@@ -14,6 +14,7 @@ import os
 TEMPLATE_PATH = "paper_trading/dashboard_template.html"
 OUTPUT_PATH = "paper_trading/dashboard.html"
 MEMECOIN_SCAN_PATH = "paper_trading/memecoin_scan.json"
+WIDE_MEMECOIN_SCAN_PATH = "paper_trading/memecoin_wide_scan.json"
 
 # (file suffix, template placeholder prefix)
 TRACKS = [
@@ -64,6 +65,12 @@ def main():
             memecoin_scan = json.load(f)
     out = out.replace("__MEMECOIN_SCAN_JSON__", json.dumps(memecoin_scan))
 
+    wide_scan = {"ranked": [], "not_moving": [], "updated_at_utc": None, "universe_size": 0, "min_volume_usd": 10_000}
+    if os.path.exists(WIDE_MEMECOIN_SCAN_PATH):
+        with open(WIDE_MEMECOIN_SCAN_PATH) as f:
+            wide_scan = json.load(f)
+    out = out.replace("__WIDE_MEMECOIN_SCAN_JSON__", json.dumps(wide_scan))
+
     assert "__POSITIONS_JSON__" not in out
     assert "__TRADES_JSON__" not in out
     assert "__TRACK_RECORD_JSON__" not in out
@@ -71,6 +78,7 @@ def main():
     assert "__TRADES_15M_JSON__" not in out
     assert "__TRACK_RECORD_15M_JSON__" not in out
     assert "__MEMECOIN_SCAN_JSON__" not in out
+    assert "__WIDE_MEMECOIN_SCAN_JSON__" not in out
 
     with open(OUTPUT_PATH, "w") as f:
         f.write(out)

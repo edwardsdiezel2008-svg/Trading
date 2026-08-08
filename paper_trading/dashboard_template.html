@@ -157,6 +157,8 @@
   .scope-note { font-size: var(--fs-xs); color: var(--ink-muted); margin: 0; }
   .breakout-yes { color: var(--good); font-weight: 700; }
   .breakout-no { color: var(--ink-muted); }
+  .liq-thin { background: var(--critical-wash); color: var(--critical); }
+  .liq-ok { background: var(--good-wash); color: var(--good); }
 </style>
 
 <div class="app">
@@ -268,6 +270,8 @@
 
     <div class="stat-tiles" id="memeStatTiles"></div>
 
+    <h2 style="margin: 4px 2px 0; font-size: var(--fs-base);">Precise scan · 11 coins · hourly candles</h2>
+
     <div class="panel">
       <div class="panel-head">
         <h2>Breakout ranking</h2>
@@ -300,9 +304,37 @@
       </div>
     </div>
 
+    <h2 style="margin: 12px 2px 0; font-size: var(--fs-base);">Wide scan · 51 coins · 24h ticker snapshot</h2>
+    <p class="scope-note" style="margin: 2px 2px 0;">Much broader universe, much coarser signal - no rolling history, so this ranks coins by how close price sits to its own 24-hour high while up on the day, instead of the ATR-based breakout measure above. Thin-liquidity coins (under $10k 24h volume) are flagged, not hidden - their range can move on very little real trading.</p>
+
+    <div class="stat-tiles" id="wideStatTiles"></div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Wide ranking (up on the day, near 24h high)</h2>
+        <span class="panel-hint" id="wideAsOfHint">—</span>
+      </div>
+      <div class="table-wrap">
+        <table id="wideTable">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Coin</th>
+              <th class="num">Price</th>
+              <th class="num">24h Change</th>
+              <th class="num">vs 24h High</th>
+              <th class="num">24h Volume</th>
+              <th>Liquidity</th>
+            </tr>
+          </thead>
+          <tbody id="wideTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
     <footer class="foot">
-      <p class="scope-note">Universe: 11 established meme coins listed on Crypto.com Exchange (DOGE, SHIB, PEPE, FLOKI, BONK, WIF, FARTCOIN, TRUMP, BOME, HMSTR, ORDI) - not new/micro-cap launches, which aren't available through this data source.</p>
-      <p class="scope-note">Rebuilt each check-in from real 1-hour candle data. Republished to this same link whenever the ranking changes.</p>
+      <p class="scope-note">Precise scan universe: 11 established meme coins (DOGE, SHIB, PEPE, FLOKI, BONK, WIF, FARTCOIN, TRUMP, BOME, HMSTR, ORDI). Wide scan universe: 51 established meme/degen coins listed on Crypto.com Exchange. Neither covers new/micro-cap launches, which aren't available through this data source.</p>
+      <p class="scope-note">Rebuilt each check-in from real Crypto.com Exchange data. Republished to this same link whenever the ranking changes.</p>
     </footer>
   </div>
 </div>
@@ -311,6 +343,7 @@
 (function () {
   "use strict";
   const MEMECOIN_SCAN = __MEMECOIN_SCAN_JSON__;
+  const WIDE_MEMECOIN_SCAN = __WIDE_MEMECOIN_SCAN_JSON__;
   const TRACKS = {
     daily: {
       label: 'Daily', dateUnit: 'Day', intraday: false,
@@ -651,6 +684,39 @@
     }).join('');
 
     drawMemeCompareChart(ranked);
+    renderWideScan();
+  }
+
+  function renderWideScan() {
+    const ranked = WIDE_MEMECOIN_SCAN.ranked || [];
+    const universeSize = WIDE_MEMECOIN_SCAN.universe_size || 0;
+    const thinCount = ranked.filter((r) => r.thin_liquidity).length;
+    const top = ranked[0];
+
+    document.getElementById('wideAsOfHint').textContent = ranked.length ? 'As of: ' + fmtDate(ranked[0].as_of.replace('T', ' ').replace('Z', ''), true) : '—';
+
+    document.getElementById('wideStatTiles').innerHTML = `
+      <div class="tile"><span class="tile-label">Coins up on the day</span><span class="tile-value">${ranked.length} / ${universeSize}</span></div>
+      <div class="tile"><span class="tile-label">Top ranked</span><span class="tile-value">${top ? fmtSignedPct(top.change_24h_pct / 100) : '—'}</span><span class="tile-sub">${top ? top.symbol : ''}</span></div>
+      <div class="tile"><span class="tile-label">Thin-liquidity coins</span><span class="tile-value critical">${thinCount} / ${ranked.length}</span><span class="tile-sub">under $${(WIDE_MEMECOIN_SCAN.min_volume_usd || 0).toLocaleString()} 24h volume</span></div>
+      <div class="tile"><span class="tile-label">Universe size</span><span class="tile-value">${universeSize}</span><span class="tile-sub">established coins only</span></div>
+    `;
+
+    document.getElementById('wideTbody').innerHTML = ranked.map((r) => {
+      const changeClass = r.change_24h_pct >= 0 ? 'good' : 'critical';
+      const liqPill = r.thin_liquidity
+        ? '<span class="pill liq-thin">thin</span>'
+        : '<span class="pill liq-ok">ok</span>';
+      return `<tr>
+        <td class="mono">#${r.rank}</td>
+        <td class="strategy-name">${r.symbol}</td>
+        <td class="num mono">${r.price}</td>
+        <td class="num mono ${changeClass}">${fmtSignedPct(r.change_24h_pct / 100)}</td>
+        <td class="num mono">${fmtSignedPct(r.pct_from_24h_high / 100)}</td>
+        <td class="num mono">${fmtMoney(r.volume_24h_usd)}</td>
+        <td>${liqPill}</td>
+      </tr>`;
+    }).join('');
   }
 
   // ---------- tab wiring ----------
