@@ -43,6 +43,24 @@ python -m src.backtest.cli --data data/sample/NASDAQ_AAPL_ticks.csv:AAPL data/sa
 This prints a metrics table and writes `reports/metrics.csv`,
 `reports/equity_curves.png`, and `reports/explanations.txt`.
 
+## Fetching real data from Alpaca (free)
+
+`scripts/fetch_alpaca_data.py` pulls historical bars from Alpaca's free IEX
+feed and writes them straight into `data/raw/` in the format `load_bars()`
+already auto-detects - no reformatting needed. Requires a free account and
+API keys set as environment variables (never on the command line):
+
+```bash
+export ALPACA_API_KEY=...
+export ALPACA_SECRET_KEY=...
+python scripts/fetch_alpaca_data.py --symbols AAPL MSFT --start 2024-01-01 --end 2025-01-01 --timeframe 1Min
+python -m src.backtest.cli --data data/raw/AAPL_1Min_bars.csv:AAPL --freq 1min
+```
+
+The free tier is the IEX feed (one exchange's volume, not the full
+consolidated tape) - fine for backtesting, just not literally every NASDAQ
+print. `--feed sip` gets the full tape but needs a paid subscription.
+
 ## Using your own downloaded logs
 
 1. Drop tick log CSVs into `data/raw/` (gitignored - trading data is often
