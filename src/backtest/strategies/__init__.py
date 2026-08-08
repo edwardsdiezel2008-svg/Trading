@@ -1,5 +1,6 @@
 from .base import Strategy
 from .mean_reversion import BollingerReversion, RSIReversion, ZScoreReversion
+from .regime_filter import RegimeFilteredStrategy
 from .trend import DonchianBreakout, MACDMomentum, MovingAverageCrossover
 from .volatility import ATRVolatilityBreakout
 
@@ -28,6 +29,7 @@ __all__ = [
     "BollingerReversion",
     "ZScoreReversion",
     "ATRVolatilityBreakout",
+    "RegimeFilteredStrategy",
     "ALL_STRATEGY_CLASSES",
     "build_default_strategies",
 ]
