@@ -1,0 +1,371 @@
+<style>
+  :root {
+    color-scheme: light;
+    --page: #EEF1F5;
+    --surface: #FBFCFE;
+    --surface-2: #F1F4F8;
+    --ink: #10141C;
+    --ink-2: #4A5568;
+    --ink-muted: #8A93A3;
+    --border: rgba(16,20,28,0.10);
+    --grid: #E2E6ED;
+    --accent: #B5792C;
+    --accent-wash: rgba(181,121,44,0.14);
+    --good: #0ca30c;
+    --good-wash: rgba(12,163,12,0.12);
+    --critical: #d03b3b;
+    --critical-wash: rgba(208,59,59,0.12);
+    --neutral-wash: rgba(74,85,104,0.09);
+    --series-1: #2a78d6;
+    --series-2: #eb6834;
+    --series-3: #1baf7a;
+    --series-4: #eda100;
+    --series-5: #e87ba4;
+    --series-6: #008300;
+    --series-7: #4a3aa7;
+    --shadow: 0 1px 2px rgba(16,20,28,0.06), 0 10px 28px -14px rgba(16,20,28,0.22);
+    --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Liberation Mono", Menlo, Consolas, monospace;
+    --fs-xs: 0.6875rem;
+    --fs-sm: 0.8125rem;
+    --fs-base: 0.9375rem;
+    --fs-lg: 1.125rem;
+    --fs-display: clamp(1.35rem, 1.1rem + 0.9vw, 1.75rem);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page: #0B0E14; --surface: #131822; --surface-2: #171D28;
+      --ink: #E8ECF3; --ink-2: #AEB6C4; --ink-muted: #6B7385;
+      --border: rgba(255,255,255,0.10); --grid: #232A38;
+      --accent: #D69A4E; --accent-wash: rgba(214,154,78,0.16);
+      --good: #0ca30c; --good-wash: rgba(12,163,12,0.18);
+      --critical: #e0585b; --critical-wash: rgba(224,88,91,0.18);
+      --neutral-wash: rgba(174,182,196,0.10);
+      --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70; --series-4: #c98500;
+      --series-5: #d55181; --series-6: #23c723; --series-7: #9085e9;
+      --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 10px 28px -14px rgba(0,0,0,0.55);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0B0E14; --surface: #131822; --surface-2: #171D28;
+    --ink: #E8ECF3; --ink-2: #AEB6C4; --ink-muted: #6B7385;
+    --border: rgba(255,255,255,0.10); --grid: #232A38;
+    --accent: #D69A4E; --accent-wash: rgba(214,154,78,0.16);
+    --good: #0ca30c; --good-wash: rgba(12,163,12,0.18);
+    --critical: #e0585b; --critical-wash: rgba(224,88,91,0.18);
+    --neutral-wash: rgba(174,182,196,0.10);
+    --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70; --series-4: #c98500;
+    --series-5: #d55181; --series-6: #23c723; --series-7: #9085e9;
+    --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 10px 28px -14px rgba(0,0,0,0.55);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-size: var(--fs-base);
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .good { color: var(--good); }
+  .critical { color: var(--critical); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .app { max-width: 1160px; margin: 0 auto; padding: 20px 20px 40px; display: flex; flex-direction: column; gap: 14px; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark { font-size: 1.4rem; line-height: 1; }
+  .brand-text h1 { margin: 0; font-size: var(--fs-display); font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+  .brand-sub { margin: 2px 0 0; font-size: var(--fs-sm); color: var(--ink-muted); }
+  .updated-badge {
+    font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--ink-2);
+    background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+    padding: 5px 12px; white-space: nowrap;
+  }
+
+  .caveat {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: var(--accent-wash); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px; font-size: var(--fs-sm); color: var(--ink-2);
+  }
+  .caveat strong { color: var(--ink); }
+
+  .stat-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  @media (max-width: 760px) { .stat-tiles { grid-template-columns: 1fr 1fr; } }
+  .tile {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: var(--shadow); padding: 12px 14px; display: flex; flex-direction: column; gap: 4px;
+  }
+  .tile-label { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-muted); font-weight: 600; }
+  .tile-value { font-size: 1.2rem; font-weight: 700; }
+  .tile-sub { font-size: var(--fs-xs); color: var(--ink-muted); }
+
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); padding: 14px 16px 16px; }
+  .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .panel-head h2 { margin: 0; font-size: var(--fs-base); font-weight: 700; }
+  .panel-hint { font-size: var(--fs-xs); color: var(--ink-muted); }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+  th { text-align: left; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); font-weight: 600; padding: 6px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  td.strategy-name { white-space: normal; font-weight: 600; }
+  th.num, td.num { text-align: right; }
+
+  .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; font-size: var(--fs-xs); font-weight: 700; }
+  .pill-accent { background: var(--accent-wash); color: var(--accent); }
+  .pill-neutral { background: var(--neutral-wash); color: var(--ink-2); }
+
+  .compare-wrap { height: 230px; position: relative; }
+  .compare-wrap canvas { width: 100%; height: 100%; display: block; }
+
+  .foot { padding: 6px 4px 0; }
+  .foot p { margin: 0 0 4px; font-size: var(--fs-xs); color: var(--ink-muted); }
+  .foot a { color: var(--accent); }
+</style>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">🪙</span>
+      <div class="brand-text">
+        <h1>BTC Paper Trading</h1>
+        <p class="brand-sub">All 7 strategies, simulated against real BTC/USDT daily bars</p>
+      </div>
+    </div>
+    <span class="updated-badge mono" id="updatedBadge">—</span>
+  </header>
+
+  <div class="caveat">
+    <span>⚠️</span>
+    <span><strong>Simulated, not real money.</strong> Positions are re-derived hourly from the same tested backtest engine, on real Crypto.com price data. No trades are actually placed anywhere. This is a proof-of-concept over ~300 days of history, not investment advice.</span>
+  </div>
+
+  <div class="stat-tiles" id="statTiles"></div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Strategy positions</h2>
+      <span class="panel-hint" id="asOfHint">—</span>
+    </div>
+    <div class="table-wrap">
+      <table id="strategyTable">
+        <thead>
+          <tr>
+            <th>Strategy</th>
+            <th>Position</th>
+            <th class="num">Equity</th>
+            <th class="num">Total Return</th>
+            <th class="num">Closed Trades</th>
+            <th class="num">Total Trades</th>
+            <th>Open since</th>
+          </tr>
+        </thead>
+        <tbody id="strategyTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Total return by strategy</h2>
+      <span class="panel-hint">Full backtest period, starting $100,000 each</span>
+    </div>
+    <div class="compare-wrap"><canvas id="compareCanvas"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Recent closed trades</h2>
+      <span class="panel-hint" id="tradeCountHint">—</span>
+    </div>
+    <div class="table-wrap">
+      <table id="tradeTable">
+        <thead>
+          <tr>
+            <th>Strategy</th>
+            <th>Direction</th>
+            <th>Entry</th>
+            <th>Exit</th>
+            <th class="num">Entry Px</th>
+            <th class="num">Exit Px</th>
+            <th class="num">Net P&amp;L</th>
+          </tr>
+        </thead>
+        <tbody id="tradeTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <p>Positions rebuilt each check-in by re-running the full backtest on real BTC/USDT daily data from Crypto.com Exchange - not a separate live-execution codepath. See the full bar-by-bar replay in the companion Engine Replay artifact.</p>
+    <p>Snapshot generated at build time - republished to this same link whenever a position changes; refresh for the latest if you're not sure this is current.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const POSITIONS = __POSITIONS_JSON__;
+  const TRADES = __TRADES_JSON__;
+  const CAPITAL = 100000;
+
+  const FONT_MONO = 'ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace';
+
+  function readTheme() {
+    const cs = getComputedStyle(document.documentElement);
+    const g = (n) => cs.getPropertyValue(n).trim();
+    return {
+      ink: g('--ink'), ink2: g('--ink-2'), inkMuted: g('--ink-muted'), grid: g('--grid'),
+      accent: g('--accent'), good: g('--good'), critical: g('--critical'),
+      series: [g('--series-1'), g('--series-2'), g('--series-3'), g('--series-4'), g('--series-5'), g('--series-6'), g('--series-7')],
+    };
+  }
+  let THEME = readTheme();
+
+  function fmtMoney(v) { const s = v < 0 ? '-' : ''; return s + '$' + Math.abs(v).toLocaleString(undefined, { maximumFractionDigits: 0 }); }
+  function fmtSigned(v) { return (v >= 0 ? '+' : '-') + '$' + Math.abs(v).toLocaleString(undefined, { maximumFractionDigits: 0 }); }
+  function fmtSignedPct(v) { return (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%'; }
+  function fmtDate(s) { const d = new Date(s.replace(' ', 'T') + 'Z'); return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); }
+  function fmtUpdated(s) { const d = new Date(s); return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }); }
+
+  // ---------- derive per-strategy metrics from trades + positions ----------
+  const strategyNames = Object.keys(POSITIONS.strategies);
+  const rows = strategyNames.map((name) => {
+    const p = POSITIONS.strategies[name];
+    const closedTrades = TRADES.filter((t) => t.strategy === name);
+    const totalReturn = p.equity / CAPITAL - 1;
+    return { name, ...p, closedTradeCount: closedTrades.length, totalReturn };
+  }).sort((a, b) => b.totalReturn - a.totalReturn);
+
+  document.getElementById('updatedBadge').textContent = 'Updated ' + fmtUpdated(POSITIONS.updated_at_utc);
+  document.getElementById('asOfHint').textContent = 'As of bar: ' + POSITIONS.latest_bar;
+  document.getElementById('tradeCountHint').textContent = TRADES.length + ' closed trades across all strategies';
+
+  // ---------- stat tiles ----------
+  const profitable = rows.filter((r) => r.totalReturn > 0).length;
+  const best = rows[0];
+  const worst = rows[rows.length - 1];
+  const openCount = rows.filter((r) => r.position !== 0).length;
+  const statTiles = document.getElementById('statTiles');
+  statTiles.innerHTML = `
+    <div class="tile"><span class="tile-label">Profitable strategies</span><span class="tile-value">${profitable} / ${rows.length}</span></div>
+    <div class="tile"><span class="tile-label">Best performer</span><span class="tile-value good">${fmtSignedPct(best.totalReturn)}</span><span class="tile-sub">${best.name}</span></div>
+    <div class="tile"><span class="tile-label">Worst performer</span><span class="tile-value critical">${fmtSignedPct(worst.totalReturn)}</span><span class="tile-sub">${worst.name}</span></div>
+    <div class="tile"><span class="tile-label">Open positions now</span><span class="tile-value">${openCount} / ${rows.length}</span></div>
+  `;
+
+  // ---------- strategy table ----------
+  const tbody = document.getElementById('strategyTbody');
+  tbody.innerHTML = rows.map((r) => {
+    const posClass = r.position !== 0 ? 'pill-accent' : 'pill-neutral';
+    const posLabel = r.position > 0 ? '▲ LONG' : r.position < 0 ? '▼ SHORT' : '— FLAT';
+    const retClass = r.totalReturn >= 0 ? 'good' : 'critical';
+    const openSince = r.open_trade ? fmtDate(r.open_trade.entry_time) + ' @ ' + fmtMoney(r.open_trade.entry_price) : '—';
+    return `<tr>
+      <td class="strategy-name">${r.name}</td>
+      <td><span class="pill ${posClass}">${posLabel}</span></td>
+      <td class="num mono">${fmtMoney(r.equity)}</td>
+      <td class="num mono ${retClass}">${fmtSignedPct(r.totalReturn)}</td>
+      <td class="num mono">${r.closedTradeCount}</td>
+      <td class="num mono">${r.closedTradeCount + (r.open_trade ? 1 : 0)}</td>
+      <td class="mono">${openSince}</td>
+    </tr>`;
+  }).join('');
+
+  // ---------- compare chart ----------
+  function setupCanvas(canvas) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(1, Math.round(rect.width * dpr));
+    canvas.height = Math.max(1, Math.round(rect.height * dpr));
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx, w: rect.width, h: rect.height };
+  }
+  function roundRectPath(ctx, x, y, w, h, r) {
+    r = Math.min(r, h / 2, Math.abs(w) / 2 || r);
+    if (w < 0) { x = x + w; w = -w; }
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function drawCompareChart() {
+    const canvas = document.getElementById('compareCanvas');
+    const { ctx, w, h } = setupCanvas(canvas);
+    ctx.clearRect(0, 0, w, h);
+    const nS = rows.length;
+    const gap = 8;
+    const barH = Math.min(28, (h - gap) / nS - gap);
+    const rowH = barH + gap;
+    const totalH = rowH * nS;
+    const offsetY = (h - totalH) / 2;
+    const maxAbs = Math.max(...rows.map((r) => Math.abs(r.totalReturn)), 0.05);
+    const labelW = 168, valueW = 60;
+    const scaleW = w - labelW - valueW;
+    const zeroX = labelW + scaleW / 2;
+
+    ctx.strokeStyle = THEME.grid;
+    ctx.beginPath(); ctx.moveTo(zeroX + 0.5, offsetY); ctx.lineTo(zeroX + 0.5, offsetY + totalH); ctx.stroke();
+
+    rows.forEach((r, i) => {
+      const y0 = offsetY + i * rowH;
+      const color = THEME.series[i % THEME.series.length];
+      ctx.font = '600 12px ' + FONT_MONO;
+      ctx.fillStyle = THEME.ink2;
+      ctx.textBaseline = 'middle';
+      const label = r.name.length > 22 ? r.name.slice(0, 21) + '…' : r.name;
+      ctx.fillText(label, 4, y0 + barH / 2);
+
+      const x1 = zeroX + (r.totalReturn / maxAbs) * (scaleW / 2);
+      const barY = y0 + (barH - 14) / 2;
+      ctx.fillStyle = color;
+      const left = Math.min(zeroX, x1), width = Math.max(1, Math.abs(x1 - zeroX));
+      roundRectPath(ctx, left, barY, width, 14, 3);
+      ctx.fill();
+
+      ctx.font = '600 11px ' + FONT_MONO;
+      ctx.fillStyle = r.totalReturn >= 0 ? THEME.good : THEME.critical;
+      const valText = fmtSignedPct(r.totalReturn);
+      const valX = r.totalReturn >= 0 ? x1 + 6 : x1 - 6 - ctx.measureText(valText).width;
+      ctx.fillText(valText, valX, y0 + barH / 2);
+    });
+  }
+
+  // ---------- trade log ----------
+  const tradeTbody = document.getElementById('tradeTbody');
+  const sortedTrades = TRADES.slice().sort((a, b) => new Date(b.exit_time) - new Date(a.exit_time));
+  tradeTbody.innerHTML = sortedTrades.slice(0, 60).map((t) => {
+    const cls = t.net_pnl >= 0 ? 'good' : 'critical';
+    const dirLabel = t.direction === 'LONG' ? '▲ LONG' : '▼ SHORT';
+    return `<tr>
+      <td class="strategy-name">${t.strategy}</td>
+      <td><span class="pill pill-accent">${dirLabel}</span></td>
+      <td class="mono">${fmtDate(t.entry_time)}</td>
+      <td class="mono">${fmtDate(t.exit_time)}</td>
+      <td class="num mono">${fmtMoney(t.entry_price)}</td>
+      <td class="num mono">${fmtMoney(t.exit_price)}</td>
+      <td class="num mono ${cls}">${fmtSigned(t.net_pnl)}</td>
+    </tr>`;
+  }).join('');
+
+  drawCompareChart();
+  window.addEventListener('resize', () => { drawCompareChart(); });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); drawCompareChart(); });
+  new MutationObserver(() => { THEME = readTheme(); drawCompareChart(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+</script>
