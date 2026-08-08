@@ -92,3 +92,22 @@ def test_percent_equity_sizing_scales_with_capital():
     result = run_backtest(bars, AlwaysLong(), spec, initial_capital=1_000, sizing="percent_equity", capital_fraction=0.5)
     # 0.5 * 1000 / 100 = 5 units
     assert result.trades[0].units == pytest.approx(5.0)
+
+
+def test_percent_equity_sizing_floors_to_whole_units_for_non_fractional_assets():
+    # $100 equity against a $65 price: 100/65 = 1.53 units, but stocks/futures
+    # can't hold a fractional share/contract, so this must floor to 1.
+    bars = _bars([65] * 3)
+    spec = _flat_spec()  # fractional_units defaults to False
+    result = run_backtest(bars, AlwaysLong(), spec, initial_capital=100, sizing="percent_equity")
+    assert result.trades[0].units == pytest.approx(1.0)
+
+
+def test_percent_equity_sizing_stays_fractional_for_crypto_style_assets():
+    # Same $100 against a $65,000 price (BTC-scale): flooring would zero out
+    # the position entirely, which is exactly the bug this test guards against.
+    bars = _bars([65_000] * 3)
+    spec = InstrumentSpec("BTC_USDT", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True)
+    result = run_backtest(bars, AlwaysLong(), spec, initial_capital=100, sizing="percent_equity")
+    assert len(result.trades) == 1
+    assert result.trades[0].units == pytest.approx(100 / 65_000)

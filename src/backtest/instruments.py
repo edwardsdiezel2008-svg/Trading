@@ -9,10 +9,11 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class InstrumentSpec:
     symbol: str
-    asset_class: str  # "equity" or "future"
-    multiplier: float  # $ P&L per 1.0 price move, per contract/share
+    asset_class: str  # "equity", "future", or "crypto"
+    multiplier: float  # $ P&L per 1.0 price move, per contract/share/coin
     tick_size: float  # minimum price increment
-    commission_per_unit: float  # $ per share or per contract, one side
+    commission_per_unit: float  # $ per share/contract/coin, one side
+    fractional_units: bool = False  # True for assets tradable in fractional amounts (crypto)
 
 
 # Common defaults. Override/add via YAML config passed to the CLI for anything not listed.
@@ -29,11 +30,37 @@ DEFAULT_SPECS = {
     # Energy / metals
     "CL": InstrumentSpec("CL", "future", multiplier=1000.0, tick_size=0.01, commission_per_unit=2.50),
     "GC": InstrumentSpec("GC", "future", multiplier=100.0, tick_size=0.10, commission_per_unit=2.50),
+    # Crypto - fractional units matter here: BTC at $60k+ means a $100 account
+    # can't buy a whole "1 unit" the way a stock/futures position sizer assumes.
+    "_default_crypto": InstrumentSpec("_default_crypto", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True),
+    "BTC_USDT": InstrumentSpec("BTC_USDT", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True),
+    "BTC_USD": InstrumentSpec("BTC_USD", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True),
+    "BTC-USD": InstrumentSpec("BTC-USD", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True),
+    "ETH_USDT": InstrumentSpec("ETH_USDT", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True),
+    "ETH_USD": InstrumentSpec("ETH_USD", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True),
+    "ETH-USD": InstrumentSpec("ETH-USD", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True),
 }
+
+_CRYPTO_QUOTE_CURRENCIES = ("USDT", "USDC", "USD", "BTC", "ETH")
+
+
+def _looks_like_crypto_pair(symbol: str) -> bool:
+    """Heuristic for symbols not explicitly listed: BTC_USDT, ETH-USD, SOL/USDC,
+    etc. - a separator plus a recognizable quote currency. Plain equity tickers
+    (AAPL, MSFT) have neither, so this doesn't misfire on those.
+    """
+    for sep in ("_", "-", "/"):
+        if sep in symbol:
+            quote = symbol.split(sep)[-1]
+            if quote in _CRYPTO_QUOTE_CURRENCIES:
+                return True
+    return False
 
 
 def get_spec(symbol: str, overrides: dict | None = None) -> InstrumentSpec:
-    """Look up an instrument spec by symbol, falling back to a plain equity default.
+    """Look up an instrument spec by symbol, falling back to a plain equity
+    default - or a fractional-unit crypto default if the symbol looks like a
+    crypto pair (e.g. 'SOL_USDT') and isn't explicitly listed above.
 
     `overrides` (e.g. loaded from a YAML config) is checked first so users can
     define specs for symbols not in DEFAULT_SPECS or correct the defaults.
@@ -43,6 +70,17 @@ def get_spec(symbol: str, overrides: dict | None = None) -> InstrumentSpec:
         return overrides[symbol]
     if symbol in DEFAULT_SPECS:
         return DEFAULT_SPECS[symbol]
+
+    if _looks_like_crypto_pair(symbol):
+        default = DEFAULT_SPECS["_default_crypto"]
+        return InstrumentSpec(
+            symbol, "crypto",
+            multiplier=default.multiplier,
+            tick_size=default.tick_size,
+            commission_per_unit=default.commission_per_unit,
+            fractional_units=True,
+        )
+
     default = DEFAULT_SPECS["_default_equity"]
     return InstrumentSpec(
         symbol, "equity",

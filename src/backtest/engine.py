@@ -72,7 +72,13 @@ def _position_size(
     notional_per_unit = price * spec.multiplier
     if notional_per_unit <= 0 or equity <= 0:
         return 0.0
-    return max(np.floor((equity * capital_fraction) / notional_per_unit), 0.0)
+    raw_units = (equity * capital_fraction) / notional_per_unit
+    if spec.fractional_units:
+        return max(raw_units, 0.0)
+    # Stocks/futures trade in whole shares/contracts - flooring is correct there,
+    # but would silently zero out any position sizing for a fractional asset
+    # (e.g. $100 of equity can't buy a whole "1 unit" of $65k BTC).
+    return max(np.floor(raw_units), 0.0)
 
 
 def run_backtest(
