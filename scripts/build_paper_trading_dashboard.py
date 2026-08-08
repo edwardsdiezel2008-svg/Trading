@@ -14,6 +14,7 @@ import os
 TEMPLATE_PATH = "paper_trading/dashboard_template.html"
 POSITIONS_PATH = "paper_trading/positions.json"
 TRADE_LOG_PATH = "paper_trading/trade_log.csv"
+TRACK_RECORD_PATH = "paper_trading/track_record.csv"
 OUTPUT_PATH = "paper_trading/dashboard.html"
 
 
@@ -29,9 +30,19 @@ def main():
         t["entry_price"] = float(t["entry_price"])
         t["exit_price"] = float(t["exit_price"])
 
+    track_record = []
+    if os.path.exists(TRACK_RECORD_PATH):
+        with open(TRACK_RECORD_PATH) as f:
+            track_record = list(csv.DictReader(f))
+        for r in track_record:
+            r["equity"] = float(r["equity"])
+            r["return_since_tracking_start_pct"] = float(r["return_since_tracking_start_pct"])
+            r["position"] = float(r["position"])
+
     out = template.replace("__POSITIONS_JSON__", json.dumps(positions))
     out = out.replace("__TRADES_JSON__", json.dumps(trades))
-    assert "__POSITIONS_JSON__" not in out and "__TRADES_JSON__" not in out
+    out = out.replace("__TRACK_RECORD_JSON__", json.dumps(track_record))
+    assert "__POSITIONS_JSON__" not in out and "__TRADES_JSON__" not in out and "__TRACK_RECORD_JSON__" not in out
 
     with open(OUTPUT_PATH, "w") as f:
         f.write(out)

@@ -113,6 +113,11 @@
   .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
   .panel-head h2 { margin: 0; font-size: var(--fs-base); font-weight: 700; }
   .panel-hint { font-size: var(--fs-xs); color: var(--ink-muted); }
+  .panel-note { margin: 0 0 10px; font-size: var(--fs-sm); color: var(--ink-2); }
+
+  .ribbon-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; font-size: var(--fs-xs); color: var(--ink-muted); }
+  .ribbon-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .ribbon-legend .swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
 
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
@@ -152,6 +157,16 @@
   </div>
 
   <div class="stat-tiles" id="statTiles"></div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Track record</h2>
+      <span class="panel-hint" id="trackRecordHint">—</span>
+    </div>
+    <p class="panel-note">Return since tracking began - separate from the 300-day historical backtest below. This is the evidence that actually matters before any real money question comes up: does a strategy hold up going forward, not just in hindsight.</p>
+    <div class="compare-wrap" id="trackRecordWrap"><canvas id="trackRecordCanvas"></canvas></div>
+    <div class="ribbon-legend" id="trackRecordLegend"></div>
+  </div>
 
   <div class="panel">
     <div class="panel-head">
@@ -218,6 +233,7 @@
   "use strict";
   const POSITIONS = __POSITIONS_JSON__;
   const TRADES = __TRADES_JSON__;
+  const TRACK_RECORD = __TRACK_RECORD_JSON__;
   const CAPITAL = 100000;
 
   const FONT_MONO = 'ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace';
@@ -346,6 +362,92 @@
     });
   }
 
+  // ---------- track record chart ----------
+  const CANONICAL_STRATEGY_ORDER = Object.keys(POSITIONS.strategies);
+  function seriesColorFor(name) {
+    const idx = CANONICAL_STRATEGY_ORDER.indexOf(name);
+    return THEME.series[(idx >= 0 ? idx : 0) % THEME.series.length];
+  }
+
+  function drawTrackRecordChart() {
+    const canvas = document.getElementById('trackRecordCanvas');
+    const { ctx, w, h } = setupCanvas(canvas);
+    ctx.clearRect(0, 0, w, h);
+
+    const dates = [...new Set(TRACK_RECORD.map((r) => r.date))].sort();
+    if (dates.length === 0) {
+      ctx.font = '13px ' + FONT_MONO;
+      ctx.fillStyle = THEME.ink2;
+      ctx.fillText('No track record yet - check back after the first update.', 10, h / 2);
+      return;
+    }
+
+    const byStrategy = {};
+    CANONICAL_STRATEGY_ORDER.forEach((name) => { byStrategy[name] = []; });
+    TRACK_RECORD.forEach((r) => { if (byStrategy[r.strategy]) byStrategy[r.strategy].push(r); });
+
+    const padL = 54, padR = 12, padT = 12, padB = 22;
+    const plotW = w - padL - padR, plotH = h - padT - padB;
+
+    let minY = 0, maxY = 0;
+    Object.values(byStrategy).forEach((rows) => rows.forEach((r) => {
+      minY = Math.min(minY, r.return_since_tracking_start_pct);
+      maxY = Math.max(maxY, r.return_since_tracking_start_pct);
+    }));
+    if (minY === maxY) { minY -= 1; maxY += 1; }
+    const pad = (maxY - minY) * 0.2 || 1;
+    minY -= pad; maxY += pad;
+
+    const xFor = (date) => (dates.length > 1 ? padL + (dates.indexOf(date) / (dates.length - 1)) * plotW : padL + plotW / 2);
+    const yFor = (v) => padT + (1 - (v - minY) / (maxY - minY)) * plotH;
+
+    ctx.strokeStyle = THEME.grid; ctx.lineWidth = 1; ctx.font = '10px ' + FONT_MONO; ctx.fillStyle = THEME.inkMuted;
+    [minY, (minY + maxY) / 2, maxY].forEach((v) => {
+      const y = yFor(v);
+      ctx.beginPath(); ctx.moveTo(padL, y + 0.5); ctx.lineTo(w - padR, y + 0.5); ctx.stroke();
+      ctx.fillText(v.toFixed(1) + '%', 2, Math.max(10, y - 2));
+    });
+    const zeroY = yFor(0);
+    ctx.strokeStyle = THEME.ink2; ctx.setLineDash([4, 4]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(padL, zeroY); ctx.lineTo(w - padR, zeroY); ctx.stroke();
+    ctx.setLineDash([]);
+
+    CANONICAL_STRATEGY_ORDER.forEach((name) => {
+      const rows = byStrategy[name].slice().sort((a, b) => a.date.localeCompare(b.date));
+      if (!rows.length) return;
+      const color = seriesColorFor(name);
+      if (rows.length === 1) {
+        const x = xFor(rows[0].date), y = yFor(rows[0].return_since_tracking_start_pct);
+        ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
+      } else {
+        ctx.beginPath();
+        rows.forEach((r, i) => {
+          const x = xFor(r.date), y = yFor(r.return_since_tracking_start_pct);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.stroke();
+        const last = rows[rows.length - 1];
+        ctx.beginPath(); ctx.arc(xFor(last.date), yFor(last.return_since_tracking_start_pct), 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = color; ctx.fill();
+      }
+    });
+
+    ctx.font = '10px ' + FONT_MONO; ctx.fillStyle = THEME.inkMuted;
+    ctx.fillText(dates[0], padL, h - 6);
+    if (dates.length > 1) {
+      const lastLabel = dates[dates.length - 1];
+      ctx.fillText(lastLabel, w - padR - ctx.measureText(lastLabel).width, h - 6);
+    }
+  }
+
+  const trackDates = [...new Set(TRACK_RECORD.map((r) => r.date))].sort();
+  document.getElementById('trackRecordHint').textContent = trackDates.length
+    ? `Since ${fmtDate(trackDates[0] + ' 00:00:00')} · Day ${trackDates.length}`
+    : 'Not started yet';
+  document.getElementById('trackRecordLegend').innerHTML = CANONICAL_STRATEGY_ORDER.map((name) =>
+    `<span><i class="swatch" style="background:${seriesColorFor(name)}"></i>${name}</span>`
+  ).join('');
+
   // ---------- trade log ----------
   const tradeTbody = document.getElementById('tradeTbody');
   const sortedTrades = TRADES.slice().sort((a, b) => new Date(b.exit_time) - new Date(a.exit_time));
@@ -363,9 +465,10 @@
     </tr>`;
   }).join('');
 
-  drawCompareChart();
-  window.addEventListener('resize', () => { drawCompareChart(); });
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); drawCompareChart(); });
-  new MutationObserver(() => { THEME = readTheme(); drawCompareChart(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  function renderCharts() { drawCompareChart(); drawTrackRecordChart(); }
+  renderCharts();
+  window.addEventListener('resize', renderCharts);
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); renderCharts(); });
+  new MutationObserver(() => { THEME = readTheme(); renderCharts(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 })();
 </script>

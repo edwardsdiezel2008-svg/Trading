@@ -20,10 +20,13 @@ Usage: python scripts/paper_trade_update.py
 from __future__ import annotations
 
 import json
+import os
 import sys
 from datetime import datetime, timezone
 
 sys.path.insert(0, ".")
+
+import pandas as pd
 
 from src.backtest.data_loader import load_bars
 from src.backtest.engine import run_backtest
@@ -34,9 +37,51 @@ from src.backtest.strategies import ALL_STRATEGY_CLASSES
 BARS_PATH = "paper_trading/bars.csv"
 POSITIONS_PATH = "paper_trading/positions.json"
 TRADE_LOG_PATH = "paper_trading/trade_log.csv"
+TRACK_RECORD_PATH = "paper_trading/track_record.csv"
 SUMMARY_PATH = "paper_trading/summary.md"
 CAPITAL = 100_000.0
 SYMBOL = "BTC_USDT"
+
+# The date paper trading was actually set up - the track record measures
+# performance from THIS point forward only, separate from the 300-day
+# historical backtest that came before it. Indicators still warm up on the
+# full history (same pattern as walkforward.py / simulate_recent_period.py);
+# only the capital base and reported return are reset to this date.
+TRACKING_START_DATE = "2026-08-08"
+
+
+def _update_track_record(bars, strategy_name, result):
+    tracking_start = pd.Timestamp(TRACKING_START_DATE)
+    if tracking_start in bars.index:
+        start_idx = bars.index.get_loc(tracking_start)
+    else:
+        # Tracking start predates the bar history we have, or hasn't arrived
+        # yet - fall back to the first bar so we don't crash, but this
+        # shouldn't happen once bars.csv actually covers TRACKING_START_DATE.
+        start_idx = 0
+
+    eq = result.equity_curve
+    equity_at_start = eq.iloc[start_idx - 1] if start_idx > 0 else CAPITAL
+    current_equity = eq.iloc[-1]
+    return_since_start = current_equity / equity_at_start - 1 if equity_at_start else 0.0
+
+    today = str(bars.index[-1].date())
+    row = {
+        "date": today,
+        "strategy": strategy_name,
+        "equity": round(current_equity, 2),
+        "return_since_tracking_start_pct": round(return_since_start * 100, 3),
+        "position": result.positions.iloc[-1],
+    }
+
+    if os.path.exists(TRACK_RECORD_PATH):
+        existing = pd.read_csv(TRACK_RECORD_PATH)
+        existing = existing[~((existing["date"] == today) & (existing["strategy"] == strategy_name))]
+        updated = pd.concat([existing, pd.DataFrame([row])], ignore_index=True)
+    else:
+        updated = pd.DataFrame([row])
+    updated = updated.sort_values(["date", "strategy"])
+    updated.to_csv(TRACK_RECORD_PATH, index=False)
 
 
 def main():
@@ -51,6 +96,7 @@ def main():
         strat = cls()
         result = run_backtest(bars, strat, spec, initial_capital=CAPITAL)
         metrics = compute_metrics(result, CAPITAL, freq_hint="1D")
+        _update_track_record(bars, strat.name, result)
 
         last_pos = int(result.positions.iloc[-1])
         last_equity = float(result.equity_curve.iloc[-1])
@@ -94,7 +140,6 @@ def main():
             "strategies": positions,
         }, f, indent=2)
 
-    import pandas as pd
     pd.DataFrame(all_trades).to_csv(TRADE_LOG_PATH, index=False)
 
     lines = [
