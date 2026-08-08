@@ -22,6 +22,8 @@ class RSIReversion(Strategy):
     the midline. Params: period=14, lower=30, upper=70.
     """
 
+    PARAM_SPACE = {"period": [7, 10, 14, 21], "lower": [20, 25, 30], "upper": [70, 75, 80]}
+
     @property
     def name(self) -> str:
         return f"RSI_Reversion({self.params.get('period', 14)},{self.params.get('lower', 30)}/{self.params.get('upper', 70)})"
@@ -44,6 +46,8 @@ class BollingerReversion(Strategy):
     """Long when price closes below the lower Bollinger Band, short when above
     the upper band, exit at the midline (moving average). Params: period=20, num_std=2.
     """
+
+    PARAM_SPACE = {"period": [10, 15, 20, 30], "num_std": [1.5, 2.0, 2.5]}
 
     @property
     def name(self) -> str:
@@ -74,6 +78,8 @@ class ZScoreReversion(Strategy):
     long when the z-score is below -entry_z, short when above +entry_z,
     exits when it reverts inside +/-exit_z. Params: period=20, entry_z=2.0, exit_z=0.5.
     """
+
+    PARAM_SPACE = {"period": [10, 15, 20, 30], "entry_z": [1.5, 2.0, 2.5]}
 
     @property
     def name(self) -> str:

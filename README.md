@@ -16,8 +16,11 @@ src/backtest/
   metrics.py           CAGR, Sharpe, Sortino, max drawdown, win rate, profit factor...
   regime.py            Classifies bars as trending/ranging x high/low-vol, attributes P&L to each
   report.py            Runs everything, writes metrics.csv / equity_curves.png / explanations.txt
+  walkforward.py        Walk-forward validation: grid-search params per fold, test out-of-sample
+  sensitivity.py         Parameter sensitivity sweeps: is the edge a plateau or a lucky spike?
   cli.py                Command-line entry point
 scripts/generate_sample_data.py   Synthetic tick data for testing the pipeline (NOT real market data)
+scripts/run_validation.py         Runs walk-forward + sensitivity across the whole strategy library
 tests/                 pytest suite
 ```
 
@@ -104,18 +107,50 @@ the rest of the time" - which is what you need to know before trusting a
 backtest to generalize, since it tells you the strategy is regime-dependent
 rather than universally "profitable."
 
+## Validating results: walk-forward + parameter sensitivity
+
+`report.py` / `cli.py` are in-sample - the strategy sees the whole dataset
+before you evaluate it, which is exactly the setup that makes overfitting
+look like alpha. Two tools address that, and are run separately from the main
+CLI because they're much more expensive (grid search, not a single backtest):
+
+```bash
+python scripts/run_validation.py --data data/sample/NASDAQ_AAPL_ticks.csv:AAPL --freq 5min --n-folds 5
+```
+
+- **Walk-forward validation** (`walkforward.py`): splits the data into
+  expanding train / held-out test folds, grid-searches each strategy's
+  `PARAM_SPACE` on the train slice only, and applies the winning parameters
+  to the untouched test slice. The test folds are stitched into one
+  continuous out-of-sample equity curve - that's the honest performance
+  estimate, not the in-sample number. It's also compared against just running
+  the strategy's fixed textbook defaults over the same out-of-sample window
+  (`vs_fixed_default_ratio`), which answers "was re-optimizing even worth
+  it?" separately from "does this strategy work out-of-sample at all?"
+- **Parameter sensitivity** (`sensitivity.py`): sweeps each parameter
+  individually around its default, holding the others fixed, and reports
+  whether performance is a robust plateau (profitable across nearby values)
+  or a lucky spike (great at exactly one setting, falls apart next to it).
+  A spike is a strong overfitting signal even if the in-sample Sharpe looks
+  great.
+
+Output goes to `reports/validation/` (`walkforward_summary.csv`,
+`walkforward_folds.csv`, `sensitivity_summary.csv`, `sensitivity_detail.csv`).
+
 ## Known limitations (read before trusting results)
 
 - **CAGR/Calmar are suppressed (`NaN`) for backtests spanning under ~1
   month** - annualizing a few days of data compounds noise into meaningless
   numbers. `total_return` is always exact regardless of span; trust that for
   short backtests.
-- No walk-forward / out-of-sample split yet - every metric here is in-sample.
-  Promising results should be re-tested on a held-out period before being
-  trusted.
+- Walk-forward validation exists (see above) but isn't run automatically -
+  `report.py`/`cli.py` results are still in-sample unless you separately run
+  `scripts/run_validation.py`. Promising in-sample results should always be
+  checked out-of-sample before being trusted.
 - No margin modeling for futures (see above).
-- Strategy parameters (MA lengths, RSI thresholds, etc.) use textbook
-  defaults, not fitted values - they're a starting point, not tuned.
+- Strategy parameters default to textbook values; `PARAM_SPACE` on each
+  strategy class defines a small grid for walk-forward/sensitivity, but it's
+  a starting point, not an exhaustive search.
 
 ## Tests
 

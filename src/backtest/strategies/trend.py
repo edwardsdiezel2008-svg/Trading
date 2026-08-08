@@ -12,6 +12,8 @@ class MovingAverageCrossover(Strategy):
     above the slow MA, short when it's below. Params: fast=10, slow=50, kind='ema'|'sma'.
     """
 
+    PARAM_SPACE = {"fast": [5, 8, 10, 15, 20], "slow": [30, 40, 50, 75, 100]}
+
     @property
     def name(self) -> str:
         return f"MA_Crossover({self.params.get('fast', 10)}/{self.params.get('slow', 50)})"
@@ -37,6 +39,8 @@ class DonchianBreakout(Strategy):
     Params: lookback=20.
     """
 
+    PARAM_SPACE = {"lookback": [10, 15, 20, 30, 40, 55]}
+
     @property
     def name(self) -> str:
         return f"Donchian_Breakout({self.params.get('lookback', 20)})"
@@ -60,6 +64,8 @@ class MACDMomentum(Strategy):
     """Trades the sign of the MACD histogram (MACD line vs signal line).
     Params: fast=12, slow=26, signal=9.
     """
+
+    PARAM_SPACE = {"fast": [8, 12, 16], "slow": [21, 26, 34], "signal": [6, 9, 12]}
 
     @property
     def name(self) -> str:

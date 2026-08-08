@@ -26,6 +26,8 @@ class ATRVolatilityBreakout(Strategy):
     short-term. Holds until an opposite-direction breakout. Params: atr_period=14, k=1.5.
     """
 
+    PARAM_SPACE = {"atr_period": [7, 10, 14, 21], "k": [1.0, 1.5, 2.0, 2.5]}
+
     @property
     def name(self) -> str:
         return f"ATR_Vol_Breakout({self.params.get('atr_period', 14)},k={self.params.get('k', 1.5)})"
