@@ -43,6 +43,21 @@ python -m src.backtest.cli --data data/sample/NASDAQ_AAPL_ticks.csv:AAPL data/sa
 This prints a metrics table and writes `reports/metrics.csv`,
 `reports/equity_curves.png`, and `reports/explanations.txt`.
 
+## Fetching NASDAQ stock data with no account at all
+
+`scripts/fetch_yfinance_data.py` pulls from Yahoo Finance via `yfinance` -
+no signup, no API key, nothing to create:
+
+```bash
+python scripts/fetch_yfinance_data.py --symbols AAPL MSFT --start 2015-01-01 --end 2025-01-01 --interval 1d
+python -m src.backtest.cli --data data/raw/AAPL_1d_bars.csv:AAPL --freq 1D
+```
+
+The tradeoff: Yahoo's intraday history is short - about the last 7 days for
+1-minute bars, ~60 days for other sub-daily intervals. Daily bars and
+coarser go back decades. Good for quick testing or daily-bar backtests;
+use Alpaca below if you need years of minute-level history.
+
 ## Fetching real data from Alpaca (free)
 
 `scripts/fetch_alpaca_data.py` pulls historical bars from Alpaca and writes
