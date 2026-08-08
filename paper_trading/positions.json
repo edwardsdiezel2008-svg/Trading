@@ -1,0 +1,72 @@
+{
+  "symbol": "BTC_USDT",
+  "updated_at_utc": "2026-08-08T18:49:16.262784+00:00",
+  "latest_bar": "2026-08-08 00:00:00",
+  "strategies": {
+    "MA_Crossover(10/50)": {
+      "position": -1,
+      "position_label": "SHORT",
+      "equity": 123831.21,
+      "open_trade": {
+        "direction": -1,
+        "entry_price": 73623.7,
+        "entry_time": "2026-05-29 00:00:00"
+      },
+      "as_of": "2026-08-08 00:00:00"
+    },
+    "Donchian_Breakout(20)": {
+      "position": 1,
+      "position_label": "LONG",
+      "equity": 130721.64,
+      "open_trade": {
+        "direction": 1,
+        "entry_price": 65036.16,
+        "entry_time": "2026-07-15 00:00:00"
+      },
+      "as_of": "2026-08-08 00:00:00"
+    },
+    "MACD_Momentum(12/26/9)": {
+      "position": 1,
+      "position_label": "LONG",
+      "equity": 121742.53,
+      "open_trade": {
+        "direction": 1,
+        "entry_price": 64927.11,
+        "entry_time": "2026-08-08 00:00:00"
+      },
+      "as_of": "2026-08-08 00:00:00"
+    },
+    "RSI_Reversion(14,30/70)": {
+      "position": 0,
+      "position_label": "FLAT",
+      "equity": 88118.57,
+      "open_trade": null,
+      "as_of": "2026-08-08 00:00:00"
+    },
+    "Bollinger_Reversion(20,2sd)": {
+      "position": 0,
+      "position_label": "FLAT",
+      "equity": 91474.55,
+      "open_trade": null,
+      "as_of": "2026-08-08 00:00:00"
+    },
+    "ZScore_Reversion(20,z=2.0)": {
+      "position": 0,
+      "position_label": "FLAT",
+      "equity": 96010.05,
+      "open_trade": null,
+      "as_of": "2026-08-08 00:00:00"
+    },
+    "ATR_Vol_Breakout(14,k=1.5)": {
+      "position": -1,
+      "position_label": "SHORT",
+      "equity": 112997.63,
+      "open_trade": {
+        "direction": -1,
+        "entry_price": 66751.94,
+        "entry_time": "2026-06-03 00:00:00"
+      },
+      "as_of": "2026-08-08 00:00:00"
+    }
+  }
+}
