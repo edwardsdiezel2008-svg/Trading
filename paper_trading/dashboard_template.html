@@ -148,6 +148,15 @@
   }
   .thin-data-note.visible { display: flex; }
   .thin-data-note strong { color: var(--ink); }
+
+  .risk-banner {
+    display: flex; gap: 10px; align-items: flex-start; background: var(--critical-wash); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px; font-size: var(--fs-sm); color: var(--ink-2);
+  }
+  .risk-banner strong { color: var(--ink); }
+  .scope-note { font-size: var(--fs-xs); color: var(--ink-muted); margin: 0; }
+  .breakout-yes { color: var(--good); font-weight: 700; }
+  .breakout-no { color: var(--ink-muted); }
 </style>
 
 <div class="app">
@@ -165,93 +174,143 @@
   <div class="tab-bar" id="tabBar">
     <button class="tab-btn active" data-track="daily">Daily</button>
     <button class="tab-btn" data-track="fifteenMin">15-Minute</button>
+    <button class="tab-btn" data-track="memecoin">Memecoin Scanner</button>
   </div>
 
-  <div class="caveat">
-    <span>⚠️</span>
-    <span><strong>Simulated, not real money.</strong> Positions are re-derived from the same tested backtest engine, on real Crypto.com price data. No trades are actually placed anywhere. Not investment advice.</span>
-  </div>
-
-  <div class="thin-data-note" id="thinDataNote">
-    <span>📉</span>
-    <span><strong>Thin data - read with caution.</strong> <span id="thinDataText"></span></span>
-  </div>
-
-  <div class="stat-tiles" id="statTiles"></div>
-
-  <div class="panel">
-    <div class="panel-head">
-      <h2>Track record</h2>
-      <span class="panel-hint" id="trackRecordHint">—</span>
+  <div id="btcTrackView">
+    <div class="caveat">
+      <span>⚠️</span>
+      <span><strong>Simulated, not real money.</strong> Positions are re-derived from the same tested backtest engine, on real Crypto.com price data. No trades are actually placed anywhere. Not investment advice.</span>
     </div>
-    <p class="panel-note">Return since tracking began - separate from the historical backtest below. This is the evidence that actually matters before any real money question comes up: does a strategy hold up going forward, not just in hindsight.</p>
-    <div class="compare-wrap" id="trackRecordWrap"><canvas id="trackRecordCanvas"></canvas></div>
-    <div class="ribbon-legend" id="trackRecordLegend"></div>
+
+    <div class="thin-data-note" id="thinDataNote">
+      <span>📉</span>
+      <span><strong>Thin data - read with caution.</strong> <span id="thinDataText"></span></span>
+    </div>
+
+    <div class="stat-tiles" id="statTiles"></div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Track record</h2>
+        <span class="panel-hint" id="trackRecordHint">—</span>
+      </div>
+      <p class="panel-note">Return since tracking began - separate from the historical backtest below. This is the evidence that actually matters before any real money question comes up: does a strategy hold up going forward, not just in hindsight.</p>
+      <div class="compare-wrap" id="trackRecordWrap"><canvas id="trackRecordCanvas"></canvas></div>
+      <div class="ribbon-legend" id="trackRecordLegend"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Strategy positions</h2>
+        <span class="panel-hint" id="asOfHint">—</span>
+      </div>
+      <div class="table-wrap">
+        <table id="strategyTable">
+          <thead>
+            <tr>
+              <th>Strategy</th>
+              <th>Position</th>
+              <th class="num">Equity</th>
+              <th class="num">Total Return</th>
+              <th class="num">Closed Trades</th>
+              <th class="num">Total Trades</th>
+              <th>Open since</th>
+            </tr>
+          </thead>
+          <tbody id="strategyTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Total return by strategy</h2>
+        <span class="panel-hint" id="compareHint">Full backtest period, starting $100,000 each</span>
+      </div>
+      <div class="compare-wrap"><canvas id="compareCanvas"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Recent closed trades</h2>
+        <span class="panel-hint" id="tradeCountHint">—</span>
+      </div>
+      <div class="table-wrap">
+        <table id="tradeTable">
+          <thead>
+            <tr>
+              <th>Strategy</th>
+              <th>Direction</th>
+              <th>Entry</th>
+              <th>Exit</th>
+              <th class="num">Entry Px</th>
+              <th class="num">Exit Px</th>
+              <th class="num">Net P&amp;L</th>
+            </tr>
+          </thead>
+          <tbody id="tradeTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <footer class="foot">
+      <p>Positions rebuilt each check-in by re-running the full backtest on real BTC/USDT price data from Crypto.com Exchange - not a separate live-execution codepath. See the full bar-by-bar replay in the companion Engine Replay artifact.</p>
+      <p>Snapshot generated at build time - republished to this same link whenever a position changes; refresh for the latest if you're not sure this is current.</p>
+    </footer>
   </div>
 
-  <div class="panel">
-    <div class="panel-head">
-      <h2>Strategy positions</h2>
-      <span class="panel-hint" id="asOfHint">—</span>
+  <div id="memecoinView" style="display:none;">
+    <div class="risk-banner">
+      <span>🎲</span>
+      <span><strong>Not a prediction engine.</strong> This flags coins whose price has already broken above their recent range - it cannot front-run the next pump. Most meme coins round-trip to zero. Nothing here is investment advice, and no trades are placed.</span>
     </div>
-    <div class="table-wrap">
-      <table id="strategyTable">
-        <thead>
-          <tr>
-            <th>Strategy</th>
-            <th>Position</th>
-            <th class="num">Equity</th>
-            <th class="num">Total Return</th>
-            <th class="num">Closed Trades</th>
-            <th class="num">Total Trades</th>
-            <th>Open since</th>
-          </tr>
-        </thead>
-        <tbody id="strategyTbody"></tbody>
-      </table>
-    </div>
-  </div>
 
-  <div class="panel">
-    <div class="panel-head">
-      <h2>Total return by strategy</h2>
-      <span class="panel-hint" id="compareHint">Full backtest period, starting $100,000 each</span>
-    </div>
-    <div class="compare-wrap"><canvas id="compareCanvas"></canvas></div>
-  </div>
+    <div class="stat-tiles" id="memeStatTiles"></div>
 
-  <div class="panel">
-    <div class="panel-head">
-      <h2>Recent closed trades</h2>
-      <span class="panel-hint" id="tradeCountHint">—</span>
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Breakout ranking</h2>
+        <span class="panel-hint" id="memeAsOfHint">—</span>
+      </div>
+      <p class="panel-note">Ranked by how far price has broken above its own 20-hour high, measured in multiples of the coin's 14-hour ATR (average true range) - the same Donchian-breakout / ATR logic already used elsewhere in this toolkit, applied here as a scanner rather than a strategy.</p>
+      <div class="compare-wrap"><canvas id="memeCompareCanvas"></canvas></div>
     </div>
-    <div class="table-wrap">
-      <table id="tradeTable">
-        <thead>
-          <tr>
-            <th>Strategy</th>
-            <th>Direction</th>
-            <th>Entry</th>
-            <th>Exit</th>
-            <th class="num">Entry Px</th>
-            <th class="num">Exit Px</th>
-            <th class="num">Net P&amp;L</th>
-          </tr>
-        </thead>
-        <tbody id="tradeTbody"></tbody>
-      </table>
-    </div>
-  </div>
 
-  <footer class="foot">
-    <p>Positions rebuilt each check-in by re-running the full backtest on real BTC/USDT price data from Crypto.com Exchange - not a separate live-execution codepath. See the full bar-by-bar replay in the companion Engine Replay artifact.</p>
-    <p>Snapshot generated at build time - republished to this same link whenever a position changes; refresh for the latest if you're not sure this is current.</p>
-  </footer>
+    <div class="panel">
+      <div class="panel-head">
+        <h2>All scanned coins</h2>
+        <span class="panel-hint" id="memeCountHint">—</span>
+      </div>
+      <div class="table-wrap">
+        <table id="memeTable">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Coin</th>
+              <th class="num">Price</th>
+              <th>Breaking Out?</th>
+              <th class="num">vs 20h High</th>
+              <th class="num">Strength (ATRs)</th>
+              <th>As Of</th>
+            </tr>
+          </thead>
+          <tbody id="memeTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <footer class="foot">
+      <p class="scope-note">Universe: 11 established meme coins listed on Crypto.com Exchange (DOGE, SHIB, PEPE, FLOKI, BONK, WIF, FARTCOIN, TRUMP, BOME, HMSTR, ORDI) - not new/micro-cap launches, which aren't available through this data source.</p>
+      <p class="scope-note">Rebuilt each check-in from real 1-hour candle data. Republished to this same link whenever the ranking changes.</p>
+    </footer>
+  </div>
 </div>
 
 <script>
 (function () {
   "use strict";
+  const MEMECOIN_SCAN = __MEMECOIN_SCAN_JSON__;
   const TRACKS = {
     daily: {
       label: 'Daily', dateUnit: 'Day', intraday: false,
@@ -516,16 +575,113 @@
     drawTrackRecordChart(track, order);
   }
 
+  // ---------- memecoin scanner ----------
+  function fmtAtr(v) { return (v >= 0 ? '+' : '') + v.toFixed(2) + ' ATR'; }
+
+  function drawMemeCompareChart(ranked) {
+    const canvas = document.getElementById('memeCompareCanvas');
+    const { ctx, w, h } = setupCanvas(canvas);
+    ctx.clearRect(0, 0, w, h);
+    if (!ranked.length) return;
+    const nS = ranked.length;
+    const gap = 8;
+    const barH = Math.min(28, (h - gap) / nS - gap);
+    const rowH = barH + gap;
+    const totalH = rowH * nS;
+    const offsetY = (h - totalH) / 2;
+    const maxAbs = Math.max(...ranked.map((r) => Math.abs(r.breakout_strength_atr)), 0.5);
+    const labelW = 168, valueW = 70;
+    const scaleW = w - labelW - valueW;
+    const zeroX = labelW + scaleW / 2;
+
+    ctx.strokeStyle = THEME.grid;
+    ctx.beginPath(); ctx.moveTo(zeroX + 0.5, offsetY); ctx.lineTo(zeroX + 0.5, offsetY + totalH); ctx.stroke();
+
+    ranked.forEach((r, i) => {
+      const y0 = offsetY + i * rowH;
+      const color = THEME.series[i % THEME.series.length];
+      ctx.font = '600 12px ' + FONT_MONO;
+      ctx.fillStyle = THEME.ink2;
+      ctx.textBaseline = 'middle';
+      ctx.fillText(r.symbol, 4, y0 + barH / 2);
+
+      const x1 = zeroX + (r.breakout_strength_atr / maxAbs) * (scaleW / 2);
+      const barY = y0 + (barH - 14) / 2;
+      ctx.fillStyle = color;
+      const left = Math.min(zeroX, x1), width = Math.max(1, Math.abs(x1 - zeroX));
+      roundRectPath(ctx, left, barY, width, 14, 3);
+      ctx.fill();
+
+      ctx.font = '600 11px ' + FONT_MONO;
+      ctx.fillStyle = r.breakout_strength_atr >= 0 ? THEME.good : THEME.critical;
+      const valText = fmtAtr(r.breakout_strength_atr);
+      const valX = r.breakout_strength_atr >= 0 ? x1 + 6 : x1 - 6 - ctx.measureText(valText).width;
+      ctx.fillText(valText, valX, y0 + barH / 2);
+    });
+  }
+
+  function renderMemecoinScanner() {
+    const ranked = MEMECOIN_SCAN.ranked || [];
+    const breakoutCount = ranked.filter((r) => r.is_breakout).length;
+    const top = ranked[0];
+
+    document.getElementById('updatedBadge').textContent = 'Updated ' + fmtUpdated(MEMECOIN_SCAN.updated_at_utc);
+    document.getElementById('memeAsOfHint').textContent = ranked.length ? 'As of: ' + ranked[0].as_of : '—';
+    document.getElementById('memeCountHint').textContent = `${ranked.length} coins scanned, ${MEMECOIN_SCAN.lookback_bars}h lookback`;
+
+    document.getElementById('memeStatTiles').innerHTML = `
+      <div class="tile"><span class="tile-label">Coins breaking out</span><span class="tile-value">${breakoutCount} / ${ranked.length}</span></div>
+      <div class="tile"><span class="tile-label">Top ranked</span><span class="tile-value">${top ? fmtAtr(top.breakout_strength_atr) : '—'}</span><span class="tile-sub">${top ? top.symbol : ''}</span></div>
+      <div class="tile"><span class="tile-label">Lookback window</span><span class="tile-value">${MEMECOIN_SCAN.lookback_bars}h high / ${MEMECOIN_SCAN.atr_period}h ATR</span></div>
+      <div class="tile"><span class="tile-label">Universe size</span><span class="tile-value">${ranked.length + (MEMECOIN_SCAN.skipped || []).length}</span><span class="tile-sub">established coins only</span></div>
+    `;
+
+    document.getElementById('memeTbody').innerHTML = ranked.map((r) => {
+      const breakoutLabel = r.is_breakout ? '<span class="breakout-yes">YES</span>' : '<span class="breakout-no">no</span>';
+      const pctClass = r.breakout_pct >= 0 ? 'good' : 'critical';
+      return `<tr>
+        <td class="mono">#${r.rank}</td>
+        <td class="strategy-name">${r.symbol}</td>
+        <td class="num mono">${r.price}</td>
+        <td>${breakoutLabel}</td>
+        <td class="num mono ${pctClass}">${fmtSignedPct(r.breakout_pct / 100)}</td>
+        <td class="num mono">${fmtAtr(r.breakout_strength_atr)}</td>
+        <td class="mono">${fmtDate(r.as_of, true)}</td>
+      </tr>`;
+    }).join('');
+
+    drawMemeCompareChart(ranked);
+  }
+
+  // ---------- tab wiring ----------
+  let activeView = 'btc';
+
+  function renderActive() {
+    if (activeView === 'memecoin') renderMemecoinScanner();
+    else render(activeKey);
+  }
+
   document.getElementById('tabBar').addEventListener('click', (e) => {
     const btn = e.target.closest('.tab-btn');
     if (!btn) return;
     document.querySelectorAll('.tab-btn').forEach((b) => b.classList.toggle('active', b === btn));
-    render(btn.dataset.track);
+    const track = btn.dataset.track;
+    if (track === 'memecoin') {
+      activeView = 'memecoin';
+      document.getElementById('btcTrackView').style.display = 'none';
+      document.getElementById('memecoinView').style.display = '';
+      renderMemecoinScanner();
+    } else {
+      activeView = 'btc';
+      document.getElementById('memecoinView').style.display = 'none';
+      document.getElementById('btcTrackView').style.display = '';
+      render(track);
+    }
   });
 
   render('daily');
-  window.addEventListener('resize', () => render(activeKey));
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); render(activeKey); });
-  new MutationObserver(() => { THEME = readTheme(); render(activeKey); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  window.addEventListener('resize', renderActive);
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); renderActive(); });
+  new MutationObserver(() => { THEME = readTheme(); renderActive(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 })();
 </script>
