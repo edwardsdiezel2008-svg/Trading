@@ -18,12 +18,11 @@ from src.backtest.regime import classify_regimes
 from src.backtest.metrics import compute_metrics
 from src.backtest.strategies import build_default_strategies
 
-FREQ = "5min"
 CAPITAL = 100_000.0
 
 
-def export_instrument(symbol: str, path: str) -> dict:
-    bars = load_bars(path, freq=FREQ)
+def export_instrument(symbol: str, path: str, freq: str = "5min") -> dict:
+    bars = load_bars(path, freq=freq)
     spec = get_spec(symbol)
     regimes = classify_regimes(bars)
     strategies = build_default_strategies()
@@ -43,7 +42,7 @@ def export_instrument(symbol: str, path: str) -> dict:
     strategies_out = []
     for strat in strategies:
         result = run_backtest(bars, strat, spec, initial_capital=CAPITAL)
-        metrics = compute_metrics(result, CAPITAL, freq_hint=FREQ)
+        metrics = compute_metrics(result, CAPITAL, freq_hint=freq)
         strategies_out.append({
             "name": strat.name,
             "positions": [int(p) for p in result.positions],
@@ -70,7 +69,7 @@ def export_instrument(symbol: str, path: str) -> dict:
 
     return {
         "symbol": symbol,
-        "freq": FREQ,
+        "freq": freq,
         "initial_capital": CAPITAL,
         "bars": bars_out,
         "regimes": regime_out,
@@ -86,8 +85,9 @@ def pd_isna(v):
 def main():
     data = {
         "instruments": [
-            export_instrument("AAPL", "data/sample/NASDAQ_AAPL_ticks.csv"),
-            export_instrument("ES", "data/sample/ES_ticks.csv"),
+            export_instrument("BTC_USDT", "data/raw/BTC_USDT_1D_bars.csv", freq="1D"),
+            export_instrument("AAPL", "data/sample/NASDAQ_AAPL_ticks.csv", freq="5min"),
+            export_instrument("ES", "data/sample/ES_ticks.csv", freq="5min"),
         ]
     }
     out_path = "/tmp/claude-0/-home-user-Trading/381d606c-177e-5630-98bb-7e86b3d62d32/scratchpad/replay_data.json"
