@@ -76,6 +76,23 @@ Crypto symbols aren't in `instruments.py`'s predefined list, so they fall
 back to the default equity-like spec (multiplier 1, no leverage) - fine for
 spot crypto, just not something this toolkit has specifically tuned.
 
+**Alternative crypto source: Crypto.com.** `scripts/fetch_cryptocom_data.py`
+pulls candlesticks from Crypto.com Exchange's public API - also no account or
+key needed:
+
+```bash
+python scripts/fetch_cryptocom_data.py --instrument BTC_USDT --timeframe 1D --count 300
+python -m src.backtest.cli --data data/raw/BTC_USDT_1D_bars.csv:BTC_USDT --freq 1D
+```
+
+Unlike the Alpaca script, this one was written from Crypto.com's documented
+API shape without a live call to confirm it (no network access from this
+toolkit's build/test environment reaches crypto.com either) - run it once
+and sanity-check the output before trusting it for real analysis. It also
+only returns the most recent `--count` candles per call (no confirmed
+pagination), so it's better suited to a few hundred/thousand recent bars
+than a deep multi-year backfill.
+
 ## Using your own downloaded logs
 
 1. Drop tick log CSVs into `data/raw/` (gitignored - trading data is often
