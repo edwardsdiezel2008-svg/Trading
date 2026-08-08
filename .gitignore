@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# Downloaded trading logs are large and often licensed data - keep them local only.
+data/raw/*
+!data/raw/.gitkeep
+
+# Synthetic sample data is regenerated via scripts/generate_sample_data.py - don't bloat the repo with it.
+data/sample/*.csv
+
+reports/*
+!reports/.gitkeep
