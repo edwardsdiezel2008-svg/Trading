@@ -137,6 +137,17 @@
   .foot { padding: 6px 4px 0; }
   .foot p { margin: 0 0 4px; font-size: var(--fs-xs); color: var(--ink-muted); }
   .foot a { color: var(--accent); }
+
+  .tab-bar { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px; width: fit-content; }
+  .tab-btn { border: none; background: transparent; color: var(--ink-2); font-family: var(--font-ui); font-size: 0.85rem; font-weight: 600; padding: 7px 16px; border-radius: 7px; cursor: pointer; }
+  .tab-btn.active { background: var(--accent); color: var(--surface); }
+
+  .thin-data-note {
+    display: none; gap: 10px; align-items: flex-start; background: var(--critical-wash); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px; font-size: var(--fs-sm); color: var(--ink-2);
+  }
+  .thin-data-note.visible { display: flex; }
+  .thin-data-note strong { color: var(--ink); }
 </style>
 
 <div class="app">
@@ -145,15 +156,25 @@
       <span class="brand-mark">🪙</span>
       <div class="brand-text">
         <h1>BTC Paper Trading</h1>
-        <p class="brand-sub">All 7 strategies, simulated against real BTC/USDT daily bars</p>
+        <p class="brand-sub" id="brandSub">All 7 strategies, simulated against real BTC/USDT data</p>
       </div>
     </div>
     <span class="updated-badge mono" id="updatedBadge">—</span>
   </header>
 
+  <div class="tab-bar" id="tabBar">
+    <button class="tab-btn active" data-track="daily">Daily</button>
+    <button class="tab-btn" data-track="fifteenMin">15-Minute</button>
+  </div>
+
   <div class="caveat">
     <span>⚠️</span>
-    <span><strong>Simulated, not real money.</strong> Positions are re-derived hourly from the same tested backtest engine, on real Crypto.com price data. No trades are actually placed anywhere. This is a proof-of-concept over ~300 days of history, not investment advice.</span>
+    <span><strong>Simulated, not real money.</strong> Positions are re-derived from the same tested backtest engine, on real Crypto.com price data. No trades are actually placed anywhere. Not investment advice.</span>
+  </div>
+
+  <div class="thin-data-note" id="thinDataNote">
+    <span>📉</span>
+    <span><strong>Thin data - read with caution.</strong> <span id="thinDataText"></span></span>
   </div>
 
   <div class="stat-tiles" id="statTiles"></div>
@@ -163,7 +184,7 @@
       <h2>Track record</h2>
       <span class="panel-hint" id="trackRecordHint">—</span>
     </div>
-    <p class="panel-note">Return since tracking began - separate from the 300-day historical backtest below. This is the evidence that actually matters before any real money question comes up: does a strategy hold up going forward, not just in hindsight.</p>
+    <p class="panel-note">Return since tracking began - separate from the historical backtest below. This is the evidence that actually matters before any real money question comes up: does a strategy hold up going forward, not just in hindsight.</p>
     <div class="compare-wrap" id="trackRecordWrap"><canvas id="trackRecordCanvas"></canvas></div>
     <div class="ribbon-legend" id="trackRecordLegend"></div>
   </div>
@@ -194,7 +215,7 @@
   <div class="panel">
     <div class="panel-head">
       <h2>Total return by strategy</h2>
-      <span class="panel-hint">Full backtest period, starting $100,000 each</span>
+      <span class="panel-hint" id="compareHint">Full backtest period, starting $100,000 each</span>
     </div>
     <div class="compare-wrap"><canvas id="compareCanvas"></canvas></div>
   </div>
@@ -223,7 +244,7 @@
   </div>
 
   <footer class="foot">
-    <p>Positions rebuilt each check-in by re-running the full backtest on real BTC/USDT daily data from Crypto.com Exchange - not a separate live-execution codepath. See the full bar-by-bar replay in the companion Engine Replay artifact.</p>
+    <p>Positions rebuilt each check-in by re-running the full backtest on real BTC/USDT price data from Crypto.com Exchange - not a separate live-execution codepath. See the full bar-by-bar replay in the companion Engine Replay artifact.</p>
     <p>Snapshot generated at build time - republished to this same link whenever a position changes; refresh for the latest if you're not sure this is current.</p>
   </footer>
 </div>
@@ -231,10 +252,18 @@
 <script>
 (function () {
   "use strict";
-  const POSITIONS = __POSITIONS_JSON__;
-  const TRADES = __TRADES_JSON__;
-  const TRACK_RECORD = __TRACK_RECORD_JSON__;
+  const TRACKS = {
+    daily: {
+      label: 'Daily', dateUnit: 'Day', intraday: false,
+      positions: __POSITIONS_JSON__, trades: __TRADES_JSON__, trackRecord: __TRACK_RECORD_JSON__,
+    },
+    fifteenMin: {
+      label: '15-Minute', dateUnit: 'Update', intraday: true,
+      positions: __POSITIONS_15M_JSON__, trades: __TRADES_15M_JSON__, trackRecord: __TRACK_RECORD_15M_JSON__,
+    },
+  };
   const CAPITAL = 100000;
+  const THIN_DATA_BAR_THRESHOLD = 150;
 
   const FONT_MONO = 'ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace';
 
@@ -252,54 +281,14 @@
   function fmtMoney(v) { const s = v < 0 ? '-' : ''; return s + '$' + Math.abs(v).toLocaleString(undefined, { maximumFractionDigits: 0 }); }
   function fmtSigned(v) { return (v >= 0 ? '+' : '-') + '$' + Math.abs(v).toLocaleString(undefined, { maximumFractionDigits: 0 }); }
   function fmtSignedPct(v) { return (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%'; }
-  function fmtDate(s) { const d = new Date(s.replace(' ', 'T') + 'Z'); return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); }
+  function fmtDate(s, intraday) {
+    const d = new Date(s.replace(' ', 'T') + 'Z');
+    return intraday
+      ? d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+      : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  }
   function fmtUpdated(s) { const d = new Date(s); return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }); }
 
-  // ---------- derive per-strategy metrics from trades + positions ----------
-  const strategyNames = Object.keys(POSITIONS.strategies);
-  const rows = strategyNames.map((name) => {
-    const p = POSITIONS.strategies[name];
-    const closedTrades = TRADES.filter((t) => t.strategy === name);
-    const totalReturn = p.equity / CAPITAL - 1;
-    return { name, ...p, closedTradeCount: closedTrades.length, totalReturn };
-  }).sort((a, b) => b.totalReturn - a.totalReturn);
-
-  document.getElementById('updatedBadge').textContent = 'Updated ' + fmtUpdated(POSITIONS.updated_at_utc);
-  document.getElementById('asOfHint').textContent = 'As of bar: ' + POSITIONS.latest_bar;
-  document.getElementById('tradeCountHint').textContent = TRADES.length + ' closed trades across all strategies';
-
-  // ---------- stat tiles ----------
-  const profitable = rows.filter((r) => r.totalReturn > 0).length;
-  const best = rows[0];
-  const worst = rows[rows.length - 1];
-  const openCount = rows.filter((r) => r.position !== 0).length;
-  const statTiles = document.getElementById('statTiles');
-  statTiles.innerHTML = `
-    <div class="tile"><span class="tile-label">Profitable strategies</span><span class="tile-value">${profitable} / ${rows.length}</span></div>
-    <div class="tile"><span class="tile-label">Best performer</span><span class="tile-value good">${fmtSignedPct(best.totalReturn)}</span><span class="tile-sub">${best.name}</span></div>
-    <div class="tile"><span class="tile-label">Worst performer</span><span class="tile-value critical">${fmtSignedPct(worst.totalReturn)}</span><span class="tile-sub">${worst.name}</span></div>
-    <div class="tile"><span class="tile-label">Open positions now</span><span class="tile-value">${openCount} / ${rows.length}</span></div>
-  `;
-
-  // ---------- strategy table ----------
-  const tbody = document.getElementById('strategyTbody');
-  tbody.innerHTML = rows.map((r) => {
-    const posClass = r.position !== 0 ? 'pill-accent' : 'pill-neutral';
-    const posLabel = r.position > 0 ? '▲ LONG' : r.position < 0 ? '▼ SHORT' : '— FLAT';
-    const retClass = r.totalReturn >= 0 ? 'good' : 'critical';
-    const openSince = r.open_trade ? fmtDate(r.open_trade.entry_time) + ' @ ' + fmtMoney(r.open_trade.entry_price) : '—';
-    return `<tr>
-      <td class="strategy-name">${r.name}</td>
-      <td><span class="pill ${posClass}">${posLabel}</span></td>
-      <td class="num mono">${fmtMoney(r.equity)}</td>
-      <td class="num mono ${retClass}">${fmtSignedPct(r.totalReturn)}</td>
-      <td class="num mono">${r.closedTradeCount}</td>
-      <td class="num mono">${r.closedTradeCount + (r.open_trade ? 1 : 0)}</td>
-      <td class="mono">${openSince}</td>
-    </tr>`;
-  }).join('');
-
-  // ---------- compare chart ----------
   function setupCanvas(canvas) {
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
@@ -320,7 +309,8 @@
     ctx.arcTo(x, y, x + w, y, r);
     ctx.closePath();
   }
-  function drawCompareChart() {
+
+  function drawCompareChart(rows) {
     const canvas = document.getElementById('compareCanvas');
     const { ctx, w, h } = setupCanvas(canvas);
     ctx.clearRect(0, 0, w, h);
@@ -362,18 +352,17 @@
     });
   }
 
-  // ---------- track record chart ----------
-  const CANONICAL_STRATEGY_ORDER = Object.keys(POSITIONS.strategies);
-  function seriesColorFor(name) {
-    const idx = CANONICAL_STRATEGY_ORDER.indexOf(name);
+  function seriesColorFor(name, order) {
+    const idx = order.indexOf(name);
     return THEME.series[(idx >= 0 ? idx : 0) % THEME.series.length];
   }
 
-  function drawTrackRecordChart() {
+  function drawTrackRecordChart(track, order) {
     const canvas = document.getElementById('trackRecordCanvas');
     const { ctx, w, h } = setupCanvas(canvas);
     ctx.clearRect(0, 0, w, h);
 
+    const TRACK_RECORD = track.trackRecord;
     const dates = [...new Set(TRACK_RECORD.map((r) => r.date))].sort();
     if (dates.length === 0) {
       ctx.font = '13px ' + FONT_MONO;
@@ -383,14 +372,14 @@
     }
 
     const byStrategy = {};
-    CANONICAL_STRATEGY_ORDER.forEach((name) => { byStrategy[name] = []; });
+    order.forEach((name) => { byStrategy[name] = []; });
     TRACK_RECORD.forEach((r) => { if (byStrategy[r.strategy]) byStrategy[r.strategy].push(r); });
 
     const padL = 54, padR = 12, padT = 12, padB = 22;
     const plotW = w - padL - padR, plotH = h - padT - padB;
 
     let minY = 0, maxY = 0;
-    Object.values(byStrategy).forEach((rows) => rows.forEach((r) => {
+    Object.values(byStrategy).forEach((rs) => rs.forEach((r) => {
       minY = Math.min(minY, r.return_since_tracking_start_pct);
       maxY = Math.max(maxY, r.return_since_tracking_start_pct);
     }));
@@ -412,63 +401,131 @@
     ctx.beginPath(); ctx.moveTo(padL, zeroY); ctx.lineTo(w - padR, zeroY); ctx.stroke();
     ctx.setLineDash([]);
 
-    CANONICAL_STRATEGY_ORDER.forEach((name) => {
-      const rows = byStrategy[name].slice().sort((a, b) => a.date.localeCompare(b.date));
-      if (!rows.length) return;
-      const color = seriesColorFor(name);
-      if (rows.length === 1) {
-        const x = xFor(rows[0].date), y = yFor(rows[0].return_since_tracking_start_pct);
+    order.forEach((name) => {
+      const rs = byStrategy[name].slice().sort((a, b) => a.date.localeCompare(b.date));
+      if (!rs.length) return;
+      const color = seriesColorFor(name, order);
+      if (rs.length === 1) {
+        const x = xFor(rs[0].date), y = yFor(rs[0].return_since_tracking_start_pct);
         ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
       } else {
         ctx.beginPath();
-        rows.forEach((r, i) => {
+        rs.forEach((r, i) => {
           const x = xFor(r.date), y = yFor(r.return_since_tracking_start_pct);
           if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         });
         ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.stroke();
-        const last = rows[rows.length - 1];
+        const last = rs[rs.length - 1];
         ctx.beginPath(); ctx.arc(xFor(last.date), yFor(last.return_since_tracking_start_pct), 3.5, 0, Math.PI * 2);
         ctx.fillStyle = color; ctx.fill();
       }
     });
 
     ctx.font = '10px ' + FONT_MONO; ctx.fillStyle = THEME.inkMuted;
-    ctx.fillText(dates[0], padL, h - 6);
+    const firstLabel = fmtDate(dates[0], track.intraday);
+    ctx.fillText(firstLabel, padL, h - 6);
     if (dates.length > 1) {
-      const lastLabel = dates[dates.length - 1];
+      const lastLabel = fmtDate(dates[dates.length - 1], track.intraday);
       ctx.fillText(lastLabel, w - padR - ctx.measureText(lastLabel).width, h - 6);
     }
   }
 
-  const trackDates = [...new Set(TRACK_RECORD.map((r) => r.date))].sort();
-  document.getElementById('trackRecordHint').textContent = trackDates.length
-    ? `Since ${fmtDate(trackDates[0] + ' 00:00:00')} · Day ${trackDates.length}`
-    : 'Not started yet';
-  document.getElementById('trackRecordLegend').innerHTML = CANONICAL_STRATEGY_ORDER.map((name) =>
-    `<span><i class="swatch" style="background:${seriesColorFor(name)}"></i>${name}</span>`
-  ).join('');
+  function computeRows(track) {
+    const strategyNames = Object.keys(track.positions.strategies);
+    return strategyNames.map((name) => {
+      const p = track.positions.strategies[name];
+      const closedTrades = track.trades.filter((t) => t.strategy === name);
+      const totalReturn = p.equity / CAPITAL - 1;
+      return { name, ...p, closedTradeCount: closedTrades.length, totalReturn };
+    }).sort((a, b) => b.totalReturn - a.totalReturn);
+  }
 
-  // ---------- trade log ----------
-  const tradeTbody = document.getElementById('tradeTbody');
-  const sortedTrades = TRADES.slice().sort((a, b) => new Date(b.exit_time) - new Date(a.exit_time));
-  tradeTbody.innerHTML = sortedTrades.slice(0, 60).map((t) => {
-    const cls = t.net_pnl >= 0 ? 'good' : 'critical';
-    const dirLabel = t.direction === 'LONG' ? '▲ LONG' : '▼ SHORT';
-    return `<tr>
-      <td class="strategy-name">${t.strategy}</td>
-      <td><span class="pill pill-accent">${dirLabel}</span></td>
-      <td class="mono">${fmtDate(t.entry_time)}</td>
-      <td class="mono">${fmtDate(t.exit_time)}</td>
-      <td class="num mono">${fmtMoney(t.entry_price)}</td>
-      <td class="num mono">${fmtMoney(t.exit_price)}</td>
-      <td class="num mono ${cls}">${fmtSigned(t.net_pnl)}</td>
-    </tr>`;
-  }).join('');
+  let activeKey = 'daily';
 
-  function renderCharts() { drawCompareChart(); drawTrackRecordChart(); }
-  renderCharts();
-  window.addEventListener('resize', renderCharts);
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); renderCharts(); });
-  new MutationObserver(() => { THEME = readTheme(); renderCharts(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  function render(trackKey) {
+    activeKey = trackKey;
+    const track = TRACKS[trackKey];
+    const POSITIONS = track.positions, TRADES = track.trades;
+    const order = Object.keys(POSITIONS.strategies);
+    const rows = computeRows(track);
+
+    document.getElementById('updatedBadge').textContent = 'Updated ' + fmtUpdated(POSITIONS.updated_at_utc);
+    document.getElementById('asOfHint').textContent = 'As of bar: ' + POSITIONS.latest_bar;
+    document.getElementById('tradeCountHint').textContent = TRADES.length + ' closed trades across all strategies';
+
+    const thinNote = document.getElementById('thinDataNote');
+    if (POSITIONS.bar_count && POSITIONS.bar_count < THIN_DATA_BAR_THRESHOLD) {
+      document.getElementById('thinDataText').textContent =
+        `Only ${POSITIONS.bar_count} bars of ${track.label.toLowerCase()} history so far - metrics like Sharpe and total return are noisy small-sample artifacts, not reliable signal yet.`;
+      thinNote.classList.add('visible');
+    } else {
+      thinNote.classList.remove('visible');
+    }
+
+    const profitable = rows.filter((r) => r.totalReturn > 0).length;
+    const best = rows[0];
+    const worst = rows[rows.length - 1];
+    const openCount = rows.filter((r) => r.position !== 0).length;
+    document.getElementById('statTiles').innerHTML = `
+      <div class="tile"><span class="tile-label">Profitable strategies</span><span class="tile-value">${profitable} / ${rows.length}</span></div>
+      <div class="tile"><span class="tile-label">Best performer</span><span class="tile-value good">${fmtSignedPct(best.totalReturn)}</span><span class="tile-sub">${best.name}</span></div>
+      <div class="tile"><span class="tile-label">Worst performer</span><span class="tile-value critical">${fmtSignedPct(worst.totalReturn)}</span><span class="tile-sub">${worst.name}</span></div>
+      <div class="tile"><span class="tile-label">Open positions now</span><span class="tile-value">${openCount} / ${rows.length}</span></div>
+    `;
+
+    document.getElementById('strategyTbody').innerHTML = rows.map((r) => {
+      const posClass = r.position !== 0 ? 'pill-accent' : 'pill-neutral';
+      const posLabel = r.position > 0 ? '▲ LONG' : r.position < 0 ? '▼ SHORT' : '— FLAT';
+      const retClass = r.totalReturn >= 0 ? 'good' : 'critical';
+      const openSince = r.open_trade ? fmtDate(r.open_trade.entry_time, track.intraday) + ' @ ' + fmtMoney(r.open_trade.entry_price) : '—';
+      return `<tr>
+        <td class="strategy-name">${r.name}</td>
+        <td><span class="pill ${posClass}">${posLabel}</span></td>
+        <td class="num mono">${fmtMoney(r.equity)}</td>
+        <td class="num mono ${retClass}">${fmtSignedPct(r.totalReturn)}</td>
+        <td class="num mono">${r.closedTradeCount}</td>
+        <td class="num mono">${r.closedTradeCount + (r.open_trade ? 1 : 0)}</td>
+        <td class="mono">${openSince}</td>
+      </tr>`;
+    }).join('');
+
+    const trackDates = [...new Set(track.trackRecord.map((r) => r.date))].sort();
+    document.getElementById('trackRecordHint').textContent = trackDates.length
+      ? `Since ${fmtDate(trackDates[0], track.intraday)} · ${track.dateUnit} ${trackDates.length}`
+      : 'Not started yet';
+    document.getElementById('trackRecordLegend').innerHTML = order.map((name) =>
+      `<span><i class="swatch" style="background:${seriesColorFor(name, order)}"></i>${name}</span>`
+    ).join('');
+
+    const sortedTrades = TRADES.slice().sort((a, b) => new Date(b.exit_time) - new Date(a.exit_time));
+    document.getElementById('tradeTbody').innerHTML = sortedTrades.slice(0, 60).map((t) => {
+      const cls = t.net_pnl >= 0 ? 'good' : 'critical';
+      const dirLabel = t.direction === 'LONG' ? '▲ LONG' : '▼ SHORT';
+      return `<tr>
+        <td class="strategy-name">${t.strategy}</td>
+        <td><span class="pill pill-accent">${dirLabel}</span></td>
+        <td class="mono">${fmtDate(t.entry_time, track.intraday)}</td>
+        <td class="mono">${fmtDate(t.exit_time, track.intraday)}</td>
+        <td class="num mono">${fmtMoney(t.entry_price)}</td>
+        <td class="num mono">${fmtMoney(t.exit_price)}</td>
+        <td class="num mono ${cls}">${fmtSigned(t.net_pnl)}</td>
+      </tr>`;
+    }).join('');
+
+    drawCompareChart(rows);
+    drawTrackRecordChart(track, order);
+  }
+
+  document.getElementById('tabBar').addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    document.querySelectorAll('.tab-btn').forEach((b) => b.classList.toggle('active', b === btn));
+    render(btn.dataset.track);
+  });
+
+  render('daily');
+  window.addEventListener('resize', () => render(activeKey));
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); render(activeKey); });
+  new MutationObserver(() => { THEME = readTheme(); render(activeKey); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 })();
 </script>

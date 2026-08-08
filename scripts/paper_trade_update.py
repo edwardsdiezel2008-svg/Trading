@@ -1,24 +1,25 @@
-"""Regenerate paper-trading state from the current bar history.
+"""Regenerate paper-trading state from the current bar history, for a given
+track (timeframe).
 
-Deliberately has no incremental state logic: given paper_trading/bars.csv
-(a growing, append-only file of real BTC daily bars), this just re-runs the
-same tested backtest engine on the full history for every strategy and
-derives "current position" from the last bar of a fresh, complete backtest.
-That avoids an entire class of bugs that live-execution/incremental-update
-code is prone to (state drift, double-counting, missed updates) - the
-tradeoff is O(bars) work each run, which is trivial at this data size
-(daily bars; even years of history is a few thousand rows).
+Deliberately has no incremental state logic: given a growing, append-only
+bars CSV, this just re-runs the same tested backtest engine on the full
+history for every strategy and derives "current position" from the last bar
+of a fresh, complete backtest. That avoids an entire class of bugs that
+live-execution/incremental-update code is prone to (state drift, double-
+counting, missed updates) - the tradeoff is O(bars) work each run, trivial
+at these data sizes.
 
-This script does NOT fetch data itself - it has no network access here.
-The bars file must already be updated with the latest candle(s) before
-calling this (see paper_trading/README.md for the update procedure, which
-requires the Crypto.com MCP connector, only callable by the agent, not a
-plain script).
+This script does NOT fetch data itself - it has no network access here. The
+bars file must already be updated with the latest candle(s) before calling
+this (see paper_trading/README.md).
 
-Usage: python scripts/paper_trade_update.py
+Usage:
+  python scripts/paper_trade_update.py                                       # daily track (default)
+  python scripts/paper_trade_update.py --suffix _15m --freq 15min --tracking-start "2026-08-08 08:45:00"
 """
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import sys
@@ -34,58 +35,60 @@ from src.backtest.instruments import get_spec
 from src.backtest.metrics import compute_metrics
 from src.backtest.strategies import ALL_STRATEGY_CLASSES
 
-BARS_PATH = "paper_trading/bars.csv"
-POSITIONS_PATH = "paper_trading/positions.json"
-TRADE_LOG_PATH = "paper_trading/trade_log.csv"
-TRACK_RECORD_PATH = "paper_trading/track_record.csv"
-SUMMARY_PATH = "paper_trading/summary.md"
 CAPITAL = 100_000.0
 SYMBOL = "BTC_USDT"
 
-# The date paper trading was actually set up - the track record measures
-# performance from THIS point forward only, separate from the 300-day
-# historical backtest that came before it. Indicators still warm up on the
-# full history (same pattern as walkforward.py / simulate_recent_period.py);
-# only the capital base and reported return are reset to this date.
-TRACKING_START_DATE = "2026-08-08"
+
+def parse_args(argv=None):
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--suffix", default="", help="File suffix distinguishing this track, e.g. '_15m'. Default '' = the original daily track.")
+    p.add_argument("--freq", default="1D", help="Pandas freq string for bar resampling/annualization, e.g. '1D', '15min'.")
+    p.add_argument("--tracking-start", default="2026-08-08", help="Timestamp (parseable by pandas) marking where the live track record begins.")
+    return p.parse_args(argv)
 
 
-def _update_track_record(bars, strategy_name, result):
-    tracking_start = pd.Timestamp(TRACKING_START_DATE)
+def _update_track_record(bars, strategy_name, result, capital, tracking_start, track_record_path):
     if tracking_start in bars.index:
         start_idx = bars.index.get_loc(tracking_start)
     else:
         # Tracking start predates the bar history we have, or hasn't arrived
-        # yet - fall back to the first bar so we don't crash, but this
-        # shouldn't happen once bars.csv actually covers TRACKING_START_DATE.
+        # yet - fall back to the first bar so we don't crash.
         start_idx = 0
 
     eq = result.equity_curve
-    equity_at_start = eq.iloc[start_idx - 1] if start_idx > 0 else CAPITAL
+    equity_at_start = eq.iloc[start_idx - 1] if start_idx > 0 else capital
     current_equity = eq.iloc[-1]
     return_since_start = current_equity / equity_at_start - 1 if equity_at_start else 0.0
 
-    today = str(bars.index[-1].date())
+    latest_bar_key = str(bars.index[-1])
     row = {
-        "date": today,
+        "date": latest_bar_key,
         "strategy": strategy_name,
         "equity": round(current_equity, 2),
         "return_since_tracking_start_pct": round(return_since_start * 100, 3),
         "position": result.positions.iloc[-1],
     }
 
-    if os.path.exists(TRACK_RECORD_PATH):
-        existing = pd.read_csv(TRACK_RECORD_PATH)
-        existing = existing[~((existing["date"] == today) & (existing["strategy"] == strategy_name))]
+    if os.path.exists(track_record_path):
+        existing = pd.read_csv(track_record_path)
+        existing = existing[~((existing["date"] == latest_bar_key) & (existing["strategy"] == strategy_name))]
         updated = pd.concat([existing, pd.DataFrame([row])], ignore_index=True)
     else:
         updated = pd.DataFrame([row])
     updated = updated.sort_values(["date", "strategy"])
-    updated.to_csv(TRACK_RECORD_PATH, index=False)
+    updated.to_csv(track_record_path, index=False)
 
 
-def main():
-    bars = load_bars(BARS_PATH, freq="1D")
+def main(argv=None):
+    args = parse_args(argv)
+    bars_path = f"paper_trading/bars{args.suffix}.csv"
+    positions_path = f"paper_trading/positions{args.suffix}.json"
+    trade_log_path = f"paper_trading/trade_log{args.suffix}.csv"
+    track_record_path = f"paper_trading/track_record{args.suffix}.csv"
+    summary_path = f"paper_trading/summary{args.suffix}.md"
+    tracking_start = pd.Timestamp(args.tracking_start)
+
+    bars = load_bars(bars_path, freq=args.freq)
     spec = get_spec(SYMBOL)
 
     positions = {}
@@ -95,8 +98,8 @@ def main():
     for cls in ALL_STRATEGY_CLASSES:
         strat = cls()
         result = run_backtest(bars, strat, spec, initial_capital=CAPITAL)
-        metrics = compute_metrics(result, CAPITAL, freq_hint="1D")
-        _update_track_record(bars, strat.name, result)
+        metrics = compute_metrics(result, CAPITAL, freq_hint=args.freq)
+        _update_track_record(bars, strat.name, result, CAPITAL, tracking_start, track_record_path)
 
         last_pos = int(result.positions.iloc[-1])
         last_equity = float(result.equity_curve.iloc[-1])
@@ -132,18 +135,20 @@ def main():
 
         summary_rows.append((strat.name, last_pos, last_equity, metrics["total_return"], metrics["sharpe"], metrics["num_trades"]))
 
-    with open(POSITIONS_PATH, "w") as f:
+    with open(positions_path, "w") as f:
         json.dump({
             "symbol": SYMBOL,
+            "freq": args.freq,
             "updated_at_utc": datetime.now(timezone.utc).isoformat(),
             "latest_bar": str(bars.index[-1]),
+            "bar_count": len(bars),
             "strategies": positions,
         }, f, indent=2)
 
-    pd.DataFrame(all_trades).to_csv(TRADE_LOG_PATH, index=False)
+    pd.DataFrame(all_trades).to_csv(trade_log_path, index=False)
 
     lines = [
-        f"# BTC/USDT Paper Trading — updated {datetime.now(timezone.utc).isoformat()}",
+        f"# BTC/USDT Paper Trading ({args.freq}) — updated {datetime.now(timezone.utc).isoformat()}",
         "",
         f"Latest bar: {bars.index[-1]} · {len(bars):,} bars of history · ${CAPITAL:,.0f} starting capital per strategy",
         "",
@@ -154,10 +159,10 @@ def main():
         label = "LONG" if pos > 0 else "SHORT" if pos < 0 else "FLAT"
         sharpe_str = f"{sharpe:.2f}" if sharpe == sharpe else "—"  # NaN check
         lines.append(f"| {name} | {label} | ${equity:,.0f} | {total_ret*100:+.1f}% | {sharpe_str} | {n_trades} |")
-    with open(SUMMARY_PATH, "w") as f:
+    with open(summary_path, "w") as f:
         f.write("\n".join(lines) + "\n")
 
-    print(f"Updated {POSITIONS_PATH}, {TRADE_LOG_PATH}, {SUMMARY_PATH}")
+    print(f"Updated {positions_path}, {trade_log_path}, {summary_path}")
     print("\n".join(lines))
 
 
