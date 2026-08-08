@@ -45,10 +45,13 @@ This prints a metrics table and writes `reports/metrics.csv`,
 
 ## Fetching real data from Alpaca (free)
 
-`scripts/fetch_alpaca_data.py` pulls historical bars from Alpaca's free IEX
-feed and writes them straight into `data/raw/` in the format `load_bars()`
-already auto-detects - no reformatting needed. Requires a free account and
-API keys set as environment variables (never on the command line):
+`scripts/fetch_alpaca_data.py` pulls historical bars from Alpaca and writes
+them straight into `data/raw/` in the format `load_bars()` already
+auto-detects - no reformatting needed. Run this on a machine with normal
+internet access (it won't work from a network-restricted sandbox).
+
+**Stocks** need a free Alpaca account and API keys set as environment
+variables (never on the command line):
 
 ```bash
 export ALPACA_API_KEY=...
@@ -60,6 +63,18 @@ python -m src.backtest.cli --data data/raw/AAPL_1Min_bars.csv:AAPL --freq 1min
 The free tier is the IEX feed (one exchange's volume, not the full
 consolidated tape) - fine for backtesting, just not literally every NASDAQ
 print. `--feed sip` gets the full tape but needs a paid subscription.
+
+**Crypto** needs no account or keys at all - Alpaca serves crypto bars
+unauthenticated:
+
+```bash
+python scripts/fetch_alpaca_data.py --asset-class crypto --symbols BTC/USD ETH/USD --start 2022-01-01 --end 2025-01-01 --timeframe 1Day
+python -m src.backtest.cli --data data/raw/BTC-USD_1Day_bars.csv:BTC-USD --freq 1D
+```
+
+Crypto symbols aren't in `instruments.py`'s predefined list, so they fall
+back to the default equity-like spec (multiplier 1, no leverage) - fine for
+spot crypto, just not something this toolkit has specifically tuned.
 
 ## Using your own downloaded logs
 
