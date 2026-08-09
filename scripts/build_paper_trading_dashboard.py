@@ -50,6 +50,61 @@ def load_recent_bars(suffix, limit=CHART_CANDLE_LIMIT):
     return out
 
 
+CORRELATION_ASSETS = [("BTC", "paper_trading/bars.csv"), ("ETH", "paper_trading/bars_eth.csv"), ("SOL", "paper_trading/bars_sol.csv")]
+
+
+def _daily_returns(path):
+    if not os.path.exists(path):
+        return {}
+    with open(path) as f:
+        rows = list(csv.DictReader(f))
+    closes = {}
+    for r in rows:
+        try:
+            closes[r["timestamp"][:10]] = float(r["close"])
+        except (KeyError, ValueError, TypeError):
+            continue
+    dates = sorted(closes)
+    returns = {}
+    for prev, cur in zip(dates, dates[1:]):
+        if closes[prev]:
+            returns[cur] = closes[cur] / closes[prev] - 1
+    return returns
+
+
+def _pearson(a, b, dates):
+    xs = [a[d] for d in dates]
+    ys = [b[d] for d in dates]
+    n = len(xs)
+    if n < 2:
+        return None
+    mx, my = sum(xs) / n, sum(ys) / n
+    cov = sum((x - mx) * (y - my) for x, y in zip(xs, ys))
+    vx = sum((x - mx) ** 2 for x in xs)
+    vy = sum((y - my) ** 2 for y in ys)
+    if vx <= 0 or vy <= 0:
+        return None
+    return cov / (vx ** 0.5 * vy ** 0.5)
+
+
+def compute_correlations():
+    """Pairwise Pearson correlation of daily returns across the tracked
+    assets - answers whether ETH/SOL results are actually a diversified
+    signal or just BTC beta, using data already fetched for the daily
+    tracks (no new API calls)."""
+    returns = {name: _daily_returns(path) for name, path in CORRELATION_ASSETS}
+    returns = {name: r for name, r in returns.items() if r}
+    names = list(returns.keys())
+    pairs = []
+    for i, a in enumerate(names):
+        for b in names[i + 1:]:
+            common = sorted(set(returns[a]) & set(returns[b]))
+            corr = _pearson(returns[a], returns[b], common)
+            if corr is not None:
+                pairs.append({"a": a, "b": b, "correlation": round(corr, 3), "n": len(common)})
+    return {"assets": names, "pairs": pairs}
+
+
 def load_track(suffix):
     positions_path = f"paper_trading/positions{suffix}.json"
     trade_log_path = f"paper_trading/trade_log{suffix}.csv"
@@ -116,6 +171,8 @@ def main():
             fear_greed = json.load(f)
     out = out.replace("__FEAR_GREED_JSON__", json.dumps(fear_greed))
 
+    out = out.replace("__CORRELATIONS_JSON__", json.dumps(compute_correlations()))
+
     assert "__POSITIONS_JSON__" not in out
     assert "__TRADES_JSON__" not in out
     assert "__TRACK_RECORD_JSON__" not in out
@@ -136,6 +193,7 @@ def main():
     assert "__WIDE_MEMECOIN_SCAN_JSON__" not in out
     assert "__BTC_MARKET_SNAPSHOT_JSON__" not in out
     assert "__FEAR_GREED_JSON__" not in out
+    assert "__CORRELATIONS_JSON__" not in out
 
     with open(OUTPUT_PATH, "w") as f:
         f.write(out)

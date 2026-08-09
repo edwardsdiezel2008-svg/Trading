@@ -159,6 +159,15 @@
   .fng-greed { color: var(--good); }
   .fng-neutral { color: var(--ink); }
 
+  .corr-grid { display: grid; gap: 6px; }
+  .corr-cell {
+    border-radius: 10px; padding: 12px 10px; display: flex; flex-direction: column; gap: 2px;
+    align-items: center; justify-content: center; text-align: center; min-height: 64px;
+  }
+  .corr-cell .corr-pair { font-size: var(--fs-xs); color: var(--ink-muted); font-weight: 600; }
+  .corr-cell .corr-value { font-size: 1.1rem; font-weight: 700; font-family: var(--font-mono); }
+  .corr-cell.corr-diag { opacity: 0.55; }
+
   .risk-banner {
     display: flex; gap: 10px; align-items: flex-start; background: var(--critical-wash); border: 1px solid var(--border);
     border-radius: 12px; padding: 12px 14px; font-size: var(--fs-sm); color: var(--ink-2);
@@ -218,6 +227,15 @@
         <div id="bookAsks"></div>
       </div>
     </div>
+  </div>
+
+  <div class="panel" id="correlationPanel" style="display:none;">
+    <div class="panel-head">
+      <h2>Asset correlation</h2>
+      <span class="panel-hint" id="correlationHint">—</span>
+    </div>
+    <p class="panel-note">Pairwise correlation of daily returns - how much of ETH/SOL's simulated performance is just BTC beta versus something genuinely independent. 1.00 = moves in lockstep, 0.00 = unrelated, negative = moves opposite.</p>
+    <div class="corr-grid" id="corrGrid"></div>
   </div>
 
   <div class="tab-bar" id="tabBar">
@@ -414,6 +432,7 @@
   const WIDE_MEMECOIN_SCAN = __WIDE_MEMECOIN_SCAN_JSON__;
   const BTC_MARKET_SNAPSHOT = __BTC_MARKET_SNAPSHOT_JSON__;
   const FEAR_GREED = __FEAR_GREED_JSON__;
+  const CORRELATIONS = __CORRELATIONS_JSON__;
   const TRACKS = {
     daily: {
       label: 'Daily', symbol: 'BTC/USDT', dateUnit: 'Day', intraday: false,
@@ -1014,6 +1033,48 @@
     document.getElementById('bookGrid').style.display = snap.order_book ? '' : 'none';
   }
 
+  // ---------- asset correlation heatmap ----------
+  function hexToRgba(hex, alpha) {
+    const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || '');
+    if (!m) return `rgba(128,128,128,${alpha})`;
+    const [r, g, b] = m.slice(1).map((h) => parseInt(h, 16));
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  function renderCorrelations() {
+    const panel = document.getElementById('correlationPanel');
+    const assets = CORRELATIONS.assets || [];
+    const pairs = CORRELATIONS.pairs || [];
+    if (assets.length < 2 || !pairs.length) {
+      panel.style.display = 'none';
+      return;
+    }
+    panel.style.display = '';
+    document.getElementById('correlationHint').textContent = `${pairs[0].n.toLocaleString()} overlapping days`;
+
+    const corrFor = (a, b) => {
+      if (a === b) return 1;
+      const p = pairs.find((x) => (x.a === a && x.b === b) || (x.a === b && x.b === a));
+      return p ? p.correlation : null;
+    };
+
+    const grid = document.getElementById('corrGrid');
+    grid.style.gridTemplateColumns = `repeat(${assets.length}, 1fr)`;
+    grid.innerHTML = assets.map((rowAsset) => assets.map((colAsset) => {
+      const v = corrFor(rowAsset, colAsset);
+      const isDiag = rowAsset === colAsset;
+      if (v === null) {
+        return `<div class="corr-cell"><span class="corr-pair">${rowAsset} / ${colAsset}</span><span class="corr-value">—</span></div>`;
+      }
+      const color = v >= 0 ? THEME.good : THEME.critical;
+      const bg = hexToRgba(color, Math.min(1, Math.abs(v)) * 0.5 + 0.06);
+      return `<div class="corr-cell${isDiag ? ' corr-diag' : ''}" style="background:${bg};">
+        <span class="corr-pair">${rowAsset} / ${colAsset}</span>
+        <span class="corr-value" style="color:${color};">${v.toFixed(2)}</span>
+      </div>`;
+    }).join('')).join('');
+  }
+
   // ---------- data freshness ----------
   const STALE_THRESHOLD_HOURS = 3; // hourly cadence + generous buffer before flagging
 
@@ -1043,6 +1104,7 @@
 
   render('daily');
   renderMarketSnapshot();
+  renderCorrelations();
   checkStaleness();
   window.addEventListener('resize', renderActive);
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); renderActive(); });
