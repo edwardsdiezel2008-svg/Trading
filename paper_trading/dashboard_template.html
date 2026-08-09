@@ -276,6 +276,16 @@
 
     <div class="panel">
       <div class="panel-head">
+        <h2>Equity curve (full backtest)</h2>
+        <span class="panel-hint" id="equityCurveHint">—</span>
+      </div>
+      <p class="panel-note">Every strategy's simulated $100,000 account over the full price history, not just the live tracking window above - this is where drawdowns and blow-ups actually become visible.</p>
+      <div class="compare-wrap" id="equityCurveWrap"><canvas id="equityCurveCanvas"></canvas></div>
+      <div class="ribbon-legend" id="equityCurveLegend"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
         <h2>Total return by strategy</h2>
         <span class="panel-hint" id="compareHint">Full backtest period, starting $100,000 each</span>
       </div>
@@ -581,6 +591,64 @@
     }
   }
 
+  function drawEquityCurveChart(track, order) {
+    const canvas = document.getElementById('equityCurveCanvas');
+    const { ctx, w, h } = setupCanvas(canvas);
+    ctx.clearRect(0, 0, w, h);
+
+    const strategies = track.positions.strategies;
+    const series = order.map((name) => ({ name, points: (strategies[name] && strategies[name].equity_curve) || [] }))
+      .filter((s) => s.points.length > 1);
+    if (!series.length) {
+      ctx.font = '13px ' + FONT_MONO;
+      ctx.fillStyle = THEME.ink2;
+      ctx.fillText('No equity curve data yet - check back after the next update.', 10, h / 2);
+      return;
+    }
+
+    const padL = 66, padR = 12, padT = 12, padB = 22;
+    const plotW = w - padL - padR, plotH = h - padT - padB;
+    const maxLen = Math.max(...series.map((s) => s.points.length));
+
+    let minY = Infinity, maxY = -Infinity;
+    series.forEach((s) => s.points.forEach(([, v]) => { minY = Math.min(minY, v); maxY = Math.max(maxY, v); }));
+    minY = Math.min(minY, 0); // always show the zero/breakeven line in range
+    if (minY === maxY) { minY -= 1; maxY += 1; }
+    const pad = (maxY - minY) * 0.08 || 1;
+    minY -= pad; maxY += pad;
+
+    const xFor = (i, len) => padL + (len > 1 ? (i / (len - 1)) * plotW : plotW / 2);
+    const yFor = (v) => padT + (1 - (v - minY) / (maxY - minY)) * plotH;
+
+    ctx.strokeStyle = THEME.grid; ctx.lineWidth = 1; ctx.font = '10px ' + FONT_MONO; ctx.fillStyle = THEME.inkMuted;
+    [minY, minY + (maxY - minY) / 2, maxY].forEach((v) => {
+      const y = yFor(v);
+      ctx.beginPath(); ctx.moveTo(padL, y + 0.5); ctx.lineTo(w - padR, y + 0.5); ctx.stroke();
+      ctx.fillText(fmtMoney(v), 2, Math.max(10, y - 2));
+    });
+    const zeroY = yFor(0);
+    ctx.strokeStyle = THEME.ink2; ctx.setLineDash([4, 4]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(padL, zeroY); ctx.lineTo(w - padR, zeroY); ctx.stroke();
+    ctx.setLineDash([]);
+
+    series.forEach(({ name, points }) => {
+      const color = seriesColorFor(name, order);
+      ctx.beginPath();
+      points.forEach(([, v], i) => {
+        const x = xFor(i, points.length), y = yFor(v);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = color; ctx.lineWidth = 1.6; ctx.lineJoin = 'round'; ctx.stroke();
+    });
+
+    ctx.font = '10px ' + FONT_MONO; ctx.fillStyle = THEME.inkMuted;
+    const longest = series.find((s) => s.points.length === maxLen) || series[0];
+    const firstLabel = fmtDate(longest.points[0][0], track.intraday);
+    const lastLabel = fmtDate(longest.points[longest.points.length - 1][0], track.intraday);
+    ctx.fillText(firstLabel, padL, h - 6);
+    ctx.fillText(lastLabel, w - padR - ctx.measureText(lastLabel).width, h - 6);
+  }
+
   function computeRows(track) {
     const strategyNames = Object.keys(track.positions.strategies);
     return strategyNames.map((name) => {
@@ -628,8 +696,11 @@
       document.getElementById('trackRecordHint').textContent = 'Not started yet';
       document.getElementById('trackRecordLegend').innerHTML = '';
       document.getElementById('tradeTbody').innerHTML = '';
+      document.getElementById('equityCurveHint').textContent = 'Not started yet';
+      document.getElementById('equityCurveLegend').innerHTML = '';
       drawCompareChart([]);
       drawTrackRecordChart(track, []);
+      drawEquityCurveChart(track, []);
       return;
     }
 
@@ -684,8 +755,14 @@
       </tr>`;
     }).join('');
 
+    document.getElementById('equityCurveHint').textContent = `${POSITIONS.bar_count.toLocaleString()} bars · $100,000 starting capital each`;
+    document.getElementById('equityCurveLegend').innerHTML = order.map((name) =>
+      `<span><i class="swatch" style="background:${seriesColorFor(name, order)}"></i>${name}</span>`
+    ).join('');
+
     drawCompareChart(rows);
     drawTrackRecordChart(track, order);
+    drawEquityCurveChart(track, order);
   }
 
   // ---------- memecoin scanner ----------

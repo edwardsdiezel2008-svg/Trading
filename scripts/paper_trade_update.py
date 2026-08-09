@@ -47,6 +47,20 @@ def parse_args(argv=None):
     return p.parse_args(argv)
 
 
+def _downsample_equity_curve(index, equity_curve, max_points=250):
+    """The full backtest equity curve (one point per bar) is otherwise
+    computed and thrown away - downsample it for the dashboard's full-
+    history equity chart instead of embedding thousands of points per
+    strategy. Always keeps the first and last point."""
+    n = len(equity_curve)
+    if n <= max_points:
+        idxs = range(n)
+    else:
+        stride = (n - 1) / (max_points - 1)
+        idxs = sorted({round(i * stride) for i in range(max_points)})
+    return [[str(index[i]), round(float(equity_curve.iloc[i]), 2)] for i in idxs]
+
+
 def _update_track_record(bars, strategy_name, result, capital, tracking_start, track_record_path):
     if tracking_start in bars.index:
         start_idx = bars.index.get_loc(tracking_start)
@@ -120,6 +134,7 @@ def main(argv=None):
             "equity": round(last_equity, 2),
             "open_trade": open_trade,
             "as_of": str(bars.index[-1]),
+            "equity_curve": _downsample_equity_curve(bars.index, result.equity_curve),
         }
 
         for t in closed_trades:
