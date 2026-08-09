@@ -225,6 +225,16 @@
     font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
     color: var(--scan); background: var(--scan-wash); border-radius: 999px; padding: 1px 7px;
   }
+
+  .robust-header, .robust-row { display: grid; grid-template-columns: 1fr repeat(3, 40px); align-items: center; gap: 8px; }
+  .robust-header { padding: 0 4px 6px; font-size: var(--fs-xs); color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .robust-header span:not(:first-child) { text-align: center; }
+  .robust-row { padding: 7px 4px; border-bottom: 1px solid var(--border); font-size: var(--fs-sm); }
+  .robust-row:last-child { border-bottom: none; }
+  .robust-name { font-weight: 600; }
+  .robust-mark { text-align: center; font-family: var(--font-mono); font-weight: 700; }
+  .robust-yes { color: var(--good); }
+  .robust-no { color: var(--ink-muted); }
 </style>
 
 <div class="ambient-field" aria-hidden="true">
@@ -259,6 +269,14 @@
   <div class="section-label">Strategy tracks</div>
   <div class="nav-grid" id="navGrid"></div>
 
+  <div id="robustSection" style="display:none; flex-direction:column; gap:22px;">
+    <div class="section-label">Cross-asset validated</div>
+    <div class="panel">
+      <p style="margin:0 0 10px; font-size:var(--fs-xs); color:var(--ink-muted);">Walk-forward out-of-sample results across the BTC/ETH/SOL daily tracks - a strategy that holds up on all three independent price histories is much harder to explain by luck than one that only worked on one.</p>
+      <div id="robustTable"></div>
+    </div>
+  </div>
+
   <div class="section-label">Memecoin momentum</div>
   <div class="panel">
     <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
@@ -291,6 +309,7 @@
   const TOP_MOVERS = __TOP_MOVERS_JSON__;
   const WIDE_UNIVERSE_SIZE = __WIDE_UNIVERSE_SIZE__;
   const TOP_NEWS = __TOP_NEWS_JSON__;
+  const CROSS_ASSET_ROBUSTNESS = __CROSS_ASSET_ROBUSTNESS_JSON__;
 
   const FONT_MONO = 'ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace';
 
@@ -471,6 +490,25 @@
     }).join('');
   }
 
+  function renderRobustness() {
+    const rows = CROSS_ASSET_ROBUSTNESS || [];
+    const section = document.getElementById('robustSection');
+    if (!rows.length) {
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = 'flex';
+    const header = `<div class="robust-header"><span>Strategy</span><span>BTC</span><span>ETH</span><span>SOL</span></div>`;
+    const body = rows.map((r) => {
+      const marks = ['BTC', 'ETH', 'SOL'].map((a) => {
+        if (!(a in r.assets)) return '<span class="robust-mark robust-no">—</span>';
+        return r.assets[a] ? '<span class="robust-mark robust-yes">&#10003;</span>' : '<span class="robust-mark robust-no">&times;</span>';
+      }).join('');
+      return `<div class="robust-row"><span class="robust-name">${escHtml(r.strategy)}</span>${marks}</div>`;
+    }).join('');
+    document.getElementById('robustTable').innerHTML = header + body;
+  }
+
   function checkStaleness() {
     const timestamps = [
       ...Object.values(TRACK_SUMMARIES).map((s) => s && s.updated_at_utc),
@@ -497,6 +535,7 @@
     renderNavCards();
     renderTopMovers();
     renderHeadlines();
+    renderRobustness();
     checkStaleness();
   }
 

@@ -192,6 +192,36 @@ def summarize_track(positions, label, symbol):
     }
 
 
+def compute_cross_asset_robustness(loaded):
+    """A strategy that's walk-forward-robust on one asset could just be that
+    asset's history getting lucky. The stronger signal is a strategy that
+    holds up out-of-sample on BTC AND ETH AND SOL independently - three
+    different price histories agreeing is much harder to explain by chance
+    than one. Same 'robust' definition the per-track panel uses (positive
+    OOS return and positive OOS Sharpe), just cross-referenced across the
+    three daily tracks here."""
+    assets = [("BTC", ""), ("ETH", "_eth"), ("SOL", "_sol")]
+    by_strategy = {}
+    for asset, suffix in assets:
+        for r in (loaded[suffix]["walkforward"].get("results") or []):
+            if r.get("error"):
+                continue
+            row = by_strategy.setdefault(r["strategy"], {})
+            row[asset] = bool(r.get("oos_total_return", 0) > 0 and r.get("oos_sharpe", 0) > 0)
+
+    out = []
+    for name, per_asset in by_strategy.items():
+        robust_count = sum(1 for v in per_asset.values() if v)
+        out.append({
+            "strategy": name,
+            "assets": per_asset,
+            "robust_count": robust_count,
+            "assets_tested": len(per_asset),
+        })
+    out.sort(key=lambda r: (-r["robust_count"], r["strategy"]))
+    return out
+
+
 def build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_greed, correlations, news):
     with open(TEMPLATE_PATH) as f:
         out = f.read()
@@ -254,7 +284,10 @@ def build_index_page(loaded, wide_scan, market_snapshot, fear_greed, news):
     top_news = (news.get("items") or [])[:6]
     out = out.replace("__TOP_NEWS_JSON__", json.dumps(top_news))
 
-    for key in ("TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE", "TOP_NEWS_JSON"):
+    cross_asset_robustness = compute_cross_asset_robustness(loaded)
+    out = out.replace("__CROSS_ASSET_ROBUSTNESS_JSON__", json.dumps(cross_asset_robustness))
+
+    for key in ("TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE", "TOP_NEWS_JSON", "CROSS_ASSET_ROBUSTNESS_JSON"):
         assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
 
     with open(INDEX_OUTPUT_PATH, "w") as f:

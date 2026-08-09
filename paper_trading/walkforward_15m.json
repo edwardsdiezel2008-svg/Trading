@@ -1,0 +1,85 @@
+{
+  "symbol": "BTC_USDT",
+  "freq": "15min",
+  "n_folds": 5,
+  "generated_at_utc": "2026-08-09T19:42:33.353998Z",
+  "results": [
+    {
+      "strategy": "MA_Crossover(10/50)",
+      "oos_total_return": -0.026056528724199834,
+      "oos_sharpe": -8.019171727613319,
+      "oos_max_drawdown": -0.032489077384208066,
+      "oos_num_trades": 12,
+      "baseline_total_return": -0.02078204144597673,
+      "baseline_sharpe": -6.560414610861067,
+      "vs_fixed_default_ratio": 1.2538002482544472,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Donchian_Breakout(20)",
+      "oos_total_return": -0.009493346993945107,
+      "oos_sharpe": -3.2048098917072947,
+      "oos_max_drawdown": -0.016885929775589944,
+      "oos_num_trades": 8,
+      "baseline_total_return": -0.015389155273585309,
+      "baseline_sharpe": -5.120351316413395,
+      "vs_fixed_default_ratio": 0.6168855161426532,
+      "n_folds": 5
+    },
+    {
+      "strategy": "MACD_Momentum(12/26/9)",
+      "oos_total_return": -0.04230140484016487,
+      "oos_sharpe": -11.815383689515041,
+      "oos_max_drawdown": -0.052759053982486044,
+      "oos_num_trades": 25,
+      "baseline_total_return": -0.04577265624242777,
+      "baseline_sharpe": -12.414246102408924,
+      "vs_fixed_default_ratio": 0.9241632081852984,
+      "n_folds": 5
+    },
+    {
+      "strategy": "RSI_Reversion(14,30/70)",
+      "oos_total_return": -0.022575565287351607,
+      "oos_sharpe": -17.73019617408301,
+      "oos_max_drawdown": -0.022575565287351638,
+      "oos_num_trades": 10,
+      "baseline_total_return": -0.025316883744531227,
+      "baseline_sharpe": -15.244844818087032,
+      "vs_fixed_default_ratio": 0.8917197517339874,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Bollinger_Reversion(20,2sd)",
+      "oos_total_return": -0.017836221678910524,
+      "oos_sharpe": -8.805303828767432,
+      "oos_max_drawdown": -0.018308028235869016,
+      "oos_num_trades": 6,
+      "baseline_total_return": -0.025062504002749897,
+      "baseline_sharpe": -10.236006329688342,
+      "vs_fixed_default_ratio": 0.7116695792628505,
+      "n_folds": 5
+    },
+    {
+      "strategy": "ZScore_Reversion(20,z=2.0)",
+      "oos_total_return": -0.024080659245143354,
+      "oos_sharpe": -11.780659328322526,
+      "oos_max_drawdown": -0.025244177184441923,
+      "oos_num_trades": 7,
+      "baseline_total_return": -0.027397908655298453,
+      "baseline_sharpe": -12.253472396458477,
+      "vs_fixed_default_ratio": 0.8789232619215416,
+      "n_folds": 5
+    },
+    {
+      "strategy": "ATR_Vol_Breakout(14,k=1.5)",
+      "oos_total_return": -0.02954818389855529,
+      "oos_sharpe": -8.871679957143774,
+      "oos_max_drawdown": -0.04270071201698497,
+      "oos_num_trades": 11,
+      "baseline_total_return": -0.018777382739104787,
+      "baseline_sharpe": -6.266655811201048,
+      "vs_fixed_default_ratio": 1.5736050284057854,
+      "n_folds": 5
+    }
+  ]
+}
