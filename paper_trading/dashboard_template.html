@@ -168,6 +168,11 @@
   .corr-cell .corr-value { font-size: 1.1rem; font-weight: 700; font-family: var(--font-mono); }
   .corr-cell.corr-diag { opacity: 0.55; }
 
+  .heat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(82px, 1fr)); gap: 4px; }
+  .heat-cell { border-radius: 8px; padding: 8px 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 54px; }
+  .heat-symbol { font-size: var(--fs-xs); font-weight: 700; color: var(--ink); }
+  .heat-pct { font-size: var(--fs-xs); font-family: var(--font-mono); font-weight: 700; }
+
   .risk-banner {
     display: flex; gap: 10px; align-items: flex-start; background: var(--critical-wash); border: 1px solid var(--border);
     border-radius: 12px; padding: 12px 14px; font-size: var(--fs-sm); color: var(--ink-2);
@@ -394,6 +399,15 @@
     <p class="scope-note" style="margin: 2px 2px 0;">Much broader universe, much coarser signal - no rolling history, so this ranks coins by how close price sits to its own 24-hour high while up on the day, instead of the ATR-based breakout measure above. Thin-liquidity coins (under $10k 24h volume) are flagged, not hidden - their range can move on very little real trading.</p>
 
     <div class="stat-tiles" id="wideStatTiles"></div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Market heatmap</h2>
+        <span class="panel-hint" id="heatmapHint">—</span>
+      </div>
+      <p class="panel-note">All scanned coins by 24h change - darker means a bigger move, in either direction.</p>
+      <div class="heat-grid" id="memeHeatmapGrid"></div>
+    </div>
 
     <div class="panel">
       <div class="panel-head">
@@ -924,7 +938,30 @@
     }).join('');
 
     drawMemeCompareChart(ranked);
+    renderMemeHeatmap();
     renderWideScan();
+  }
+
+  function renderMemeHeatmap() {
+    const grid = document.getElementById('memeHeatmapGrid');
+    const all = [...(WIDE_MEMECOIN_SCAN.ranked || []), ...(WIDE_MEMECOIN_SCAN.not_moving || [])];
+    document.getElementById('heatmapHint').textContent = all.length ? `${all.length} coins` : '—';
+    if (!all.length) {
+      grid.innerHTML = '<p class="scope-note">No data yet.</p>';
+      return;
+    }
+    const sorted = all.slice().sort((a, b) => b.change_24h_pct - a.change_24h_pct);
+    grid.innerHTML = sorted.map((c) => {
+      const pct = c.change_24h_pct;
+      const color = pct >= 0 ? THEME.good : THEME.critical;
+      const intensity = Math.min(1, Math.abs(pct) / 15);
+      const bg = hexToRgba(color, intensity * 0.55 + 0.08);
+      const label = c.symbol.replace(/USD$/, '');
+      return `<div class="heat-cell" style="background:${bg};" title="${c.symbol}: ${fmtSignedPct(pct / 100)} · $${(c.volume_24h_usd || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })} 24h vol">
+        <span class="heat-symbol">${label}</span>
+        <span class="heat-pct" style="color:${color};">${fmtSignedPct(pct / 100)}</span>
+      </div>`;
+    }).join('');
   }
 
   function renderWideScan() {
