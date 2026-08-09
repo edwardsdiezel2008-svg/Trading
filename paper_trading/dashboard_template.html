@@ -138,7 +138,8 @@
   .foot p { margin: 0 0 4px; font-size: var(--fs-xs); color: var(--ink-muted); }
   .foot a { color: var(--accent); }
 
-  .tab-bar { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px; width: fit-content; }
+  .tab-bar { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tab-btn { flex: 0 0 auto; }
   .tab-btn { border: none; background: transparent; color: var(--ink-2); font-family: var(--font-ui); font-size: 0.85rem; font-weight: 600; padding: 7px 16px; border-radius: 7px; cursor: pointer; }
   .tab-btn.active { background: var(--accent); color: var(--surface); }
 
@@ -348,6 +349,28 @@
 
     <div class="panel">
       <div class="panel-head">
+        <h2>Robustness (walk-forward)</h2>
+        <span class="panel-hint" id="wfHint">—</span>
+      </div>
+      <p class="panel-note">The full-backtest numbers above are one long in-sample fit - a strategy can look great by luck alone over one history. Walk-forward re-optimizes each strategy's parameters on rolling training windows and scores it only on data it never saw during that fit. A strategy that's robust here made money on genuinely unseen data, not just in hindsight.</p>
+      <div class="table-wrap">
+        <table id="wfTable">
+          <thead>
+            <tr>
+              <th>Strategy</th>
+              <th class="num">Full-Backtest Return</th>
+              <th class="num">Out-of-Sample Return</th>
+              <th class="num">Out-of-Sample Sharpe</th>
+              <th>Verdict</th>
+            </tr>
+          </thead>
+          <tbody id="wfTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
         <h2>Recent closed trades</h2>
         <span class="panel-hint" id="tradeCountHint">—</span>
       </div>
@@ -472,19 +495,19 @@
   const TRACKS = {
     daily: {
       label: 'Daily', symbol: 'BTC/USDT', dateUnit: 'Day', intraday: false,
-      positions: __POSITIONS_JSON__, trades: __TRADES_JSON__, trackRecord: __TRACK_RECORD_JSON__, bars: __BARS_JSON__,
+      positions: __POSITIONS_JSON__, trades: __TRADES_JSON__, trackRecord: __TRACK_RECORD_JSON__, bars: __BARS_JSON__, walkforward: __WALKFORWARD_JSON__,
     },
     fifteenMin: {
       label: '15-Minute', symbol: 'BTC/USDT', dateUnit: 'Update', intraday: true,
-      positions: __POSITIONS_15M_JSON__, trades: __TRADES_15M_JSON__, trackRecord: __TRACK_RECORD_15M_JSON__, bars: __BARS_15M_JSON__,
+      positions: __POSITIONS_15M_JSON__, trades: __TRADES_15M_JSON__, trackRecord: __TRACK_RECORD_15M_JSON__, bars: __BARS_15M_JSON__, walkforward: __WALKFORWARD_15M_JSON__,
     },
     eth: {
       label: 'ETH Daily', symbol: 'ETH/USDT', dateUnit: 'Day', intraday: false,
-      positions: __POSITIONS_ETH_JSON__, trades: __TRADES_ETH_JSON__, trackRecord: __TRACK_RECORD_ETH_JSON__, bars: __BARS_ETH_JSON__,
+      positions: __POSITIONS_ETH_JSON__, trades: __TRADES_ETH_JSON__, trackRecord: __TRACK_RECORD_ETH_JSON__, bars: __BARS_ETH_JSON__, walkforward: __WALKFORWARD_ETH_JSON__,
     },
     sol: {
       label: 'SOL Daily', symbol: 'SOL/USDT', dateUnit: 'Day', intraday: false,
-      positions: __POSITIONS_SOL_JSON__, trades: __TRADES_SOL_JSON__, trackRecord: __TRACK_RECORD_SOL_JSON__, bars: __BARS_SOL_JSON__,
+      positions: __POSITIONS_SOL_JSON__, trades: __TRADES_SOL_JSON__, trackRecord: __TRACK_RECORD_SOL_JSON__, bars: __BARS_SOL_JSON__, walkforward: __WALKFORWARD_SOL_JSON__,
     },
   };
   const CAPITAL = 100000;
@@ -836,6 +859,8 @@
       document.getElementById('tradeTbody').innerHTML = '';
       document.getElementById('equityCurveHint').textContent = 'Not started yet';
       document.getElementById('equityCurveLegend').innerHTML = '';
+      document.getElementById('wfHint').textContent = '—';
+      document.getElementById('wfTbody').innerHTML = '';
       drawCompareChart([]);
       drawTrackRecordChart(track, []);
       drawEquityCurveChart(track, []);
@@ -905,10 +930,54 @@
       `<span><i class="swatch" style="background:${seriesColorFor(name, order)}"></i>${name}</span>`
     ).join('') + '<span><i class="swatch" style="background:var(--ink); opacity:0.6;"></i>Buy &amp; Hold (benchmark, dashed)</span>';
 
+    renderWalkforward(track, rows);
     drawCompareChart(rows);
     drawTrackRecordChart(track, order);
     drawEquityCurveChart(track, order);
     drawCandlestickChart(track);
+  }
+
+  function renderWalkforward(track, rows) {
+    const wf = track.walkforward;
+    const results = (wf && wf.results) || [];
+    const byName = {};
+    results.forEach((r) => { byName[r.strategy] = r; });
+
+    if (!results.length) {
+      document.getElementById('wfHint').textContent = 'Not run yet';
+      document.getElementById('wfTbody').innerHTML =
+        '<tr><td colspan="5" class="scope-note">Walk-forward validation hasn\'t been run for this track yet (it\'s expensive - run manually via scripts/walkforward_snapshot.py, not on every hourly update).</td></tr>';
+      return;
+    }
+    document.getElementById('wfHint').textContent = wf.generated_at_utc
+      ? `${wf.n_folds}-fold · generated ${fmtUpdated(wf.generated_at_utc)}`
+      : `${wf.n_folds}-fold`;
+
+    document.getElementById('wfTbody').innerHTML = rows.map((r) => {
+      const wfRow = byName[r.name];
+      if (!wfRow || wfRow.error) {
+        return `<tr>
+          <td class="strategy-name">${r.name}</td>
+          <td class="num mono">${fmtSignedPct(r.totalReturn)}</td>
+          <td class="num mono" colspan="2">—</td>
+          <td><span class="pill pill-neutral">${wfRow ? 'skipped' : 'not run'}</span></td>
+        </tr>`;
+      }
+      const oosRet = wfRow.oos_total_return, oosSharpe = wfRow.oos_sharpe;
+      const robust = oosRet > 0 && oosSharpe > 0;
+      const retClass = oosRet >= 0 ? 'good' : 'critical';
+      const sharpeStr = isFinite(oosSharpe) ? oosSharpe.toFixed(2) : '—';
+      const verdictPill = robust
+        ? '<span class="pill liq-ok">✓ robust</span>'
+        : '<span class="pill liq-thin">⚠ not confirmed</span>';
+      return `<tr>
+        <td class="strategy-name">${r.name}</td>
+        <td class="num mono">${fmtSignedPct(r.totalReturn)}</td>
+        <td class="num mono ${retClass}">${fmtSignedPct(oosRet)}</td>
+        <td class="num mono">${sharpeStr}</td>
+        <td>${verdictPill}</td>
+      </tr>`;
+    }).join('');
   }
 
   // ---------- memecoin scanner ----------

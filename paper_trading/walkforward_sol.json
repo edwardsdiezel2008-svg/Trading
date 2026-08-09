@@ -1,0 +1,85 @@
+{
+  "symbol": "SOL_USDT",
+  "freq": "1D",
+  "n_folds": 5,
+  "generated_at_utc": "2026-08-09T17:58:39.359818Z",
+  "results": [
+    {
+      "strategy": "MA_Crossover(10/50)",
+      "oos_total_return": -0.313513181387557,
+      "oos_sharpe": 0.2290027273551023,
+      "oos_max_drawdown": -0.7984081737557045,
+      "oos_num_trades": 69,
+      "baseline_total_return": -0.12374473935640995,
+      "baseline_sharpe": 0.29719251173102085,
+      "vs_fixed_default_ratio": 2.5335475513393377,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Donchian_Breakout(20)",
+      "oos_total_return": -0.462054608042861,
+      "oos_sharpe": 0.2054468392961774,
+      "oos_max_drawdown": -0.8298562538449609,
+      "oos_num_trades": 33,
+      "baseline_total_return": 0.2959919928747121,
+      "baseline_sharpe": 0.3926313747299627,
+      "vs_fixed_default_ratio": -1.5610375252226505,
+      "n_folds": 5
+    },
+    {
+      "strategy": "MACD_Momentum(12/26/9)",
+      "oos_total_return": 6.799036659677014,
+      "oos_sharpe": 0.7842308660363241,
+      "oos_max_drawdown": -0.6194147292047099,
+      "oos_num_trades": 92,
+      "baseline_total_return": 0.19442839563885328,
+      "baseline_sharpe": 0.4061797708994219,
+      "vs_fixed_default_ratio": 34.969360505890734,
+      "n_folds": 5
+    },
+    {
+      "strategy": "RSI_Reversion(14,30/70)",
+      "oos_total_return": 0.0,
+      "oos_sharpe": NaN,
+      "oos_max_drawdown": 0.0,
+      "oos_num_trades": 0,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Bollinger_Reversion(20,2sd)",
+      "oos_total_return": 0.04177070693848983,
+      "oos_sharpe": 0.11857021070810889,
+      "oos_max_drawdown": -0.23388270777734718,
+      "oos_num_trades": 6,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "ZScore_Reversion(20,z=2.0)",
+      "oos_total_return": 0.0,
+      "oos_sharpe": NaN,
+      "oos_max_drawdown": 0.0,
+      "oos_num_trades": 0,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "ATR_Vol_Breakout(14,k=1.5)",
+      "oos_total_return": 7.773434628241464,
+      "oos_sharpe": 0.8159124527771818,
+      "oos_max_drawdown": -0.8010571676424577,
+      "oos_num_trades": 67,
+      "baseline_total_return": 10.561208542453407,
+      "baseline_sharpe": 0.8796010676976606,
+      "vs_fixed_default_ratio": 0.7360364675116686,
+      "n_folds": 5
+    }
+  ]
+}
