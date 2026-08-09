@@ -1,0 +1,28 @@
+name: List all exchange tickers (diagnostic)
+
+# One-off diagnostic - dumps every USD/USDT-quoted instrument Crypto.com
+# Exchange's public API actually lists, so the memecoin wide-scan candidate
+# list can be curated from the real listing instead of guessing ticker
+# names. Not part of the regular pipeline; trigger manually and read the
+# job log. Doesn't commit anything.
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  list-tickers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/hello-rs2zvp
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: List all tickers
+        run: python scripts/list_all_tickers.py
