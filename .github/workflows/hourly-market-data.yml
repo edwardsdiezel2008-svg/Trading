@@ -79,7 +79,8 @@ jobs:
         id: stage
         run: |
           mkdir -p _site
-          cp paper_trading/dashboard.html _site/index.html
+          cp paper_trading/index.html _site/index.html
+          cp paper_trading/dashboard.html _site/dashboard.html
           echo "site_ready=true" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-pages-artifact@v3
