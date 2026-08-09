@@ -1,5 +1,5 @@
 {
-  "updated_at_utc": "2026-08-09T20:29:21.355216+00:00",
+  "updated_at_utc": "2026-08-09T20:32:16.977396+00:00",
   "lookback_bars": 20,
   "atr_period": 14,
   "ranked": [
@@ -30,6 +30,19 @@
       "rank": 2
     },
     {
+      "symbol": "SHIBUSD",
+      "status": "ok",
+      "price": 4.668e-06,
+      "prior_20bar_high": 4.664e-06,
+      "atr_14": 1.9629314434002438e-08,
+      "is_breakout": true,
+      "breakout_pct": 0.086,
+      "breakout_strength_atr": 0.204,
+      "bar_count": 305,
+      "as_of": "2026-08-09 20:00:00",
+      "rank": 3
+    },
+    {
       "symbol": "WIFUSD",
       "status": "ok",
       "price": 0.1458,
@@ -40,7 +53,7 @@
       "breakout_strength_atr": 0.114,
       "bar_count": 305,
       "as_of": "2026-08-09 20:00:00",
-      "rank": 3
+      "rank": 4
     },
     {
       "symbol": "BONKUSD",
@@ -53,7 +66,7 @@
       "breakout_strength_atr": 0.057,
       "bar_count": 305,
       "as_of": "2026-08-09 20:00:00",
-      "rank": 4
+      "rank": 5
     },
     {
       "symbol": "ORDIUSD",
@@ -66,43 +79,30 @@
       "breakout_strength_atr": 0.009,
       "bar_count": 305,
       "as_of": "2026-08-09 20:00:00",
-      "rank": 5
-    },
-    {
-      "symbol": "SHIBUSD",
-      "status": "ok",
-      "price": 4.661e-06,
-      "prior_20bar_high": 4.664e-06,
-      "atr_14": 1.9629314434002438e-08,
-      "is_breakout": false,
-      "breakout_pct": -0.064,
-      "breakout_strength_atr": -0.153,
-      "bar_count": 305,
-      "as_of": "2026-08-09 20:00:00",
       "rank": 6
     },
     {
-      "symbol": "DOGEUSD",
+      "symbol": "PEPEUSD",
       "status": "ok",
-      "price": 0.070411,
-      "prior_20bar_high": 0.070768,
-      "atr_14": 0.0002488791674065506,
+      "price": 2.915e-06,
+      "prior_20bar_high": 2.937e-06,
+      "atr_14": 1.6290509031474172e-08,
       "is_breakout": false,
-      "breakout_pct": -0.504,
-      "breakout_strength_atr": -1.434,
+      "breakout_pct": -0.749,
+      "breakout_strength_atr": -1.35,
       "bar_count": 305,
       "as_of": "2026-08-09 20:00:00",
       "rank": 7
     },
     {
-      "symbol": "PEPEUSD",
+      "symbol": "DOGEUSD",
       "status": "ok",
-      "price": 2.913e-06,
-      "prior_20bar_high": 2.937e-06,
-      "atr_14": 1.6290509031474172e-08,
+      "price": 0.070403,
+      "prior_20bar_high": 0.070768,
+      "atr_14": 0.0002488791674065506,
       "is_breakout": false,
-      "breakout_pct": -0.817,
-      "breakout_strength_atr": -1.473,
+      "breakout_pct": -0.516,
+      "breakout_strength_atr": -1.467,
       "bar_count": 305,
       "as_of": "2026-08-09 20:00:00",
       "rank": 8
@@ -136,12 +136,12 @@
     {
       "symbol": "HMSTRUSD",
       "status": "ok",
-      "price": 0.00020616,
+      "price": 0.00020387,
       "prior_20bar_high": 0.00023263,
       "atr_14": 5.8323192087970295e-06,
       "is_breakout": false,
-      "breakout_pct": -11.379,
-      "breakout_strength_atr": -4.539,
+      "breakout_pct": -12.363,
+      "breakout_strength_atr": -4.931,
       "bar_count": 305,
       "as_of": "2026-08-09 20:00:00",
       "rank": 11
