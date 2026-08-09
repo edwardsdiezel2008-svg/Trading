@@ -173,6 +173,15 @@
   .heat-symbol { font-size: var(--fs-xs); font-weight: 700; color: var(--ink); }
   .heat-pct { font-size: var(--fs-xs); font-family: var(--font-mono); font-weight: 700; }
 
+  .overview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 640px) { .overview-grid { grid-template-columns: 1fr; } }
+  .overview-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); padding: 12px 14px; }
+  .overview-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .overview-symbol { font-weight: 700; font-size: var(--fs-sm); }
+  .overview-price { font-family: var(--font-mono); font-size: 1.1rem; font-weight: 700; margin-top: 2px; }
+  .overview-change { font-family: var(--font-mono); font-size: var(--fs-sm); font-weight: 700; }
+  .overview-spark { width: 100%; height: 36px; margin-top: 6px; display: block; }
+
   .risk-banner {
     display: flex; gap: 10px; align-items: flex-start; background: var(--critical-wash); border: 1px solid var(--border);
     border-radius: 12px; padding: 12px 14px; font-size: var(--fs-sm); color: var(--ink-2);
@@ -232,6 +241,14 @@
         <div id="bookAsks"></div>
       </div>
     </div>
+  </div>
+
+  <div class="panel" id="overviewPanel" style="display:none;">
+    <div class="panel-head">
+      <h2>Market overview</h2>
+      <span class="panel-hint" id="overviewHint">—</span>
+    </div>
+    <div class="overview-grid" id="overviewGrid"></div>
   </div>
 
   <div class="panel" id="correlationPanel" style="display:none;">
@@ -1070,6 +1087,67 @@
     document.getElementById('bookGrid').style.display = snap.order_book ? '' : 'none';
   }
 
+  // ---------- market overview (price + sparkline per asset) ----------
+  function drawSparkline(canvasId, values) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const { ctx, w, h } = setupCanvas(canvas);
+    ctx.clearRect(0, 0, w, h);
+    if (values.length < 2) return;
+    const min = Math.min(...values), max = Math.max(...values);
+    const range = max - min || 1;
+    const up = values[values.length - 1] >= values[0];
+    ctx.strokeStyle = up ? THEME.good : THEME.critical;
+    ctx.lineWidth = 1.5;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    values.forEach((v, i) => {
+      const x = (i / (values.length - 1)) * w;
+      const y = h - ((v - min) / range) * (h - 4) - 2;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+
+  function renderOverview() {
+    const panel = document.getElementById('overviewPanel');
+    const assets = [
+      { key: 'BTC', track: TRACKS.daily },
+      { key: 'ETH', track: TRACKS.eth },
+      { key: 'SOL', track: TRACKS.sol },
+    ].filter((a) => a.track.bars && a.track.bars.length > 1);
+    if (!assets.length) {
+      panel.style.display = 'none';
+      return;
+    }
+    panel.style.display = '';
+    document.getElementById('overviewHint').textContent = 'Latest close · 24h change · 30-day trend';
+
+    document.getElementById('overviewGrid').innerHTML = assets.map((a) => `
+      <div class="overview-tile">
+        <div class="overview-top">
+          <span class="overview-symbol">${a.key}/USDT</span>
+          <span class="overview-change" id="ovChange${a.key}"></span>
+        </div>
+        <div class="overview-price" id="ovPrice${a.key}"></div>
+        <canvas class="overview-spark" id="ovSpark${a.key}"></canvas>
+      </div>
+    `).join('');
+
+    assets.forEach((a) => {
+      const bars = a.track.bars;
+      const last = bars[bars.length - 1];
+      const prev = bars.length > 1 ? bars[bars.length - 2] : last;
+      const price = last[4], prevClose = prev[4];
+      const pct = prevClose ? price / prevClose - 1 : 0;
+      document.getElementById(`ovPrice${a.key}`).textContent = fmtMoney(price);
+      const changeEl = document.getElementById(`ovChange${a.key}`);
+      changeEl.textContent = fmtSignedPct(pct);
+      changeEl.style.color = pct >= 0 ? THEME.good : THEME.critical;
+      drawSparkline(`ovSpark${a.key}`, bars.slice(-30).map((b) => b[4]));
+    });
+  }
+
   // ---------- asset correlation heatmap ----------
   function hexToRgba(hex, alpha) {
     const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || '');
@@ -1139,12 +1217,17 @@
     }
   }
 
+  function renderPersistent() {
+    renderMarketSnapshot();
+    renderOverview();
+    renderCorrelations();
+  }
+
   render('daily');
-  renderMarketSnapshot();
-  renderCorrelations();
+  renderPersistent();
   checkStaleness();
-  window.addEventListener('resize', renderActive);
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); renderActive(); });
-  new MutationObserver(() => { THEME = readTheme(); renderActive(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  window.addEventListener('resize', () => { renderActive(); renderPersistent(); });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); renderActive(); renderPersistent(); });
+  new MutationObserver(() => { THEME = readTheme(); renderActive(); renderPersistent(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 })();
 </script>
