@@ -1,0 +1,51 @@
+name: Backfill deep price history
+
+# One-time (or occasional) deep candlestick backfill for BTC/ETH/SOL daily
+# bars via pagination, going back further than the ~300-candle cap the
+# hourly job's incremental fetch uses. Not scheduled - trigger manually
+# from the Actions tab (or via workflow_dispatch) whenever deeper history
+# is wanted. The hourly job's own incremental fetch keeps things current
+# after this runs; daily candles barely change hour to hour, so relying on
+# the hourly job alone to build up depth would take years.
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_candles:
+        description: "Max candles to pull per symbol"
+        required: false
+        default: "6000"
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/hello-rs2zvp
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Backfill deep history
+        run: python scripts/fetch_market_data.py --backfill --max-candles "${{ github.event.inputs.max_candles }}"
+
+      - name: Commit and push if anything changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add paper_trading/bars.csv paper_trading/bars_eth.csv paper_trading/bars_sol.csv
+          if git diff --cached --quiet; then
+            echo "No changes - nothing to commit"
+          else
+            git commit -m "Backfill deep price history (BTC/ETH/SOL daily)"
+            git pull --rebase origin claude/hello-rs2zvp
+            git push origin HEAD:claude/hello-rs2zvp
+          fi

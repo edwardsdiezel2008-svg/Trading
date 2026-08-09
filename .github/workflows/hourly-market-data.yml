@@ -49,6 +49,11 @@ jobs:
           python scripts/paper_trade_update.py
           python scripts/paper_trade_update.py --suffix _15m --freq 15min --tracking-start "2026-08-08 08:45:00"
 
+      - name: Update ETH/SOL paper-trading state (daily)
+        run: |
+          python scripts/paper_trade_update.py --suffix _eth --symbol ETH_USDT --tracking-start "2026-08-09"
+          python scripts/paper_trade_update.py --suffix _sol --symbol SOL_USDT --tracking-start "2026-08-09"
+
       - name: Update memecoin scanners (precise + wide)
         run: |
           python scripts/memecoin_scan_update.py
