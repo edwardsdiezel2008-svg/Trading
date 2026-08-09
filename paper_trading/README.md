@@ -1,6 +1,6 @@
 # Crypto paper trading cockpit
 
-Simulated (no real money) live trading of 7 backtested strategies against
+Simulated (no real money) live trading of 9 backtested strategies against
 real Crypto.com Exchange data - BTC (daily + 15-minute), ETH (daily), SOL
 (daily) - plus a wide memecoin momentum/breakout scanner, updated hourly.
 

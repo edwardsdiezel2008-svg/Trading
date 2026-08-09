@@ -256,7 +256,7 @@
   <header class="hero">
     <span class="hero-tag"><span class="scan-pulse-dot"></span>Live · autonomous pipeline</span>
     <h1>Crypto Paper Trading Cockpit</h1>
-    <p class="hero-sub">BTC, ETH and SOL tracked around the clock by a GitHub Actions pipeline - real Crypto.com Exchange data, seven backtested strategies per asset, zero real money at risk.</p>
+    <p class="hero-sub" id="heroSub">BTC, ETH and SOL tracked around the clock by a GitHub Actions pipeline - real Crypto.com Exchange data, backtested strategies per asset, zero real money at risk.</p>
     <div class="hero-row">
       <span class="updated-badge mono" id="updatedBadge">—</span>
       <a class="details-link" href="dashboard.html">Full Dashboard →</a>
@@ -546,8 +546,17 @@
     }
   }
 
+  function renderHeroSub() {
+    const seeded = Object.values(TRACK_SUMMARIES).find((s) => s && s.seeded && s.total);
+    if (seeded) {
+      document.getElementById('heroSub').textContent =
+        `BTC, ETH and SOL tracked around the clock by a GitHub Actions pipeline - real Crypto.com Exchange data, ${seeded.total} backtested strategies per asset, zero real money at risk.`;
+    }
+  }
+
   function renderAll() {
     THEME = readTheme();
+    renderHeroSub();
     renderAssets();
     renderMarketStats();
     renderNavCards();
