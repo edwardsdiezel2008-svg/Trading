@@ -677,8 +677,21 @@
   }
   let THEME = readTheme();
 
-  function fmtMoney(v) { const s = v < 0 ? '-' : ''; return s + '$' + Math.abs(v).toLocaleString(undefined, { maximumFractionDigits: 0 }); }
-  function fmtSigned(v) { return (v >= 0 ? '+' : '-') + '$' + Math.abs(v).toLocaleString(undefined, { maximumFractionDigits: 0 }); }
+  function fmtMoney(v) {
+    const s = v < 0 ? '-' : '';
+    const abs = Math.abs(v);
+    // Equity values are always large (starting capital $100k+) and want whole
+    // dollars; trade entry/exit prices can be small (e.g. SOL ~$77, a
+    // memecoin fraction of a cent) where rounding to $0 decimals would
+    // silently erase the only meaningful digits.
+    const digits = abs < 10 ? 4 : abs < 1000 ? 2 : 0;
+    return s + '$' + abs.toLocaleString(undefined, { maximumFractionDigits: digits });
+  }
+  function fmtSigned(v) {
+    const abs = Math.abs(v);
+    const digits = abs < 10 ? 4 : abs < 1000 ? 2 : 0;
+    return (v >= 0 ? '+' : '-') + '$' + abs.toLocaleString(undefined, { maximumFractionDigits: digits });
+  }
   function fmtSignedPct(v) { return (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%'; }
   function fmtDate(s, intraday) {
     const d = new Date(s.replace(' ', 'T') + 'Z');
