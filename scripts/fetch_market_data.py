@@ -67,6 +67,21 @@ MEME_WIDE_SYMBOLS = [
     "GOATEDUSD", "BINKUSD", "FWOGUSD", "CASHCATUSD", "LUNCUSD",
     "CHILLGUYUSD", "SPXUSD", "ELONUSD", "SNEKUSD", "VINEUSD", "PENGUUSD",
     "LADYSUSD", "GEKKOUSD", "MANEKIUSD", "AIXBTUSD", "BIRBUSD", "HEHEUSD",
+    # Expanded from 51 -> ~100 candidate tickers. Not all of these are
+    # confirmed listed on Crypto.com Exchange - fetch_tickers() already
+    # drops any symbol missing from the live response (see the WARN log
+    # in main()), so an unresolved guess here just silently shrinks the
+    # universe rather than breaking anything. Check the next run's logs
+    # for the "wide-scan symbols missing" line to see what didn't hit.
+    "MEWUSD", "BRETTUSD", "SLERFUSD", "SAMOUSD", "HOGEUSD", "LEASHUSD",
+    "BONEUSD", "AKITAUSD", "SAITAMAUSD", "KISHUUSD", "BABYDOGEUSD",
+    "NEIROUSD", "RATSUSD", "SATSUSD", "GIGAUSD", "APUUSD", "ZEREBROUSD",
+    "MICHIUSD", "KEYCATUSD", "BILLYUSD", "MUBARAKUSD", "WOJAKUSD",
+    "PUPSUSD", "CHEEMSUSD", "WOOFUSD", "VOLTUSD", "COPEUSD", "BODENUSD",
+    "MOTHERUSD", "DUKOUSD", "HIPPOUSD", "PUFFUSD", "BRIANUSD", "SIGMAUSD",
+    "NPCUSD", "MUMUUSD", "SMOGUSD", "HARAMBEUSD", "TREMPUSD", "MAGAUSD",
+    "PONDERUSD", "SILLYUSD", "RETIKUSD", "JELLYJELLYUSD", "GNONUSD",
+    "MANYUUSD", "LOCKINUSD", "LUCEUSD", "FRIENDUSD", "PIPUSD", "BENUSD",
 ]
 
 

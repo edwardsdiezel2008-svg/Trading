@@ -507,7 +507,7 @@
       </div>
     </div>
 
-    <div class="scanner-section-label">Wide scan · 51 coins · 24h ticker snapshot</div>
+    <div class="scanner-section-label">Wide scan · <span id="wideUniverseLabel">—</span> coins · 24h ticker snapshot</div>
     <p class="scope-note" style="margin: 2px 2px 0;">Much broader universe, much coarser signal - no rolling history, so this ranks coins by how close price sits to its own 24-hour high while up on the day, instead of the ATR-based breakout measure above. Thin-liquidity coins (under $10k 24h volume) are flagged, not hidden - their range can move on very little real trading.</p>
 
     <div class="stat-tiles" id="wideStatTiles"></div>
@@ -546,7 +546,7 @@
     </div>
 
     <footer class="foot">
-      <p class="scope-note">Precise scan universe: 11 established meme coins (DOGE, SHIB, PEPE, FLOKI, BONK, WIF, FARTCOIN, TRUMP, BOME, HMSTR, ORDI). Wide scan universe: 51 established meme/degen coins listed on Crypto.com Exchange. Neither covers new/micro-cap launches, which aren't available through this data source.</p>
+      <p class="scope-note">Precise scan universe: 11 established meme coins (DOGE, SHIB, PEPE, FLOKI, BONK, WIF, FARTCOIN, TRUMP, BOME, HMSTR, ORDI). Wide scan universe: <span id="wideUniverseLabelFooter">—</span> meme/degen coins confirmed listed on Crypto.com Exchange (out of a larger candidate list - not every guessed ticker resolves). Neither covers new/micro-cap launches, which aren't available through this data source.</p>
       <p class="scope-note">Rebuilt each check-in from real Crypto.com Exchange data. Republished to this same link whenever the ranking changes.</p>
     </footer>
   </div>
@@ -1156,6 +1156,8 @@
     const thinCount = ranked.filter((r) => r.thin_liquidity).length;
     const top = ranked[0];
 
+    document.getElementById('wideUniverseLabel').textContent = universeSize || '—';
+    document.getElementById('wideUniverseLabelFooter').textContent = universeSize || '—';
     document.getElementById('wideAsOfHint').textContent = ranked.length ? 'As of: ' + fmtDate(ranked[0].as_of.replace('T', ' ').replace('Z', ''), true) : '—';
 
     document.getElementById('wideStatTiles').innerHTML = `
