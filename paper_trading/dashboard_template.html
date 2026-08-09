@@ -243,6 +243,15 @@
 
     <div class="panel">
       <div class="panel-head">
+        <h2>Price</h2>
+        <span class="panel-hint" id="priceChartHint">—</span>
+      </div>
+      <p class="panel-note">Recent candles, real Crypto.com price data - the raw input every strategy above is trading against.</p>
+      <div class="compare-wrap" id="priceChartWrap"><canvas id="priceChartCanvas"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
         <h2>Track record</h2>
         <span class="panel-hint" id="trackRecordHint">—</span>
       </div>
@@ -408,19 +417,19 @@
   const TRACKS = {
     daily: {
       label: 'Daily', symbol: 'BTC/USDT', dateUnit: 'Day', intraday: false,
-      positions: __POSITIONS_JSON__, trades: __TRADES_JSON__, trackRecord: __TRACK_RECORD_JSON__,
+      positions: __POSITIONS_JSON__, trades: __TRADES_JSON__, trackRecord: __TRACK_RECORD_JSON__, bars: __BARS_JSON__,
     },
     fifteenMin: {
       label: '15-Minute', symbol: 'BTC/USDT', dateUnit: 'Update', intraday: true,
-      positions: __POSITIONS_15M_JSON__, trades: __TRADES_15M_JSON__, trackRecord: __TRACK_RECORD_15M_JSON__,
+      positions: __POSITIONS_15M_JSON__, trades: __TRADES_15M_JSON__, trackRecord: __TRACK_RECORD_15M_JSON__, bars: __BARS_15M_JSON__,
     },
     eth: {
       label: 'ETH Daily', symbol: 'ETH/USDT', dateUnit: 'Day', intraday: false,
-      positions: __POSITIONS_ETH_JSON__, trades: __TRADES_ETH_JSON__, trackRecord: __TRACK_RECORD_ETH_JSON__,
+      positions: __POSITIONS_ETH_JSON__, trades: __TRADES_ETH_JSON__, trackRecord: __TRACK_RECORD_ETH_JSON__, bars: __BARS_ETH_JSON__,
     },
     sol: {
       label: 'SOL Daily', symbol: 'SOL/USDT', dateUnit: 'Day', intraday: false,
-      positions: __POSITIONS_SOL_JSON__, trades: __TRADES_SOL_JSON__, trackRecord: __TRACK_RECORD_SOL_JSON__,
+      positions: __POSITIONS_SOL_JSON__, trades: __TRADES_SOL_JSON__, trackRecord: __TRACK_RECORD_SOL_JSON__, bars: __BARS_SOL_JSON__,
     },
   };
   const CAPITAL = 100000;
@@ -591,6 +600,59 @@
     }
   }
 
+  function drawCandlestickChart(track) {
+    const canvas = document.getElementById('priceChartCanvas');
+    const { ctx, w, h } = setupCanvas(canvas);
+    ctx.clearRect(0, 0, w, h);
+    const bars = track.bars || [];
+    const hint = document.getElementById('priceChartHint');
+    if (!bars.length) {
+      hint.textContent = '—';
+      ctx.font = '13px ' + FONT_MONO;
+      ctx.fillStyle = THEME.ink2;
+      ctx.fillText('No price data yet - check back after the next update.', 10, h / 2);
+      return;
+    }
+    hint.textContent = `${bars.length} candles · ${fmtDate(bars[0][0], track.intraday)} → ${fmtDate(bars[bars.length - 1][0], track.intraday)}`;
+
+    const padL = 66, padR = 12, padT = 12, padB = 22;
+    const plotW = w - padL - padR, plotH = h - padT - padB;
+
+    let minY = Infinity, maxY = -Infinity;
+    bars.forEach(([, o, hi, lo, c]) => { minY = Math.min(minY, lo); maxY = Math.max(maxY, hi); });
+    const pad = (maxY - minY) * 0.06 || 1;
+    minY -= pad; maxY += pad;
+
+    const n = bars.length;
+    const slot = plotW / n;
+    const bodyW = Math.max(1, Math.min(10, slot * 0.6));
+    const xFor = (i) => padL + slot * i + slot / 2;
+    const yFor = (v) => padT + (1 - (v - minY) / (maxY - minY)) * plotH;
+
+    ctx.strokeStyle = THEME.grid; ctx.lineWidth = 1; ctx.font = '10px ' + FONT_MONO; ctx.fillStyle = THEME.inkMuted;
+    [minY, minY + (maxY - minY) / 2, maxY].forEach((v) => {
+      const y = yFor(v);
+      ctx.beginPath(); ctx.moveTo(padL, y + 0.5); ctx.lineTo(w - padR, y + 0.5); ctx.stroke();
+      ctx.fillText(fmtMoney(v), 2, Math.max(10, y - 2));
+    });
+
+    bars.forEach(([, o, hi, lo, c], i) => {
+      const x = xFor(i);
+      const up = c >= o;
+      const color = up ? THEME.good : THEME.critical;
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x, yFor(hi)); ctx.lineTo(x, yFor(lo)); ctx.stroke();
+      const yO = yFor(o), yC = yFor(c);
+      const bodyTop = Math.min(yO, yC), bodyH = Math.max(1, Math.abs(yC - yO));
+      ctx.fillRect(x - bodyW / 2, bodyTop, bodyW, bodyH);
+    });
+
+    ctx.font = '10px ' + FONT_MONO; ctx.fillStyle = THEME.inkMuted;
+    ctx.fillText(fmtDate(bars[0][0], track.intraday), padL, h - 6);
+    const lastLabel = fmtDate(bars[n - 1][0], track.intraday);
+    ctx.fillText(lastLabel, w - padR - ctx.measureText(lastLabel).width, h - 6);
+  }
+
   function drawEquityCurveChart(track, order) {
     const canvas = document.getElementById('equityCurveCanvas');
     const { ctx, w, h } = setupCanvas(canvas);
@@ -701,6 +763,7 @@
       drawCompareChart([]);
       drawTrackRecordChart(track, []);
       drawEquityCurveChart(track, []);
+      drawCandlestickChart(track);
       return;
     }
 
@@ -763,6 +826,7 @@
     drawCompareChart(rows);
     drawTrackRecordChart(track, order);
     drawEquityCurveChart(track, order);
+    drawCandlestickChart(track);
   }
 
   // ---------- memecoin scanner ----------
