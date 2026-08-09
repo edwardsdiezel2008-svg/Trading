@@ -1128,7 +1128,7 @@
       const wfRow = byName[r.name];
       const sensRow = sensByName[r.name];
       const stabilityCell = sensRow && !sensRow.error
-        ? `<span class="mono ${sensRow.frac_profitable >= 0.5 ? 'good' : 'critical'}">${Math.round(sensRow.frac_profitable * 100)}% of ${sensRow.n_values_tested}</span>`
+        ? `<span class="pill ${sensRow.frac_profitable >= 0.5 ? 'liq-ok' : 'liq-thin'} mono">${Math.round(sensRow.frac_profitable * 100)}% of ${sensRow.n_values_tested}</span>`
         : '—';
       if (!wfRow || wfRow.error) {
         return `<tr>

@@ -166,6 +166,31 @@ def compute_current_regimes():
     return out
 
 
+def diversify_news(items, limit=6, max_per_source=2):
+    """The full news list is pure-recency sorted across several RSS feeds
+    that don't post at the same rate - a single high-frequency outlet can
+    fill most or all of a small top-N slice, crowding out the others
+    entirely. Caps each source at max_per_source for the primary picks,
+    then backfills any remaining slots by recency regardless of source so
+    a short list (e.g. a quiet source with only one recent item) still
+    always returns `limit` items when available."""
+    picked, leftover, per_source = [], [], {}
+    for it in items:
+        src = it.get("source")
+        if per_source.get(src, 0) < max_per_source:
+            picked.append(it)
+            per_source[src] = per_source.get(src, 0) + 1
+        else:
+            leftover.append(it)
+        if len(picked) >= limit:
+            return picked
+    for it in leftover:
+        picked.append(it)
+        if len(picked) >= limit:
+            break
+    return picked
+
+
 def load_track(suffix):
     positions_path = f"paper_trading/positions{suffix}.json"
     trade_log_path = f"paper_trading/trade_log{suffix}.csv"
@@ -320,7 +345,7 @@ def build_index_page(loaded, wide_scan, market_snapshot, fear_greed, news, regim
     out = out.replace("__TOP_MOVERS_JSON__", json.dumps(top_movers))
     out = out.replace("__WIDE_UNIVERSE_SIZE__", json.dumps(wide_scan.get("universe_size", 0)))
 
-    top_news = (news.get("items") or [])[:6]
+    top_news = diversify_news(news.get("items") or [], limit=6, max_per_source=2)
     out = out.replace("__TOP_NEWS_JSON__", json.dumps(top_news))
 
     cross_asset_robustness = compute_cross_asset_robustness(loaded)
