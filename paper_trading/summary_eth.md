@@ -1,13 +1,13 @@
-# ETH/USDT Paper Trading (1D) — updated 2026-08-09T17:44:53.389708+00:00
+# ETH/USDT Paper Trading (1D) — updated 2026-08-09T17:48:17.791818+00:00
 
 Latest bar: 2026-08-09 00:00:00 · 2,148 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| MA_Crossover(10/50) | LONG | $722,215 | +622.2% | 0.69 | 50 |
-| Donchian_Breakout(20) | LONG | $326,170 | +226.2% | 0.53 | 41 |
-| MACD_Momentum(12/26/9) | SHORT | $48,836 | -51.2% | 0.16 | 162 |
-| RSI_Reversion(14,30/70) | FLAT | $27,088 | -72.9% | -0.19 | 60 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $14,585 | -85.4% | 0.16 | 81 |
-| Bollinger_Reversion(20,2sd) | FLAT | $6,437 | -93.6% | 0.11 | 67 |
-| ATR_Vol_Breakout(14,k=1.5) | FLAT | $-264,294 | -364.3% | -0.42 | 2 |
+| MA_Crossover(10/50) | LONG | $636,617 | +536.6% | 0.67 | 50 |
+| Donchian_Breakout(20) | LONG | $293,182 | +193.2% | 0.51 | 41 |
+| MACD_Momentum(12/26/9) | SHORT | $32,234 | -67.8% | 0.08 | 162 |
+| RSI_Reversion(14,30/70) | FLAT | $23,134 | -76.9% | -0.24 | 60 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $11,758 | -88.2% | 0.14 | 81 |
+| Bollinger_Reversion(20,2sd) | FLAT | $5,367 | -94.6% | 0.10 | 67 |
+| ATR_Vol_Breakout(14,k=1.5) | FLAT | $-265,071 | -365.1% | -0.42 | 2 |

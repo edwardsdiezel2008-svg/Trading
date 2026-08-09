@@ -14,6 +14,14 @@ class InstrumentSpec:
     tick_size: float  # minimum price increment
     commission_per_unit: float  # $ per share/contract/coin, one side
     fractional_units: bool = False  # True for assets tradable in fractional amounts (crypto)
+    # Percentage-of-notional costs, one side each (added on top of
+    # commission_per_unit). A fixed $-per-unit fee makes no sense for an
+    # asset whose price moves from $17k to $150k+ within one backtest -
+    # exchange fees and market-order slippage both scale with trade value,
+    # not with unit count. Default 0.0 so existing equity/futures specs
+    # (which use commission_per_unit instead) are unaffected.
+    commission_pct: float = 0.0
+    slippage_pct: float = 0.0
 
 
 # Common defaults. Override/add via YAML config passed to the CLI for anything not listed.
@@ -32,13 +40,24 @@ DEFAULT_SPECS = {
     "GC": InstrumentSpec("GC", "future", multiplier=100.0, tick_size=0.10, commission_per_unit=2.50),
     # Crypto - fractional units matter here: BTC at $60k+ means a $100 account
     # can't buy a whole "1 unit" the way a stock/futures position sizer assumes.
-    "_default_crypto": InstrumentSpec("_default_crypto", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True),
-    "BTC_USDT": InstrumentSpec("BTC_USDT", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True),
-    "BTC_USD": InstrumentSpec("BTC_USD", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True),
-    "BTC-USD": InstrumentSpec("BTC-USD", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True),
-    "ETH_USDT": InstrumentSpec("ETH_USDT", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True),
-    "ETH_USD": InstrumentSpec("ETH_USD", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True),
-    "ETH-USD": InstrumentSpec("ETH-USD", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True),
+    #
+    # commission_pct/slippage_pct: 0.075% taker fee (Crypto.com Exchange's
+    # standard non-VIP taker rate) + 0.05% assumed market-order slippage,
+    # one side each - a good-faith realistic estimate, not a live-verified
+    # fee schedule (this sandbox can't reach the exchange's docs to check).
+    # ~0.25% round trip. Previously this was 0.0 - i.e. every backtested
+    # return on this project was frictionless and therefore not a real
+    # signal of whether any strategy could actually be profitable.
+    "_default_crypto": InstrumentSpec("_default_crypto", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True, commission_pct=0.00075, slippage_pct=0.0005),
+    "BTC_USDT": InstrumentSpec("BTC_USDT", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True, commission_pct=0.00075, slippage_pct=0.0005),
+    "BTC_USD": InstrumentSpec("BTC_USD", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True, commission_pct=0.00075, slippage_pct=0.0005),
+    "BTC-USD": InstrumentSpec("BTC-USD", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True, commission_pct=0.00075, slippage_pct=0.0005),
+    "ETH_USDT": InstrumentSpec("ETH_USDT", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True, commission_pct=0.00075, slippage_pct=0.0005),
+    "ETH_USD": InstrumentSpec("ETH_USD", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True, commission_pct=0.00075, slippage_pct=0.0005),
+    "ETH-USD": InstrumentSpec("ETH-USD", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True, commission_pct=0.00075, slippage_pct=0.0005),
+    "SOL_USDT": InstrumentSpec("SOL_USDT", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True, commission_pct=0.00075, slippage_pct=0.0005),
+    "SOL_USD": InstrumentSpec("SOL_USD", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True, commission_pct=0.00075, slippage_pct=0.0005),
+    "SOL-USD": InstrumentSpec("SOL-USD", "crypto", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, fractional_units=True, commission_pct=0.00075, slippage_pct=0.0005),
 }
 
 _CRYPTO_QUOTE_CURRENCIES = ("USDT", "USDC", "USD", "BTC", "ETH")
@@ -79,6 +98,8 @@ def get_spec(symbol: str, overrides: dict | None = None) -> InstrumentSpec:
             tick_size=default.tick_size,
             commission_per_unit=default.commission_per_unit,
             fractional_units=True,
+            commission_pct=default.commission_pct,
+            slippage_pct=default.slippage_pct,
         )
 
     default = DEFAULT_SPECS["_default_equity"]
@@ -87,4 +108,6 @@ def get_spec(symbol: str, overrides: dict | None = None) -> InstrumentSpec:
         multiplier=default.multiplier,
         tick_size=default.tick_size,
         commission_per_unit=default.commission_per_unit,
+        commission_pct=default.commission_pct,
+        slippage_pct=default.slippage_pct,
     )

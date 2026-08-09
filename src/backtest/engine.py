@@ -59,6 +59,17 @@ class BacktestResult:
     trades: list[Trade] = field(default_factory=list)
 
 
+def _trade_cost(units: float, price: float, spec: InstrumentSpec, slippage_ticks: float) -> float:
+    """Fixed per-unit costs (equities/futures: commission_per_unit + tick-based
+    slippage) plus percentage-of-notional costs (crypto: commission_pct +
+    slippage_pct) - additive so existing fixed-cost specs are unaffected by
+    the percentage fields defaulting to 0.0."""
+    fixed = units * (spec.commission_per_unit + slippage_ticks * spec.tick_size)
+    notional = units * price * spec.multiplier
+    pct = notional * (spec.commission_pct + spec.slippage_pct)
+    return fixed + pct
+
+
 def _position_size(
     equity: float,
     price: float,
@@ -136,7 +147,7 @@ def run_backtest(
         if p != current_direction:
             if current_direction != 0:
                 # Close the existing leg.
-                exit_cost = current_units * (spec.commission_per_unit + slippage_ticks * spec.tick_size)
+                exit_cost = _trade_cost(current_units, o, spec, slippage_ticks)
                 equity -= exit_cost
                 gross_pnl = current_units * current_direction * (o - entry_price) * spec.multiplier
                 trade = Trade(
@@ -159,7 +170,7 @@ def run_backtest(
 
             if p != 0:
                 new_units = _position_size(equity, o, spec, capital_fraction, sizing, fixed_units)
-                entry_cost = new_units * (spec.commission_per_unit + slippage_ticks * spec.tick_size)
+                entry_cost = _trade_cost(new_units, o, spec, slippage_ticks)
                 if new_units > 0:
                     equity -= entry_cost
                     current_direction = p
@@ -182,7 +193,7 @@ def run_backtest(
     # Close any position still open at the end of the data, at the last close.
     if current_direction != 0:
         last_price = close[-1]
-        exit_cost = current_units * (spec.commission_per_unit + slippage_ticks * spec.tick_size)
+        exit_cost = _trade_cost(current_units, last_price, spec, slippage_ticks)
         gross_pnl = current_units * current_direction * (last_price - entry_price) * spec.multiplier
         trade = Trade(
             entry_time=entry_time,
