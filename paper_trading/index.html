@@ -72,6 +72,30 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
+
+  .ambient-field { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .ambient-grid {
+    position: absolute; inset: -10% -10%; opacity: 0.35;
+    background-image:
+      repeating-linear-gradient(0deg, var(--scan-wash) 0, var(--scan-wash) 1px, transparent 1px, transparent 64px),
+      repeating-linear-gradient(90deg, var(--scan-wash) 0, var(--scan-wash) 1px, transparent 1px, transparent 64px);
+    animation: ambient-grid-drift 34s linear infinite;
+    mask-image: radial-gradient(circle at 50% 15%, black, transparent 72%);
+    -webkit-mask-image: radial-gradient(circle at 50% 15%, black, transparent 72%);
+  }
+  @keyframes ambient-grid-drift { from { background-position: 0 0, 0 0; } to { background-position: 64px 64px, -64px 64px; } }
+  .ambient-dot {
+    position: absolute; border-radius: 50%; filter: blur(1px);
+    background: radial-gradient(circle, var(--scan-glow), transparent 70%);
+    animation: ambient-drift 16s ease-in-out infinite;
+  }
+  @keyframes ambient-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+    50% { transform: translate(16px, -24px) scale(1.15); opacity: 0.65; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-grid, .ambient-dot { animation: none; }
+  }
   .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
   .good { color: var(--good); }
   .critical { color: var(--critical); }
@@ -189,7 +213,27 @@
 
   .foot { padding: 6px 4px 0; display: flex; flex-direction: column; gap: 4px; }
   .foot p { margin: 0; font-size: var(--fs-xs); color: var(--ink-muted); }
+
+  .news-list { display: flex; flex-direction: column; gap: 2px; }
+  .news-item { display: flex; flex-direction: column; gap: 3px; padding: 9px 4px; border-bottom: 1px solid var(--border); text-decoration: none; color: inherit; }
+  .news-item:last-child { border-bottom: none; }
+  .news-item:hover .news-title { color: var(--scan); }
+  .news-title { font-size: var(--fs-sm); font-weight: 600; color: var(--ink); transition: color 0.12s ease; }
+  .news-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: var(--fs-xs); color: var(--ink-muted); }
+  .news-source { font-weight: 600; }
+  .news-tag {
+    font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--scan); background: var(--scan-wash); border-radius: 999px; padding: 1px 7px;
+  }
 </style>
+
+<div class="ambient-field" aria-hidden="true">
+  <div class="ambient-grid"></div>
+  <div class="ambient-dot" style="top:6%; left:3%; width:120px; height:120px; animation-delay:0s;"></div>
+  <div class="ambient-dot" style="top:70%; left:95%; width:160px; height:160px; animation-delay:-4s;"></div>
+  <div class="ambient-dot" style="top:38%; left:97%; width:90px; height:90px; animation-delay:-9s;"></div>
+  <div class="ambient-dot" style="top:90%; left:6%; width:110px; height:110px; animation-delay:-6s;"></div>
+</div>
 
 <div class="shell">
   <header class="hero">
@@ -224,6 +268,13 @@
     <div class="heat-grid" id="moversGrid"></div>
   </div>
 
+  <div id="newsSection" style="display:none; flex-direction:column; gap:22px;">
+    <div class="section-label">Headlines</div>
+    <div class="panel">
+      <div class="news-list" id="newsList"></div>
+    </div>
+  </div>
+
   <footer class="foot">
     <p>Simulated, not real money - no trades are ever actually placed. Not investment advice.</p>
     <p>Rebuilt every hourly check-in from real Crypto.com Exchange data via GitHub Actions - independent of any chat session being open.</p>
@@ -239,6 +290,7 @@
   const FEAR_GREED = {"updated_at_utc": "2026-08-09T19:19:25.120665Z", "value": 31, "classification": "Fear", "timestamp": "2026-08-09T00:00:00Z"};
   const TOP_MOVERS = [{"symbol": "CASHCATUSD", "price": 0.1399, "change_24h_pct": 25.22, "high_24h": 0.14044, "low_24h": 0.10295, "pct_from_24h_high": -0.385, "range_position": 0.986, "volume_24h_usd": 224786.08, "thin_liquidity": false, "as_of": "2026-08-09T19:19:16.500000Z", "rank": 11}, {"symbol": "BOMEUSD", "price": 0.00077935, "change_24h_pct": 25.18, "high_24h": 0.00077935, "low_24h": 0.00062259, "pct_from_24h_high": 0.0, "range_position": 1.0, "volume_24h_usd": 6951.44, "thin_liquidity": true, "as_of": "2026-08-09T19:19:23.500000Z", "rank": 1}, {"symbol": "FWOGUSD", "price": 0.0045922, "change_24h_pct": 14.0, "high_24h": 0.0045923, "low_24h": 0.0040282, "pct_from_24h_high": -0.002, "range_position": 1.0, "volume_24h_usd": 117.67, "thin_liquidity": true, "as_of": "2026-08-09T19:19:24.256000Z", "rank": 7}, {"symbol": "PUMPUSD", "price": 0.0026953, "change_24h_pct": 13.14, "high_24h": 0.0027433, "low_24h": 0.0023733, "pct_from_24h_high": -1.75, "range_position": 0.87, "volume_24h_usd": 41353.21, "thin_liquidity": false, "as_of": "2026-08-09T19:19:23.914000Z", "rank": 16}, {"symbol": "WENUSD", "price": 3.6125e-06, "change_24h_pct": -10.71, "high_24h": 4.0979e-06, "low_24h": 3.403e-06, "pct_from_24h_high": -11.845, "range_position": 0.301, "volume_24h_usd": 1102.47, "thin_liquidity": true, "as_of": "2026-08-09T19:19:00.256000Z"}, {"symbol": "CATIUSD", "price": 0.044703, "change_24h_pct": -10.51, "high_24h": 0.060147, "low_24h": 0.042271, "pct_from_24h_high": -25.677, "range_position": 0.136, "volume_24h_usd": 46437.28, "thin_liquidity": false, "as_of": "2026-08-09T19:19:23.617000Z"}, {"symbol": "CHILLGUYUSD", "price": 0.01151, "change_24h_pct": 9.83, "high_24h": 0.01151, "low_24h": 0.01022, "pct_from_24h_high": 0.0, "range_position": 1.0, "volume_24h_usd": 5255.95, "thin_liquidity": true, "as_of": "2026-08-09T19:19:23.617000Z", "rank": 8}, {"symbol": "GOATUSD", "price": 0.01501, "change_24h_pct": 9.48, "high_24h": 0.01519, "low_24h": 0.01371, "pct_from_24h_high": -1.185, "range_position": 0.878, "volume_24h_usd": 3175.3, "thin_liquidity": true, "as_of": "2026-08-09T19:19:24.272000Z", "rank": 15}, {"symbol": "AIXBTUSD", "price": 0.01944, "change_24h_pct": 9.46, "high_24h": 0.01944, "low_24h": 0.01776, "pct_from_24h_high": 0.0, "range_position": 1.0, "volume_24h_usd": 59.64, "thin_liquidity": true, "as_of": "2026-08-09T19:19:23.617000Z", "rank": 9}, {"symbol": "MYROUSD", "price": 0.0021074, "change_24h_pct": -8.78, "high_24h": 0.0023102, "low_24h": 0.0017866, "pct_from_24h_high": -8.778, "range_position": 0.613, "volume_24h_usd": 1499.23, "thin_liquidity": true, "as_of": "2026-08-09T19:19:00.249000Z"}, {"symbol": "ACTUSD", "price": 0.01069, "change_24h_pct": 8.09, "high_24h": 0.01069, "low_24h": 0.00966, "pct_from_24h_high": 0.0, "range_position": 1.0, "volume_24h_usd": 1603.6, "thin_liquidity": true, "as_of": "2026-08-09T19:19:24.272000Z", "rank": 6}, {"symbol": "USELESSUSD", "price": 0.03705, "change_24h_pct": -8.05, "high_24h": 0.04091, "low_24h": 0.036796, "pct_from_24h_high": -9.435, "range_position": 0.062, "volume_24h_usd": 18633.64, "thin_liquidity": false, "as_of": "2026-08-09T19:19:23.256000Z"}];
   const WIDE_UNIVERSE_SIZE = 57;
+  const TOP_NEWS = [];
 
   const FONT_MONO = 'ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace';
 
@@ -260,6 +312,16 @@
     if (!s) return 'not seeded yet';
     const d = new Date(s);
     return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
+  }
+  function escHtml(s) { return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  function fmtNewsAge(s) {
+    if (!s) return '';
+    const d = new Date(s);
+    if (isNaN(d)) return '';
+    const mins = Math.max(0, (Date.now() - d.getTime()) / 60000);
+    if (mins < 60) return Math.round(mins) + 'm ago';
+    if (mins < 1440) return Math.round(mins / 60) + 'h ago';
+    return Math.round(mins / 1440) + 'd ago';
   }
   function hexToRgba(hex, alpha) {
     const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || '');
@@ -390,6 +452,25 @@
     }).join('');
   }
 
+  function renderHeadlines() {
+    const items = TOP_NEWS || [];
+    const section = document.getElementById('newsSection');
+    if (!items.length) {
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = 'flex';
+    document.getElementById('newsList').innerHTML = items.map((n) => {
+      const href = /^https?:\/\//i.test(n.link || '') ? n.link : '#';
+      const tags = (n.tags || []).map((t) => `<span class="news-tag">${escHtml(t)}</span>`).join('');
+      const age = fmtNewsAge(n.published_utc);
+      return `<a class="news-item" href="${escHtml(href)}" target="_blank" rel="noopener noreferrer">
+        <span class="news-title">${escHtml(n.title)}</span>
+        <span class="news-meta"><span class="news-source">${escHtml(n.source || '')}</span>${age ? ' · ' + age : ''}${tags}</span>
+      </a>`;
+    }).join('');
+  }
+
   function checkStaleness() {
     const timestamps = [
       ...Object.values(TRACK_SUMMARIES).map((s) => s && s.updated_at_utc),
@@ -415,6 +496,7 @@
     renderMarketStats();
     renderNavCards();
     renderTopMovers();
+    renderHeadlines();
     checkStaleness();
   }
 

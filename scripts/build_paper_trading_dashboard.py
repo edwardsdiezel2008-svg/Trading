@@ -21,6 +21,7 @@ MEMECOIN_SCAN_PATH = "paper_trading/memecoin_scan.json"
 WIDE_MEMECOIN_SCAN_PATH = "paper_trading/memecoin_wide_scan.json"
 BTC_MARKET_SNAPSHOT_PATH = "paper_trading/btc_market_snapshot.json"
 FEAR_GREED_PATH = "paper_trading/fear_greed.json"
+NEWS_PATH = "paper_trading/news.json"
 CAPITAL = 100_000.0
 
 # (file suffix, template placeholder prefix, bars placeholder, walk-forward placeholder)
@@ -191,7 +192,7 @@ def summarize_track(positions, label, symbol):
     }
 
 
-def build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_greed, correlations):
+def build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_greed, correlations, news):
     with open(TEMPLATE_PATH) as f:
         out = f.read()
 
@@ -208,11 +209,12 @@ def build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_g
     out = out.replace("__BTC_MARKET_SNAPSHOT_JSON__", json.dumps(market_snapshot))
     out = out.replace("__FEAR_GREED_JSON__", json.dumps(fear_greed))
     out = out.replace("__CORRELATIONS_JSON__", json.dumps(correlations))
+    out = out.replace("__NEWS_JSON__", json.dumps(news))
 
     for _, pos_key, trades_key, track_key, bars_key, wf_key in TRACKS:
         for key in (pos_key, trades_key, track_key, bars_key, wf_key):
             assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
-    for key in ("MEMECOIN_SCAN_JSON", "WIDE_MEMECOIN_SCAN_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "CORRELATIONS_JSON"):
+    for key in ("MEMECOIN_SCAN_JSON", "WIDE_MEMECOIN_SCAN_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "CORRELATIONS_JSON", "NEWS_JSON"):
         assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
 
     with open(OUTPUT_PATH, "w") as f:
@@ -220,7 +222,7 @@ def build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_g
     print(f"Wrote {OUTPUT_PATH} ({os.path.getsize(OUTPUT_PATH) / 1024:.1f} KB)")
 
 
-def build_index_page(loaded, wide_scan, market_snapshot, fear_greed):
+def build_index_page(loaded, wide_scan, market_snapshot, fear_greed, news):
     if not os.path.exists(INDEX_TEMPLATE_PATH):
         print(f"Skipping {INDEX_OUTPUT_PATH}: {INDEX_TEMPLATE_PATH} not found")
         return
@@ -249,7 +251,10 @@ def build_index_page(loaded, wide_scan, market_snapshot, fear_greed):
     out = out.replace("__TOP_MOVERS_JSON__", json.dumps(top_movers))
     out = out.replace("__WIDE_UNIVERSE_SIZE__", json.dumps(wide_scan.get("universe_size", 0)))
 
-    for key in ("TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE"):
+    top_news = (news.get("items") or [])[:6]
+    out = out.replace("__TOP_NEWS_JSON__", json.dumps(top_news))
+
+    for key in ("TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE", "TOP_NEWS_JSON"):
         assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
 
     with open(INDEX_OUTPUT_PATH, "w") as f:
@@ -289,10 +294,15 @@ def main():
         with open(FEAR_GREED_PATH) as f:
             fear_greed = json.load(f)
 
+    news = {"updated_at_utc": None, "sources": [], "items": []}
+    if os.path.exists(NEWS_PATH):
+        with open(NEWS_PATH) as f:
+            news = json.load(f)
+
     correlations = compute_correlations()
 
-    build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_greed, correlations)
-    build_index_page(loaded, wide_scan, market_snapshot, fear_greed)
+    build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_greed, correlations, news)
+    build_index_page(loaded, wide_scan, market_snapshot, fear_greed, news)
 
 
 if __name__ == "__main__":

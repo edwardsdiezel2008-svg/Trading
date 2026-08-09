@@ -89,6 +89,30 @@
   }
   .view-fade { animation: view-fade-in 0.25s ease; }
   @keyframes view-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .ambient-field { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .ambient-grid {
+    position: absolute; inset: -10% -10%; opacity: 0.35;
+    background-image:
+      repeating-linear-gradient(0deg, var(--scan-wash) 0, var(--scan-wash) 1px, transparent 1px, transparent 64px),
+      repeating-linear-gradient(90deg, var(--scan-wash) 0, var(--scan-wash) 1px, transparent 1px, transparent 64px);
+    animation: ambient-grid-drift 34s linear infinite;
+    mask-image: radial-gradient(circle at 50% 20%, black, transparent 72%);
+    -webkit-mask-image: radial-gradient(circle at 50% 20%, black, transparent 72%);
+  }
+  @keyframes ambient-grid-drift { from { background-position: 0 0, 0 0; } to { background-position: 64px 64px, -64px 64px; } }
+  .ambient-dot {
+    position: absolute; border-radius: 50%; filter: blur(1px);
+    background: radial-gradient(circle, var(--scan-glow), transparent 70%);
+    animation: ambient-drift 16s ease-in-out infinite;
+  }
+  @keyframes ambient-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+    50% { transform: translate(16px, -24px) scale(1.15); opacity: 0.65; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-grid, .ambient-dot { animation: none; }
+  }
   .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
   .good { color: var(--good); }
   .critical { color: var(--critical); }
@@ -274,6 +298,19 @@
     .scan-pulse-dot, .breakout-yes, .scanner-sweep-line { animation: none; }
   }
 
+  .news-list { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 2px; max-height: 340px; overflow-y: auto; }
+  .news-item { display: flex; flex-direction: column; gap: 3px; padding: 9px 4px; border-bottom: 1px solid var(--border); text-decoration: none; color: inherit; }
+  .news-item:last-child { border-bottom: none; }
+  .news-item:hover .news-title { color: var(--scan); }
+  .news-title { font-size: var(--fs-sm); font-weight: 600; color: var(--ink); transition: color 0.12s ease; }
+  .news-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: var(--fs-xs); color: var(--ink-muted); }
+  .news-source { font-weight: 600; }
+  .news-tag {
+    font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--scan); background: var(--scan-wash); border-radius: 999px; padding: 1px 7px;
+  }
+  .news-empty { font-size: var(--fs-sm); color: var(--ink-muted); padding: 6px 4px; }
+
   .book-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   @media (max-width: 640px) { .book-grid { grid-template-columns: 1fr; } }
   .book-side h3 { margin: 0 0 6px; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); }
@@ -287,6 +324,15 @@
   .funding-pos { color: var(--good); }
   .funding-neg { color: var(--critical); }
 </style>
+
+<div class="ambient-field" aria-hidden="true">
+  <div class="ambient-grid"></div>
+  <div class="ambient-dot" style="top:8%; left:3%; width:120px; height:120px; animation-delay:0s;"></div>
+  <div class="ambient-dot" style="top:68%; left:95%; width:160px; height:160px; animation-delay:-4s;"></div>
+  <div class="ambient-dot" style="top:32%; left:97%; width:90px; height:90px; animation-delay:-9s;"></div>
+  <div class="ambient-dot" style="top:88%; left:6%; width:110px; height:110px; animation-delay:-6s;"></div>
+  <div class="ambient-dot" style="top:4%; left:60%; width:70px; height:70px; animation-delay:-11s;"></div>
+</div>
 
 <div class="app">
   <header class="topbar">
@@ -342,6 +388,16 @@
     </div>
     <p class="panel-note">Pairwise correlation of daily returns - how much of ETH/SOL's simulated performance is just BTC beta versus something genuinely independent. 1.00 = moves in lockstep, 0.00 = unrelated, negative = moves opposite.</p>
     <div class="corr-grid" id="corrGrid"></div>
+  </div>
+
+  <div class="panel scanner-sweep-wrap" id="newsPanel" style="display:none;">
+    <div class="scanner-sweep-line"></div>
+    <div class="panel-head">
+      <h2><span class="scan-pulse-dot" style="width:6px; height:6px; margin-right:6px;"></span>Market news</h2>
+      <span class="panel-hint" id="newsHint">—</span>
+    </div>
+    <p class="panel-note">Live headlines from mainstream crypto news outlets, tagged by likely relevance - context for the price action above, not trading signals.</p>
+    <div class="news-list" id="newsList"></div>
   </div>
 
   <div class="tab-bar" id="tabBar">
@@ -578,6 +634,7 @@
   const BTC_MARKET_SNAPSHOT = {"updated_at_utc": "2026-08-09T19:19:24.879851Z", "order_book": {"bids": [["65212.44", "0.36519"], ["65212.19", "0.02302"], ["65210.66", "0.00766"], ["65209.98", "0.00002"], ["65207.52", "0.02000"], ["65206.48", "0.00015"], ["65206.47", "0.01051"], ["65206.46", "0.26304"], ["65206.45", "0.03066"], ["65205.06", "0.02200"]], "asks": [["65212.45", "0.11039"], ["65212.86", "0.02302"], ["65214.41", "0.02000"], ["65216.27", "0.00321"], ["65217.00", "0.03066"], ["65217.01", "0.08813"], ["65217.02", "0.12305"], ["65217.99", "0.00766"], ["65218.29", "0.02069"], ["65218.51", "0.00767"]], "timestamp": "2026-08-09T19:19:24.524000Z"}, "funding_rate": {"rate": "0.000003954", "timestamp": "2026-08-09T19:19:05Z", "instrument_name": "BTCUSD-PERP"}};
   const FEAR_GREED = {"updated_at_utc": "2026-08-09T19:19:25.120665Z", "value": 31, "classification": "Fear", "timestamp": "2026-08-09T00:00:00Z"};
   const CORRELATIONS = {"assets": ["BTC", "ETH", "SOL"], "pairs": [{"a": "BTC", "b": "ETH", "correlation": 0.807, "n": 2147}, {"a": "BTC", "b": "SOL", "correlation": 0.68, "n": 1937}, {"a": "ETH", "b": "SOL", "correlation": 0.719, "n": 1937}]};
+  const NEWS = {"updated_at_utc": null, "sources": [], "items": []};
   const TRACKS = {
     daily: {
       label: 'Daily', symbol: 'BTC/USDT', dateUnit: 'Day', intraday: false,
@@ -622,6 +679,16 @@
       : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   }
   function fmtUpdated(s) { if (!s) return 'not seeded yet'; const d = new Date(s); return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }); }
+  function escHtml(s) { return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  function fmtNewsAge(s) {
+    if (!s) return '';
+    const d = new Date(s);
+    if (isNaN(d)) return '';
+    const mins = Math.max(0, (Date.now() - d.getTime()) / 60000);
+    if (mins < 60) return Math.round(mins) + 'm ago';
+    if (mins < 1440) return Math.round(mins / 60) + 'h ago';
+    return Math.round(mins / 1440) + 'd ago';
+  }
 
   function setupCanvas(canvas) {
     const dpr = window.devicePixelRatio || 1;
@@ -1394,6 +1461,28 @@
     }).join('')).join('');
   }
 
+  function renderNews() {
+    const panel = document.getElementById('newsPanel');
+    const items = NEWS.items || [];
+    if (!items.length) {
+      panel.style.display = 'none';
+      return;
+    }
+    panel.style.display = '';
+    document.getElementById('newsHint').textContent = NEWS.updated_at_utc
+      ? 'Updated ' + fmtUpdated(NEWS.updated_at_utc) : '—';
+
+    document.getElementById('newsList').innerHTML = items.map((n) => {
+      const href = /^https?:\/\//i.test(n.link || '') ? n.link : '#';
+      const tags = (n.tags || []).map((t) => `<span class="news-tag">${escHtml(t)}</span>`).join('');
+      const age = fmtNewsAge(n.published_utc);
+      return `<a class="news-item" href="${escHtml(href)}" target="_blank" rel="noopener noreferrer">
+        <span class="news-title">${escHtml(n.title)}</span>
+        <span class="news-meta"><span class="news-source">${escHtml(n.source || '')}</span>${age ? ' · ' + age : ''}${tags}</span>
+      </a>`;
+    }).join('');
+  }
+
   // ---------- data freshness ----------
   const STALE_THRESHOLD_HOURS = 3; // hourly cadence + generous buffer before flagging
 
@@ -1425,6 +1514,7 @@
     renderMarketSnapshot();
     renderOverview();
     renderCorrelations();
+    renderNews();
   }
 
   if (!hasDeepLink) render('daily');
