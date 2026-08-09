@@ -279,6 +279,11 @@
       <span><strong>Thin data - read with caution.</strong> <span id="thinDataText"></span></span>
     </div>
 
+    <div class="thin-data-note" id="unprofitableNote">
+      <span>🚫</span>
+      <span><strong>Not currently profitable.</strong> <span id="unprofitableText"></span></span>
+    </div>
+
     <div class="stat-tiles" id="statTiles"></div>
 
     <div class="panel">
@@ -799,6 +804,15 @@
       thinNote.classList.add('visible');
     } else {
       thinNote.classList.remove('visible');
+    }
+
+    const unprofitableNote = document.getElementById('unprofitableNote');
+    if (rows.length && rows.every((r) => r.totalReturn <= 0)) {
+      document.getElementById('unprofitableText').textContent =
+        `Every strategy on this track is net-negative after realistic trading costs (${track.label}, full backtest period). This is not a track to trade live right now.`;
+      unprofitableNote.classList.add('visible');
+    } else {
+      unprofitableNote.classList.remove('visible');
     }
 
     if (!rows.length) {
