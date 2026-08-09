@@ -61,6 +61,18 @@ def _downsample_equity_curve(index, equity_curve, max_points=250):
     return [[str(index[i]), round(float(equity_curve.iloc[i]), 2)] for i in idxs]
 
 
+def _buy_and_hold_curve(bars, capital):
+    """The obvious question the strategy comparison chart couldn't answer on
+    its own: would just holding the asset have done better than any of
+    this? No costs modeled - a single buy at the first bar and a single
+    sell at the last, whose two-trade cost is negligible next to a multi-
+    year hold."""
+    initial_price = bars["close"].iloc[0]
+    if not initial_price:
+        return pd.Series(capital, index=bars.index)
+    return capital * (bars["close"] / initial_price)
+
+
 def _update_track_record(bars, strategy_name, result, capital, tracking_start, track_record_path):
     if tracking_start in bars.index:
         start_idx = bars.index.get_loc(tracking_start)
@@ -157,6 +169,7 @@ def main(argv=None):
             "updated_at_utc": datetime.now(timezone.utc).isoformat(),
             "latest_bar": str(bars.index[-1]),
             "bar_count": len(bars),
+            "buy_and_hold_equity_curve": _downsample_equity_curve(bars.index, _buy_and_hold_curve(bars, CAPITAL)),
             "strategies": positions,
         }, f, indent=2)
 
@@ -170,6 +183,9 @@ def main(argv=None):
         "| Strategy | Position | Equity | Total Return | Sharpe | Trades |",
         "|---|---|---|---|---|---|",
     ]
+    bh_final = float(_buy_and_hold_curve(bars, CAPITAL).iloc[-1])
+    bh_return = bh_final / CAPITAL - 1
+    lines.append(f"| *Buy & Hold (benchmark)* | — | ${bh_final:,.0f} | {bh_return*100:+.1f}% | — | 1 |")
     for name, pos, equity, total_ret, sharpe, n_trades in sorted(summary_rows, key=lambda r: -r[3]):
         label = "LONG" if pos > 0 else "SHORT" if pos < 0 else "FLAT"
         sharpe_str = f"{sharpe:.2f}" if sharpe == sharpe else "—"  # NaN check

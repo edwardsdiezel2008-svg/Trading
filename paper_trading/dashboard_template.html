@@ -716,6 +716,7 @@
     const strategies = track.positions.strategies;
     const series = order.map((name) => ({ name, points: (strategies[name] && strategies[name].equity_curve) || [] }))
       .filter((s) => s.points.length > 1);
+    const bhPoints = track.positions.buy_and_hold_equity_curve || [];
     if (!series.length) {
       ctx.font = '13px ' + FONT_MONO;
       ctx.fillStyle = THEME.ink2;
@@ -729,6 +730,7 @@
 
     let minY = Infinity, maxY = -Infinity;
     series.forEach((s) => s.points.forEach(([, v]) => { minY = Math.min(minY, v); maxY = Math.max(maxY, v); }));
+    bhPoints.forEach(([, v]) => { minY = Math.min(minY, v); maxY = Math.max(maxY, v); });
     minY = Math.min(minY, 0); // always show the zero/breakeven line in range
     if (minY === maxY) { minY -= 1; maxY += 1; }
     const pad = (maxY - minY) * 0.08 || 1;
@@ -757,6 +759,16 @@
       });
       ctx.strokeStyle = color; ctx.lineWidth = 1.6; ctx.lineJoin = 'round'; ctx.stroke();
     });
+
+    if (bhPoints.length > 1) {
+      ctx.beginPath();
+      bhPoints.forEach(([, v], i) => {
+        const x = xFor(i, bhPoints.length), y = yFor(v);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = THEME.ink; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+      ctx.setLineDash([6, 4]); ctx.stroke(); ctx.setLineDash([]);
+    }
 
     ctx.font = '10px ' + FONT_MONO; ctx.fillStyle = THEME.inkMuted;
     const longest = series.find((s) => s.points.length === maxLen) || series[0];
@@ -835,11 +847,17 @@
     const best = rows[0];
     const worst = rows[rows.length - 1];
     const openCount = rows.filter((r) => r.position !== 0).length;
+    const bhCurve = POSITIONS.buy_and_hold_equity_curve;
+    const bhReturn = (bhCurve && bhCurve.length) ? bhCurve[bhCurve.length - 1][1] / CAPITAL - 1 : null;
+    const beatBhTile = bhReturn !== null
+      ? `<div class="tile"><span class="tile-label">Beat Buy &amp; Hold</span><span class="tile-value">${rows.filter((r) => r.totalReturn > bhReturn).length} / ${rows.length}</span><span class="tile-sub">Buy &amp; Hold: ${fmtSignedPct(bhReturn)}</span></div>`
+      : '';
     document.getElementById('statTiles').innerHTML = `
       <div class="tile"><span class="tile-label">Profitable strategies</span><span class="tile-value">${profitable} / ${rows.length}</span></div>
       <div class="tile"><span class="tile-label">Best performer</span><span class="tile-value good">${fmtSignedPct(best.totalReturn)}</span><span class="tile-sub">${best.name}</span></div>
       <div class="tile"><span class="tile-label">Worst performer</span><span class="tile-value critical">${fmtSignedPct(worst.totalReturn)}</span><span class="tile-sub">${worst.name}</span></div>
       <div class="tile"><span class="tile-label">Open positions now</span><span class="tile-value">${openCount} / ${rows.length}</span></div>
+      ${beatBhTile}
     `;
 
     document.getElementById('strategyTbody').innerHTML = rows.map((r) => {
@@ -885,7 +903,7 @@
     document.getElementById('equityCurveHint').textContent = `${POSITIONS.bar_count.toLocaleString()} bars · $100,000 starting capital each`;
     document.getElementById('equityCurveLegend').innerHTML = order.map((name) =>
       `<span><i class="swatch" style="background:${seriesColorFor(name, order)}"></i>${name}</span>`
-    ).join('');
+    ).join('') + '<span><i class="swatch" style="background:var(--ink); opacity:0.6;"></i>Buy &amp; Hold (benchmark, dashed)</span>';
 
     drawCompareChart(rows);
     drawTrackRecordChart(track, order);
