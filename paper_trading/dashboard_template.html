@@ -627,6 +627,30 @@
       </div>
     </div>
 
+    <div class="panel">
+      <div class="panel-head">
+        <h2>🚩 Rug Pull Watch</h2>
+        <span class="panel-hint" id="rugAsOfHint">—</span>
+      </div>
+      <p class="panel-note">Flags coins with a severe 24h decline or drawdown from their own 24h high - the price-action <em>aftermath</em> a rug pull leaves behind (liquidity drained, price collapses), not the on-chain cause. This exchange is a curated, mainstream listing where a literal on-chain rug pull (LP drain, honeypot contract) is rare - most flags here will be ordinary high-volatility drawdowns, a broad market selloff, or a thin-liquidity air pocket, not an actual rug. There's no holder-concentration or liquidity-lock data behind this - it's a crash proxy from price/volume alone, not a verdict.</p>
+      <div class="stat-tiles" id="rugStatTiles"></div>
+      <div class="table-wrap" style="margin-top: 12px;">
+        <table id="rugTable">
+          <thead>
+            <tr>
+              <th>Coin</th>
+              <th class="num">24h Change</th>
+              <th class="num">vs 24h High</th>
+              <th class="num">24h Volume</th>
+              <th>Liquidity</th>
+              <th>Severity</th>
+            </tr>
+          </thead>
+          <tbody id="rugTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
     <footer class="foot">
       <p class="scope-note">Precise scan universe: 11 established meme coins (DOGE, SHIB, PEPE, FLOKI, BONK, WIF, FARTCOIN, TRUMP, BOME, HMSTR, ORDI). Wide scan universe: <span id="wideUniverseLabelFooter">—</span> meme/degen coins confirmed listed on Crypto.com Exchange (out of a larger candidate list - not every guessed ticker resolves). Neither covers new/micro-cap launches, which aren't available through this data source.</p>
       <p class="scope-note">Rebuilt each check-in from real Crypto.com Exchange data. Republished to this same link whenever the ranking changes.</p>
@@ -1253,6 +1277,7 @@
     drawMemeCompareChart(ranked);
     renderMemeHeatmap();
     renderWideScan();
+    renderRugWatch();
   }
 
   function renderMemeHeatmap() {
@@ -1309,6 +1334,53 @@
         <td>${liqPill}</td>
       </tr>`;
     }).join('');
+  }
+
+  // ---------- rug pull watch ----------
+  const RUG_SEVERE = { change: -30, fromHigh: -40 };
+  const RUG_ELEVATED = { change: -15, fromHigh: -25 };
+
+  function rugSeverityFor(r) {
+    if (r.change_24h_pct <= RUG_SEVERE.change || r.pct_from_24h_high <= RUG_SEVERE.fromHigh) return 'severe';
+    if (r.change_24h_pct <= RUG_ELEVATED.change || r.pct_from_24h_high <= RUG_ELEVATED.fromHigh) return 'elevated';
+    return null;
+  }
+
+  function renderRugWatch() {
+    const all = (WIDE_MEMECOIN_SCAN.ranked || []).concat(WIDE_MEMECOIN_SCAN.not_moving || []);
+    const flagged = all
+      .map((r) => ({ r, severity: rugSeverityFor(r) }))
+      .filter((x) => x.severity)
+      .sort((a, b) => Math.min(a.r.change_24h_pct, a.r.pct_from_24h_high) - Math.min(b.r.change_24h_pct, b.r.pct_from_24h_high));
+
+    document.getElementById('rugAsOfHint').textContent = all.length
+      ? 'As of: ' + fmtDate((all[0].as_of || '').replace('T', ' ').replace('Z', ''), true)
+      : '—';
+
+    const severeCount = flagged.filter((x) => x.severity === 'severe').length;
+    const thinFlaggedCount = flagged.filter((x) => x.r.thin_liquidity).length;
+    document.getElementById('rugStatTiles').innerHTML = `
+      <div class="tile"><span class="tile-label">Flagged</span><span class="tile-value ${flagged.length ? 'critical' : ''}">${flagged.length} / ${all.length}</span></div>
+      <div class="tile"><span class="tile-label">Severe</span><span class="tile-value critical">${severeCount}</span><span class="tile-sub">≥30% down or ≥40% off 24h high</span></div>
+      <div class="tile"><span class="tile-label">Thin liquidity among flagged</span><span class="tile-value">${thinFlaggedCount} / ${flagged.length || 0}</span><span class="tile-sub">easier to move, easier to fake</span></div>
+    `;
+
+    document.getElementById('rugTbody').innerHTML = flagged.length ? flagged.map(({ r, severity }) => {
+      const liqPill = r.thin_liquidity
+        ? '<span class="pill liq-thin">thin</span>'
+        : '<span class="pill liq-ok">ok</span>';
+      const sevPill = severity === 'severe'
+        ? '<span class="pill liq-thin">🚩 severe</span>'
+        : '<span class="pill pill-accent">⚠ elevated</span>';
+      return `<tr>
+        <td class="strategy-name">${r.symbol}</td>
+        <td class="num mono critical">${fmtSignedPct(r.change_24h_pct / 100)}</td>
+        <td class="num mono critical">${fmtSignedPct(r.pct_from_24h_high / 100)}</td>
+        <td class="num mono">${fmtMoney(r.volume_24h_usd)}</td>
+        <td>${liqPill}</td>
+        <td>${sevPill}</td>
+      </tr>`;
+    }).join('') : '<tr><td colspan="6" class="scope-note">Nothing crossing the crash thresholds right now - checked every hourly update.</td></tr>';
   }
 
   // ---------- tab wiring ----------
