@@ -59,6 +59,9 @@ jobs:
           python scripts/memecoin_scan_update.py
           python scripts/memecoin_wide_scan.py
 
+      - name: Fetch market news
+        run: python scripts/fetch_news.py
+
       - name: Rebuild dashboard HTML
         run: python scripts/build_paper_trading_dashboard.py
 
