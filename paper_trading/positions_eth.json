@@ -1,7 +1,7 @@
 {
   "symbol": "ETH_USDT",
   "freq": "1D",
-  "updated_at_utc": "2026-08-09T19:38:20.017440+00:00",
+  "updated_at_utc": "2026-08-09T19:41:22.124084+00:00",
   "latest_bar": "2026-08-09 00:00:00",
   "bar_count": 2148,
   "buy_and_hold_equity_curve": [
@@ -1003,14 +1003,14 @@
     ],
     [
       "2026-08-09 00:00:00",
-      557858.08
+      557953.85
     ]
   ],
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 635775.68,
+      "equity": 635884.98,
       "open_trade": {
         "direction": 1,
         "entry_price": 1918.05,
@@ -2016,14 +2016,14 @@
         ],
         [
           "2026-08-09 00:00:00",
-          635775.68
+          635884.98
         ]
       ]
     },
     "Donchian_Breakout(20)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 292794.49,
+      "equity": 292844.83,
       "open_trade": {
         "direction": 1,
         "entry_price": 1891.99,
@@ -3029,14 +3029,14 @@
         ],
         [
           "2026-08-09 00:00:00",
-          292794.49
+          292844.83
         ]
       ]
     },
     "MACD_Momentum(12/26/9)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 32268.39,
+      "equity": 32262.76,
       "open_trade": {
         "direction": -1,
         "entry_price": 1910.65,
@@ -4042,7 +4042,7 @@
         ],
         [
           "2026-08-09 00:00:00",
-          32268.39
+          32262.76
         ]
       ]
     },
@@ -7076,7 +7076,7 @@
     "ATR_Vol_Breakout(14,k=1.5)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 11674.94,
+      "equity": 11676.95,
       "open_trade": {
         "direction": 1,
         "entry_price": 1891.99,
@@ -8082,7 +8082,7 @@
         ],
         [
           "2026-08-09 00:00:00",
-          11674.94
+          11676.95
         ]
       ]
     }
