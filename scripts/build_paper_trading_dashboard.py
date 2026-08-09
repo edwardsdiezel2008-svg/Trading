@@ -1,7 +1,9 @@
-"""Inject current paper_trading state (both the daily and 15-minute tracks)
-into the dashboard template, producing a self-contained HTML file ready to
-publish as an Artifact. Run this after scripts/paper_trade_update.py
-whenever either track's state changes.
+"""Build both paper_trading HTML pages from current state:
+  - paper_trading/index.html     - minimal live overview (the site root)
+  - paper_trading/dashboard.html - full detailed dashboard (linked from index)
+
+Run this after scripts/paper_trade_update.py whenever any track's state
+changes.
 
 Usage: python scripts/build_paper_trading_dashboard.py
 """
@@ -13,10 +15,13 @@ import os
 
 TEMPLATE_PATH = "paper_trading/dashboard_template.html"
 OUTPUT_PATH = "paper_trading/dashboard.html"
+INDEX_TEMPLATE_PATH = "paper_trading/index_template.html"
+INDEX_OUTPUT_PATH = "paper_trading/index.html"
 MEMECOIN_SCAN_PATH = "paper_trading/memecoin_scan.json"
 WIDE_MEMECOIN_SCAN_PATH = "paper_trading/memecoin_wide_scan.json"
 BTC_MARKET_SNAPSHOT_PATH = "paper_trading/btc_market_snapshot.json"
 FEAR_GREED_PATH = "paper_trading/fear_greed.json"
+CAPITAL = 100_000.0
 
 # (file suffix, template placeholder prefix, bars placeholder, walk-forward placeholder)
 TRACKS = [
@@ -26,7 +31,18 @@ TRACKS = [
     ("_sol", "POSITIONS_SOL_JSON", "TRADES_SOL_JSON", "TRACK_RECORD_SOL_JSON", "BARS_SOL_JSON", "WALKFORWARD_SOL_JSON"),
 ]
 
+# suffix -> (hash-link key used by dashboard_template.html's tab wiring, nav label)
+TRACK_META = {
+    "": ("daily", "BTC Daily"),
+    "_15m": ("fifteenMin", "BTC 15-Minute"),
+    "_eth": ("eth", "ETH Daily"),
+    "_sol": ("sol", "SOL Daily"),
+}
+
 EMPTY_WALKFORWARD = {"symbol": None, "freq": None, "n_folds": 0, "generated_at_utc": None, "results": []}
+EMPTY_POSITIONS = {"symbol": None, "freq": None, "updated_at_utc": None, "latest_bar": None, "bar_count": 0, "strategies": {}}
+CHART_CANDLE_LIMIT = 200
+OVERVIEW_BARS_LIMIT = 30
 
 
 def load_walkforward(suffix):
@@ -35,10 +51,6 @@ def load_walkforward(suffix):
         return dict(EMPTY_WALKFORWARD)
     with open(path) as f:
         return json.load(f)
-
-EMPTY_POSITIONS = {"symbol": None, "freq": None, "updated_at_utc": None, "latest_bar": None, "bar_count": 0, "strategies": {}}
-
-CHART_CANDLE_LIMIT = 200
 
 
 def load_recent_bars(suffix, limit=CHART_CANDLE_LIMIT):
@@ -146,73 +158,141 @@ def load_track(suffix):
     return positions, trades, track_record
 
 
-def main():
+def summarize_track(positions, label, symbol):
+    """Lightweight per-track summary for the minimal landing page - avoids
+    embedding full per-strategy equity curves/trade logs there, which
+    belong on the detailed page only."""
+    strategies = positions.get("strategies") or {}
+    if not strategies:
+        return {"label": label, "symbol": symbol, "seeded": False}
+
+    rows = []
+    for name, p in strategies.items():
+        equity = p.get("equity") or 0
+        total_return = -1.0 if equity <= 0 else (equity / CAPITAL - 1)
+        rows.append({"name": name, "total_return": total_return})
+    rows.sort(key=lambda r: -r["total_return"])
+    profitable = sum(1 for r in rows if r["total_return"] > 0)
+
+    bh_curve = positions.get("buy_and_hold_equity_curve") or []
+    bh_return = (bh_curve[-1][1] / CAPITAL - 1) if bh_curve else None
+
+    return {
+        "label": label,
+        "symbol": symbol,
+        "seeded": True,
+        "updated_at_utc": positions.get("updated_at_utc"),
+        "bar_count": positions.get("bar_count", 0),
+        "total": len(rows),
+        "profitable": profitable,
+        "best_name": rows[0]["name"],
+        "best_return": rows[0]["total_return"],
+        "buy_and_hold_return": bh_return,
+    }
+
+
+def build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_greed, correlations):
     with open(TEMPLATE_PATH) as f:
         out = f.read()
 
     for suffix, pos_key, trades_key, track_key, bars_key, wf_key in TRACKS:
+        d = loaded[suffix]
+        out = out.replace(f"__{pos_key}__", json.dumps(d["positions"]))
+        out = out.replace(f"__{trades_key}__", json.dumps(d["trades"]))
+        out = out.replace(f"__{track_key}__", json.dumps(d["track_record"]))
+        out = out.replace(f"__{bars_key}__", json.dumps(d["bars"]))
+        out = out.replace(f"__{wf_key}__", json.dumps(d["walkforward"]))
+
+    out = out.replace("__MEMECOIN_SCAN_JSON__", json.dumps(memecoin_scan))
+    out = out.replace("__WIDE_MEMECOIN_SCAN_JSON__", json.dumps(wide_scan))
+    out = out.replace("__BTC_MARKET_SNAPSHOT_JSON__", json.dumps(market_snapshot))
+    out = out.replace("__FEAR_GREED_JSON__", json.dumps(fear_greed))
+    out = out.replace("__CORRELATIONS_JSON__", json.dumps(correlations))
+
+    for _, pos_key, trades_key, track_key, bars_key, wf_key in TRACKS:
+        for key in (pos_key, trades_key, track_key, bars_key, wf_key):
+            assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
+    for key in ("MEMECOIN_SCAN_JSON", "WIDE_MEMECOIN_SCAN_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "CORRELATIONS_JSON"):
+        assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
+
+    with open(OUTPUT_PATH, "w") as f:
+        f.write(out)
+    print(f"Wrote {OUTPUT_PATH} ({os.path.getsize(OUTPUT_PATH) / 1024:.1f} KB)")
+
+
+def build_index_page(loaded, wide_scan, market_snapshot, fear_greed):
+    if not os.path.exists(INDEX_TEMPLATE_PATH):
+        print(f"Skipping {INDEX_OUTPUT_PATH}: {INDEX_TEMPLATE_PATH} not found")
+        return
+
+    with open(INDEX_TEMPLATE_PATH) as f:
+        out = f.read()
+
+    summaries = {}
+    for suffix, (key, label) in TRACK_META.items():
+        symbol = loaded[suffix]["positions"].get("symbol") or {"": "BTC/USDT", "_15m": "BTC/USDT", "_eth": "ETH/USDT", "_sol": "SOL/USDT"}[suffix]
+        summaries[key] = summarize_track(loaded[suffix]["positions"], label, symbol)
+    out = out.replace("__TRACK_SUMMARIES_JSON__", json.dumps(summaries))
+
+    overview_bars = {
+        "BTC": loaded[""]["bars"][-OVERVIEW_BARS_LIMIT:],
+        "ETH": loaded["_eth"]["bars"][-OVERVIEW_BARS_LIMIT:],
+        "SOL": loaded["_sol"]["bars"][-OVERVIEW_BARS_LIMIT:],
+    }
+    out = out.replace("__OVERVIEW_BARS_JSON__", json.dumps(overview_bars))
+
+    out = out.replace("__BTC_MARKET_SNAPSHOT_JSON__", json.dumps(market_snapshot))
+    out = out.replace("__FEAR_GREED_JSON__", json.dumps(fear_greed))
+
+    all_coins = (wide_scan.get("ranked") or []) + (wide_scan.get("not_moving") or [])
+    top_movers = sorted(all_coins, key=lambda c: -abs(c.get("change_24h_pct", 0)))[:12]
+    out = out.replace("__TOP_MOVERS_JSON__", json.dumps(top_movers))
+    out = out.replace("__WIDE_UNIVERSE_SIZE__", json.dumps(wide_scan.get("universe_size", 0)))
+
+    for key in ("TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE"):
+        assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
+
+    with open(INDEX_OUTPUT_PATH, "w") as f:
+        f.write(out)
+    print(f"Wrote {INDEX_OUTPUT_PATH} ({os.path.getsize(INDEX_OUTPUT_PATH) / 1024:.1f} KB)")
+
+
+def main():
+    loaded = {}
+    for suffix, *_ in TRACKS:
         positions, trades, track_record = load_track(suffix)
-        out = out.replace(f"__{pos_key}__", json.dumps(positions))
-        out = out.replace(f"__{trades_key}__", json.dumps(trades))
-        out = out.replace(f"__{track_key}__", json.dumps(track_record))
-        out = out.replace(f"__{bars_key}__", json.dumps(load_recent_bars(suffix)))
-        out = out.replace(f"__{wf_key}__", json.dumps(load_walkforward(suffix)))
+        loaded[suffix] = {
+            "positions": positions,
+            "trades": trades,
+            "track_record": track_record,
+            "bars": load_recent_bars(suffix),
+            "walkforward": load_walkforward(suffix),
+        }
 
     memecoin_scan = {"ranked": [], "skipped": [], "updated_at_utc": None, "lookback_bars": 20, "atr_period": 14}
     if os.path.exists(MEMECOIN_SCAN_PATH):
         with open(MEMECOIN_SCAN_PATH) as f:
             memecoin_scan = json.load(f)
-    out = out.replace("__MEMECOIN_SCAN_JSON__", json.dumps(memecoin_scan))
 
     wide_scan = {"ranked": [], "not_moving": [], "updated_at_utc": None, "universe_size": 0, "min_volume_usd": 10_000}
     if os.path.exists(WIDE_MEMECOIN_SCAN_PATH):
         with open(WIDE_MEMECOIN_SCAN_PATH) as f:
             wide_scan = json.load(f)
-    out = out.replace("__WIDE_MEMECOIN_SCAN_JSON__", json.dumps(wide_scan))
 
     market_snapshot = {"updated_at_utc": None, "order_book": None, "funding_rate": None}
     if os.path.exists(BTC_MARKET_SNAPSHOT_PATH):
         with open(BTC_MARKET_SNAPSHOT_PATH) as f:
             market_snapshot = json.load(f)
-    out = out.replace("__BTC_MARKET_SNAPSHOT_JSON__", json.dumps(market_snapshot))
 
     fear_greed = {"updated_at_utc": None, "value": None, "classification": "", "timestamp": ""}
     if os.path.exists(FEAR_GREED_PATH):
         with open(FEAR_GREED_PATH) as f:
             fear_greed = json.load(f)
-    out = out.replace("__FEAR_GREED_JSON__", json.dumps(fear_greed))
 
-    out = out.replace("__CORRELATIONS_JSON__", json.dumps(compute_correlations()))
+    correlations = compute_correlations()
 
-    assert "__POSITIONS_JSON__" not in out
-    assert "__TRADES_JSON__" not in out
-    assert "__TRACK_RECORD_JSON__" not in out
-    assert "__BARS_JSON__" not in out
-    assert "__WALKFORWARD_JSON__" not in out
-    assert "__POSITIONS_15M_JSON__" not in out
-    assert "__TRADES_15M_JSON__" not in out
-    assert "__TRACK_RECORD_15M_JSON__" not in out
-    assert "__BARS_15M_JSON__" not in out
-    assert "__WALKFORWARD_15M_JSON__" not in out
-    assert "__POSITIONS_ETH_JSON__" not in out
-    assert "__TRADES_ETH_JSON__" not in out
-    assert "__TRACK_RECORD_ETH_JSON__" not in out
-    assert "__BARS_ETH_JSON__" not in out
-    assert "__WALKFORWARD_ETH_JSON__" not in out
-    assert "__POSITIONS_SOL_JSON__" not in out
-    assert "__TRADES_SOL_JSON__" not in out
-    assert "__TRACK_RECORD_SOL_JSON__" not in out
-    assert "__BARS_SOL_JSON__" not in out
-    assert "__WALKFORWARD_SOL_JSON__" not in out
-    assert "__MEMECOIN_SCAN_JSON__" not in out
-    assert "__WIDE_MEMECOIN_SCAN_JSON__" not in out
-    assert "__BTC_MARKET_SNAPSHOT_JSON__" not in out
-    assert "__FEAR_GREED_JSON__" not in out
-    assert "__CORRELATIONS_JSON__" not in out
-
-    with open(OUTPUT_PATH, "w") as f:
-        f.write(out)
-    print(f"Wrote {OUTPUT_PATH} ({os.path.getsize(OUTPUT_PATH) / 1024:.1f} KB)")
+    build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_greed, correlations)
+    build_index_page(loaded, wide_scan, market_snapshot, fear_greed)
 
 
 if __name__ == "__main__":

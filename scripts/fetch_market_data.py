@@ -67,21 +67,15 @@ MEME_WIDE_SYMBOLS = [
     "GOATEDUSD", "BINKUSD", "FWOGUSD", "CASHCATUSD", "LUNCUSD",
     "CHILLGUYUSD", "SPXUSD", "ELONUSD", "SNEKUSD", "VINEUSD", "PENGUUSD",
     "LADYSUSD", "GEKKOUSD", "MANEKIUSD", "AIXBTUSD", "BIRBUSD", "HEHEUSD",
-    # Expanded from 51 -> ~100 candidate tickers. Not all of these are
-    # confirmed listed on Crypto.com Exchange - fetch_tickers() already
-    # drops any symbol missing from the live response (see the WARN log
-    # in main()), so an unresolved guess here just silently shrinks the
-    # universe rather than breaking anything. Check the next run's logs
-    # for the "wide-scan symbols missing" line to see what didn't hit.
-    "MEWUSD", "BRETTUSD", "SLERFUSD", "SAMOUSD", "HOGEUSD", "LEASHUSD",
-    "BONEUSD", "AKITAUSD", "SAITAMAUSD", "KISHUUSD", "BABYDOGEUSD",
-    "NEIROUSD", "RATSUSD", "SATSUSD", "GIGAUSD", "APUUSD", "ZEREBROUSD",
-    "MICHIUSD", "KEYCATUSD", "BILLYUSD", "MUBARAKUSD", "WOJAKUSD",
-    "PUPSUSD", "CHEEMSUSD", "WOOFUSD", "VOLTUSD", "COPEUSD", "BODENUSD",
-    "MOTHERUSD", "DUKOUSD", "HIPPOUSD", "PUFFUSD", "BRIANUSD", "SIGMAUSD",
-    "NPCUSD", "MUMUUSD", "SMOGUSD", "HARAMBEUSD", "TREMPUSD", "MAGAUSD",
-    "PONDERUSD", "SILLYUSD", "RETIKUSD", "JELLYJELLYUSD", "GNONUSD",
-    "MANYUUSD", "LOCKINUSD", "LUCEUSD", "FRIENDUSD", "PIPUSD", "BENUSD",
+    # A first attempt to reach ~100 by guessing well-known meme ticker
+    # names failed hard: 50 of 51 guesses didn't exist on this exchange
+    # (only BONEUSD hit). Crypto.com Exchange is a curated, mainstream
+    # listing - most memecoins trade on DEXs or degen-focused exchanges
+    # instead. Re-curated from the exchange's *actual* public instrument
+    # list (scripts/list_all_tickers.py) instead of guessing further -
+    # these are confirmed real listings, not guesses. The realistic
+    # ceiling for this data source is roughly 55-60 coins, not 100.
+    "BONEUSD", "BASEDUSD", "CLANKERUSD", "ELIZAOSUSD", "LOAFUSD", "PUMPUSD",
 ]
 
 
