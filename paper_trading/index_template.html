@@ -171,6 +171,13 @@
   .asset-change { font-family: var(--font-mono); font-size: var(--fs-sm); font-weight: 700; }
   .asset-price { font-family: var(--font-mono); font-size: 1.6rem; font-weight: 800; margin-top: 4px; }
   .asset-spark { width: 100%; height: 44px; margin-top: 10px; display: block; }
+  .regime-pill {
+    display: inline-flex; align-items: center; gap: 4px; margin-top: 10px;
+    font-size: var(--fs-xs); font-family: var(--font-mono); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em; padding: 3px 8px; border-radius: 999px;
+  }
+  .regime-trending { color: var(--scan); background: var(--scan-wash); }
+  .regime-ranging { color: var(--ink-muted); background: var(--neutral-wash); }
 
   .stat-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   @media (max-width: 640px) { .stat-strip { grid-template-columns: 1fr; } }
@@ -310,6 +317,7 @@
   const WIDE_UNIVERSE_SIZE = __WIDE_UNIVERSE_SIZE__;
   const TOP_NEWS = __TOP_NEWS_JSON__;
   const CROSS_ASSET_ROBUSTNESS = __CROSS_ASSET_ROBUSTNESS_JSON__;
+  const REGIMES = __REGIMES_JSON__;
 
   const FONT_MONO = 'ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace';
 
@@ -387,6 +395,7 @@
         </div>
         <div class="asset-price" id="assetPrice${a.key}"></div>
         <canvas class="asset-spark" id="assetSpark${a.key}"></canvas>
+        <span class="regime-pill" id="assetRegime${a.key}" style="display:none;"></span>
       </div>
     `).join('');
     assets.forEach((a) => {
@@ -399,6 +408,15 @@
       chEl.textContent = fmtSignedPct(pct);
       chEl.style.color = pct >= 0 ? THEME.good : THEME.critical;
       drawSparkline(`assetSpark${a.key}`, bars.map((b) => b[4]), pct >= 0 ? THEME.good : THEME.critical);
+
+      const regime = REGIMES[a.key];
+      const regimeEl = document.getElementById(`assetRegime${a.key}`);
+      if (regime) {
+        const trending = regime.trend_regime === 'trending';
+        regimeEl.className = 'regime-pill ' + (trending ? 'regime-trending' : 'regime-ranging');
+        regimeEl.textContent = `${trending ? 'Trending' : 'Ranging'} · ${regime.vol_regime === 'high_vol' ? 'High Vol' : 'Low Vol'}`;
+        regimeEl.style.display = 'inline-flex';
+      }
     });
   }
 

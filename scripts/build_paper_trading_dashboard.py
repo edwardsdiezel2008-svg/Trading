@@ -12,6 +12,12 @@ from __future__ import annotations
 import csv
 import json
 import os
+import sys
+
+sys.path.insert(0, ".")
+
+from src.backtest.data_loader import load_bars
+from src.backtest.regime import classify_regimes
 
 TEMPLATE_PATH = "paper_trading/dashboard_template.html"
 OUTPUT_PATH = "paper_trading/dashboard.html"
@@ -135,6 +141,29 @@ def compute_correlations():
             if corr is not None:
                 pairs.append({"a": a, "b": b, "correlation": round(corr, 3), "n": len(common)})
     return {"assets": names, "pairs": pairs}
+
+
+def compute_current_regimes():
+    """Latest ADX-based trend/volatility regime per asset - the same
+    classify_regimes() used for backtest regime attribution, read at just
+    its most recent bar. Context for *why* trend-following strategies
+    (the ones that show up as cross-asset robust) are currently paying off
+    or not: they need a trending regime to have anything to catch."""
+    out = {}
+    for name, path in CORRELATION_ASSETS:
+        if not os.path.exists(path):
+            continue
+        try:
+            bars = load_bars(path, freq="1D")
+            regimes = classify_regimes(bars)
+            last = regimes.iloc[-1]
+            trend_regime, vol_regime, adx = last["trend_regime"], last["vol_regime"], last["adx"]
+            if trend_regime != trend_regime or vol_regime != vol_regime:  # NaN check without a pandas import at call sites
+                continue
+            out[name] = {"trend_regime": trend_regime, "vol_regime": vol_regime, "adx": round(float(adx), 1)}
+        except Exception as e:
+            print(f"WARN: regime classification failed for {name}: {e}")
+    return out
 
 
 def load_track(suffix):
@@ -262,7 +291,7 @@ def build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_g
     print(f"Wrote {OUTPUT_PATH} ({os.path.getsize(OUTPUT_PATH) / 1024:.1f} KB)")
 
 
-def build_index_page(loaded, wide_scan, market_snapshot, fear_greed, news):
+def build_index_page(loaded, wide_scan, market_snapshot, fear_greed, news, regimes):
     if not os.path.exists(INDEX_TEMPLATE_PATH):
         print(f"Skipping {INDEX_OUTPUT_PATH}: {INDEX_TEMPLATE_PATH} not found")
         return
@@ -297,7 +326,9 @@ def build_index_page(loaded, wide_scan, market_snapshot, fear_greed, news):
     cross_asset_robustness = compute_cross_asset_robustness(loaded)
     out = out.replace("__CROSS_ASSET_ROBUSTNESS_JSON__", json.dumps(cross_asset_robustness))
 
-    for key in ("TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE", "TOP_NEWS_JSON", "CROSS_ASSET_ROBUSTNESS_JSON"):
+    out = out.replace("__REGIMES_JSON__", json.dumps(regimes))
+
+    for key in ("TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE", "TOP_NEWS_JSON", "CROSS_ASSET_ROBUSTNESS_JSON", "REGIMES_JSON"):
         assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
 
     with open(INDEX_OUTPUT_PATH, "w") as f:
@@ -344,9 +375,10 @@ def main():
             news = json.load(f)
 
     correlations = compute_correlations()
+    regimes = compute_current_regimes()
 
     build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_greed, correlations, news)
-    build_index_page(loaded, wide_scan, market_snapshot, fear_greed, news)
+    build_index_page(loaded, wide_scan, market_snapshot, fear_greed, news, regimes)
 
 
 if __name__ == "__main__":
