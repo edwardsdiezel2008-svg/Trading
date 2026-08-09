@@ -1038,8 +1038,14 @@
     const beatBhTile = bhReturn !== null
       ? `<div class="tile"><span class="tile-label">Beat Buy &amp; Hold</span><span class="tile-value">${rows.filter((r) => r.totalReturn > bhReturn).length} / ${rows.length}</span><span class="tile-sub">Buy &amp; Hold: ${fmtSignedPct(bhReturn)}</span></div>`
       : '';
+    const wfResults = (track.walkforward && track.walkforward.results) || [];
+    const wfRobustCount = wfResults.filter((r) => !r.error && r.oos_total_return > 0 && r.oos_sharpe > 0).length;
+    const wfTile = wfResults.length
+      ? `<div class="tile"><span class="tile-label">Walk-forward confirmed</span><span class="tile-value ${wfRobustCount > 0 ? 'good' : 'critical'}">${wfRobustCount} / ${wfResults.length}</span><span class="tile-sub">Out-of-sample, not in-sample</span></div>`
+      : '';
     document.getElementById('statTiles').innerHTML = `
       <div class="tile"><span class="tile-label">Profitable strategies</span><span class="tile-value">${profitable} / ${rows.length}</span></div>
+      ${wfTile}
       <div class="tile"><span class="tile-label">Best performer</span><span class="tile-value good">${fmtSignedPct(best.totalReturn)}</span><span class="tile-sub">${best.name}</span></div>
       <div class="tile"><span class="tile-label">Worst performer</span><span class="tile-value critical">${fmtSignedPct(worst.totalReturn)}</span><span class="tile-sub">${worst.name}</span></div>
       <div class="tile"><span class="tile-label">Open positions now</span><span class="tile-value">${openCount} / ${rows.length}</span></div>
