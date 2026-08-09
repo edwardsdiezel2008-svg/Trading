@@ -1,4 +1,4 @@
-# BTC/USDT Paper Trading (15min) — updated 2026-08-09T17:40:13.951052+00:00
+# BTC/USDT Paper Trading (15min) — updated 2026-08-09T17:44:52.924957+00:00
 
 Latest bar: 2026-08-09 17:30:00 · 310 bars of history · $100,000 starting capital per strategy
 
