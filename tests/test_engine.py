@@ -24,6 +24,14 @@ class FlipAtBar(Strategy):
         return pd.Series([1 if i < flip_at else -1 for i in range(n)], index=bars.index)
 
 
+class LongUntil(Strategy):
+    """Long for bars before `flip_at`, flat from `flip_at` onward."""
+    def generate_signals(self, bars: pd.DataFrame) -> pd.Series:
+        flip_at = self.params["flip_at"]
+        n = len(bars)
+        return pd.Series([1 if i < flip_at else 0 for i in range(n)], index=bars.index)
+
+
 def _flat_spec(multiplier=1.0, commission=0.0, tick_size=0.01):
     return InstrumentSpec("TEST", "equity", multiplier=multiplier, tick_size=tick_size, commission_per_unit=commission)
 
@@ -111,3 +119,45 @@ def test_percent_equity_sizing_stays_fractional_for_crypto_style_assets():
     result = run_backtest(bars, AlwaysLong(), spec, initial_capital=100, sizing="percent_equity")
     assert len(result.trades) == 1
     assert result.trades[0].units == pytest.approx(100 / 65_000)
+
+
+def test_max_loss_fraction_force_closes_before_the_strategy_would_exit():
+    # Long entered at 100 with 100% of equity; crashes to 40 (a 60% loss) on
+    # bar 2, then the strategy itself would only go flat on bar 3. Without a
+    # floor, equity rides the crash out to whatever the position is worth
+    # when the signal eventually exits (or the backtest ends) - no ceiling
+    # on the drawdown. With max_loss_fraction=0.5, the position must be
+    # force-closed the moment the 60% loss is realized (bar 2's close), one
+    # bar earlier than the strategy's own flat signal (bar 3's open).
+    closes = [100, 100, 40, 10]
+    opens = [100, 100, 100, 40]
+    bars = _bars(closes, opens=opens)
+    spec = _flat_spec()
+    strat = LongUntil(params={"flip_at": 2})
+
+    capped = run_backtest(bars, strat, spec, initial_capital=10_000, sizing="percent_equity", slippage_ticks=0, max_loss_fraction=0.5)
+    uncapped = run_backtest(bars, strat, spec, initial_capital=10_000, sizing="percent_equity", slippage_ticks=0)
+
+    assert len(capped.trades) == 1
+    assert capped.trades[0].exit_time == bars.index[2]  # stopped out mid-backtest
+    assert capped.positions.iloc[2] == 0  # flat immediately after the forced close
+    assert capped.equity_curve.iloc[-1] == pytest.approx(4_000.0)
+
+    assert len(uncapped.trades) == 1
+    assert uncapped.trades[0].exit_time == bars.index[3]  # only exits when the signal goes flat
+    # Same price path, so the loss is identical in dollar terms either way -
+    # the fix changes *when* the position is closed, not the crash itself.
+    assert uncapped.equity_curve.iloc[-1] == pytest.approx(4_000.0)
+
+
+def test_max_loss_fraction_off_by_default():
+    # Default behavior (max_loss_fraction=None) must be byte-for-byte
+    # unchanged from before the parameter existed - every other track's
+    # already-generated backtest numbers depend on this.
+    bars = _bars([100, 100, 40, 10], opens=[100, 100, 100, 40])
+    spec = _flat_spec()
+    strat = LongUntil(params={"flip_at": 2})
+    with_explicit_none = run_backtest(bars, strat, spec, initial_capital=10_000, sizing="percent_equity", slippage_ticks=0, max_loss_fraction=None)
+    without_param = run_backtest(bars, strat, spec, initial_capital=10_000, sizing="percent_equity", slippage_ticks=0)
+    assert with_explicit_none.equity_curve.tolist() == without_param.equity_curve.tolist()
+    assert len(with_explicit_none.trades) == len(without_param.trades) == 1
