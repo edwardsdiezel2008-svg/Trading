@@ -74,6 +74,10 @@
   body {
     margin: 0;
     background: var(--page);
+    background-image:
+      radial-gradient(circle at 15% 0%, var(--scan-wash), transparent 45%),
+      radial-gradient(circle at 85% 100%, var(--scan-wash), transparent 40%);
+    background-attachment: fixed;
     color: var(--ink);
     font-family: var(--font-ui);
     font-size: var(--fs-base);
@@ -83,6 +87,8 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
+  .view-fade { animation: view-fade-in 0.25s ease; }
+  @keyframes view-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
   .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
   .good { color: var(--good); }
   .critical { color: var(--critical); }
@@ -100,6 +106,14 @@
     background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
     padding: 5px 12px; white-space: nowrap;
   }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .overview-link {
+    display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: var(--fs-xs);
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--scan); text-decoration: none;
+    background: var(--scan-wash); border: 1px solid var(--scan-wash); border-radius: 999px; padding: 5px 12px;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .overview-link:hover { box-shadow: 0 0 12px var(--scan-glow); border-color: var(--scan); }
 
   .caveat {
     display: flex; gap: 10px; align-items: flex-start;
@@ -111,14 +125,26 @@
   .stat-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
   @media (max-width: 760px) { .stat-tiles { grid-template-columns: 1fr 1fr; } }
   .tile {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-    box-shadow: var(--shadow); padding: 12px 14px; display: flex; flex-direction: column; gap: 4px;
+    position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: var(--shadow); padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; overflow: hidden;
+  }
+  .tile::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--scan), transparent 85%); opacity: 0.7;
   }
   .tile-label { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-muted); font-weight: 600; }
   .tile-value { font-size: 1.2rem; font-weight: 700; }
   .tile-sub { font-size: var(--fs-xs); color: var(--ink-muted); }
 
-  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); padding: 14px 16px 16px; }
+  .panel {
+    position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: var(--shadow), 0 0 0 1px var(--scan-wash) inset; padding: 14px 16px 16px; overflow: hidden;
+  }
+  .panel::before, .panel::after {
+    content: ''; position: absolute; width: 12px; height: 12px; pointer-events: none; z-index: 1;
+  }
+  .panel::before { top: -1px; left: -1px; border-top: 2px solid var(--scan); border-left: 2px solid var(--scan); }
+  .panel::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--scan); border-right: 2px solid var(--scan); }
   .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
   .panel-head h2 { margin: 0; font-size: var(--fs-base); font-weight: 700; }
   .panel-hint { font-size: var(--fs-xs); color: var(--ink-muted); }
@@ -186,7 +212,8 @@
 
   .overview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   @media (max-width: 640px) { .overview-grid { grid-template-columns: 1fr; } }
-  .overview-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); padding: 12px 14px; }
+  .overview-tile { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow); padding: 12px 14px; overflow: hidden; }
+  .overview-tile::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--scan), transparent 85%); opacity: 0.7; }
   .overview-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
   .overview-symbol { font-weight: 700; font-size: var(--fs-sm); }
   .overview-price { font-family: var(--font-mono); font-size: 1.1rem; font-weight: 700; margin-top: 2px; }
@@ -228,18 +255,6 @@
     content: ''; flex: 1; height: 1px;
     background: linear-gradient(90deg, var(--scan-wash), transparent);
   }
-  #memecoinView .panel {
-    position: relative; border-radius: 6px; overflow: hidden;
-    border-color: var(--scan-wash);
-    box-shadow: var(--shadow), 0 0 0 1px var(--scan-wash) inset;
-  }
-  #memecoinView .panel::before,
-  #memecoinView .panel::after {
-    content: ''; position: absolute; width: 14px; height: 14px; pointer-events: none; z-index: 1;
-  }
-  #memecoinView .panel::before { top: -1px; left: -1px; border-top: 2px solid var(--scan); border-left: 2px solid var(--scan); }
-  #memecoinView .panel::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--scan); border-right: 2px solid var(--scan); }
-  #memecoinView .tile { border-radius: 6px; }
   #memecoinView .breakout-yes {
     color: var(--scan); font-weight: 700; font-family: var(--font-mono);
     text-shadow: 0 0 8px var(--scan-glow);
@@ -282,7 +297,10 @@
         <p class="brand-sub" id="brandSub">All 7 strategies, simulated against real BTC/USDT data</p>
       </div>
     </div>
-    <span class="updated-badge mono" id="updatedBadge">—</span>
+    <div class="topbar-right">
+      <a class="overview-link" href="index.html"><span class="scan-pulse-dot" style="width:6px; height:6px;"></span>Overview</a>
+      <span class="updated-badge mono" id="updatedBadge">—</span>
+    </div>
   </header>
 
   <div class="stale-banner" id="staleBanner" style="display:none;">
@@ -1192,23 +1210,38 @@
     else render(activeKey);
   }
 
-  document.getElementById('tabBar').addEventListener('click', (e) => {
-    const btn = e.target.closest('.tab-btn');
-    if (!btn) return;
+  function activateTab(track) {
+    const btn = document.querySelector(`.tab-btn[data-track="${track}"]`);
+    if (!btn) return false;
     document.querySelectorAll('.tab-btn').forEach((b) => b.classList.toggle('active', b === btn));
-    const track = btn.dataset.track;
     if (track === 'memecoin') {
       activeView = 'memecoin';
       document.getElementById('btcTrackView').style.display = 'none';
-      document.getElementById('memecoinView').style.display = '';
+      const meme = document.getElementById('memecoinView');
+      meme.style.display = '';
+      meme.classList.remove('view-fade'); void meme.offsetWidth; meme.classList.add('view-fade');
       renderMemecoinScanner();
     } else {
       activeView = 'btc';
       document.getElementById('memecoinView').style.display = 'none';
-      document.getElementById('btcTrackView').style.display = '';
+      const btcView = document.getElementById('btcTrackView');
+      btcView.style.display = '';
+      btcView.classList.remove('view-fade'); void btcView.offsetWidth; btcView.classList.add('view-fade');
       render(track);
     }
+    btn.scrollIntoView({ block: 'nearest', inline: 'center' });
+    return true;
+  }
+
+  document.getElementById('tabBar').addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    activateTab(btn.dataset.track);
   });
+
+  // Deep-linking from the overview page, e.g. dashboard.html#eth
+  const initialTrack = (location.hash || '').replace('#', '');
+  const hasDeepLink = initialTrack && activateTab(initialTrack);
 
   // ---------- live BTC market snapshot (order book + funding rate + sentiment) ----------
   function renderMarketSnapshot() {
@@ -1394,7 +1427,7 @@
     renderCorrelations();
   }
 
-  render('daily');
+  if (!hasDeepLink) render('daily');
   renderPersistent();
   checkStaleness();
   window.addEventListener('resize', () => { renderActive(); renderPersistent(); });
