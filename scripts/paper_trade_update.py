@@ -36,7 +36,6 @@ from src.backtest.metrics import compute_metrics
 from src.backtest.strategies import ALL_STRATEGY_CLASSES
 
 CAPITAL = 100_000.0
-SYMBOL = "BTC_USDT"
 
 
 def parse_args(argv=None):
@@ -44,6 +43,7 @@ def parse_args(argv=None):
     p.add_argument("--suffix", default="", help="File suffix distinguishing this track, e.g. '_15m'. Default '' = the original daily track.")
     p.add_argument("--freq", default="1D", help="Pandas freq string for bar resampling/annualization, e.g. '1D', '15min'.")
     p.add_argument("--tracking-start", default="2026-08-08", help="Timestamp (parseable by pandas) marking where the live track record begins.")
+    p.add_argument("--symbol", default="BTC_USDT", help="Instrument symbol for backtest spec lookup and metadata, e.g. 'ETH_USDT', 'SOL_USDT'.")
     return p.parse_args(argv)
 
 
@@ -89,7 +89,7 @@ def main(argv=None):
     tracking_start = pd.Timestamp(args.tracking_start)
 
     bars = load_bars(bars_path, freq=args.freq)
-    spec = get_spec(SYMBOL)
+    spec = get_spec(args.symbol)
 
     positions = {}
     all_trades = []
@@ -137,7 +137,7 @@ def main(argv=None):
 
     with open(positions_path, "w") as f:
         json.dump({
-            "symbol": SYMBOL,
+            "symbol": args.symbol,
             "freq": args.freq,
             "updated_at_utc": datetime.now(timezone.utc).isoformat(),
             "latest_bar": str(bars.index[-1]),
@@ -148,7 +148,7 @@ def main(argv=None):
     pd.DataFrame(all_trades).to_csv(trade_log_path, index=False)
 
     lines = [
-        f"# BTC/USDT Paper Trading ({args.freq}) — updated {datetime.now(timezone.utc).isoformat()}",
+        f"# {args.symbol.replace('_', '/')} Paper Trading ({args.freq}) — updated {datetime.now(timezone.utc).isoformat()}",
         "",
         f"Latest bar: {bars.index[-1]} · {len(bars):,} bars of history · ${CAPITAL:,.0f} starting capital per strategy",
         "",

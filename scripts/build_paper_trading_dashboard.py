@@ -21,13 +21,22 @@ BTC_MARKET_SNAPSHOT_PATH = "paper_trading/btc_market_snapshot.json"
 TRACKS = [
     ("", "POSITIONS_JSON", "TRADES_JSON", "TRACK_RECORD_JSON"),
     ("_15m", "POSITIONS_15M_JSON", "TRADES_15M_JSON", "TRACK_RECORD_15M_JSON"),
+    ("_eth", "POSITIONS_ETH_JSON", "TRADES_ETH_JSON", "TRACK_RECORD_ETH_JSON"),
+    ("_sol", "POSITIONS_SOL_JSON", "TRADES_SOL_JSON", "TRACK_RECORD_SOL_JSON"),
 ]
+
+EMPTY_POSITIONS = {"symbol": None, "freq": None, "updated_at_utc": None, "latest_bar": None, "bar_count": 0, "strategies": {}}
 
 
 def load_track(suffix):
     positions_path = f"paper_trading/positions{suffix}.json"
     trade_log_path = f"paper_trading/trade_log{suffix}.csv"
     track_record_path = f"paper_trading/track_record{suffix}.csv"
+
+    if not os.path.exists(positions_path):
+        # New tracks (ETH/SOL) don't exist until their first successful
+        # workflow run seeds them - render an empty track rather than crash.
+        return dict(EMPTY_POSITIONS), [], []
 
     with open(positions_path) as f:
         positions = json.load(f)
@@ -84,6 +93,12 @@ def main():
     assert "__POSITIONS_15M_JSON__" not in out
     assert "__TRADES_15M_JSON__" not in out
     assert "__TRACK_RECORD_15M_JSON__" not in out
+    assert "__POSITIONS_ETH_JSON__" not in out
+    assert "__TRADES_ETH_JSON__" not in out
+    assert "__TRACK_RECORD_ETH_JSON__" not in out
+    assert "__POSITIONS_SOL_JSON__" not in out
+    assert "__TRADES_SOL_JSON__" not in out
+    assert "__TRACK_RECORD_SOL_JSON__" not in out
     assert "__MEMECOIN_SCAN_JSON__" not in out
     assert "__WIDE_MEMECOIN_SCAN_JSON__" not in out
     assert "__BTC_MARKET_SNAPSHOT_JSON__" not in out

@@ -206,8 +206,10 @@
   </div>
 
   <div class="tab-bar" id="tabBar">
-    <button class="tab-btn active" data-track="daily">Daily</button>
-    <button class="tab-btn" data-track="fifteenMin">15-Minute</button>
+    <button class="tab-btn active" data-track="daily">BTC Daily</button>
+    <button class="tab-btn" data-track="fifteenMin">BTC 15-Minute</button>
+    <button class="tab-btn" data-track="eth">ETH Daily</button>
+    <button class="tab-btn" data-track="sol">SOL Daily</button>
     <button class="tab-btn" data-track="memecoin">Memecoin Scanner</button>
   </div>
 
@@ -289,7 +291,7 @@
     </div>
 
     <footer class="foot">
-      <p>Positions rebuilt each check-in by re-running the full backtest on real BTC/USDT price data from Crypto.com Exchange - not a separate live-execution codepath. See the full bar-by-bar replay in the companion Engine Replay artifact.</p>
+      <p>Positions rebuilt each check-in by re-running the full backtest on real <span id="footerSymbol">BTC/USDT</span> price data from Crypto.com Exchange - not a separate live-execution codepath.</p>
       <p>Snapshot generated at build time - republished to this same link whenever a position changes; refresh for the latest if you're not sure this is current.</p>
     </footer>
   </div>
@@ -379,12 +381,20 @@
   const BTC_MARKET_SNAPSHOT = __BTC_MARKET_SNAPSHOT_JSON__;
   const TRACKS = {
     daily: {
-      label: 'Daily', dateUnit: 'Day', intraday: false,
+      label: 'Daily', symbol: 'BTC/USDT', dateUnit: 'Day', intraday: false,
       positions: __POSITIONS_JSON__, trades: __TRADES_JSON__, trackRecord: __TRACK_RECORD_JSON__,
     },
     fifteenMin: {
-      label: '15-Minute', dateUnit: 'Update', intraday: true,
+      label: '15-Minute', symbol: 'BTC/USDT', dateUnit: 'Update', intraday: true,
       positions: __POSITIONS_15M_JSON__, trades: __TRADES_15M_JSON__, trackRecord: __TRACK_RECORD_15M_JSON__,
+    },
+    eth: {
+      label: 'ETH Daily', symbol: 'ETH/USDT', dateUnit: 'Day', intraday: false,
+      positions: __POSITIONS_ETH_JSON__, trades: __TRADES_ETH_JSON__, trackRecord: __TRACK_RECORD_ETH_JSON__,
+    },
+    sol: {
+      label: 'SOL Daily', symbol: 'SOL/USDT', dateUnit: 'Day', intraday: false,
+      positions: __POSITIONS_SOL_JSON__, trades: __TRADES_SOL_JSON__, trackRecord: __TRACK_RECORD_SOL_JSON__,
     },
   };
   const CAPITAL = 100000;
@@ -412,7 +422,7 @@
       ? d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
       : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   }
-  function fmtUpdated(s) { const d = new Date(s); return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }); }
+  function fmtUpdated(s) { if (!s) return 'not seeded yet'; const d = new Date(s); return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }); }
 
   function setupCanvas(canvas) {
     const dpr = window.devicePixelRatio || 1;
@@ -575,8 +585,9 @@
     const rows = computeRows(track);
 
     document.getElementById('updatedBadge').textContent = 'Updated ' + fmtUpdated(POSITIONS.updated_at_utc);
-    document.getElementById('asOfHint').textContent = 'As of bar: ' + POSITIONS.latest_bar;
+    document.getElementById('asOfHint').textContent = POSITIONS.latest_bar ? 'As of bar: ' + POSITIONS.latest_bar : '—';
     document.getElementById('tradeCountHint').textContent = TRADES.length + ' closed trades across all strategies';
+    document.getElementById('footerSymbol').textContent = track.symbol;
 
     const thinNote = document.getElementById('thinDataNote');
     if (POSITIONS.bar_count && POSITIONS.bar_count < THIN_DATA_BAR_THRESHOLD) {
@@ -585,6 +596,18 @@
       thinNote.classList.add('visible');
     } else {
       thinNote.classList.remove('visible');
+    }
+
+    if (!rows.length) {
+      document.getElementById('statTiles').innerHTML =
+        `<div class="tile"><span class="tile-label">Status</span><span class="tile-value">Not seeded yet</span><span class="tile-sub">This track's first data lands on the next hourly update</span></div>`;
+      document.getElementById('strategyTbody').innerHTML = '';
+      document.getElementById('trackRecordHint').textContent = 'Not started yet';
+      document.getElementById('trackRecordLegend').innerHTML = '';
+      document.getElementById('tradeTbody').innerHTML = '';
+      drawCompareChart([]);
+      drawTrackRecordChart(track, []);
+      return;
     }
 
     const profitable = rows.filter((r) => r.totalReturn > 0).length;

@@ -16,6 +16,7 @@ Usage: python scripts/fetch_market_data.py
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import datetime
 import json
@@ -31,9 +32,20 @@ BASE_URL = "https://api.crypto.com/exchange/v1/public"
 DERIV_BASE_URL = "https://deriv-api.crypto.com/v1/public"
 CANDLE_COUNT = 300
 ORDER_BOOK_DEPTH = 10
+BACKFILL_MAX_CANDLES = 6000
 
 BTC_SYMBOL = "BTC_USDT"
 BTC_PERP_SYMBOL = "BTCUSD-PERP"
+ETH_SYMBOL = "ETH_USDT"
+SOL_SYMBOL = "SOL_USDT"
+
+# (symbol, bars file) - the other liquid instruments tracked alongside BTC,
+# added so paper-trading results can be checked for whether a strategy's
+# edge is BTC-specific or holds up more generally. Daily only for now.
+OTHER_INSTRUMENTS = [
+    (ETH_SYMBOL, "paper_trading/bars_eth.csv"),
+    (SOL_SYMBOL, "paper_trading/bars_sol.csv"),
+]
 
 MEME_PRECISE_SYMBOLS = [
     "DOGEUSD", "SHIBUSD", "PEPEUSD", "FLOKIUSD", "BONKUSD", "WIFUSD",
@@ -95,6 +107,52 @@ def fetch_candlestick(instrument_name, timeframe, count=CANDLE_COUNT):
         "count": count,
     })
     return result["data"]
+
+
+def fetch_candlestick_paginated(instrument_name, timeframe, max_candles=BACKFILL_MAX_CANDLES, page_size=CANDLE_COUNT):
+    """Walk further back in time than a single call's page_size cap allows,
+    by requesting progressively older pages via end_ts. Stops once a page
+    adds no new candles (either the API doesn't actually support end_ts
+    pagination and keeps returning the same latest page, or history is
+    exhausted) or once max_candles is reached.
+
+    The end_ts param name/semantics are inferred from common exchange API
+    conventions, not confirmed docs - this sandbox can't reach
+    exchange-docs.crypto.com to check. If it's wrong, every page will come
+    back identical and the "no new candles" guard below will stop after
+    one extra page instead of looping forever - watch the printed page
+    logs when this runs to tell the difference from a real, older page.
+    """
+    all_candles = {}
+    end_ts = None
+    page_num = 0
+    while len(all_candles) < max_candles:
+        page_num += 1
+        params = {
+            "instrument_name": _normalize_instrument(instrument_name),
+            "timeframe": timeframe,
+            "count": page_size,
+        }
+        if end_ts is not None:
+            params["end_ts"] = end_ts
+        result = _get("get-candlestick", params)
+        page = result["data"]
+        print(f"  {instrument_name} page {page_num}: {len(page)} candles, end_ts={end_ts}")
+        if not page:
+            break
+        before = len(all_candles)
+        for c in page:
+            all_candles[_candle_timestamp(c)] = c
+        oldest_ts = min(_candle_timestamp(c) for c in page)
+        new_end_ts = int(oldest_ts.timestamp() * 1000) - 1
+        if len(all_candles) == before or (end_ts is not None and new_end_ts >= end_ts):
+            print(f"  {instrument_name}: no new candles on page {page_num} - stopping")
+            break
+        end_ts = new_end_ts
+        if len(page) < page_size:
+            break
+        time.sleep(0.2)
+    return sorted(all_candles.values(), key=_candle_timestamp)
 
 
 def fetch_tickers():
@@ -230,6 +288,23 @@ def merge_bars_csv(path, candles, date_only=False):
     return len(rows)
 
 
+def backfill_daily_history(max_candles=BACKFILL_MAX_CANDLES):
+    """One-time deep backfill for BTC + the other tracked instruments'
+    daily bars, via pagination. NOT called by the normal hourly run (see
+    main()) - daily candles barely change hour to hour, so relying on
+    hourly incremental fetches alone would take years to accumulate real
+    depth. Run manually via the backfill-history workflow instead."""
+    targets = [(BTC_SYMBOL, "paper_trading/bars.csv")] + OTHER_INSTRUMENTS
+    for symbol, path in targets:
+        print(f"Backfilling {symbol} -> {path} (up to {max_candles} candles)...")
+        try:
+            candles = fetch_candlestick_paginated(symbol, "1D", max_candles=max_candles)
+            n = merge_bars_csv(path, candles, date_only=True)
+            print(f"{path}: {n} rows after backfill ({len(candles)} candles fetched this run)")
+        except Exception as e:
+            print(f"WARN: backfill failed for {symbol}: {e}")
+
+
 def main():
     candles = fetch_candlestick(BTC_SYMBOL, "1D")
     n = merge_bars_csv("paper_trading/bars.csv", candles, date_only=True)
@@ -238,6 +313,14 @@ def main():
     candles = fetch_candlestick(BTC_SYMBOL, "15m")
     n = merge_bars_csv("paper_trading/bars_15m.csv", candles)
     print(f"bars_15m.csv: {n} rows")
+
+    for symbol, path in OTHER_INSTRUMENTS:
+        try:
+            candles = fetch_candlestick(symbol, "1D")
+            n = merge_bars_csv(path, candles, date_only=True)
+            print(f"{path}: {n} rows")
+        except Exception as e:
+            print(f"WARN: skipping {symbol} daily fetch: {e}")
 
     for symbol in MEME_PRECISE_SYMBOLS:
         try:
@@ -292,4 +375,14 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--backfill", action="store_true",
+                         help="One-time deep history backfill (BTC/ETH/SOL daily) via pagination, "
+                              "instead of the normal hourly incremental fetch.")
+    parser.add_argument("--max-candles", type=int, default=BACKFILL_MAX_CANDLES,
+                         help="Cap on candles to pull per symbol during --backfill.")
+    args = parser.parse_args()
+    if args.backfill:
+        backfill_daily_history(max_candles=args.max_candles)
+    else:
+        main()
