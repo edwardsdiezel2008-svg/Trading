@@ -1,0 +1,96 @@
+name: Hourly market data update
+
+# Keeps paper_trading/ data fresh independent of any Claude session or MCP
+# connector - runs on GitHub's own infrastructure on a schedule, so it
+# doesn't matter whether anyone is chatting with Claude or has a device
+# open. See scripts/fetch_market_data.py for the actual data fetch, which
+# talks to Crypto.com's public REST API directly (no auth needed).
+#
+# Also deploys the rebuilt dashboard to GitHub Pages every run, so the
+# dashboard itself needs no manual republish step from a Claude session -
+# https://<owner>.github.io/<repo>/ always reflects the latest commit.
+# (One-time manual setup required: repo Settings -> Pages -> Build and
+# deployment -> Source: "GitHub Actions".)
+
+on:
+  schedule:
+    - cron: "10 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: market-data-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    outputs:
+      site_ready: ${{ steps.stage.outputs.site_ready }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/hello-rs2zvp
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch fresh market data
+        run: python scripts/fetch_market_data.py
+
+      - name: Update BTC paper-trading state (daily + 15-min)
+        run: |
+          python scripts/paper_trade_update.py
+          python scripts/paper_trade_update.py --suffix _15m --freq 15min --tracking-start "2026-08-08 08:45:00"
+
+      - name: Update memecoin scanners (precise + wide)
+        run: |
+          python scripts/memecoin_scan_update.py
+          python scripts/memecoin_wide_scan.py
+
+      - name: Rebuild dashboard HTML
+        run: python scripts/build_paper_trading_dashboard.py
+
+      - name: Commit and push if anything changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add paper_trading/
+          if git diff --cached --quiet; then
+            echo "No changes - nothing to commit"
+          else
+            git commit -m "Automated market data update: $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git pull --rebase origin claude/hello-rs2zvp
+            git push origin HEAD:claude/hello-rs2zvp
+          fi
+
+      - name: Stage dashboard for Pages
+        id: stage
+        run: |
+          mkdir -p _site
+          cp paper_trading/dashboard.html _site/index.html
+          echo "site_ready=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: update
+    if: needs.update.outputs.site_ready == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
