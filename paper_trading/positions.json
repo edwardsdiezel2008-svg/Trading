@@ -1,14 +1,14 @@
 {
   "symbol": "BTC_USDT",
   "freq": "1D",
-  "updated_at_utc": "2026-08-09T13:42:07.496043+00:00",
+  "updated_at_utc": "2026-08-09T15:02:39.916616+00:00",
   "latest_bar": "2026-08-09 00:00:00",
   "bar_count": 301,
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 146080.73,
+      "equity": 145900.48,
       "open_trade": {
         "direction": -1,
         "entry_price": 73623.7,
@@ -19,7 +19,7 @@
     "Donchian_Breakout(20)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 143217.11,
+      "equity": 143439.94,
       "open_trade": {
         "direction": 1,
         "entry_price": 65036.16,
@@ -30,7 +30,7 @@
     "MACD_Momentum(12/26/9)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 132451.34,
+      "equity": 132657.42,
       "open_trade": {
         "direction": 1,
         "entry_price": 64927.11,
@@ -62,7 +62,7 @@
     "ATR_Vol_Breakout(14,k=1.5)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 114381.23,
+      "equity": 114211.73,
       "open_trade": {
         "direction": -1,
         "entry_price": 66751.94,
