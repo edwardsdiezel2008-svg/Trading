@@ -1,14 +1,14 @@
 {
   "symbol": "BTC_USDT",
   "freq": "1D",
-  "updated_at_utc": "2026-08-09T17:06:05.337196+00:00",
+  "updated_at_utc": "2026-08-09T17:26:46.464719+00:00",
   "latest_bar": "2026-08-09 00:00:00",
-  "bar_count": 301,
+  "bar_count": 2148,
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 145892.05,
+      "equity": 818020.92,
       "open_trade": {
         "direction": -1,
         "entry_price": 73623.7,
@@ -19,7 +19,7 @@
     "Donchian_Breakout(20)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 143450.37,
+      "equity": 243090.94,
       "open_trade": {
         "direction": 1,
         "entry_price": 65036.16,
@@ -30,7 +30,7 @@
     "MACD_Momentum(12/26/9)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 132667.06,
+      "equity": 191440.93,
       "open_trade": {
         "direction": 1,
         "entry_price": 64927.11,
@@ -41,28 +41,28 @@
     "RSI_Reversion(14,30/70)": {
       "position": 0,
       "position_label": "FLAT",
-      "equity": 83272.44,
+      "equity": 21621.21,
       "open_trade": null,
       "as_of": "2026-08-09 00:00:00"
     },
     "Bollinger_Reversion(20,2sd)": {
       "position": 0,
       "position_label": "FLAT",
-      "equity": 88664.17,
+      "equity": 11632.9,
       "open_trade": null,
       "as_of": "2026-08-09 00:00:00"
     },
     "ZScore_Reversion(20,z=2.0)": {
       "position": 0,
       "position_label": "FLAT",
-      "equity": 98094.5,
+      "equity": 10901.0,
       "open_trade": null,
       "as_of": "2026-08-09 00:00:00"
     },
     "ATR_Vol_Breakout(14,k=1.5)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 114203.8,
+      "equity": 584814.04,
       "open_trade": {
         "direction": -1,
         "entry_price": 66751.94,

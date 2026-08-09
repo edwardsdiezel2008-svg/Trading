@@ -1,14 +1,14 @@
 {
   "symbol": "ETH_USDT",
   "freq": "1D",
-  "updated_at_utc": "2026-08-09T17:06:05.837891+00:00",
+  "updated_at_utc": "2026-08-09T17:26:47.114578+00:00",
   "latest_bar": "2026-08-09 00:00:00",
-  "bar_count": 300,
+  "bar_count": 2148,
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 139865.94,
+      "equity": 722267.83,
       "open_trade": {
         "direction": 1,
         "entry_price": 1918.05,
@@ -19,7 +19,7 @@
     "Donchian_Breakout(20)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 122512.0,
+      "equity": 326193.63,
       "open_trade": {
         "direction": 1,
         "entry_price": 1891.99,
@@ -30,7 +30,7 @@
     "MACD_Momentum(12/26/9)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 171910.15,
+      "equity": 48832.65,
       "open_trade": {
         "direction": -1,
         "entry_price": 1910.65,
@@ -41,33 +41,29 @@
     "RSI_Reversion(14,30/70)": {
       "position": 0,
       "position_label": "FLAT",
-      "equity": 67869.51,
+      "equity": 27088.28,
       "open_trade": null,
       "as_of": "2026-08-09 00:00:00"
     },
     "Bollinger_Reversion(20,2sd)": {
       "position": 0,
       "position_label": "FLAT",
-      "equity": 66381.91,
+      "equity": 6437.12,
       "open_trade": null,
       "as_of": "2026-08-09 00:00:00"
     },
     "ZScore_Reversion(20,z=2.0)": {
       "position": 0,
       "position_label": "FLAT",
-      "equity": 70397.86,
+      "equity": 14585.16,
       "open_trade": null,
       "as_of": "2026-08-09 00:00:00"
     },
     "ATR_Vol_Breakout(14,k=1.5)": {
-      "position": 1,
-      "position_label": "LONG",
-      "equity": 103874.25,
-      "open_trade": {
-        "direction": 1,
-        "entry_price": 1891.99,
-        "entry_time": "2026-07-15 00:00:00"
-      },
+      "position": 0,
+      "position_label": "FLAT",
+      "equity": -264294.12,
+      "open_trade": null,
       "as_of": "2026-08-09 00:00:00"
     }
   }

@@ -30,6 +30,11 @@ BASE_URL = "https://api.crypto.com/exchange/v1/public"
 # host from spot/exchange endpoints - confirmed via Crypto.com's own docs,
 # not something the MCP tool ever exposed a working path for.
 DERIV_BASE_URL = "https://deriv-api.crypto.com/v1/public"
+# Independent of Crypto.com entirely - alternative.me's Fear & Greed Index
+# is a free, public, non-manipulable daily sentiment read across the whole
+# crypto market (not BTC-specific), used here as a regime signal alongside
+# pure price data.
+FEAR_GREED_URL = "https://api.alternative.me/fng/"
 CANDLE_COUNT = 300
 ORDER_BOOK_DEPTH = 10
 BACKFILL_MAX_CANDLES = 6000
@@ -248,6 +253,31 @@ def fetch_funding_rate(instrument_name=BTC_PERP_SYMBOL, count=1):
     return {"rate": str(value), "timestamp": ts or "", "instrument_name": instrument_name}
 
 
+def fetch_fear_greed():
+    """alternative.me's response shape: {"data": [{"value": "34",
+    "value_classification": "Fear", "timestamp": "<unix seconds>", ...}], ...}
+    - a different host/vendor entirely from Crypto.com, so field names and
+    conventions aren't expected to match; kept defensive anyway since this
+    also runs unattended."""
+    resp = requests.get(FEAR_GREED_URL, params={"limit": 1}, timeout=20)
+    resp.raise_for_status()
+    body = resp.json()
+    data = body.get("data") if isinstance(body, dict) else body
+    if not data:
+        return None
+    latest = data[0]
+    print(f"DEBUG: sample fear/greed entry keys: {sorted(latest.keys())}")
+    value = _first(latest, "value", default=None)
+    classification = _first(latest, "value_classification", default="")
+    ts = _first(latest, "timestamp")
+    if ts is not None:
+        try:
+            ts = datetime.datetime.utcfromtimestamp(int(ts)).isoformat() + "Z"
+        except (TypeError, ValueError):
+            pass
+    return {"value": int(value) if value is not None else None, "classification": classification, "timestamp": ts or ""}
+
+
 def _candle_timestamp(c):
     """Crypto.com's REST responses have used both a short epoch-ms shape
     (t/o/h/l/c/v) and a long ISO-timestamp shape (timestamp/open/high/low/
@@ -257,6 +287,23 @@ def _candle_timestamp(c):
     if isinstance(ts_raw, (int, float)):
         return datetime.datetime.utcfromtimestamp(ts_raw / 1000)
     return datetime.datetime.fromisoformat(str(ts_raw).replace("Z", "+00:00")).replace(tzinfo=None)
+
+
+def _sanitize_ohlc(o, h, l, cl):
+    """Crypto.com's deep historical candles (2020-2021 era, seen via
+    --backfill) occasionally have low=0 with an otherwise sane open/high/
+    close - a single bad tick, not a real price. A zero/negative or
+    otherwise impossible low blows up any ATR/range-based strategy that
+    reads it (a fake near-100% true-range spike). Clamp low into a sane
+    range instead of trusting it blindly; leave everything else alone."""
+    try:
+        o, h, l, cl = float(o), float(h), float(l), float(cl)
+    except (TypeError, ValueError):
+        return o, h, l, cl
+    lower_bound = min(o, cl)
+    if l <= 0 or l > lower_bound:
+        l = lower_bound
+    return o, h, l, cl
 
 
 def merge_bars_csv(path, candles, date_only=False):
@@ -278,6 +325,7 @@ def merge_bars_csv(path, candles, date_only=False):
         l = c.get("l", c.get("low"))
         cl = c.get("c", c.get("close"))
         v = c.get("v", c.get("volume", 0))
+        o, h, l, cl = _sanitize_ohlc(o, h, l, cl)
         rows[ts] = [ts, o, h, l, cl, v]
 
     with open(path, "w", newline="") as f:
@@ -372,6 +420,19 @@ def main():
                 "funding_rate": funding,
             }, f, indent=2)
         print("btc_market_snapshot.json written")
+
+    try:
+        fng = fetch_fear_greed()
+        print(f"fear/greed: {fng}")
+        if fng is not None:
+            with open("paper_trading/fear_greed.json", "w") as f:
+                json.dump({
+                    "updated_at_utc": datetime.datetime.utcnow().isoformat() + "Z",
+                    **fng,
+                }, f, indent=2)
+            print("fear_greed.json written")
+    except Exception as e:
+        print(f"WARN: fear/greed fetch failed: {e}")
 
 
 if __name__ == "__main__":

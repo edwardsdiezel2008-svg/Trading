@@ -149,6 +149,16 @@
   .thin-data-note.visible { display: flex; }
   .thin-data-note strong { color: var(--ink); }
 
+  .stale-banner {
+    display: flex; gap: 10px; align-items: flex-start; background: var(--critical-wash); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px; font-size: var(--fs-sm); color: var(--ink-2);
+  }
+  .stale-banner strong { color: var(--ink); }
+
+  .fng-fear { color: var(--critical); }
+  .fng-greed { color: var(--good); }
+  .fng-neutral { color: var(--ink); }
+
   .risk-banner {
     display: flex; gap: 10px; align-items: flex-start; background: var(--critical-wash); border: 1px solid var(--border);
     border-radius: 12px; padding: 12px 14px; font-size: var(--fs-sm); color: var(--ink-2);
@@ -186,12 +196,17 @@
     <span class="updated-badge mono" id="updatedBadge">—</span>
   </header>
 
+  <div class="stale-banner" id="staleBanner" style="display:none;">
+    <span>⏱️</span>
+    <span><strong>Data may be stale.</strong> <span id="staleBannerText"></span> The automated hourly pipeline runs independent of this page being open - check the repo's Actions tab if this persists past a couple of hours.</span>
+  </div>
+
   <div class="panel" id="marketSnapshotPanel" style="display:none;">
     <div class="panel-head">
-      <h2>Live BTC market</h2>
+      <h2>Live market</h2>
       <span class="panel-hint" id="marketSnapshotHint">—</span>
     </div>
-    <p class="panel-note">Order book depth and perpetual funding rate - real market context, separate from the simulated strategy tracks below. Funding rate is a positioning gauge for the BTC perpetual contract (positive = longs pay shorts, i.e. market leaning long); the paper-trading strategies themselves only ever trade spot.</p>
+    <p class="panel-note">Order book depth, perpetual funding rate, and market-wide sentiment - real market context, separate from the simulated strategy tracks below. Funding rate is a positioning gauge for the BTC perpetual contract (positive = longs pay shorts, i.e. market leaning long); the paper-trading strategies themselves only ever trade spot.</p>
     <div class="stat-tiles" id="fundingStatTiles"></div>
     <div class="book-grid" id="bookGrid" style="margin-top: 12px;">
       <div class="book-side">
@@ -379,6 +394,7 @@
   const MEMECOIN_SCAN = __MEMECOIN_SCAN_JSON__;
   const WIDE_MEMECOIN_SCAN = __WIDE_MEMECOIN_SCAN_JSON__;
   const BTC_MARKET_SNAPSHOT = __BTC_MARKET_SNAPSHOT_JSON__;
+  const FEAR_GREED = __FEAR_GREED_JSON__;
   const TRACKS = {
     daily: {
       label: 'Daily', symbol: 'BTC/USDT', dateUnit: 'Day', intraday: false,
@@ -570,8 +586,15 @@
     return strategyNames.map((name) => {
       const p = track.positions.strategies[name];
       const closedTrades = track.trades.filter((t) => t.strategy === name);
-      const totalReturn = p.equity / CAPITAL - 1;
-      return { name, ...p, closedTradeCount: closedTrades.length, totalReturn };
+      // The backtest engine doesn't model margin calls, so a heavily-shorted
+      // position can imply equity below zero over a long enough history -
+      // not a real trading outcome, just unconstrained position sizing.
+      // Floor both the displayed equity and return at zero/-100% so this
+      // reads as "wiped out" instead of a confusing negative dollar figure.
+      const wipedOut = p.equity <= 0;
+      const equity = wipedOut ? 0 : p.equity;
+      const totalReturn = wipedOut ? -1 : p.equity / CAPITAL - 1;
+      return { name, ...p, equity, closedTradeCount: closedTrades.length, totalReturn, wipedOut };
     }).sort((a, b) => b.totalReturn - a.totalReturn);
   }
 
@@ -626,10 +649,11 @@
       const posLabel = r.position > 0 ? '▲ LONG' : r.position < 0 ? '▼ SHORT' : '— FLAT';
       const retClass = r.totalReturn >= 0 ? 'good' : 'critical';
       const openSince = r.open_trade ? fmtDate(r.open_trade.entry_time, track.intraday) + ' @ ' + fmtMoney(r.open_trade.entry_price) : '—';
+      const equityCell = r.wipedOut ? '<span class="pill liq-thin" title="Backtest equity went to/below zero - the engine does not model margin calls, so this is not a realistic trading outcome.">wiped out</span>' : fmtMoney(r.equity);
       return `<tr>
         <td class="strategy-name">${r.name}</td>
         <td><span class="pill ${posClass}">${posLabel}</span></td>
-        <td class="num mono">${fmtMoney(r.equity)}</td>
+        <td class="num mono">${equityCell}</td>
         <td class="num mono ${retClass}">${fmtSignedPct(r.totalReturn)}</td>
         <td class="num mono">${r.closedTradeCount}</td>
         <td class="num mono">${r.closedTradeCount + (r.open_trade ? 1 : 0)}</td>
@@ -801,21 +825,27 @@
     }
   });
 
-  // ---------- live BTC market snapshot (order book + funding rate) ----------
+  // ---------- live BTC market snapshot (order book + funding rate + sentiment) ----------
   function renderMarketSnapshot() {
     const panel = document.getElementById('marketSnapshotPanel');
     const snap = BTC_MARKET_SNAPSHOT;
-    if (!snap || (!snap.order_book && !snap.funding_rate)) {
+    const fng = FEAR_GREED;
+    const hasFng = fng && fng.value !== null && fng.value !== undefined;
+    if ((!snap || (!snap.order_book && !snap.funding_rate)) && !hasFng) {
       panel.style.display = 'none';
       return;
     }
     panel.style.display = '';
-    document.getElementById('marketSnapshotHint').textContent = snap.updated_at_utc
+    document.getElementById('marketSnapshotHint').textContent = snap && snap.updated_at_utc
       ? 'As of: ' + fmtUpdated(snap.updated_at_utc)
       : '—';
 
     const tiles = [];
-    if (snap.funding_rate && snap.funding_rate.rate !== undefined) {
+    if (hasFng) {
+      const cls = /fear/i.test(fng.classification) ? 'fng-fear' : /greed/i.test(fng.classification) ? 'fng-greed' : 'fng-neutral';
+      tiles.push(`<div class="tile"><span class="tile-label">Fear &amp; Greed Index</span><span class="tile-value ${cls}">${fng.value}</span><span class="tile-sub">${fng.classification || '—'} · market-wide, daily</span></div>`);
+    }
+    if (snap && snap.funding_rate && snap.funding_rate.rate !== undefined) {
       const rate = parseFloat(snap.funding_rate.rate);
       const pct = isFinite(rate) ? rate * 100 : NaN;
       const cls = isFinite(pct) ? (pct >= 0 ? 'funding-pos' : 'funding-neg') : '';
@@ -843,8 +873,36 @@
     document.getElementById('bookGrid').style.display = snap.order_book ? '' : 'none';
   }
 
+  // ---------- data freshness ----------
+  const STALE_THRESHOLD_HOURS = 3; // hourly cadence + generous buffer before flagging
+
+  function checkStaleness() {
+    const timestamps = [
+      TRACKS.daily.positions.updated_at_utc, TRACKS.fifteenMin.positions.updated_at_utc,
+      TRACKS.eth.positions.updated_at_utc, TRACKS.sol.positions.updated_at_utc,
+      MEMECOIN_SCAN.updated_at_utc, WIDE_MEMECOIN_SCAN.updated_at_utc,
+      BTC_MARKET_SNAPSHOT.updated_at_utc, FEAR_GREED.updated_at_utc,
+    ].filter(Boolean).map((s) => new Date(s)).filter((d) => !isNaN(d));
+
+    const banner = document.getElementById('staleBanner');
+    if (!timestamps.length) {
+      banner.style.display = 'none';
+      return;
+    }
+    const freshest = new Date(Math.max(...timestamps.map((d) => d.getTime())));
+    const ageHours = (Date.now() - freshest.getTime()) / 3600000;
+    if (ageHours > STALE_THRESHOLD_HOURS) {
+      document.getElementById('staleBannerText').textContent =
+        `Freshest data on this page is from ${fmtUpdated(freshest.toISOString())} (about ${ageHours.toFixed(1)}h ago).`;
+      banner.style.display = 'flex';
+    } else {
+      banner.style.display = 'none';
+    }
+  }
+
   render('daily');
   renderMarketSnapshot();
+  checkStaleness();
   window.addEventListener('resize', renderActive);
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); renderActive(); });
   new MutationObserver(() => { THEME = readTheme(); renderActive(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });

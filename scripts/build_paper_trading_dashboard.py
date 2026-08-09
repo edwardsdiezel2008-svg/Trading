@@ -16,6 +16,7 @@ OUTPUT_PATH = "paper_trading/dashboard.html"
 MEMECOIN_SCAN_PATH = "paper_trading/memecoin_scan.json"
 WIDE_MEMECOIN_SCAN_PATH = "paper_trading/memecoin_wide_scan.json"
 BTC_MARKET_SNAPSHOT_PATH = "paper_trading/btc_market_snapshot.json"
+FEAR_GREED_PATH = "paper_trading/fear_greed.json"
 
 # (file suffix, template placeholder prefix)
 TRACKS = [
@@ -87,6 +88,12 @@ def main():
             market_snapshot = json.load(f)
     out = out.replace("__BTC_MARKET_SNAPSHOT_JSON__", json.dumps(market_snapshot))
 
+    fear_greed = {"updated_at_utc": None, "value": None, "classification": "", "timestamp": ""}
+    if os.path.exists(FEAR_GREED_PATH):
+        with open(FEAR_GREED_PATH) as f:
+            fear_greed = json.load(f)
+    out = out.replace("__FEAR_GREED_JSON__", json.dumps(fear_greed))
+
     assert "__POSITIONS_JSON__" not in out
     assert "__TRADES_JSON__" not in out
     assert "__TRACK_RECORD_JSON__" not in out
@@ -102,6 +109,7 @@ def main():
     assert "__MEMECOIN_SCAN_JSON__" not in out
     assert "__WIDE_MEMECOIN_SCAN_JSON__" not in out
     assert "__BTC_MARKET_SNAPSHOT_JSON__" not in out
+    assert "__FEAR_GREED_JSON__" not in out
 
     with open(OUTPUT_PATH, "w") as f:
         f.write(out)
