@@ -1120,9 +1120,9 @@
         '<tr><td colspan="6" class="scope-note">Walk-forward validation hasn\'t been run for this track yet (it\'s expensive - run manually via scripts/walkforward_snapshot.py, not on every hourly update).</td></tr>';
       return;
     }
-    document.getElementById('wfHint').textContent = wf.generated_at_utc
-      ? `${wf.n_folds}-fold · generated ${fmtUpdated(wf.generated_at_utc)}`
-      : `${wf.n_folds}-fold`;
+    const wfGenerated = wf.generated_at_utc ? `${wf.n_folds}-fold · generated ${fmtUpdated(wf.generated_at_utc)}` : `${wf.n_folds}-fold`;
+    const sensGenerated = sens && sens.generated_at_utc ? ` · sensitivity generated ${fmtUpdated(sens.generated_at_utc)}` : '';
+    document.getElementById('wfHint').textContent = wfGenerated + sensGenerated;
 
     document.getElementById('wfTbody').innerHTML = rows.map((r) => {
       const wfRow = byName[r.name];
