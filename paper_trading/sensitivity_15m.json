@@ -1,56 +1,70 @@
 {
   "symbol": "BTC_USDT",
   "freq": "15min",
-  "generated_at_utc": "2026-08-09T19:47:27.786239Z",
+  "generated_at_utc": "2026-08-09T20:20:38.538428Z",
   "results": [
     {
       "strategy": "MA_Crossover(10/50)",
       "n_values_tested": 10,
       "frac_profitable": 0.0,
-      "sharpe_min": -10.897520291422556,
-      "sharpe_max": -4.790188464308486
+      "sharpe_min": -10.92682969976897,
+      "sharpe_max": -4.841703091530349
     },
     {
       "strategy": "Donchian_Breakout(20)",
       "n_values_tested": 6,
       "frac_profitable": 0.0,
-      "sharpe_min": -6.910035359508589,
-      "sharpe_max": -0.029851783108313962
+      "sharpe_min": -7.438086583722031,
+      "sharpe_max": -0.10896710940860554
     },
     {
       "strategy": "MACD_Momentum(12/26/9)",
       "n_values_tested": 9,
       "frac_profitable": 0.0,
-      "sharpe_min": -17.851498902901085,
-      "sharpe_max": -7.84439878529083
+      "sharpe_min": -17.72222567187663,
+      "sharpe_max": -7.749404814006534
     },
     {
       "strategy": "RSI_Reversion(14,30/70)",
       "n_values_tested": 10,
       "frac_profitable": 0.0,
-      "sharpe_min": -24.4956859423972,
-      "sharpe_max": -10.4988368746946
+      "sharpe_min": -24.411988910574607,
+      "sharpe_max": -10.465423585718016
     },
     {
       "strategy": "Bollinger_Reversion(20,2sd)",
       "n_values_tested": 7,
       "frac_profitable": 0.0,
-      "sharpe_min": -11.947485797190527,
-      "sharpe_max": -6.991768633874661
+      "sharpe_min": -12.554705100396463,
+      "sharpe_max": -6.864259402174845
     },
     {
       "strategy": "ZScore_Reversion(20,z=2.0)",
       "n_values_tested": 7,
       "frac_profitable": 0.0,
-      "sharpe_min": -14.050152274325157,
-      "sharpe_max": -7.427924744466139
+      "sharpe_min": -14.632173313328465,
+      "sharpe_max": -7.404480478069266
     },
     {
       "strategy": "ATR_Vol_Breakout(14,k=1.5)",
       "n_values_tested": 8,
       "frac_profitable": 0.0,
-      "sharpe_min": -12.577056073085075,
-      "sharpe_max": -5.759273157921972
+      "sharpe_min": -12.732251861853463,
+      "sharpe_max": -5.81896240539675
+    },
+    {
+      "strategy": "Supertrend(10,m=3.0)",
+      "n_values_tested": 8,
+      "frac_profitable": 0.0,
+      "sharpe_min": -11.599295935649272,
+      "sharpe_max": -4.9139307863904325
+    },
+    {
+      "strategy": "VWAP_Reversion(20,2%)",
+      "n_values_tested": 8,
+      "frac_profitable": 0.0,
+      "sharpe_min": NaN,
+      "sharpe_max": NaN
     }
   ]
 }

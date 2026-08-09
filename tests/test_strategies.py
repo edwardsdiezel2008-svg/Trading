@@ -9,6 +9,8 @@ from src.backtest.strategies import (
     MACDMomentum,
     MovingAverageCrossover,
     RSIReversion,
+    Supertrend,
+    VWAPReversion,
     ZScoreReversion,
     build_default_strategies,
 )
@@ -21,6 +23,8 @@ ALL = [
     BollingerReversion(),
     ZScoreReversion(),
     ATRVolatilityBreakout(),
+    Supertrend(),
+    VWAPReversion(),
 ]
 
 
@@ -46,8 +50,8 @@ def test_signals_are_valid_positions(strategy):
 
 def test_build_default_strategies_returns_one_of_each():
     strategies = build_default_strategies()
-    assert len(strategies) == 7
-    assert len({s.name for s in strategies}) == 7
+    assert len(strategies) == 9
+    assert len({s.name for s in strategies}) == 9
 
 
 def test_ma_crossover_flips_on_clean_trend_reversal():
@@ -63,3 +67,56 @@ def test_ma_crossover_flips_on_clean_trend_reversal():
     signals = strategy.generate_signals(bars)
     assert signals.iloc[40] == 1
     assert signals.iloc[-1] == -1
+
+
+def test_supertrend_flips_on_clean_trend_reversal():
+    up = np.linspace(100, 300, 60)
+    down = np.linspace(300, 100, 60)
+    price = np.concatenate([up, down])
+    idx = pd.date_range("2026-01-05", periods=len(price), freq="1min")
+    bars = pd.DataFrame({
+        "open": price, "high": price + 1, "low": price - 1, "close": price, "volume": 100,
+    }, index=idx)
+
+    strategy = Supertrend(params={"atr_period": 10, "multiplier": 2.0})
+    signals = strategy.generate_signals(bars)
+    assert signals.iloc[40] == 1
+    assert signals.iloc[-1] == -1
+
+
+def test_supertrend_band_never_moves_against_the_trend():
+    # A ratcheting band is the whole point of Supertrend vs. a plain
+    # breakout test - once in an uptrend, a small pullback that doesn't
+    # break the lower band must not flip the signal.
+    price = np.concatenate([np.linspace(100, 200, 40), [199, 197, 199, 202]])
+    idx = pd.date_range("2026-01-05", periods=len(price), freq="1min")
+    bars = pd.DataFrame({
+        "open": price, "high": price + 0.5, "low": price - 0.5, "close": price, "volume": 100,
+    }, index=idx)
+    strategy = Supertrend(params={"atr_period": 10, "multiplier": 3.0})
+    signals = strategy.generate_signals(bars)
+    assert (signals.iloc[35:] == 1).all()
+
+
+def test_vwap_reversion_goes_long_on_a_sharp_dip_below_vwap():
+    # Flat, high-volume price history establishes a stable VWAP, then a
+    # sharp one-bar dip should trigger a long entry.
+    price = [100.0] * 25 + [90.0] * 5
+    idx = pd.date_range("2026-01-05", periods=len(price), freq="1min")
+    bars = pd.DataFrame({
+        "open": price, "high": price, "low": price, "close": price, "volume": 1000,
+    }, index=idx)
+    strategy = VWAPReversion(params={"window": 20, "entry_pct": 0.02, "exit_pct": 0.005})
+    signals = strategy.generate_signals(bars)
+    assert signals.iloc[-1] == 1
+
+
+def test_vwap_reversion_flat_when_price_tracks_vwap():
+    price = [100.0 + (i % 3) * 0.01 for i in range(30)]  # negligible drift
+    idx = pd.date_range("2026-01-05", periods=len(price), freq="1min")
+    bars = pd.DataFrame({
+        "open": price, "high": price, "low": price, "close": price, "volume": 1000,
+    }, index=idx)
+    strategy = VWAPReversion(params={"window": 20, "entry_pct": 0.02, "exit_pct": 0.005})
+    signals = strategy.generate_signals(bars)
+    assert (signals.iloc[20:] == 0).all()

@@ -101,3 +101,41 @@ class ZScoreReversion(Strategy):
         signal = raw.ffill().fillna(0)
         signal[z.isna()] = 0
         return signal
+
+
+class VWAPReversion(Strategy):
+    """Mean-reversion around a rolling volume-weighted average price, rather
+    than a simple/exponential moving average of price alone - the one
+    strategy in this library that actually uses the bar's volume column.
+    Long when price is more than entry_pct below rolling VWAP, short when
+    that far above, flat once it reverts within exit_pct. VWAP is a
+    standard intraday fair-value anchor (institutional execution
+    benchmarks are built around it) precisely because it weights the
+    moves that came with size more than ones that didn't.
+    Params: window=20, entry_pct=0.02, exit_pct=0.005.
+    """
+
+    PARAM_SPACE = {"window": [10, 14, 20, 30], "entry_pct": [0.01, 0.02, 0.03, 0.05]}
+
+    @property
+    def name(self) -> str:
+        return f"VWAP_Reversion({self.params.get('window', 20)},{self.params.get('entry_pct', 0.02) * 100:.0f}%)"
+
+    def generate_signals(self, bars: pd.DataFrame) -> pd.Series:
+        window = self.params.get("window", 20)
+        entry_pct = self.params.get("entry_pct", 0.02)
+        exit_pct = self.params.get("exit_pct", 0.005)
+        close, volume = bars["close"], bars["volume"]
+        typical = (bars["high"] + bars["low"] + bars["close"]) / 3
+        pv_sum = (typical * volume).rolling(window).sum()
+        vol_sum = volume.rolling(window).sum().replace(0, np.nan)
+        vwap = pv_sum / vol_sum
+        dist = (close - vwap) / vwap
+
+        raw = pd.Series(np.nan, index=bars.index)
+        raw[dist <= -entry_pct] = 1
+        raw[dist >= entry_pct] = -1
+        raw[dist.abs() <= exit_pct] = 0
+        signal = raw.ffill().fillna(0)
+        signal[vwap.isna()] = 0
+        return signal

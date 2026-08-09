@@ -1,28 +1,28 @@
 {
   "symbol": "ETH_USDT",
   "freq": "1D",
-  "generated_at_utc": "2026-08-09T19:47:26.603844Z",
+  "generated_at_utc": "2026-08-09T20:20:37.064516Z",
   "results": [
     {
       "strategy": "MA_Crossover(10/50)",
       "n_values_tested": 10,
       "frac_profitable": 1.0,
-      "sharpe_min": 0.3261060167459201,
-      "sharpe_max": 0.7901711250898661
+      "sharpe_min": 0.32606754646368363,
+      "sharpe_max": 0.7901310811205376
     },
     {
       "strategy": "Donchian_Breakout(20)",
       "n_values_tested": 6,
       "frac_profitable": 0.8333333333333334,
-      "sharpe_min": 0.20713665053076472,
-      "sharpe_max": 0.6207690589219538
+      "sharpe_min": 0.20709848751365384,
+      "sharpe_max": 0.6208104758321591
     },
     {
       "strategy": "MACD_Momentum(12/26/9)",
       "n_values_tested": 9,
       "frac_profitable": 0.3333333333333333,
-      "sharpe_min": 0.04508288414559254,
-      "sharpe_max": 0.35241165008534997
+      "sharpe_min": 0.045121042399874994,
+      "sharpe_max": 0.3524515058730764
     },
     {
       "strategy": "RSI_Reversion(14,30/70)",
@@ -49,8 +49,22 @@
       "strategy": "ATR_Vol_Breakout(14,k=1.5)",
       "n_values_tested": 8,
       "frac_profitable": 0.5,
-      "sharpe_min": -0.5864992824844437,
-      "sharpe_max": 0.5826227264393697
+      "sharpe_min": -0.5864637527388382,
+      "sharpe_max": 0.5826370209081372
+    },
+    {
+      "strategy": "Supertrend(10,m=3.0)",
+      "n_values_tested": 8,
+      "frac_profitable": 0.875,
+      "sharpe_min": 0.23509029874081033,
+      "sharpe_max": 0.5370401258861028
+    },
+    {
+      "strategy": "VWAP_Reversion(20,2%)",
+      "n_values_tested": 8,
+      "frac_profitable": 0.0,
+      "sharpe_min": -0.6068554656759618,
+      "sharpe_max": -0.43080858549125733
     }
   ]
 }

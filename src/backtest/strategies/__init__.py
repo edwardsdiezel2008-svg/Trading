@@ -1,8 +1,8 @@
 from .base import Strategy
-from .mean_reversion import BollingerReversion, RSIReversion, ZScoreReversion
+from .mean_reversion import BollingerReversion, RSIReversion, VWAPReversion, ZScoreReversion
 from .regime_filter import RegimeFilteredStrategy
 from .trend import DonchianBreakout, MACDMomentum, MovingAverageCrossover
-from .volatility import ATRVolatilityBreakout
+from .volatility import ATRVolatilityBreakout, Supertrend
 
 ALL_STRATEGY_CLASSES = [
     MovingAverageCrossover,
@@ -12,6 +12,8 @@ ALL_STRATEGY_CLASSES = [
     BollingerReversion,
     ZScoreReversion,
     ATRVolatilityBreakout,
+    Supertrend,
+    VWAPReversion,
 ]
 
 
@@ -29,6 +31,8 @@ __all__ = [
     "BollingerReversion",
     "ZScoreReversion",
     "ATRVolatilityBreakout",
+    "Supertrend",
+    "VWAPReversion",
     "RegimeFilteredStrategy",
     "ALL_STRATEGY_CLASSES",
     "build_default_strategies",

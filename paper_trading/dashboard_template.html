@@ -990,6 +990,9 @@
     document.getElementById('asOfHint').textContent = POSITIONS.latest_bar ? 'As of bar: ' + POSITIONS.latest_bar : '—';
     document.getElementById('tradeCountHint').textContent = TRADES.length + ' closed trades across all strategies';
     document.getElementById('footerSymbol').textContent = track.symbol;
+    if (order.length) {
+        document.getElementById('brandSub').textContent = `All ${order.length} strategies, simulated against real ${track.symbol} data`;
+    }
 
     const thinNote = document.getElementById('thinDataNote');
     if (POSITIONS.bar_count && POSITIONS.bar_count < THIN_DATA_BAR_THRESHOLD) {
