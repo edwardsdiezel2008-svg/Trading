@@ -25,9 +25,15 @@ import time
 import requests
 
 BASE_URL = "https://api.crypto.com/exchange/v1/public"
+# Funding rates are a derivatives-only concept and live on a separate API
+# host from spot/exchange endpoints - confirmed via Crypto.com's own docs,
+# not something the MCP tool ever exposed a working path for.
+DERIV_BASE_URL = "https://deriv-api.crypto.com/v1/public"
 CANDLE_COUNT = 300
+ORDER_BOOK_DEPTH = 10
 
 BTC_SYMBOL = "BTC_USDT"
+BTC_PERP_SYMBOL = "BTCUSD-PERP"
 
 MEME_PRECISE_SYMBOLS = [
     "DOGEUSD", "SHIBUSD", "PEPEUSD", "FLOKIUSD", "BONKUSD", "WIFUSD",
@@ -61,8 +67,8 @@ def _normalize_instrument(symbol):
     return symbol
 
 
-def _get(path, params=None, retries=3):
-    url = f"{BASE_URL}/{path}"
+def _get(path, params=None, retries=3, base_url=BASE_URL):
+    url = f"{base_url}/{path}"
     last_err = None
     for attempt in range(retries):
         try:
@@ -133,6 +139,55 @@ def _normalize_ticker(t):
         "volume_value": _first(t, "volume_value", "vv", "v", default="0"),
         "timestamp": ts or "",
     }
+
+
+def _normalize_book_level(level):
+    """A book level has shown up as [price, size, num_orders] and as
+    {"price":.., "quantity":..} across exchange API generations - handle
+    both and return a plain [price_str, size_str] pair."""
+    if isinstance(level, (list, tuple)):
+        return [str(level[0]), str(level[1] if len(level) > 1 else "0")]
+    if isinstance(level, dict):
+        price = _first(level, "price", "p")
+        size = _first(level, "quantity", "size", "q", "s", default="0")
+        return [str(price), str(size)]
+    return [str(level), "0"]
+
+
+def fetch_order_book(instrument_name, depth=ORDER_BOOK_DEPTH):
+    result = _get("get-book", {
+        "instrument_name": _normalize_instrument(instrument_name),
+        "depth": depth,
+    })
+    # Seen shapes: {"depth": N, "data": [{"bids": [...], "asks": [...], "t": ...}]}
+    # and directly {"bids": [...], "asks": [...]} at the top level.
+    entry = result
+    if isinstance(result.get("data"), list) and result["data"]:
+        entry = result["data"][0]
+    bids = [_normalize_book_level(lv) for lv in entry.get("bids", [])]
+    asks = [_normalize_book_level(lv) for lv in entry.get("asks", [])]
+    ts = _first(entry, "t", "timestamp")
+    if isinstance(ts, (int, float)):
+        ts = datetime.datetime.utcfromtimestamp(ts / 1000).isoformat() + "Z"
+    return {"bids": bids, "asks": asks, "timestamp": ts or ""}
+
+
+def fetch_funding_rate(instrument_name=BTC_PERP_SYMBOL, count=1):
+    result = _get("get-valuations", {
+        "instrument_name": instrument_name,
+        "valuation_type": "funding_rate",
+        "count": count,
+    }, base_url=DERIV_BASE_URL)
+    data = result.get("data") if isinstance(result, dict) else result
+    if not data:
+        return None
+    latest = data[0]
+    print(f"DEBUG: sample funding rate entry keys: {sorted(latest.keys())}")
+    value = _first(latest, "value", "v", "funding_rate", default="0")
+    ts = _first(latest, "t", "timestamp")
+    if isinstance(ts, (int, float)):
+        ts = datetime.datetime.utcfromtimestamp(ts / 1000).isoformat() + "Z"
+    return {"rate": str(value), "timestamp": ts or "", "instrument_name": instrument_name}
 
 
 def _candle_timestamp(c):
@@ -211,6 +266,29 @@ def main():
     with open("paper_trading/memecoins_wide_tickers.json", "w") as f:
         json.dump({"symbols": found}, f, indent=2)
     print(f"memecoins_wide_tickers.json: {len(found)} symbols")
+
+    book = None
+    try:
+        book = fetch_order_book(BTC_SYMBOL)
+        print(f"order book: {len(book['bids'])} bid levels, {len(book['asks'])} ask levels")
+    except Exception as e:
+        print(f"WARN: order book fetch failed: {e}")
+
+    funding = None
+    try:
+        funding = fetch_funding_rate(BTC_PERP_SYMBOL)
+        print(f"funding rate: {funding}")
+    except Exception as e:
+        print(f"WARN: funding rate fetch failed: {e}")
+
+    if book is not None or funding is not None:
+        with open("paper_trading/btc_market_snapshot.json", "w") as f:
+            json.dump({
+                "updated_at_utc": datetime.datetime.utcnow().isoformat() + "Z",
+                "order_book": book,
+                "funding_rate": funding,
+            }, f, indent=2)
+        print("btc_market_snapshot.json written")
 
 
 if __name__ == "__main__":

@@ -15,6 +15,7 @@ TEMPLATE_PATH = "paper_trading/dashboard_template.html"
 OUTPUT_PATH = "paper_trading/dashboard.html"
 MEMECOIN_SCAN_PATH = "paper_trading/memecoin_scan.json"
 WIDE_MEMECOIN_SCAN_PATH = "paper_trading/memecoin_wide_scan.json"
+BTC_MARKET_SNAPSHOT_PATH = "paper_trading/btc_market_snapshot.json"
 
 # (file suffix, template placeholder prefix)
 TRACKS = [
@@ -71,6 +72,12 @@ def main():
             wide_scan = json.load(f)
     out = out.replace("__WIDE_MEMECOIN_SCAN_JSON__", json.dumps(wide_scan))
 
+    market_snapshot = {"updated_at_utc": None, "order_book": None, "funding_rate": None}
+    if os.path.exists(BTC_MARKET_SNAPSHOT_PATH):
+        with open(BTC_MARKET_SNAPSHOT_PATH) as f:
+            market_snapshot = json.load(f)
+    out = out.replace("__BTC_MARKET_SNAPSHOT_JSON__", json.dumps(market_snapshot))
+
     assert "__POSITIONS_JSON__" not in out
     assert "__TRADES_JSON__" not in out
     assert "__TRACK_RECORD_JSON__" not in out
@@ -79,6 +86,7 @@ def main():
     assert "__TRACK_RECORD_15M_JSON__" not in out
     assert "__MEMECOIN_SCAN_JSON__" not in out
     assert "__WIDE_MEMECOIN_SCAN_JSON__" not in out
+    assert "__BTC_MARKET_SNAPSHOT_JSON__" not in out
 
     with open(OUTPUT_PATH, "w") as f:
         f.write(out)

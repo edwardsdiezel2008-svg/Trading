@@ -159,6 +159,19 @@
   .breakout-no { color: var(--ink-muted); }
   .liq-thin { background: var(--critical-wash); color: var(--critical); }
   .liq-ok { background: var(--good-wash); color: var(--good); }
+
+  .book-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 640px) { .book-grid { grid-template-columns: 1fr; } }
+  .book-side h3 { margin: 0 0 6px; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); }
+  .book-row { display: flex; justify-content: space-between; font-size: var(--fs-sm); padding: 3px 6px; border-radius: 4px; position: relative; }
+  .book-row .px { font-family: var(--font-mono); }
+  .book-row .sz { font-family: var(--font-mono); color: var(--ink-muted); }
+  .book-bid .px { color: var(--good); }
+  .book-ask .px { color: var(--critical); }
+  .book-bid { background: var(--good-wash); }
+  .book-ask { background: var(--critical-wash); }
+  .funding-pos { color: var(--good); }
+  .funding-neg { color: var(--critical); }
 </style>
 
 <div class="app">
@@ -172,6 +185,25 @@
     </div>
     <span class="updated-badge mono" id="updatedBadge">—</span>
   </header>
+
+  <div class="panel" id="marketSnapshotPanel" style="display:none;">
+    <div class="panel-head">
+      <h2>Live BTC market</h2>
+      <span class="panel-hint" id="marketSnapshotHint">—</span>
+    </div>
+    <p class="panel-note">Order book depth and perpetual funding rate - real market context, separate from the simulated strategy tracks below. Funding rate is a positioning gauge for the BTC perpetual contract (positive = longs pay shorts, i.e. market leaning long); the paper-trading strategies themselves only ever trade spot.</p>
+    <div class="stat-tiles" id="fundingStatTiles"></div>
+    <div class="book-grid" id="bookGrid" style="margin-top: 12px;">
+      <div class="book-side">
+        <h3>Bids</h3>
+        <div id="bookBids"></div>
+      </div>
+      <div class="book-side">
+        <h3>Asks</h3>
+        <div id="bookAsks"></div>
+      </div>
+    </div>
+  </div>
 
   <div class="tab-bar" id="tabBar">
     <button class="tab-btn active" data-track="daily">Daily</button>
@@ -344,6 +376,7 @@
   "use strict";
   const MEMECOIN_SCAN = __MEMECOIN_SCAN_JSON__;
   const WIDE_MEMECOIN_SCAN = __WIDE_MEMECOIN_SCAN_JSON__;
+  const BTC_MARKET_SNAPSHOT = __BTC_MARKET_SNAPSHOT_JSON__;
   const TRACKS = {
     daily: {
       label: 'Daily', dateUnit: 'Day', intraday: false,
@@ -745,7 +778,50 @@
     }
   });
 
+  // ---------- live BTC market snapshot (order book + funding rate) ----------
+  function renderMarketSnapshot() {
+    const panel = document.getElementById('marketSnapshotPanel');
+    const snap = BTC_MARKET_SNAPSHOT;
+    if (!snap || (!snap.order_book && !snap.funding_rate)) {
+      panel.style.display = 'none';
+      return;
+    }
+    panel.style.display = '';
+    document.getElementById('marketSnapshotHint').textContent = snap.updated_at_utc
+      ? 'As of: ' + fmtUpdated(snap.updated_at_utc)
+      : '—';
+
+    const tiles = [];
+    if (snap.funding_rate && snap.funding_rate.rate !== undefined) {
+      const rate = parseFloat(snap.funding_rate.rate);
+      const pct = isFinite(rate) ? rate * 100 : NaN;
+      const cls = isFinite(pct) ? (pct >= 0 ? 'funding-pos' : 'funding-neg') : '';
+      const label = isFinite(pct) ? (pct >= 0 ? 'Long-biased' : 'Short-biased') : '—';
+      const pctStr = isFinite(pct) ? (pct >= 0 ? '+' : '') + pct.toFixed(4) + '%' : '—';
+      tiles.push(`<div class="tile"><span class="tile-label">BTC perp funding rate</span><span class="tile-value ${cls}">${pctStr}</span><span class="tile-sub">${label} · ${snap.funding_rate.instrument_name || ''}</span></div>`);
+    }
+    if (snap.order_book && snap.order_book.bids && snap.order_book.bids.length && snap.order_book.asks && snap.order_book.asks.length) {
+      const bestBid = parseFloat(snap.order_book.bids[0][0]);
+      const bestAsk = parseFloat(snap.order_book.asks[0][0]);
+      const spread = bestAsk - bestBid;
+      const spreadPct = bestBid ? (spread / bestBid) * 100 : 0;
+      tiles.push(`<div class="tile"><span class="tile-label">Best bid</span><span class="tile-value good">${fmtMoney(bestBid)}</span></div>`);
+      tiles.push(`<div class="tile"><span class="tile-label">Best ask</span><span class="tile-value critical">${fmtMoney(bestAsk)}</span></div>`);
+      tiles.push(`<div class="tile"><span class="tile-label">Spread</span><span class="tile-value">${fmtMoney(spread)}</span><span class="tile-sub">${spreadPct.toFixed(3)}%</span></div>`);
+    }
+    document.getElementById('fundingStatTiles').innerHTML = tiles.join('');
+
+    const renderSide = (levels, cls) => (levels || []).slice(0, 10).map((lv) => {
+      const px = parseFloat(lv[0]), sz = parseFloat(lv[1]);
+      return `<div class="book-row ${cls}"><span class="px">${fmtMoney(px)}</span><span class="sz">${isFinite(sz) ? sz.toLocaleString(undefined, { maximumFractionDigits: 5 }) : lv[1]}</span></div>`;
+    }).join('');
+    document.getElementById('bookBids').innerHTML = snap.order_book ? renderSide(snap.order_book.bids, 'book-bid') : '<p class="scope-note">Unavailable this update.</p>';
+    document.getElementById('bookAsks').innerHTML = snap.order_book ? renderSide(snap.order_book.asks, 'book-ask') : '<p class="scope-note">Unavailable this update.</p>';
+    document.getElementById('bookGrid').style.display = snap.order_book ? '' : 'none';
+  }
+
   render('daily');
+  renderMarketSnapshot();
   window.addEventListener('resize', renderActive);
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); renderActive(); });
   new MutationObserver(() => { THEME = readTheme(); renderActive(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
