@@ -6,9 +6,11 @@ name: Hourly market data update
 # open. See scripts/fetch_market_data.py for the actual data fetch, which
 # talks to Crypto.com's public REST API directly (no auth needed).
 #
-# This updates the underlying data and commits it, but does NOT republish
-# the Claude Artifact dashboard - that still needs a manual refresh from a
-# Claude session, since Artifact publishing isn't available from here.
+# Also deploys the rebuilt dashboard to GitHub Pages every run, so the
+# dashboard itself needs no manual republish step from a Claude session -
+# https://<owner>.github.io/<repo>/ always reflects the latest commit.
+# (One-time manual setup required: repo Settings -> Pages -> Build and
+# deployment -> Source: "GitHub Actions".)
 
 on:
   schedule:
@@ -25,6 +27,8 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    outputs:
+      site_ready: ${{ steps.stage.outputs.site_ready }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -65,3 +69,28 @@ jobs:
             git pull --rebase origin claude/hello-rs2zvp
             git push origin HEAD:claude/hello-rs2zvp
           fi
+
+      - name: Stage dashboard for Pages
+        id: stage
+        run: |
+          mkdir -p _site
+          cp paper_trading/dashboard.html _site/index.html
+          echo "site_ready=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: update
+    if: needs.update.outputs.site_ready == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
