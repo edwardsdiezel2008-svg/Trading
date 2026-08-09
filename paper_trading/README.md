@@ -1,50 +1,114 @@
-# BTC/USDT paper trading
+# Crypto paper trading cockpit
 
-Simulated (no real money) live trading of all 7 strategies against real
-BTC/USDT daily bars, updated roughly hourly by a scheduled agent check-in.
+Simulated (no real money) live trading of 7 backtested strategies against
+real Crypto.com Exchange data - BTC (daily + 15-minute), ETH (daily), SOL
+(daily) - plus a wide memecoin momentum/breakout scanner, updated hourly.
+
+**Live site:** the root of this repo's GitHub Pages deployment is the
+minimal landing page; `/dashboard.html` is the full detail page with every
+track, chart, and table.
 
 ## How it actually works
 
-There's no standalone bot process - this environment's scheduled triggers
-fire a prompt into the Claude session, which then does the update by hand
-each time:
+There is no standalone bot process and no dependency on a Claude chat
+session or MCP connector being open. `.github/workflows/hourly-market-data.yml`
+runs on GitHub's own infrastructure every hour (`cron: "10 * * * *"`, plus
+manual `workflow_dispatch`):
 
-1. Pull the latest daily candle(s) for BTC_USDT via the Crypto.com MCP
-   connector (`mcp__Crypto_com__get_candlestick`) - this is the one live
-   data path that works from within the session; direct HTTP calls to
-   market data APIs are blocked by this environment's network policy.
-2. Upsert those candles into `bars.csv` (today's row gets overwritten as it
-   updates through the day; a new row is appended when a new day starts).
-3. Run `python scripts/paper_trade_update.py`, which re-runs the same
-   tested backtest engine (`src/backtest/engine.py`) on the full bar
-   history for every strategy and derives each one's current position from
-   the last bar of a fresh, complete backtest - no separate incremental
-   "live execution" logic that could drift out of sync with what the
-   engine actually validated.
-4. Commit and push `bars.csv`, `positions.json`, `trade_log.csv`, and
-   `summary.md` so state survives container restarts.
-5. Only send a chat message if a strategy's position actually changed
-   since the last check - silent otherwise.
+1. `scripts/fetch_market_data.py` - plain HTTP against Crypto.com Exchange's
+   public REST API (no auth needed) for BTC/ETH/SOL candles, the wide
+   memecoin ticker universe, BTC order book + perpetual funding rate, and
+   `scripts/fetch_news.py` pulls crypto headlines from public RSS feeds
+   (CoinDesk, CoinTelegraph, Bitcoin.com).
+2. `scripts/paper_trade_update.py` (once per track: daily, 15-min, ETH,
+   SOL) re-runs the same tested backtest engine (`src/backtest/engine.py`)
+   on the full bar history for every strategy and derives each one's
+   current position from the last bar of a fresh, complete backtest - no
+   separate incremental "live execution" logic that could drift out of
+   sync with what the engine actually validated. The 15-minute track also
+   passes `--cost-aware-min-multiple 1.0`, wrapping every strategy in
+   `CostAwareFilter` (`src/backtest/strategies/cost_filter.py`) so it only
+   trades when the recent ATR-based expected move can plausibly clear the
+   round-trip transaction cost - reusing daily-tuned strategy periods
+   unfiltered on 15-minute bars caused far more whipsaw trades than the
+   typical bar-to-bar move could pay for.
+3. `scripts/memecoin_scan_update.py` / `scripts/memecoin_wide_scan.py`
+   refresh the memecoin breakout scanner and momentum heatmap.
+4. `scripts/build_paper_trading_dashboard.py` rebuilds both HTML pages from
+   the current state.
+5. Commits and pushes everything under `paper_trading/` if anything
+   changed, then stages `index.html` + `dashboard.html` and deploys them to
+   GitHub Pages via `actions/deploy-pages@v4`.
+
+## Risk floor (applies to every live track)
+
+Every `paper_trade_update.py` run applies `max_loss_fraction=0.5` to
+`run_backtest()`: an open position is force-closed the moment it's lost
+half the equity that was allocated to it, simulating the stop-out a real
+account would hit long before equity could go arbitrarily negative. This
+is off by default in the engine itself (`max_loss_fraction=None`) and only
+enabled for the live paper-trading tracks - walk-forward and sensitivity
+snapshots run without it, since those are deliberately testing a
+strategy's raw signal edge.
+
+## Robustness checks (not part of the hourly pipeline - run manually)
+
+Two separate questions, both expensive (grid search per fold/parameter
+value), so neither runs on every hourly update:
+
+- `scripts/walkforward_snapshot.py` - re-optimizes each strategy's
+  parameters on rolling training windows and scores it only on data it
+  never saw during that fit (`walkforward*.json`). Answers "did this hold
+  up on unseen data."
+- `scripts/sensitivity_snapshot.py` - sweeps each strategy's parameter
+  space one value at a time and reports what fraction of nearby values
+  were also profitable (`sensitivity*.json`). Answers "is the edge a
+  plateau, or a spike at exactly one setting."
+
+The dashboard's "Robustness (walk-forward)" table shows both together per
+track, and the landing page's "Cross-asset validated" panel cross-
+references walk-forward results across the three daily tracks (BTC/ETH/
+SOL) - a strategy robust on all three independent price histories is much
+harder to explain by luck than one that only worked on one.
+
+## Other context surfaced on the dashboard
+
+- **Regime** (`src/backtest/regime.py`, `compute_current_regimes()`) - each
+  asset's latest ADX-based trend/volatility classification, shown as a
+  pill on the landing page's asset cards. Trend-following strategies need
+  a trending regime to have anything to catch.
+- **Correlation** - pairwise Pearson correlation of daily returns across
+  BTC/ETH/SOL, so ETH/SOL results can be checked for whether they're a
+  genuinely independent signal or just BTC beta.
+- **News** - recent crypto headlines from public RSS feeds, tagged by
+  likely BTC/ETH/SOL/Regulation/ETF/Macro relevance. Context, not a
+  trading signal - nothing here reads or reacts to it.
 
 ## Files
 
-- `bars.csv` - growing daily OHLCV history, the only file fed by live data.
-- `positions.json` - current position, unrealized equity, and open trade
-  (if any) per strategy, plus when it was last updated.
-- `trade_log.csv` - every closed trade across all 7 strategies.
-- `summary.md` - human-readable snapshot table.
+Per track (suffix `""` = BTC daily, `_15m`, `_eth`, `_sol`):
+`bars{suffix}.csv`, `positions{suffix}.json`, `trade_log{suffix}.csv`,
+`track_record{suffix}.csv`, `summary{suffix}.md`,
+`walkforward{suffix}.json`, `sensitivity{suffix}.json` (the last two only
+where a manual snapshot has been run). Plus `memecoin_scan.json` /
+`memecoin_wide_scan.json` / `memecoins_wide_tickers.json` /
+`memecoins/*.csv` (scanner), `btc_market_snapshot.json` (order book +
+funding), `fear_greed.json`, `news.json`, `index.html` + `dashboard.html`
+(built output - regenerate with `python scripts/build_paper_trading_dashboard.py`,
+never hand-edit).
 
 ## Caveats
 
-- **Hourly, not real-time.** Scheduled triggers in this environment have a
-  one-hour minimum interval. This checks in on a real market roughly once
-  an hour; it does not react intraday.
-- **"Today" is provisional.** BTC/USDT trades 24/7 and Crypto.com's current-day
-  candle updates continuously until the day rolls over. A position derived
-  from today's still-forming candle reflects "if today closed here," not a
-  finalized signal - by the time it would actually execute (next day's
-  open, per this engine's execution model), the number may have moved.
-- **No real capital, no real slippage/latency.** This proves whether a
-  strategy's logic would have kept working on real, ongoing price action -
-  it is not a substitute for actually trading, and nothing here should be
-  read as investment advice.
+- **Simulated, not real money.** No trades are ever actually placed
+  anywhere. Not investment advice.
+- **Hourly, not real-time.** This checks in on the real market roughly
+  once an hour; it does not react intraday except within that cadence.
+- **Costs are modeled but simplified.** Crypto tracks use Crypto.com's
+  published taker fee (0.075%) plus an assumed 0.05% slippage, both
+  round-trip. Real fills, especially in thin memecoin markets, can be
+  worse.
+- **Most strategies are not currently profitable.** Read the walk-forward
+  and sensitivity numbers before trusting any full-backtest headline
+  return - see "Robustness checks" above. A strategy showing a large
+  in-sample return can still be a curve-fit that fails on data it never
+  saw.
