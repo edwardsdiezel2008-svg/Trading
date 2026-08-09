@@ -424,6 +424,11 @@
       <span><strong>Not currently profitable.</strong> <span id="unprofitableText"></span></span>
     </div>
 
+    <div class="thin-data-note" id="costFilterNote">
+      <span>🧮</span>
+      <span><strong>Cost-aware filter active.</strong> These strategies use the same periods as the daily track, which on 15-minute bars means far more crossings/breakouts than the typical bar-to-bar move can pay for after fees. A trade only fires when the recent ATR-based expected move is at least as large as the round-trip transaction cost - otherwise the strategy holds its current position instead of flipping. This cuts needless whipsaw trades but doesn't manufacture an edge that isn't there.</span>
+    </div>
+
     <div class="stat-tiles" id="statTiles"></div>
 
     <div class="panel">
@@ -993,6 +998,8 @@
     } else {
       thinNote.classList.remove('visible');
     }
+
+    document.getElementById('costFilterNote').classList.toggle('visible', trackKey === 'fifteenMin');
 
     const unprofitableNote = document.getElementById('unprofitableNote');
     if (rows.length && rows.every((r) => r.totalReturn <= 0)) {

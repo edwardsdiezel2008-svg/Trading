@@ -47,7 +47,7 @@ jobs:
       - name: Update BTC paper-trading state (daily + 15-min)
         run: |
           python scripts/paper_trade_update.py
-          python scripts/paper_trade_update.py --suffix _15m --freq 15min --tracking-start "2026-08-08 08:45:00"
+          python scripts/paper_trade_update.py --suffix _15m --freq 15min --tracking-start "2026-08-08 08:45:00" --cost-aware-min-multiple 1.0
 
       - name: Update ETH/SOL paper-trading state (daily)
         run: |

@@ -34,8 +34,16 @@ from src.backtest.engine import run_backtest
 from src.backtest.instruments import get_spec
 from src.backtest.metrics import compute_metrics
 from src.backtest.strategies import ALL_STRATEGY_CLASSES
+from src.backtest.strategies.cost_filter import CostAwareFilter
 
 CAPITAL = 100_000.0
+# Real accounts never let equity go arbitrarily negative - a broker/exchange
+# liquidates you first. Force-close any open position once it's lost half
+# the equity that was allocated to it, applied to every paper-trading track
+# (not just the one that happened to hit this) so the whole dashboard
+# reflects a bounded, realistic risk floor rather than raw unbounded
+# backtest math. See src/backtest/engine.py's max_loss_fraction docstring.
+MAX_LOSS_FRACTION = 0.5
 
 
 def parse_args(argv=None):
@@ -44,6 +52,12 @@ def parse_args(argv=None):
     p.add_argument("--freq", default="1D", help="Pandas freq string for bar resampling/annualization, e.g. '1D', '15min'.")
     p.add_argument("--tracking-start", default="2026-08-08", help="Timestamp (parseable by pandas) marking where the live track record begins.")
     p.add_argument("--symbol", default="BTC_USDT", help="Instrument symbol for backtest spec lookup and metadata, e.g. 'ETH_USDT', 'SOL_USDT'.")
+    p.add_argument("--cost-aware-min-multiple", type=float, default=None,
+                    help="If set, wraps every strategy in CostAwareFilter: a position change is only taken when "
+                         "the bar's ATR-based expected move is at least this many multiples of the round-trip "
+                         "transaction cost. Meant for sub-daily tracks (e.g. 15-minute) where reusing daily-tuned "
+                         "strategy periods causes far more trades than the typical bar-to-bar move can pay for. "
+                         "Off by default so daily/ETH/SOL tracks are unaffected.")
     return p.parse_args(argv)
 
 
@@ -123,7 +137,9 @@ def main(argv=None):
 
     for cls in ALL_STRATEGY_CLASSES:
         strat = cls()
-        result = run_backtest(bars, strat, spec, initial_capital=CAPITAL)
+        if args.cost_aware_min_multiple is not None:
+            strat = CostAwareFilter(strat, spec, min_cost_multiple=args.cost_aware_min_multiple)
+        result = run_backtest(bars, strat, spec, initial_capital=CAPITAL, max_loss_fraction=MAX_LOSS_FRACTION)
         metrics = compute_metrics(result, CAPITAL, freq_hint=args.freq)
         _update_track_record(bars, strat.name, result, CAPITAL, tracking_start, track_record_path)
 

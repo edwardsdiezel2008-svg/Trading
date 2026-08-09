@@ -101,12 +101,23 @@ def run_backtest(
     sizing: str | None = None,
     fixed_units: float = 1.0,
     slippage_ticks: float = 1.0,
+    max_loss_fraction: float | None = None,
 ) -> BacktestResult:
     """Run one strategy over one instrument's bars.
 
     sizing: 'percent_equity' or 'fixed_units'. Defaults to 'fixed_units' for
     futures (margin isn't modeled, so notional sizing is unreliable there)
     and 'percent_equity' for equities.
+
+    max_loss_fraction: if set, force-closes an open position the moment its
+    mark-to-market loss reaches this fraction of the equity that was
+    allocated to it at entry - simulating a stop-loss/margin-call floor a
+    real account would hit. Off by default (None), which is the original,
+    unbounded behavior: without it, a short position sized at 100% of
+    equity has no ceiling on how far the market can move against it before
+    the position is closed, so equity can go arbitrarily negative (e.g. a
+    short held through a 3x rally). Real accounts never let that happen -
+    they liquidate you first.
     """
     if sizing is None:
         sizing = "fixed_units" if spec.asset_class == "future" else "percent_equity"
@@ -186,6 +197,33 @@ def run_backtest(
         # 3. Mark-to-market this bar's open-to-close move for whatever we're now holding.
         if current_direction != 0:
             equity += current_units * current_direction * (c - o) * spec.multiplier
+
+        # 4. Stop-loss/liquidation floor: force-close if this leg's mark-to-market
+        #    loss has reached max_loss_fraction of the equity it was opened with.
+        #    A fresh entry next bar is still possible if the signal still wants one.
+        if current_direction != 0 and max_loss_fraction is not None and entry_equity:
+            loss_frac = 1.0 - equity / entry_equity
+            if loss_frac >= max_loss_fraction:
+                exit_cost = _trade_cost(current_units, c, spec, slippage_ticks)
+                equity -= exit_cost
+                gross_pnl = current_units * current_direction * (c - entry_price) * spec.multiplier
+                trade = Trade(
+                    entry_time=entry_time,
+                    exit_time=bars.index[i],
+                    direction=current_direction,
+                    entry_price=entry_price,
+                    exit_price=c,
+                    units=current_units,
+                    gross_pnl=gross_pnl,
+                    costs=current_entry_cost + exit_cost,
+                    net_pnl=gross_pnl - current_entry_cost - exit_cost,
+                    entry_equity=entry_equity,
+                )
+                trade._bars_held = i - entry_bar_idx
+                trades.append(trade)
+                current_direction = 0
+                current_units = 0.0
+                current_entry_cost = 0.0
 
         equity_curve[i] = equity
         positions_held[i] = current_direction
