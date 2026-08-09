@@ -1,0 +1,56 @@
+{
+  "symbol": "BTC_USDT",
+  "freq": "1D",
+  "generated_at_utc": "2026-08-09T19:47:25.944658Z",
+  "results": [
+    {
+      "strategy": "MA_Crossover(10/50)",
+      "n_values_tested": 10,
+      "frac_profitable": 1.0,
+      "sharpe_min": 0.6674189063468472,
+      "sharpe_max": 0.9095355321428862
+    },
+    {
+      "strategy": "Donchian_Breakout(20)",
+      "n_values_tested": 6,
+      "frac_profitable": 0.6666666666666666,
+      "sharpe_min": 0.0012069900449034486,
+      "sharpe_max": 0.6052020199634797
+    },
+    {
+      "strategy": "MACD_Momentum(12/26/9)",
+      "n_values_tested": 9,
+      "frac_profitable": 0.6666666666666666,
+      "sharpe_min": 0.06473347696622253,
+      "sharpe_max": 0.45049952505834073
+    },
+    {
+      "strategy": "RSI_Reversion(14,30/70)",
+      "n_values_tested": 10,
+      "frac_profitable": 0.0,
+      "sharpe_min": -0.8790234689607497,
+      "sharpe_max": -0.25979137476835024
+    },
+    {
+      "strategy": "Bollinger_Reversion(20,2sd)",
+      "n_values_tested": 7,
+      "frac_profitable": 0.0,
+      "sharpe_min": -0.7665296654689654,
+      "sharpe_max": -0.37505154441120053
+    },
+    {
+      "strategy": "ZScore_Reversion(20,z=2.0)",
+      "n_values_tested": 7,
+      "frac_profitable": 0.0,
+      "sharpe_min": -0.7899017597820622,
+      "sharpe_max": -0.31575940105185485
+    },
+    {
+      "strategy": "ATR_Vol_Breakout(14,k=1.5)",
+      "n_values_tested": 8,
+      "frac_profitable": 1.0,
+      "sharpe_min": 0.42493502152872253,
+      "sharpe_max": 0.989907086824189
+    }
+  ]
+}

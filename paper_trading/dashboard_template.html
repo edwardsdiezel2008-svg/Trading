@@ -496,7 +496,7 @@
         <h2>Robustness (walk-forward)</h2>
         <span class="panel-hint" id="wfHint">—</span>
       </div>
-      <p class="panel-note">The full-backtest numbers above are one long in-sample fit - a strategy can look great by luck alone over one history. Walk-forward re-optimizes each strategy's parameters on rolling training windows and scores it only on data it never saw during that fit. A strategy that's robust here made money on genuinely unseen data, not just in hindsight.</p>
+      <p class="panel-note">The full-backtest numbers above are one long in-sample fit - a strategy can look great by luck alone over one history. Walk-forward re-optimizes each strategy's parameters on rolling training windows and scores it only on data it never saw during that fit. A strategy that's robust here made money on genuinely unseen data, not just in hindsight. Param stability is a separate check: the % of nearby parameter values (e.g. a lookback of 18 or 22 instead of 20) that were also profitable - a real edge tends to hold up across a plateau of similar settings, not just the one exact default.</p>
       <div class="table-wrap">
         <table id="wfTable">
           <thead>
@@ -506,6 +506,7 @@
               <th class="num">Out-of-Sample Return</th>
               <th class="num">Out-of-Sample Sharpe</th>
               <th>Verdict</th>
+              <th class="num">Param Stability</th>
             </tr>
           </thead>
           <tbody id="wfTbody"></tbody>
@@ -643,19 +644,19 @@
   const TRACKS = {
     daily: {
       label: 'Daily', symbol: 'BTC/USDT', dateUnit: 'Day', intraday: false,
-      positions: __POSITIONS_JSON__, trades: __TRADES_JSON__, trackRecord: __TRACK_RECORD_JSON__, bars: __BARS_JSON__, walkforward: __WALKFORWARD_JSON__,
+      positions: __POSITIONS_JSON__, trades: __TRADES_JSON__, trackRecord: __TRACK_RECORD_JSON__, bars: __BARS_JSON__, walkforward: __WALKFORWARD_JSON__, sensitivity: __SENSITIVITY_JSON__,
     },
     fifteenMin: {
       label: '15-Minute', symbol: 'BTC/USDT', dateUnit: 'Update', intraday: true,
-      positions: __POSITIONS_15M_JSON__, trades: __TRADES_15M_JSON__, trackRecord: __TRACK_RECORD_15M_JSON__, bars: __BARS_15M_JSON__, walkforward: __WALKFORWARD_15M_JSON__,
+      positions: __POSITIONS_15M_JSON__, trades: __TRADES_15M_JSON__, trackRecord: __TRACK_RECORD_15M_JSON__, bars: __BARS_15M_JSON__, walkforward: __WALKFORWARD_15M_JSON__, sensitivity: __SENSITIVITY_15M_JSON__,
     },
     eth: {
       label: 'ETH Daily', symbol: 'ETH/USDT', dateUnit: 'Day', intraday: false,
-      positions: __POSITIONS_ETH_JSON__, trades: __TRADES_ETH_JSON__, trackRecord: __TRACK_RECORD_ETH_JSON__, bars: __BARS_ETH_JSON__, walkforward: __WALKFORWARD_ETH_JSON__,
+      positions: __POSITIONS_ETH_JSON__, trades: __TRADES_ETH_JSON__, trackRecord: __TRACK_RECORD_ETH_JSON__, bars: __BARS_ETH_JSON__, walkforward: __WALKFORWARD_ETH_JSON__, sensitivity: __SENSITIVITY_ETH_JSON__,
     },
     sol: {
       label: 'SOL Daily', symbol: 'SOL/USDT', dateUnit: 'Day', intraday: false,
-      positions: __POSITIONS_SOL_JSON__, trades: __TRADES_SOL_JSON__, trackRecord: __TRACK_RECORD_SOL_JSON__, bars: __BARS_SOL_JSON__, walkforward: __WALKFORWARD_SOL_JSON__,
+      positions: __POSITIONS_SOL_JSON__, trades: __TRADES_SOL_JSON__, trackRecord: __TRACK_RECORD_SOL_JSON__, bars: __BARS_SOL_JSON__, walkforward: __WALKFORWARD_SOL_JSON__, sensitivity: __SENSITIVITY_SOL_JSON__,
     },
   };
   const CAPITAL = 100000;
@@ -1103,10 +1104,14 @@
     const byName = {};
     results.forEach((r) => { byName[r.strategy] = r; });
 
+    const sens = track.sensitivity;
+    const sensByName = {};
+    ((sens && sens.results) || []).forEach((r) => { sensByName[r.strategy] = r; });
+
     if (!results.length) {
       document.getElementById('wfHint').textContent = 'Not run yet';
       document.getElementById('wfTbody').innerHTML =
-        '<tr><td colspan="5" class="scope-note">Walk-forward validation hasn\'t been run for this track yet (it\'s expensive - run manually via scripts/walkforward_snapshot.py, not on every hourly update).</td></tr>';
+        '<tr><td colspan="6" class="scope-note">Walk-forward validation hasn\'t been run for this track yet (it\'s expensive - run manually via scripts/walkforward_snapshot.py, not on every hourly update).</td></tr>';
       return;
     }
     document.getElementById('wfHint').textContent = wf.generated_at_utc
@@ -1115,12 +1120,17 @@
 
     document.getElementById('wfTbody').innerHTML = rows.map((r) => {
       const wfRow = byName[r.name];
+      const sensRow = sensByName[r.name];
+      const stabilityCell = sensRow && !sensRow.error
+        ? `<span class="mono ${sensRow.frac_profitable >= 0.5 ? 'good' : 'critical'}">${Math.round(sensRow.frac_profitable * 100)}% of ${sensRow.n_values_tested}</span>`
+        : '—';
       if (!wfRow || wfRow.error) {
         return `<tr>
           <td class="strategy-name">${r.name}</td>
           <td class="num mono">${fmtSignedPct(r.totalReturn)}</td>
           <td class="num mono" colspan="2">—</td>
           <td><span class="pill pill-neutral">${wfRow ? 'skipped' : 'not run'}</span></td>
+          <td class="num">${stabilityCell}</td>
         </tr>`;
       }
       const oosRet = wfRow.oos_total_return, oosSharpe = wfRow.oos_sharpe;
@@ -1136,6 +1146,7 @@
         <td class="num mono ${retClass}">${fmtSignedPct(oosRet)}</td>
         <td class="num mono">${sharpeStr}</td>
         <td>${verdictPill}</td>
+        <td class="num">${stabilityCell}</td>
       </tr>`;
     }).join('');
   }
