@@ -465,6 +465,7 @@
               <th>Position</th>
               <th class="num">Equity</th>
               <th class="num">Total Return</th>
+              <th class="num">Max Drawdown</th>
               <th class="num">Closed Trades</th>
               <th class="num">Total Trades</th>
               <th>Open since</th>
@@ -1001,6 +1002,19 @@
     ctx.fillText(lastLabel, w - padR - ctx.measureText(lastLabel).width, h - 6);
   }
 
+  function computeMaxDrawdown(curve) {
+    // Largest peak-to-trough decline over the full equity curve - the
+    // single most-asked risk question ("how bad could it get") that total
+    // return alone can't answer, since two strategies with the same
+    // ending return can have very different rides getting there.
+    let peak = -Infinity, maxDD = 0;
+    for (const [, eq] of curve) {
+      if (eq > peak) peak = eq;
+      if (peak > 0) maxDD = Math.min(maxDD, eq / peak - 1);
+    }
+    return maxDD;
+  }
+
   function computeRows(track) {
     const strategyNames = Object.keys(track.positions.strategies);
     return strategyNames.map((name) => {
@@ -1014,7 +1028,11 @@
       const wipedOut = p.equity <= 0;
       const equity = wipedOut ? 0 : p.equity;
       const totalReturn = wipedOut ? -1 : p.equity / CAPITAL - 1;
-      return { name, ...p, equity, closedTradeCount: closedTrades.length, totalReturn, wipedOut };
+      // Floored at -100% for the same reason equity/totalReturn are above -
+      // unconstrained short sizing can drive the simulated equity curve
+      // below zero, which isn't a real percentage decline.
+      const maxDrawdown = Math.max(computeMaxDrawdown(p.equity_curve || []), -1);
+      return { name, ...p, equity, closedTradeCount: closedTrades.length, totalReturn, wipedOut, maxDrawdown };
     }).sort((a, b) => b.totalReturn - a.totalReturn);
   }
 
@@ -1076,6 +1094,7 @@
     const profitable = rows.filter((r) => r.totalReturn > 0).length;
     const best = rows[0];
     const worst = rows[rows.length - 1];
+    const deepestDD = rows.reduce((a, b) => (b.maxDrawdown < a.maxDrawdown ? b : a), rows[0]);
     const openCount = rows.filter((r) => r.position !== 0).length;
     const bhCurve = POSITIONS.buy_and_hold_equity_curve;
     const bhReturn = (bhCurve && bhCurve.length) ? bhCurve[bhCurve.length - 1][1] / CAPITAL - 1 : null;
@@ -1092,6 +1111,7 @@
       ${wfTile}
       <div class="tile"><span class="tile-label">Best performer</span><span class="tile-value good">${fmtSignedPct(best.totalReturn)}</span><span class="tile-sub">${best.name}</span></div>
       <div class="tile"><span class="tile-label">Worst performer</span><span class="tile-value critical">${fmtSignedPct(worst.totalReturn)}</span><span class="tile-sub">${worst.name}</span></div>
+      <div class="tile"><span class="tile-label">Deepest drawdown</span><span class="tile-value critical">${fmtSignedPct(deepestDD.maxDrawdown)}</span><span class="tile-sub">${deepestDD.name} · peak-to-trough, full backtest</span></div>
       <div class="tile"><span class="tile-label">Open positions now</span><span class="tile-value">${openCount} / ${rows.length}</span></div>
       ${beatBhTile}
     `;
@@ -1102,11 +1122,13 @@
       const retClass = r.totalReturn >= 0 ? 'good' : 'critical';
       const openSince = r.open_trade ? fmtDate(r.open_trade.entry_time, track.intraday) + ' @ ' + fmtMoney(r.open_trade.entry_price) : '—';
       const equityCell = r.wipedOut ? '<span class="pill liq-thin" title="Backtest equity went to/below zero - the engine does not model margin calls, so this is not a realistic trading outcome.">wiped out</span>' : fmtMoney(r.equity);
+      const ddClass = r.maxDrawdown < -0.0001 ? 'critical' : '';
       return `<tr>
         <td class="strategy-name">${r.name}</td>
         <td><span class="pill ${posClass}">${posLabel}</span></td>
         <td class="num mono">${equityCell}</td>
         <td class="num mono ${retClass}">${fmtSignedPct(r.totalReturn)}</td>
+        <td class="num mono ${ddClass}">${fmtSignedPct(r.maxDrawdown)}</td>
         <td class="num mono">${r.closedTradeCount}</td>
         <td class="num mono">${r.closedTradeCount + (r.open_trade ? 1 : 0)}</td>
         <td class="mono">${openSince}</td>
