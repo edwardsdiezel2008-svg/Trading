@@ -195,10 +195,16 @@ track's is `Inside_Bar_Breakout(0.6)` (+6.1% OOS, Sharpe 1.44) - one of the
 new pattern-recognition strategies added specifically for intraday
 timeframes, and the only strategy that held up walk-forward-robust on the
 5-minute track once ORB's session-boundary bug (below) was fixed. The two
-S&P 500 Futures tracks are brand new as of this writing - not yet seeded
-with real data (that happens on the next live hourly run) and therefore
-without walk-forward/sensitivity/meta-strategy snapshots yet either; both
-panels will correctly read "not enough history yet" until then.
+S&P 500 Futures tracks seeded with real data immediately on their first
+live run (Yahoo returns full history in one request) and now have their
+own real snapshots too (`walkforward_es*.json`, `sensitivity_es*.json`,
+`meta_strategy_es*.json`). As of this writing: the daily track's locked-in
+pick is `RSI_Reversion(14,30/70)` (+6.6% out-of-sample, Sharpe 0.71, 90%
+parameter-stable); the 5-minute track's is `ZScore_Reversion(20,z=2.0)`
+(+0.9% OOS, Sharpe 1.64, 86% parameter-stable) - a different winner than
+Nasdaq's 5-minute track (`Inside_Bar_Breakout`), a useful cross-check that
+these aren't just picking the same strategy everywhere regardless of the
+underlying instrument.
 
 ## Pattern-recognition strategies
 

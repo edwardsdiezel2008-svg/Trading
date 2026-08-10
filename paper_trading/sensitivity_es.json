@@ -1,0 +1,91 @@
+{
+  "symbol": "MES",
+  "freq": "1D",
+  "generated_at_utc": "2026-08-10T17:06:15.365936Z",
+  "results": [
+    {
+      "strategy": "MA_Crossover(10/50)",
+      "n_values_tested": 10,
+      "frac_profitable": 1.0,
+      "sharpe_min": 0.22495369104957413,
+      "sharpe_max": 0.464114282539661
+    },
+    {
+      "strategy": "Donchian_Breakout(20)",
+      "n_values_tested": 6,
+      "frac_profitable": 0.8333333333333334,
+      "sharpe_min": -0.06667011458997343,
+      "sharpe_max": 0.3072218428483884
+    },
+    {
+      "strategy": "MACD_Momentum(12/26/9)",
+      "n_values_tested": 9,
+      "frac_profitable": 0.3333333333333333,
+      "sharpe_min": -0.21358509015667432,
+      "sharpe_max": 0.12427023019896935
+    },
+    {
+      "strategy": "RSI_Reversion(14,30/70)",
+      "n_values_tested": 10,
+      "frac_profitable": 0.9,
+      "sharpe_min": -0.00827373657192041,
+      "sharpe_max": 0.7409537875297809
+    },
+    {
+      "strategy": "Bollinger_Reversion(20,2sd)",
+      "n_values_tested": 7,
+      "frac_profitable": 0.8571428571428571,
+      "sharpe_min": 0.014105215760985163,
+      "sharpe_max": 0.6089625724428043
+    },
+    {
+      "strategy": "ZScore_Reversion(20,z=2.0)",
+      "n_values_tested": 7,
+      "frac_profitable": 1.0,
+      "sharpe_min": 0.13206559506307572,
+      "sharpe_max": 0.4861899818612309
+    },
+    {
+      "strategy": "ATR_Vol_Breakout(14,k=1.5)",
+      "n_values_tested": 8,
+      "frac_profitable": 0.125,
+      "sharpe_min": -0.7379673630722989,
+      "sharpe_max": 0.2929569343702991
+    },
+    {
+      "strategy": "Supertrend(10,m=3.0)",
+      "n_values_tested": 8,
+      "frac_profitable": 0.125,
+      "sharpe_min": -0.2625908559167952,
+      "sharpe_max": 0.06120280659913389
+    },
+    {
+      "strategy": "VWAP_Reversion(20,2%)",
+      "n_values_tested": 8,
+      "frac_profitable": 0.625,
+      "sharpe_min": -0.10821563981677063,
+      "sharpe_max": 0.16052919537533336
+    },
+    {
+      "strategy": "Engulfing_Reversal(0.3)",
+      "n_values_tested": 4,
+      "frac_profitable": 1.0,
+      "sharpe_min": 0.0362277629688494,
+      "sharpe_max": 0.16462070129196926
+    },
+    {
+      "strategy": "Inside_Bar_Breakout(0.6)",
+      "n_values_tested": 4,
+      "frac_profitable": 0.75,
+      "sharpe_min": 0.0035139956802938822,
+      "sharpe_max": 0.46017598541723725
+    },
+    {
+      "strategy": "Opening_Range_Breakout(6)",
+      "n_values_tested": 4,
+      "frac_profitable": 0.0,
+      "sharpe_min": NaN,
+      "sharpe_max": NaN
+    }
+  ]
+}
