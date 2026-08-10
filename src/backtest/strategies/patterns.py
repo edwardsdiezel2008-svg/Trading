@@ -100,6 +100,15 @@ class OpeningRangeBreakout(Strategy):
     flat at the start of every new session - this is a day-trade setup, not
     a multi-day hold). On daily bars (one bar = one session) this correctly
     never fires - opening range breakout is an inherently intraday concept.
+
+    Session boundary is anchored to 9:30 AM US/Eastern (the NYSE/Nasdaq
+    cash-equity open) rather than a raw UTC calendar-day boundary. That
+    matters specifically for near-24-hour-traded futures like NQ=F: bars are
+    stored as naive UTC timestamps, so a plain midnight-UTC boundary lands
+    at ~7-8 PM Eastern - the middle of the overnight Globex session, not the
+    market open ORB is actually built around. Bars before 9:30 ET on a given
+    date belong to the *prior* session's late trading, not that date's
+    opening range.
     Params: range_bars=6 (30 minutes of 5-minute bars).
     """
 
@@ -111,7 +120,11 @@ class OpeningRangeBreakout(Strategy):
 
     def generate_signals(self, bars: pd.DataFrame) -> pd.Series:
         range_bars = self.params.get("range_bars", 6)
-        dates = bars.index.normalize()
+        idx = bars.index
+        et = (idx.tz_localize("UTC") if idx.tz is None else idx.tz_convert("UTC")).tz_convert("America/New_York")
+        session_date = et.normalize()
+        cash_open = session_date + pd.Timedelta(hours=9, minutes=30)
+        dates = session_date.where(et >= cash_open, session_date - pd.Timedelta(days=1))
 
         orb_high = bars.groupby(dates)["high"].transform(lambda s: s.iloc[:range_bars].max())
         orb_low = bars.groupby(dates)["low"].transform(lambda s: s.iloc[:range_bars].min())

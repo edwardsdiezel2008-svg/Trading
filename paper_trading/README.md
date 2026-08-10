@@ -165,6 +165,28 @@ Two honest caveats, both surfaced directly on the dashboard tab:
   already used for every other track, so the 5-minute track's own history
   keeps growing past that 60-day window over time.
 
+**Data-quality due diligence.** Before trusting a continuous futures
+series enough to build validation on top of it, its daily history was
+checked for rollover artifacts (a common failure mode: splicing quarterly
+contracts can leave fake gaps at expiration boundaries) - zero OHLC
+internal-consistency violations across 2,514 daily bars, no non-positive
+prices, and ~251 trading days/year (matching the real CME calendar). Every
+single-day move over 5% lines up with a real, independently verifiable
+historical volatility event (Dec 2018, the Feb-Apr 2020 COVID crash, the
+2022 rate-hike selloff), not an artifact. Yahoo's continuous NQ=F series
+checks out clean.
+
+Both tracks now have real walk-forward, sensitivity, and meta-strategy
+snapshots on file (`walkforward_nq*.json`, `sensitivity_nq*.json`,
+`meta_strategy_nq*.json`) - the "🔒 Locked-in strategy" and "🧠 Meta-strategy
+selector" panels are live on both Nasdaq Futures tabs, not just placeholder
+text. As of this writing: the daily track's locked-in pick is
+`RSI_Reversion(14,30/70)` (+17.1% out-of-sample, Sharpe 0.77); the 5-minute
+track's is `Inside_Bar_Breakout(0.6)` (+6.1% OOS, Sharpe 1.44) - one of the
+new pattern-recognition strategies added specifically for intraday
+timeframes, and the only strategy that held up walk-forward-robust on the
+5-minute track once ORB's session-boundary bug (below) was fixed.
+
 ## Pattern-recognition strategies
 
 Three of the 12 strategies read the raw shape of the candles rather than an
@@ -187,6 +209,26 @@ setups, not something invented for this project:
   of the session's cumulative VWAP, triggers an entry held until the
   opposite breakout or session end. On daily bars (one bar = one session)
   this correctly never fires - ORB is an inherently intraday concept.
+
+**Bug found and fixed while focusing on the Nasdaq Futures tracks
+specifically:** Opening Range Breakout's session boundary was originally a
+raw UTC calendar-day split (`bars.index.normalize()`). That's silently
+wrong for near-24-hour-traded futures like NQ=F, whose 5-minute bars are
+stored as naive UTC timestamps - a midnight-UTC boundary lands around
+7-8 PM US/Eastern, in the middle of the overnight Globex session, not the
+market open ORB is actually built around (the standard reference is the
+NYSE/Nasdaq cash-equity open, 9:30 AM ET). The old boundary could split one
+continuous overnight session into two arbitrary pieces, or worse, treat a
+genuine breakout as the start of a brand-new "session" with its own
+opening range consisting only of itself - permanently unable to break out.
+Fixed by anchoring the session boundary to 9:30 AM US/Eastern instead
+(`src/backtest/strategies/patterns.py`); a regression test
+(`test_opening_range_breakout_session_spans_utc_midnight_correctly`)
+locks in the corrected behavior across a UTC-midnight crossing. This
+changed ORB's real out-of-sample numbers on the 5-minute Nasdaq Futures
+track (from +2.9% to -1.0% walk-forward OOS return) - a bug fix isn't
+guaranteed to make a strategy look better, only correct, and that's
+reported here rather than quietly re-running until the number looked good.
 
 ## Locked-in strategy
 

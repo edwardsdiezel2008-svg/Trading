@@ -206,6 +206,24 @@ def test_opening_range_breakout_resets_flat_at_new_session():
     assert (signals.iloc[-3:] == 0).all()
 
 
+def test_opening_range_breakout_session_spans_utc_midnight_correctly():
+    # First 3 bars: flat opening range, late in the UTC calendar day but
+    # still hours before that date's 9:30 AM ET cash open. Last 3 bars:
+    # cross UTC midnight into the next calendar date and break out strongly.
+    # A raw UTC-midnight session boundary would wrongly treat the last 3
+    # bars as their own brand-new session (never able to break out of an
+    # opening range consisting of themselves) - the ET-anchored fix keeps
+    # them in the same continuous overnight session as the first 3.
+    rows = [_bar(100.0, 100.5, 99.5, 100.0)] * 3
+    idx = pd.date_range("2026-08-10 23:45", periods=3, freq="5min")
+    rows2 = [_bar(100.0, 103.0, 100.0, 102.5)] * 3
+    idx2 = pd.date_range("2026-08-11 00:00", periods=3, freq="5min")
+    bars = pd.DataFrame(rows + rows2, index=idx.append(idx2))
+    strategy = OpeningRangeBreakout(params={"range_bars": 3})
+    signals = strategy.generate_signals(bars)
+    assert (signals.iloc[3:] == 1).all()
+
+
 def test_opening_range_breakout_never_fires_on_daily_bars():
     # One bar per session means bar_num is always 0 < range_bars - the
     # strategy should correctly stay flat the whole time.
