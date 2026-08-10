@@ -37,6 +37,7 @@ TRACKS = [
     ("_15m", "POSITIONS_15M_JSON", "TRADES_15M_JSON", "TRACK_RECORD_15M_JSON", "BARS_15M_JSON", "WALKFORWARD_15M_JSON", "SENSITIVITY_15M_JSON"),
     ("_eth", "POSITIONS_ETH_JSON", "TRADES_ETH_JSON", "TRACK_RECORD_ETH_JSON", "BARS_ETH_JSON", "WALKFORWARD_ETH_JSON", "SENSITIVITY_ETH_JSON"),
     ("_sol", "POSITIONS_SOL_JSON", "TRADES_SOL_JSON", "TRACK_RECORD_SOL_JSON", "BARS_SOL_JSON", "WALKFORWARD_SOL_JSON", "SENSITIVITY_SOL_JSON"),
+    ("_perp", "POSITIONS_PERP_JSON", "TRADES_PERP_JSON", "TRACK_RECORD_PERP_JSON", "BARS_PERP_JSON", "WALKFORWARD_PERP_JSON", "SENSITIVITY_PERP_JSON"),
 ]
 
 # suffix -> (hash-link key used by dashboard_template.html's tab wiring, nav label)
@@ -45,6 +46,7 @@ TRACK_META = {
     "_15m": ("fifteenMin", "BTC 15-Minute"),
     "_eth": ("eth", "ETH Daily"),
     "_sol": ("sol", "SOL Daily"),
+    "_perp": ("perp", "BTC Perpetual"),
 }
 
 EMPTY_WALKFORWARD = {"symbol": None, "freq": None, "n_folds": 0, "generated_at_utc": None, "results": []}
@@ -70,12 +72,20 @@ def load_sensitivity(suffix):
         return json.load(f)
 
 
+#  The _perp track has no bars file of its own - it's the same BTC price
+#  history as the base daily track (paper_trade_update.py --bars-file), just
+#  leveraged/liquidation-aware. Route reads back to the file that actually
+#  exists instead of duplicating it.
+BARS_FILE_OVERRIDES = {"_perp": ""}
+
+
 def load_recent_bars(suffix, limit=CHART_CANDLE_LIMIT):
     """Tail of the raw OHLC bars for the price chart - deliberately not the
     full multi-thousand-bar history (unreadable as candlesticks), just
     enough recent context to see actual price action alongside the
     strategy equity curves."""
-    path = f"paper_trading/bars{suffix}.csv"
+    bars_suffix = BARS_FILE_OVERRIDES.get(suffix, suffix)
+    path = f"paper_trading/bars{bars_suffix}.csv"
     if not os.path.exists(path):
         return []
     with open(path) as f:
@@ -322,6 +332,7 @@ def summarize_track(positions, label, symbol):
         "best_name": rows[0]["name"],
         "best_return": rows[0]["total_return"],
         "buy_and_hold_return": bh_return,
+        "leverage": positions.get("leverage", 1.0),
     }
 
 
@@ -397,7 +408,7 @@ def build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_gre
 
     summaries = {}
     for suffix, (key, label) in TRACK_META.items():
-        symbol = loaded[suffix]["positions"].get("symbol") or {"": "BTC/USDT", "_15m": "BTC/USDT", "_eth": "ETH/USDT", "_sol": "SOL/USDT"}[suffix]
+        symbol = loaded[suffix]["positions"].get("symbol") or {"": "BTC/USDT", "_15m": "BTC/USDT", "_eth": "ETH/USDT", "_sol": "SOL/USDT", "_perp": "BTC/USDT"}[suffix]
         summaries[key] = summarize_track(loaded[suffix]["positions"], label, symbol)
     out = out.replace("__TRACK_SUMMARIES_JSON__", json.dumps(summaries))
 

@@ -454,10 +454,11 @@
   }
 
   function renderNavCards() {
-    const order = ['daily', 'fifteenMin', 'eth', 'sol'];
+    const order = ['daily', 'fifteenMin', 'eth', 'sol', 'perp'];
     const cards = order.map((key) => {
       const s = TRACK_SUMMARIES[key];
       if (!s) return '';
+      const leverageBadge = s.leverage && s.leverage > 1 ? `<span class="rug-badge" style="color:var(--scan); background:var(--scan-wash);">⚡ ${s.leverage}x</span>` : '';
       let stat, sub;
       if (!s.seeded) {
         stat = 'Not seeded yet'; sub = 'First data lands on the next hourly update';
@@ -469,7 +470,13 @@
           : `${s.bar_count.toLocaleString()} bars of history`;
       }
       return `<a class="nav-card" href="dashboard.html#${key}">
-        <div class="nav-card-top"><span class="nav-card-label">${s.label}</span><span class="nav-card-arrow">→</span></div>
+        <div class="nav-card-top">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span class="nav-card-label">${s.label}</span>
+            ${leverageBadge}
+          </div>
+          <span class="nav-card-arrow">→</span>
+        </div>
         <span class="nav-card-stat">${stat}</span>
         <span class="nav-card-sub">${sub}</span>
       </a>`;

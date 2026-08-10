@@ -1,8 +1,9 @@
 # Crypto paper trading cockpit
 
 Simulated (no real money) live trading of 9 backtested strategies against
-real Crypto.com Exchange data - BTC (daily + 15-minute), ETH (daily), SOL
-(daily) - plus a wide memecoin momentum/breakout scanner, updated hourly.
+real Crypto.com Exchange data - BTC (daily + 15-minute + 3x leveraged
+perpetual), ETH (daily), SOL (daily) - plus a wide memecoin momentum/
+breakout scanner, updated hourly.
 
 **Live site:** the root of this repo's GitHub Pages deployment is the
 minimal landing page; `/dashboard.html` is the full detail page with every
@@ -23,18 +24,21 @@ manual `workflow_dispatch`):
    memecoin ticker universe, BTC order book + perpetual funding rate, and
    `scripts/fetch_news.py` pulls crypto headlines from public RSS feeds
    (CoinDesk, CoinTelegraph, Bitcoin.com).
-2. `scripts/paper_trade_update.py` (once per track: daily, 15-min, ETH,
-   SOL) re-runs the same tested backtest engine (`src/backtest/engine.py`)
-   on the full bar history for every strategy and derives each one's
-   current position from the last bar of a fresh, complete backtest - no
-   separate incremental "live execution" logic that could drift out of
-   sync with what the engine actually validated. The 15-minute track also
-   passes `--cost-aware-min-multiple 1.0`, wrapping every strategy in
-   `CostAwareFilter` (`src/backtest/strategies/cost_filter.py`) so it only
-   trades when the recent ATR-based expected move can plausibly clear the
-   round-trip transaction cost - reusing daily-tuned strategy periods
-   unfiltered on 15-minute bars caused far more whipsaw trades than the
-   typical bar-to-bar move could pay for.
+2. `scripts/paper_trade_update.py` (once per track: daily, 15-min, BTC
+   Perpetual, ETH, SOL) re-runs the same tested backtest engine
+   (`src/backtest/engine.py`) on the full bar history for every strategy
+   and derives each one's current position from the last bar of a fresh,
+   complete backtest - no separate incremental "live execution" logic that
+   could drift out of sync with what the engine actually validated. The
+   15-minute track also passes `--cost-aware-min-multiple 1.0`, wrapping
+   every strategy in `CostAwareFilter` (`src/backtest/strategies/cost_filter.py`)
+   so it only trades when the recent ATR-based expected move can plausibly
+   clear the round-trip transaction cost - reusing daily-tuned strategy
+   periods unfiltered on 15-minute bars caused far more whipsaw trades than
+   the typical bar-to-bar move could pay for. The BTC Perpetual track
+   passes `--leverage 3.0 --bars-file paper_trading/bars.csv`, reusing the
+   daily track's own bars instead of a separate fetch - see "BTC Perpetual"
+   below.
 3. `scripts/memecoin_scan_update.py` / `scripts/memecoin_wide_scan.py`
    refresh the memecoin breakout scanner and momentum heatmap.
 4. `scripts/build_paper_trading_dashboard.py` rebuilds both HTML pages from
@@ -55,6 +59,40 @@ is off by default in the engine itself (`max_loss_fraction=None`) and only
 enabled for the live paper-trading tracks - walk-forward and sensitivity
 snapshots run without it, since those are deliberately testing a
 strategy's raw signal edge.
+
+## BTC Perpetual (leverage, liquidation, funding)
+
+The `_perp` track runs the same 9 strategies against the same BTC price
+history as the daily track, but sized at 3x notional exposure per dollar of
+equity (`run_backtest(..., capital_fraction=leverage)` - the engine's
+existing sizing knob, not new engine code) - same price moves, amplified
+gains and losses. Two mechanics this introduces that the spot tracks don't
+have:
+
+- **Liquidation.** The spot tracks' `max_loss_fraction=0.5` "risk floor"
+  would be economically meaningless at leverage (either too early or too
+  late depending on leverage), so the perp track computes its own
+  loss-fraction from a maintenance-margin approximation instead:
+  `1 - leverage * 0.005` (`perp_max_loss_fraction()` in
+  `scripts/paper_trade_update.py`). A per-position liquidation price is
+  derived from that and shown on the dashboard's "BTC Perpetual" tab.
+  Known simplification: the engine only checks for a liquidation-triggering
+  loss at each bar's *close*, not continuously, so a single large daily
+  candle can jump straight past the threshold instead of stopping cleanly
+  at the liquidation price - a leveraged strategy's equity can occasionally
+  read as more deeply negative than the liquidation math alone implies.
+- **Funding.** Real perpetuals periodically exchange payments between longs
+  and shorts to stay anchored to spot price. Crypto.com's public API only
+  exposes the *current* funding rate, not a historical series, so it's
+  honestly impossible to backtest funding cost over the full multi-year
+  history the way price/cost/slippage are. Instead, `accrue_funding()`
+  tracks it as a separate, real running total going forward: each hourly
+  check-in applies that check-in's live funding rate once (direction-
+  signed - longs pay a positive rate, shorts receive it), guarded against
+  double-applying on a manual re-trigger within 30 minutes. This total is
+  shown alongside the position but deliberately kept separate from the
+  Total Return/Equity figures (which are the historical-backtest numbers,
+  funding-free) rather than silently blended into them.
 
 ## Robustness checks (not part of the hourly pipeline - run manually)
 

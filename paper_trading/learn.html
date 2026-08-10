@@ -273,7 +273,17 @@
       <div class="gloss-row"><span class="gloss-term">Duration</span><p class="gloss-def">How long a closed trade was held, entry to exit - tells apart a scalp (minutes to hours) from a multi-day swing at a glance.</p></div>
       <div class="gloss-row"><span class="gloss-term">Buy &amp; Hold benchmark</span><p class="gloss-def">What simply buying at the start and holding would have returned - the bar every active strategy has to actually beat to justify trading at all.</p></div>
       <div class="gloss-row"><span class="gloss-term">Regime (Trending / Ranging)</span><p class="gloss-def">Classified from ADX on recent price action. Trend-following strategies need a trending regime to have anything to catch; mean-reversion strategies need a ranging one.</p></div>
+      <div class="gloss-row"><span class="gloss-term">Leverage</span><p class="gloss-def">Position notional as a multiple of equity - the BTC Perpetual track runs every strategy at 3x, so the same price move produces roughly 3x the gain or loss of the spot BTC Daily track.</p></div>
+      <div class="gloss-row"><span class="gloss-term">Liquidation Price</span><p class="gloss-def">The price at which a leveraged position gets force-closed because it's lost too much of the margin backing it - the leveraged-specific risk the spot tracks don't have at all. "Distance to liquidation" on the BTC Perpetual tab is how far the current price sits from that level.</p></div>
+      <div class="gloss-row"><span class="gloss-term">Funding Accrued</span><p class="gloss-def">A real running total of the periodic payment perpetual contracts exchange between longs and shorts, using the live rate fetched each hourly check-in. Tracked separately from Total Return/Equity, not blended into them - see "BTC Perpetual, honestly" below.</p></div>
     </div>
+  </div>
+
+  <div class="section-label">BTC Perpetual, honestly</div>
+  <div class="panel">
+    <p>The BTC Perpetual tab runs the same 9 strategies at 3x leverage against the same BTC price history as the spot Daily track - same price moves, amplified gains <em>and</em> losses. Two things worth being upfront about:</p>
+    <p><strong>Leverage doesn't just scale returns by 3x.</strong> It changes the compounding dynamics: a position that would have simply drawn down and recovered unleveraged can instead get liquidated at 3x, permanently losing the capital that would have ridden out the recovery. Compare a strategy's Total Return on this tab against its spot-track equivalent - it's frequently <em>lower</em>, not higher, for exactly this reason. That's a real finding, not a bug in the simulation.</p>
+    <p><strong>Funding cost isn't backtested, only tracked going forward.</strong> Crypto.com's public API only exposes the <em>current</em> funding rate, not a historical series, so there's no honest way to reconstruct what funding would have cost over the multi-year backtest period. The "Funding Accrued" figure is real, not simulated - it accrues from the live rate at each hourly check-in - but it only started counting from when this feature launched, and it's shown separately from Total Return/Equity rather than silently folded into them.</p>
   </div>
 
   <div class="section-label">Rug Pull Watch, honestly</div>

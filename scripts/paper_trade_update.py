@@ -45,6 +45,70 @@ CAPITAL = 100_000.0
 # backtest math. See src/backtest/engine.py's max_loss_fraction docstring.
 MAX_LOSS_FRACTION = 0.5
 
+# --- Leveraged/perpetual-futures specific helpers (only active when
+# --leverage != 1.0) ---
+
+# 0.5% - a reasonable, clearly-approximate stand-in for a real exchange's
+# lowest-tier BTC perpetual maintenance margin requirement. Real schedules
+# vary by position size/tier; this system doesn't model per-tier margin.
+MAINTENANCE_MARGIN_RATIO = 0.005
+
+
+def perp_max_loss_fraction(leverage: float) -> float:
+    """How much of the equity allocated to a leveraged position must be lost
+    before it's force-closed - standing in for a real exchange's margin
+    call/liquidation. At leverage L, a price move of roughly 1/L against the
+    position wipes the margin backing it; real liquidation happens a bit
+    before that, once only MAINTENANCE_MARGIN_RATIO worth of margin remains.
+    Higher leverage means liquidation is both a smaller *price move* away
+    and (correctly) a larger *fraction of allocated margin* lost - a single
+    blanket loss-fraction like the 0.5 used for the unleveraged tracks would
+    either be economically meaningless at leverage or force-close far too
+    early relative to how real margin trading actually works."""
+    return max(0.0, 1.0 - leverage * MAINTENANCE_MARGIN_RATIO)
+
+
+def liquidation_price(entry_price, direction: int, leverage: float, max_loss_fraction: float):
+    """Price at which a leveraged position would be force-closed under
+    perp_max_loss_fraction, given its entry price and direction. None for a
+    flat or unleveraged position, where liquidation isn't a meaningful
+    concept."""
+    if direction == 0 or leverage <= 1.0 or entry_price is None:
+        return None
+    adverse_frac = max_loss_fraction / leverage
+    if direction > 0:
+        return entry_price * (1 - adverse_frac)
+    return entry_price * (1 + adverse_frac)
+
+
+def accrue_funding(prior_accrued_usd, prior_ts, now, direction: int, notional, funding_rate, min_interval_minutes: float = 30.0):
+    """Adds this check-in's funding cost/credit to a running total, guarded
+    against re-applying within min_interval_minutes (protects against a
+    manual re-trigger double-charging funding that a real ~hourly cadence
+    wouldn't). Applies the currently-reported live funding rate once per
+    check-in that clears the guard, directly - not scaled to a specific
+    settlement interval, since this system has no way to verify Crypto.com
+    perpetuals' exact funding cadence without live access to their API
+    docs. Funding is zero-sum for the position holder: a positive rate is
+    paid BY longs TO shorts (and vice versa for a negative rate), so
+    direction - not just price - determines the sign.
+
+    Returns (new_accrued_usd, new_timestamp, applied). The very first call
+    for a strategy (prior_ts is None) only establishes the baseline
+    timestamp and never backdates an accrual - funding tracking starts from
+    when this feature launched, not from whenever the position happened to
+    have actually opened."""
+    prior_accrued_usd = prior_accrued_usd or 0.0
+    if prior_ts is None:
+        return prior_accrued_usd, now, True
+    elapsed_minutes = (now - prior_ts).total_seconds() / 60.0
+    if elapsed_minutes < min_interval_minutes:
+        return prior_accrued_usd, prior_ts, False
+    delta = 0.0
+    if direction != 0 and funding_rate is not None and notional:
+        delta = -direction * notional * funding_rate
+    return prior_accrued_usd + delta, now, True
+
 
 def parse_args(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -58,6 +122,16 @@ def parse_args(argv=None):
                          "transaction cost. Meant for sub-daily tracks (e.g. 15-minute) where reusing daily-tuned "
                          "strategy periods causes far more trades than the typical bar-to-bar move can pay for. "
                          "Off by default so daily/ETH/SOL tracks are unaffected.")
+    p.add_argument("--leverage", type=float, default=1.0,
+                    help="Position notional as a multiple of equity (passed through to run_backtest's "
+                         "capital_fraction). 1.0 (default) matches every existing spot track exactly. Above 1.0 "
+                         "switches this track to perpetual-futures-style leveraged sizing: max_loss_fraction is "
+                         "computed from leverage (see perp_max_loss_fraction) instead of the flat 0.5 used "
+                         "elsewhere, and a liquidation price + live funding-rate accrual are tracked per strategy.")
+    p.add_argument("--bars-file", default=None,
+                    help="Explicit bars CSV path, overriding the default paper_trading/bars<suffix>.csv - lets a "
+                         "leveraged track reuse an existing spot track's bars (e.g. bars.csv for a BTC perp track) "
+                         "without a separate data fetch.")
     return p.parse_args(argv)
 
 
@@ -119,9 +193,21 @@ def _update_track_record(bars, strategy_name, result, capital, tracking_start, t
     updated.to_csv(track_record_path, index=False)
 
 
+def _load_btc_funding_rate(path="paper_trading/btc_market_snapshot.json"):
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path) as f:
+            snap = json.load(f)
+        rate = (snap.get("funding_rate") or {}).get("rate")
+        return float(rate) if rate is not None else None
+    except (ValueError, TypeError, json.JSONDecodeError):
+        return None
+
+
 def main(argv=None):
     args = parse_args(argv)
-    bars_path = f"paper_trading/bars{args.suffix}.csv"
+    bars_path = args.bars_file or f"paper_trading/bars{args.suffix}.csv"
     positions_path = f"paper_trading/positions{args.suffix}.json"
     trade_log_path = f"paper_trading/trade_log{args.suffix}.csv"
     track_record_path = f"paper_trading/track_record{args.suffix}.csv"
@@ -131,6 +217,18 @@ def main(argv=None):
     bars = load_bars(bars_path, freq=args.freq)
     spec = get_spec(args.symbol)
 
+    is_leveraged = args.leverage != 1.0
+    max_loss_fraction = perp_max_loss_fraction(args.leverage) if is_leveraged else MAX_LOSS_FRACTION
+
+    prior_positions = {}
+    funding_rate = None
+    now = datetime.now(timezone.utc)
+    if is_leveraged:
+        funding_rate = _load_btc_funding_rate()
+        if os.path.exists(positions_path):
+            with open(positions_path) as f:
+                prior_positions = (json.load(f).get("strategies")) or {}
+
     positions = {}
     all_trades = []
     summary_rows = []
@@ -139,7 +237,7 @@ def main(argv=None):
         strat = cls()
         if args.cost_aware_min_multiple is not None:
             strat = CostAwareFilter(strat, spec, min_cost_multiple=args.cost_aware_min_multiple)
-        result = run_backtest(bars, strat, spec, initial_capital=CAPITAL, max_loss_fraction=MAX_LOSS_FRACTION)
+        result = run_backtest(bars, strat, spec, initial_capital=CAPITAL, max_loss_fraction=max_loss_fraction, capital_fraction=args.leverage)
         metrics = compute_metrics(result, CAPITAL, freq_hint=args.freq)
         _update_track_record(bars, strat.name, result, CAPITAL, tracking_start, track_record_path)
 
@@ -151,12 +249,12 @@ def main(argv=None):
             # reporting purposes; if we're still holding as of the latest bar,
             # treat that synthetic close as "still open" for paper-trading state.
             t = result.trades[-1]
-            open_trade = {"direction": t.direction, "entry_price": t.entry_price, "entry_time": str(t.entry_time)}
+            open_trade = {"direction": t.direction, "entry_price": t.entry_price, "entry_time": str(t.entry_time), "units": t.units}
             closed_trades = result.trades[:-1]
         else:
             closed_trades = result.trades
 
-        positions[strat.name] = {
+        pos_entry = {
             "position": last_pos,
             "position_label": "LONG" if last_pos > 0 else "SHORT" if last_pos < 0 else "FLAT",
             "equity": round(last_equity, 2),
@@ -164,6 +262,20 @@ def main(argv=None):
             "as_of": str(bars.index[-1]),
             "equity_curve": _downsample_equity_curve(bars.index, result.equity_curve),
         }
+
+        if is_leveraged:
+            liq_price = liquidation_price(open_trade["entry_price"], last_pos, args.leverage, max_loss_fraction) if open_trade else None
+            notional = (open_trade["units"] * float(bars["close"].iloc[-1])) if open_trade else 0.0
+            prior_strat = prior_positions.get(strat.name) or {}
+            prior_accrued = prior_strat.get("funding_accrued_usd")
+            prior_ts_str = prior_strat.get("funding_last_accrued_utc")
+            prior_ts = pd.Timestamp(prior_ts_str).to_pydatetime() if prior_ts_str else None
+            accrued, ts, _applied = accrue_funding(prior_accrued, prior_ts, now, last_pos, notional, funding_rate)
+            pos_entry["liquidation_price"] = liq_price
+            pos_entry["funding_accrued_usd"] = round(accrued, 4)
+            pos_entry["funding_last_accrued_utc"] = ts.isoformat()
+
+        positions[strat.name] = pos_entry
 
         for t in closed_trades:
             all_trades.append({
@@ -182,6 +294,7 @@ def main(argv=None):
         json.dump({
             "symbol": args.symbol,
             "freq": args.freq,
+            "leverage": args.leverage,
             "updated_at_utc": datetime.now(timezone.utc).isoformat(),
             "latest_bar": str(bars.index[-1]),
             "bar_count": len(bars),
