@@ -425,10 +425,18 @@ three pattern-recognition strategies entirely, so they were structurally
 incomplete, not just stale.
 
 The dashboard's "Robustness (walk-forward)" table shows both together per
-track, and the landing page's "Cross-asset validated" panel cross-
-references walk-forward results across the three daily tracks (BTC/ETH/
-SOL) - a strategy robust on all three independent price histories is much
-harder to explain by luck than one that only worked on one.
+track, and the landing page has two cross-referencing panels built on the
+same `_cross_track_robustness()` helper in `build_paper_trading_dashboard.py`:
+"Cross-asset validated" checks the three crypto daily tracks (BTC/ETH/SOL),
+and "Cross-futures validated" checks all six daily futures tracks
+(NQ/ES/YM/RTY/GC/CL) - a strategy robust on several independent price
+histories at once is much harder to explain by luck than one that only
+worked on a single instrument. Real result from the futures side, as of
+this writing: `RSI_Reversion(14,30/70)` and `ZScore_Reversion(20,z=2.0)`
+are walk-forward-robust on 5 of the 6 futures markets (everything except
+Gold) - the strongest cross-market signal in either panel right now, and a
+genuinely useful answer to "which strategy should I actually trust" beyond
+any single instrument's Locked-in Strategy pick.
 
 ## Other context surfaced on the dashboard
 

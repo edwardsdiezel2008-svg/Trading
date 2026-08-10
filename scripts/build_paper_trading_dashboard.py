@@ -380,15 +380,11 @@ def summarize_track(positions, label, symbol):
     }
 
 
-def compute_cross_asset_robustness(loaded):
-    """A strategy that's walk-forward-robust on one asset could just be that
-    asset's history getting lucky. The stronger signal is a strategy that
-    holds up out-of-sample on BTC AND ETH AND SOL independently - three
-    different price histories agreeing is much harder to explain by chance
-    than one. Same 'robust' definition the per-track panel uses (positive
-    OOS return and positive OOS Sharpe), just cross-referenced across the
-    three daily tracks here."""
-    assets = [("BTC", ""), ("ETH", "_eth"), ("SOL", "_sol")]
+def _cross_track_robustness(loaded, assets):
+    """Shared helper: for a list of (label, suffix) pairs, cross-reference
+    walk-forward robustness (positive OOS return AND positive OOS Sharpe)
+    per strategy across all of them. Independent price histories agreeing
+    is much harder to explain by chance than any single one working alone."""
     by_strategy = {}
     for asset, suffix in assets:
         for r in (loaded[suffix]["walkforward"].get("results") or []):
@@ -408,6 +404,29 @@ def compute_cross_asset_robustness(loaded):
         })
     out.sort(key=lambda r: (-r["robust_count"], r["strategy"]))
     return out
+
+
+def compute_cross_asset_robustness(loaded):
+    """A strategy that's walk-forward-robust on one asset could just be that
+    asset's history getting lucky. The stronger signal is a strategy that
+    holds up out-of-sample on BTC AND ETH AND SOL independently - three
+    different price histories agreeing is much harder to explain by chance
+    than one. Cross-referenced across the three crypto daily tracks."""
+    return _cross_track_robustness(loaded, [("BTC", ""), ("ETH", "_eth"), ("SOL", "_sol")])
+
+
+def compute_cross_futures_robustness(loaded):
+    """Same question, asked of the futures side of the cockpit: a strategy
+    walk-forward-robust on one futures market could just be that market's
+    10-year history getting lucky. Six independent futures markets (two
+    large-cap equity indices, one small-cap index, one blue-chip index, and
+    two commodities with very different drivers) agreeing is a much
+    stronger signal than any single one - cross-referenced across
+    NQ/ES/YM/RTY/GC/CL's daily tracks."""
+    return _cross_track_robustness(loaded, [
+        ("NQ", "_nq"), ("ES", "_es"), ("YM", "_ym"),
+        ("RTY", "_rty"), ("GC", "_gc"), ("CL", "_cl"),
+    ])
 
 
 def build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_greed, correlations, news):
@@ -484,12 +503,15 @@ def build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_gre
     cross_asset_robustness = compute_cross_asset_robustness(loaded)
     out = out.replace("__CROSS_ASSET_ROBUSTNESS_JSON__", json.dumps(cross_asset_robustness))
 
+    cross_futures_robustness = compute_cross_futures_robustness(loaded)
+    out = out.replace("__CROSS_FUTURES_ROBUSTNESS_JSON__", json.dumps(cross_futures_robustness))
+
     out = out.replace("__REGIMES_JSON__", json.dumps(regimes))
 
     rug_watch = compute_rug_watch_summary(wide_scan, memecoin_scan)
     out = out.replace("__RUG_WATCH_JSON__", json.dumps(rug_watch))
 
-    for key in ("TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE", "TOP_NEWS_JSON", "CROSS_ASSET_ROBUSTNESS_JSON", "REGIMES_JSON", "RUG_WATCH_JSON"):
+    for key in ("TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE", "TOP_NEWS_JSON", "CROSS_ASSET_ROBUSTNESS_JSON", "CROSS_FUTURES_ROBUSTNESS_JSON", "REGIMES_JSON", "RUG_WATCH_JSON"):
         assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
 
     with open(INDEX_OUTPUT_PATH, "w") as f:

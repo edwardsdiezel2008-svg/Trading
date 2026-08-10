@@ -242,6 +242,7 @@
   }
 
   .robust-header, .robust-row { display: grid; grid-template-columns: 1fr repeat(3, 40px); align-items: center; gap: 8px; }
+  .robust-header.wide, .robust-row.wide { grid-template-columns: 1fr repeat(6, 34px); }
   .robust-header { padding: 0 4px 6px; font-size: var(--fs-xs); color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.05em; }
   .robust-header span:not(:first-child) { text-align: center; }
   .robust-row { padding: 7px 4px; border-bottom: 1px solid var(--border); font-size: var(--fs-sm); }
@@ -293,6 +294,14 @@
     </div>
   </div>
 
+  <div id="futuresRobustSection" style="display:none; flex-direction:column; gap:22px;">
+    <div class="section-label">Cross-futures validated</div>
+    <div class="panel">
+      <p style="margin:0 0 10px; font-size:var(--fs-xs); color:var(--ink-muted);">Walk-forward out-of-sample results across all six daily futures tracks (Nasdaq, S&amp;P 500, Dow, Russell 2000, Gold, WTI Crude Oil) - real prices, real strategies, real fold-by-fold re-optimization. A strategy robust on several independent markets at once is a much stronger signal than one that only worked on a single instrument's history.</p>
+      <div id="futuresRobustTable"></div>
+    </div>
+  </div>
+
   <div class="section-label">Memecoin momentum</div>
   <div class="panel">
     <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
@@ -326,6 +335,7 @@
   const WIDE_UNIVERSE_SIZE = __WIDE_UNIVERSE_SIZE__;
   const TOP_NEWS = __TOP_NEWS_JSON__;
   const CROSS_ASSET_ROBUSTNESS = __CROSS_ASSET_ROBUSTNESS_JSON__;
+  const CROSS_FUTURES_ROBUSTNESS = __CROSS_FUTURES_ROBUSTNESS_JSON__;
   const REGIMES = __REGIMES_JSON__;
   const RUG_WATCH = __RUG_WATCH_JSON__;
 
@@ -554,6 +564,26 @@
     document.getElementById('robustTable').innerHTML = header + body;
   }
 
+  function renderFuturesRobustness() {
+    const rows = CROSS_FUTURES_ROBUSTNESS || [];
+    const section = document.getElementById('futuresRobustSection');
+    if (!rows.length) {
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = 'flex';
+    const cols = ['NQ', 'ES', 'YM', 'RTY', 'GC', 'CL'];
+    const header = `<div class="robust-header wide"><span>Strategy</span>${cols.map((c) => `<span>${c}</span>`).join('')}</div>`;
+    const body = rows.map((r) => {
+      const marks = cols.map((a) => {
+        if (!(a in r.assets)) return '<span class="robust-mark robust-no">—</span>';
+        return r.assets[a] ? '<span class="robust-mark robust-yes">&#10003;</span>' : '<span class="robust-mark robust-no">&times;</span>';
+      }).join('');
+      return `<div class="robust-row wide"><span class="robust-name">${escHtml(r.strategy)}</span>${marks}</div>`;
+    }).join('');
+    document.getElementById('futuresRobustTable').innerHTML = header + body;
+  }
+
   function checkStaleness() {
     const timestamps = [
       ...Object.values(TRACK_SUMMARIES).map((s) => s && s.updated_at_utc),
@@ -590,6 +620,7 @@
     renderTopMovers();
     renderHeadlines();
     renderRobustness();
+    renderFuturesRobustness();
     checkStaleness();
   }
 

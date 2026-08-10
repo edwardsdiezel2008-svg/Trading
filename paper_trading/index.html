@@ -242,6 +242,7 @@
   }
 
   .robust-header, .robust-row { display: grid; grid-template-columns: 1fr repeat(3, 40px); align-items: center; gap: 8px; }
+  .robust-header.wide, .robust-row.wide { grid-template-columns: 1fr repeat(6, 34px); }
   .robust-header { padding: 0 4px 6px; font-size: var(--fs-xs); color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.05em; }
   .robust-header span:not(:first-child) { text-align: center; }
   .robust-row { padding: 7px 4px; border-bottom: 1px solid var(--border); font-size: var(--fs-sm); }
@@ -293,6 +294,14 @@
     </div>
   </div>
 
+  <div id="futuresRobustSection" style="display:none; flex-direction:column; gap:22px;">
+    <div class="section-label">Cross-futures validated</div>
+    <div class="panel">
+      <p style="margin:0 0 10px; font-size:var(--fs-xs); color:var(--ink-muted);">Walk-forward out-of-sample results across all six daily futures tracks (Nasdaq, S&amp;P 500, Dow, Russell 2000, Gold, WTI Crude Oil) - real prices, real strategies, real fold-by-fold re-optimization. A strategy robust on several independent markets at once is a much stronger signal than one that only worked on a single instrument's history.</p>
+      <div id="futuresRobustTable"></div>
+    </div>
+  </div>
+
   <div class="section-label">Memecoin momentum</div>
   <div class="panel">
     <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
@@ -326,6 +335,7 @@
   const WIDE_UNIVERSE_SIZE = 57;
   const TOP_NEWS = [{"title": "Vitalik Overhauls Ethereum Roadmap as Quantum Risks Take Hold", "link": "https://news.bitcoin.com/blockchain/vitalik-overhauls-ethereum-roadmap-as-quantum-risks-take-hold/", "source": "Bitcoin.com", "published_utc": "2026-08-10T18:48:04Z", "tags": ["ETH"]}, {"title": "Bitcoin Drops Below $64,000 as Strategy Sells 1,690 BTC", "link": "https://news.bitcoin.com/market-updates/bitcoin-drops-below-64000-as-strategy-sells-1690-btc/", "source": "Bitcoin.com", "published_utc": "2026-08-10T18:05:35Z", "tags": ["BTC"]}, {"title": "\u2018Disappointing\u2019 \u2014 crypto advocates react to delay in CLARITY vote", "link": "https://cointelegraph.com/news/clarity-act-vote-disappointing-crypto-advocates-delay?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound", "source": "CoinTelegraph", "published_utc": "2026-08-10T17:08:34Z", "tags": ["Regulation"]}, {"title": "Bitcoin price slip wipes weekend gains as oil surge hits 5% on Hormuz disappointment", "link": "https://cointelegraph.com/markets/bitcoin-wipes-weekend-gains-as-oil-nears-5-surge-on-hormuz-disappointment?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound", "source": "CoinTelegraph", "published_utc": "2026-08-10T16:14:58Z", "tags": ["BTC"]}, {"title": "Grayscale quietly drops Cardano, Polkadot and Hedera ETF plans", "link": "https://www.coindesk.com/business/2026/08/10/grayscale-quietly-drops-cardano-polkadot-and-hedera-etf-plans", "source": "CoinDesk", "published_utc": "2026-08-10T15:02:14Z", "tags": ["ETF"]}, {"title": "Solana lending giant Jupiter now lets the same dollar earn twice", "link": "https://www.coindesk.com/markets/2026/08/10/solana-lending-giant-jupiter-now-lets-the-same-dollar-earn-twice", "source": "CoinDesk", "published_utc": "2026-08-10T14:30:00Z", "tags": ["ETH", "SOL"]}];
   const CROSS_ASSET_ROBUSTNESS = [{"strategy": "ATR_Vol_Breakout(14,k=1.5)", "assets": {"BTC": true, "ETH": true, "SOL": true}, "robust_count": 3, "assets_tested": 3}, {"strategy": "Engulfing_Reversal(0.3)", "assets": {"BTC": true, "ETH": false, "SOL": true}, "robust_count": 2, "assets_tested": 3}, {"strategy": "MACD_Momentum(12/26/9)", "assets": {"BTC": false, "ETH": true, "SOL": true}, "robust_count": 2, "assets_tested": 3}, {"strategy": "Bollinger_Reversion(20,2sd)", "assets": {"BTC": false, "ETH": false, "SOL": true}, "robust_count": 1, "assets_tested": 3}, {"strategy": "Inside_Bar_Breakout(0.6)", "assets": {"BTC": false, "ETH": true, "SOL": false}, "robust_count": 1, "assets_tested": 3}, {"strategy": "RSI_Reversion(14,30/70)", "assets": {"BTC": true, "ETH": false, "SOL": false}, "robust_count": 1, "assets_tested": 3}, {"strategy": "Supertrend(10,m=3.0)", "assets": {"BTC": false, "ETH": false, "SOL": true}, "robust_count": 1, "assets_tested": 3}, {"strategy": "Donchian_Breakout(20)", "assets": {"BTC": false, "ETH": false, "SOL": false}, "robust_count": 0, "assets_tested": 3}, {"strategy": "MA_Crossover(10/50)", "assets": {"BTC": false, "ETH": false, "SOL": false}, "robust_count": 0, "assets_tested": 3}, {"strategy": "Opening_Range_Breakout(6)", "assets": {"BTC": false, "ETH": false, "SOL": false}, "robust_count": 0, "assets_tested": 3}, {"strategy": "VWAP_Reversion(20,2%)", "assets": {"BTC": false, "ETH": false, "SOL": false}, "robust_count": 0, "assets_tested": 3}, {"strategy": "ZScore_Reversion(20,z=2.0)", "assets": {"BTC": false, "ETH": false, "SOL": false}, "robust_count": 0, "assets_tested": 3}];
+  const CROSS_FUTURES_ROBUSTNESS = [{"strategy": "RSI_Reversion(14,30/70)", "assets": {"NQ": true, "ES": true, "YM": true, "RTY": true, "GC": false, "CL": true}, "robust_count": 5, "assets_tested": 6}, {"strategy": "ZScore_Reversion(20,z=2.0)", "assets": {"NQ": true, "ES": true, "YM": true, "RTY": true, "GC": false, "CL": true}, "robust_count": 5, "assets_tested": 6}, {"strategy": "Bollinger_Reversion(20,2sd)", "assets": {"NQ": true, "ES": true, "YM": true, "RTY": true, "GC": false, "CL": false}, "robust_count": 4, "assets_tested": 6}, {"strategy": "MA_Crossover(10/50)", "assets": {"NQ": true, "ES": true, "YM": false, "RTY": false, "GC": true, "CL": true}, "robust_count": 4, "assets_tested": 6}, {"strategy": "Donchian_Breakout(20)", "assets": {"NQ": false, "ES": false, "YM": false, "RTY": true, "GC": true, "CL": true}, "robust_count": 3, "assets_tested": 6}, {"strategy": "Engulfing_Reversal(0.3)", "assets": {"NQ": true, "ES": true, "YM": false, "RTY": false, "GC": true, "CL": false}, "robust_count": 3, "assets_tested": 6}, {"strategy": "Inside_Bar_Breakout(0.6)", "assets": {"NQ": true, "ES": true, "YM": false, "RTY": true, "GC": false, "CL": false}, "robust_count": 3, "assets_tested": 6}, {"strategy": "VWAP_Reversion(20,2%)", "assets": {"NQ": true, "ES": false, "YM": true, "RTY": true, "GC": false, "CL": false}, "robust_count": 3, "assets_tested": 6}, {"strategy": "ATR_Vol_Breakout(14,k=1.5)", "assets": {"NQ": false, "ES": false, "YM": true, "RTY": true, "GC": false, "CL": false}, "robust_count": 2, "assets_tested": 6}, {"strategy": "MACD_Momentum(12/26/9)", "assets": {"NQ": false, "ES": false, "YM": false, "RTY": true, "GC": true, "CL": false}, "robust_count": 2, "assets_tested": 6}, {"strategy": "Supertrend(10,m=3.0)", "assets": {"NQ": true, "ES": false, "YM": false, "RTY": false, "GC": true, "CL": false}, "robust_count": 2, "assets_tested": 6}, {"strategy": "Opening_Range_Breakout(6)", "assets": {"NQ": false, "ES": false, "YM": false, "RTY": false, "GC": false, "CL": false}, "robust_count": 0, "assets_tested": 6}];
   const REGIMES = {"BTC": {"trend_regime": "ranging", "vol_regime": "low_vol", "adx": 10.8}, "ETH": {"trend_regime": "ranging", "vol_regime": "low_vol", "adx": 18.6}, "SOL": {"trend_regime": "ranging", "vol_regime": "low_vol", "adx": 12.5}};
   const RUG_WATCH = {"flagged_count": 0, "severe_count": 0, "top_symbol": null};
 
@@ -554,6 +564,26 @@
     document.getElementById('robustTable').innerHTML = header + body;
   }
 
+  function renderFuturesRobustness() {
+    const rows = CROSS_FUTURES_ROBUSTNESS || [];
+    const section = document.getElementById('futuresRobustSection');
+    if (!rows.length) {
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = 'flex';
+    const cols = ['NQ', 'ES', 'YM', 'RTY', 'GC', 'CL'];
+    const header = `<div class="robust-header wide"><span>Strategy</span>${cols.map((c) => `<span>${c}</span>`).join('')}</div>`;
+    const body = rows.map((r) => {
+      const marks = cols.map((a) => {
+        if (!(a in r.assets)) return '<span class="robust-mark robust-no">—</span>';
+        return r.assets[a] ? '<span class="robust-mark robust-yes">&#10003;</span>' : '<span class="robust-mark robust-no">&times;</span>';
+      }).join('');
+      return `<div class="robust-row wide"><span class="robust-name">${escHtml(r.strategy)}</span>${marks}</div>`;
+    }).join('');
+    document.getElementById('futuresRobustTable').innerHTML = header + body;
+  }
+
   function checkStaleness() {
     const timestamps = [
       ...Object.values(TRACK_SUMMARIES).map((s) => s && s.updated_at_utc),
@@ -590,6 +620,7 @@
     renderTopMovers();
     renderHeadlines();
     renderRobustness();
+    renderFuturesRobustness();
     checkStaleness();
   }
 
