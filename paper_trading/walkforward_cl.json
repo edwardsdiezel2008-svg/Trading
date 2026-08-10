@@ -2,7 +2,7 @@
   "symbol": "MCL",
   "freq": "1D",
   "n_folds": 5,
-  "generated_at_utc": "2026-08-10T18:52:39.130170Z",
+  "generated_at_utc": "2026-08-10T21:52:09.090305Z",
   "results": [
     {
       "strategy": "MA_Crossover(10/50)",
@@ -13,7 +13,11 @@
       "baseline_total_return": 0.030011840784374355,
       "baseline_sharpe": 0.11006974042559516,
       "vs_fixed_default_ratio": 0.6176644360888958,
-      "n_folds": 5
+      "n_folds": 5,
+      "oos_return_ci_low": -0.11071254339428252,
+      "oos_return_ci_high": 0.16023586709994025,
+      "oos_return_ci_level": 0.9,
+      "oos_significant": false
     },
     {
       "strategy": "Donchian_Breakout(20)",
@@ -24,7 +28,11 @@
       "baseline_total_return": 0.0850324227062178,
       "baseline_sharpe": 0.27449059997301956,
       "vs_fixed_default_ratio": 0.8499779630033325,
-      "n_folds": 5
+      "n_folds": 5,
+      "oos_return_ci_low": -0.0682467797329696,
+      "oos_return_ci_high": 0.23033236001261548,
+      "oos_return_ci_level": 0.9,
+      "oos_significant": false
     },
     {
       "strategy": "MACD_Momentum(12/26/9)",
@@ -35,7 +43,11 @@
       "baseline_total_return": -0.2541991513515762,
       "baseline_sharpe": -0.870986102117937,
       "vs_fixed_default_ratio": 0.4992831495823701,
-      "n_folds": 5
+      "n_folds": 5,
+      "oos_return_ci_low": -0.26916229428596006,
+      "oos_return_ci_high": 0.049959812282379445,
+      "oos_return_ci_level": 0.9,
+      "oos_significant": false
     },
     {
       "strategy": "RSI_Reversion(14,30/70)",
@@ -46,7 +58,11 @@
       "baseline_total_return": 0.05278068102232347,
       "baseline_sharpe": 0.3842681359126884,
       "vs_fixed_default_ratio": 0.25576635500365197,
-      "n_folds": 5
+      "n_folds": 5,
+      "oos_return_ci_low": -0.03089942965657055,
+      "oos_return_ci_high": 0.06850839201561026,
+      "oos_return_ci_level": 0.9,
+      "oos_significant": false
     },
     {
       "strategy": "Bollinger_Reversion(20,2sd)",
@@ -57,7 +73,11 @@
       "baseline_total_return": 0.024846992620528363,
       "baseline_sharpe": 0.13205111931533545,
       "vs_fixed_default_ratio": -2.6761505887489627,
-      "n_folds": 5
+      "n_folds": 5,
+      "oos_return_ci_low": -0.1539815690751594,
+      "oos_return_ci_high": 0.021642946575104214,
+      "oos_return_ci_level": 0.9,
+      "oos_significant": false
     },
     {
       "strategy": "ZScore_Reversion(20,z=2.0)",
@@ -68,7 +88,11 @@
       "baseline_total_return": 0.08192567073966939,
       "baseline_sharpe": 0.43534654037832066,
       "vs_fixed_default_ratio": 0.8422667448086669,
-      "n_folds": 5
+      "n_folds": 5,
+      "oos_return_ci_low": -0.027497482125880934,
+      "oos_return_ci_high": 0.1750255823266498,
+      "oos_return_ci_level": 0.9,
+      "oos_significant": false
     },
     {
       "strategy": "ATR_Vol_Breakout(14,k=1.5)",
@@ -79,7 +103,11 @@
       "baseline_total_return": -0.003564573036248242,
       "baseline_sharpe": 0.007267646157436177,
       "vs_fixed_default_ratio": 42.035174050771104,
-      "n_folds": 5
+      "n_folds": 5,
+      "oos_return_ci_low": -0.2850908349712813,
+      "oos_return_ci_high": 0.0020577091382977765,
+      "oos_return_ci_level": 0.9,
+      "oos_significant": false
     },
     {
       "strategy": "Supertrend(10,m=3.0)",
@@ -90,7 +118,11 @@
       "baseline_total_return": 0.07520829637355675,
       "baseline_sharpe": 0.24801267759437604,
       "vs_fixed_default_ratio": -0.1066053714376769,
-      "n_folds": 5
+      "n_folds": 5,
+      "oos_return_ci_low": -0.14135553737218126,
+      "oos_return_ci_high": 0.1402787720705359,
+      "oos_return_ci_level": 0.9,
+      "oos_significant": false
     },
     {
       "strategy": "VWAP_Reversion(20,2%)",
@@ -101,7 +133,11 @@
       "baseline_total_return": 0.00925941145304221,
       "baseline_sharpe": 0.04828732069745587,
       "vs_fixed_default_ratio": -1.528510462874983,
-      "n_folds": 5
+      "n_folds": 5,
+      "oos_return_ci_low": -0.13539240526629315,
+      "oos_return_ci_high": 0.11960430385281735,
+      "oos_return_ci_level": 0.9,
+      "oos_significant": false
     },
     {
       "strategy": "Engulfing_Reversal(0.3)",
@@ -112,7 +148,11 @@
       "baseline_total_return": -0.05245609154904707,
       "baseline_sharpe": -0.1427725866727377,
       "vs_fixed_default_ratio": 1.2741492950828814,
-      "n_folds": 5
+      "n_folds": 5,
+      "oos_return_ci_low": -0.19798600412803477,
+      "oos_return_ci_high": 0.07778112225125568,
+      "oos_return_ci_level": 0.9,
+      "oos_significant": false
     },
     {
       "strategy": "Inside_Bar_Breakout(0.6)",
@@ -123,7 +163,11 @@
       "baseline_total_return": 0.0009208063164489744,
       "baseline_sharpe": 0.02142770235475983,
       "vs_fixed_default_ratio": -32.59968947226196,
-      "n_folds": 5
+      "n_folds": 5,
+      "oos_return_ci_low": -0.14700389189429838,
+      "oos_return_ci_high": 0.08476635492687565,
+      "oos_return_ci_level": 0.9,
+      "oos_significant": false
     },
     {
       "strategy": "Opening_Range_Breakout(6)",
@@ -134,7 +178,11 @@
       "baseline_total_return": 0.0,
       "baseline_sharpe": NaN,
       "vs_fixed_default_ratio": null,
-      "n_folds": 5
+      "n_folds": 5,
+      "oos_return_ci_low": 0.0,
+      "oos_return_ci_high": 0.0,
+      "oos_return_ci_level": 0.9,
+      "oos_significant": false
     }
   ]
 }
