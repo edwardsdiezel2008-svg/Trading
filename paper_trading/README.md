@@ -391,6 +391,32 @@ to a single backtest). Run manually:
 python scripts/meta_strategy_snapshot.py --bars paper_trading/bars.csv --symbol BTC_USDT --freq 1D --output paper_trading/meta_strategy.json
 ```
 
+## Statistical significance (bootstrap confidence intervals)
+
+A walk-forward OOS number is still a single point estimate from one
+specific sequence of market history - "positive OOS return and positive OOS
+Sharpe" (the bar every other check in this project uses for "robust") says
+nothing about how confident that point estimate actually is. `src/backtest/
+significance.py`'s `bootstrap_return_ci()` closes that gap: circular block
+bootstrap resampling (1,000 resamples, 20-bar blocks to preserve the OOS
+return series' own serial correlation rather than assuming i.i.d. bars) of
+each strategy's walk-forward OOS equity curve, producing a 90% confidence
+interval on total return. If that interval still includes zero, the result
+can't be told apart from a strategy with no real edge at this sample size -
+even when the point estimate itself is positive. Not a rigorous hypothesis
+test (multiple testing across 12 strategies per track isn't corrected for),
+just an honest uncertainty band a bare point estimate doesn't carry.
+
+Wired into `walkforward_snapshot.py` - every `walkforward*.json` now carries
+`oos_return_ci_low` / `oos_return_ci_high` / `oos_significant` per strategy
+alongside the existing OOS metrics, no separate script to run. The dashboard
+surfaces it two ways: a "90% CI (Bootstrap)" column in the Robustness
+(walk-forward) table (green when the interval excludes zero, tooltip
+explains why), and an explicit caveat sentence on the Locked-in Strategy
+panel whenever the current pick's interval still includes zero - the pick
+itself doesn't change (it still clears the plain profitable/robust/stable
+bars), but the caveat makes the added uncertainty impossible to miss.
+
 ## Robustness checks (not part of the hourly pipeline - run manually)
 
 Two separate questions, both expensive (grid search per fold/parameter
@@ -399,7 +425,8 @@ value), so neither runs on every hourly update:
 - `scripts/walkforward_snapshot.py` - re-optimizes each strategy's
   parameters on rolling training windows and scores it only on data it
   never saw during that fit (`walkforward*.json`). Answers "did this hold
-  up on unseen data."
+  up on unseen data." Also runs the bootstrap significance check above on
+  the resulting OOS equity curve.
 - `scripts/sensitivity_snapshot.py` - sweeps each strategy's parameter
   space one value at a time and reports what fraction of nearby values
   were also profitable (`sensitivity*.json`). Answers "is the edge a

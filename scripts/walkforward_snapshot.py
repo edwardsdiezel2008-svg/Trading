@@ -23,6 +23,7 @@ sys.path.insert(0, ".")
 from scripts.paper_trade_update import perp_max_loss_fraction
 from src.backtest.data_loader import load_bars
 from src.backtest.instruments import get_spec
+from src.backtest.significance import bootstrap_return_ci
 from src.backtest.strategies import ALL_STRATEGY_CLASSES
 from src.backtest.walkforward import run_walk_forward
 
@@ -59,6 +60,7 @@ def main(argv=None):
             print(f"  skipped: {e}")
             results.append({"strategy": name, "error": str(e)})
             continue
+        ci = bootstrap_return_ci(wf.oos_equity_curve)
         results.append({
             "strategy": name,
             "oos_total_return": wf.oos_metrics["total_return"],
@@ -69,6 +71,10 @@ def main(argv=None):
             "baseline_sharpe": wf.baseline_metrics["sharpe"],
             "vs_fixed_default_ratio": wf.vs_fixed_default_ratio,
             "n_folds": len(wf.folds),
+            "oos_return_ci_low": ci["ci_low"],
+            "oos_return_ci_high": ci["ci_high"],
+            "oos_return_ci_level": ci["ci_level"],
+            "oos_significant": ci["significant"],
         })
 
     out = {

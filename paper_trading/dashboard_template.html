@@ -582,7 +582,7 @@
         <h2>Robustness (walk-forward)</h2>
         <span class="panel-hint" id="wfHint">—</span>
       </div>
-      <p class="panel-note">The full-backtest numbers above are one long in-sample fit - a strategy can look great by luck alone over one history. Walk-forward re-optimizes each strategy's parameters on rolling training windows and scores it only on data it never saw during that fit. A strategy that's robust here made money on genuinely unseen data, not just in hindsight. Param stability is a separate check: the % of nearby parameter values (e.g. a lookback of 18 or 22 instead of 20) that were also profitable - a real edge tends to hold up across a plateau of similar settings, not just the one exact default.</p>
+      <p class="panel-note">The full-backtest numbers above are one long in-sample fit - a strategy can look great by luck alone over one history. Walk-forward re-optimizes each strategy's parameters on rolling training windows and scores it only on data it never saw during that fit. A strategy that's robust here made money on genuinely unseen data, not just in hindsight. The 90% CI column adds a third layer: circular block-bootstrap resampling of the out-of-sample return series (1,000 resamples, preserving serial correlation) - a positive point estimate whose interval still includes zero can't be told apart from no real edge at this sample size, even though it "passed" the plain positive-return check. Param stability is a separate check: the % of nearby parameter values (e.g. a lookback of 18 or 22 instead of 20) that were also profitable - a real edge tends to hold up across a plateau of similar settings, not just the one exact default.</p>
       <div class="table-wrap">
         <table id="wfTable">
           <thead>
@@ -591,6 +591,7 @@
               <th class="num">Full-Backtest Return</th>
               <th class="num">Out-of-Sample Return</th>
               <th class="num">Out-of-Sample Sharpe</th>
+              <th class="num">90% CI (Bootstrap)</th>
               <th>Verdict</th>
               <th class="num">Param Stability</th>
             </tr>
@@ -1447,7 +1448,7 @@
     if (!results.length) {
       document.getElementById('wfHint').textContent = 'Not run yet';
       document.getElementById('wfTbody').innerHTML =
-        '<tr><td colspan="6" class="scope-note">Walk-forward validation hasn\'t been run for this track yet (it\'s expensive - run manually via scripts/walkforward_snapshot.py, not on every hourly update).</td></tr>';
+        '<tr><td colspan="7" class="scope-note">Walk-forward validation hasn\'t been run for this track yet (it\'s expensive - run manually via scripts/walkforward_snapshot.py, not on every hourly update).</td></tr>';
       return;
     }
     const wfGenerated = wf.generated_at_utc ? `${wf.n_folds}-fold · generated ${fmtUpdated(wf.generated_at_utc)}` : `${wf.n_folds}-fold`;
@@ -1464,7 +1465,7 @@
         return `<tr>
           <td class="strategy-name">${r.name}</td>
           <td class="num mono">${fmtSignedPct(r.totalReturn)}</td>
-          <td class="num mono" colspan="2">—</td>
+          <td class="num mono" colspan="3">—</td>
           <td><span class="pill pill-neutral">${wfRow ? 'skipped' : 'not run'}</span></td>
           <td class="num">${stabilityCell}</td>
         </tr>`;
@@ -1473,6 +1474,10 @@
       const robust = oosRet > 0 && oosSharpe > 0;
       const retClass = oosRet >= 0 ? 'good' : 'critical';
       const sharpeStr = isFinite(oosSharpe) ? oosSharpe.toFixed(2) : '—';
+      const ciLow = wfRow.oos_return_ci_low, ciHigh = wfRow.oos_return_ci_high;
+      const ciCell = (ciLow == null || ciHigh == null)
+        ? '—'
+        : `<span class="mono ${wfRow.oos_significant ? 'good' : ''}" title="${wfRow.oos_significant ? 'Interval excludes zero at this confidence level' : 'Interval includes zero - not statistically distinguishable from no edge at this sample size'}">${fmtSignedPct(ciLow)} to ${fmtSignedPct(ciHigh)}</span>`;
       const verdictPill = robust
         ? '<span class="pill liq-ok">✓ robust</span>'
         : '<span class="pill liq-thin">⚠ not confirmed</span>';
@@ -1481,6 +1486,7 @@
         <td class="num mono">${fmtSignedPct(r.totalReturn)}</td>
         <td class="num mono ${retClass}">${fmtSignedPct(oosRet)}</td>
         <td class="num mono">${sharpeStr}</td>
+        <td class="num">${ciCell}</td>
         <td>${verdictPill}</td>
         <td class="num">${stabilityCell}</td>
       </tr>`;
@@ -1508,7 +1514,10 @@
       const robust = oosRet > 0 && isFinite(oosSharpe) && oosSharpe > 0;
       const stable = sensRow && !sensRow.error && sensRow.frac_profitable >= 0.5;
       if (!robust || !stable || r.totalReturn <= 0) return null;
-      return { name: r.name, oosRet, oosSharpe, fracProfitable: sensRow.frac_profitable, totalReturn: r.totalReturn };
+      return {
+        name: r.name, oosRet, oosSharpe, fracProfitable: sensRow.frac_profitable, totalReturn: r.totalReturn,
+        ciLow: wfRow.oos_return_ci_low, ciHigh: wfRow.oos_return_ci_high, ciSignificant: wfRow.oos_significant,
+      };
     }).filter(Boolean);
 
     if (!candidates.length) {
@@ -1517,7 +1526,11 @@
     }
     candidates.sort((a, b) => b.oosSharpe - a.oosSharpe);
     const best = candidates[0];
-    el.innerHTML = `<strong>${best.name}</strong> - the strategy this track effectively trades right now. Profitable on the full backtest (${fmtSignedPct(best.totalReturn)}), walk-forward-robust on unseen data (${fmtSignedPct(best.oosRet)} out-of-sample, Sharpe ${best.oosSharpe.toFixed(2)}), and stable across ${Math.round(best.fracProfitable * 100)}% of nearby parameter values. Picked automatically from the walk-forward + sensitivity results below whenever this track has enough history to run them - not a permanent or hand-picked choice.`;
+    const ciNote = (best.ciLow == null || best.ciHigh == null) ? '' :
+      (best.ciSignificant
+        ? ` A 90% bootstrap confidence interval on that out-of-sample return (${fmtSignedPct(best.ciLow)} to ${fmtSignedPct(best.ciHigh)}) stays entirely positive - this edge holds up under resampling, not just as a single point estimate.`
+        : ` Worth flagging: a 90% bootstrap confidence interval on that out-of-sample return spans ${fmtSignedPct(best.ciLow)} to ${fmtSignedPct(best.ciHigh)} - it still includes zero, so this pick isn't statistically distinguishable from no real edge yet at this sample size, even though it clears the plain profitable/robust/stable bars above.`);
+    el.innerHTML = `<strong>${best.name}</strong> - the strategy this track effectively trades right now. Profitable on the full backtest (${fmtSignedPct(best.totalReturn)}), walk-forward-robust on unseen data (${fmtSignedPct(best.oosRet)} out-of-sample, Sharpe ${best.oosSharpe.toFixed(2)}), and stable across ${Math.round(best.fracProfitable * 100)}% of nearby parameter values. Picked automatically from the walk-forward + sensitivity results below whenever this track has enough history to run them - not a permanent or hand-picked choice.${ciNote}`;
   }
 
   function renderMetaStrategy(track) {
