@@ -426,6 +426,8 @@
     <button class="tab-btn" data-track="solPerp">⚡ SOL Perpetual</button>
     <button class="tab-btn" data-track="nq">📈 Nasdaq Futures (Daily)</button>
     <button class="tab-btn" data-track="nq5m">📈 Nasdaq Futures (5-Min)</button>
+    <button class="tab-btn" data-track="es">📊 S&amp;P 500 Futures (Daily)</button>
+    <button class="tab-btn" data-track="es5m">📊 S&amp;P 500 Futures (5-Min)</button>
     <button class="tab-btn" data-track="memecoin">Memecoin Scanner</button>
   </div>
 
@@ -522,11 +524,11 @@
 
     <div class="panel" id="nqNote" style="display:none;">
       <div class="panel-head">
-        <h2>📈 Nasdaq Futures, honestly</h2>
+        <h2>📈 Index Futures, honestly</h2>
       </div>
-      <p class="panel-note">Both Nasdaq Futures tracks trade the <strong>real NQ=F price</strong> (CME Nasdaq-100 E-mini futures, continuous front contract), fetched from Yahoo Finance's public chart endpoint - unauthenticated and keyless, the same way Crypto.com's REST API supplies crypto candles here without needing an account. That real futures price is paired with the real <strong>Micro E-mini Nasdaq-100 (MNQ)</strong> contract's point-value economics ($2/index-point multiplier, $0.75/side commission) - MNQ and NQ track the identical index level, just at 1/10th the contract size, so this is real futures P&L math, not an ETF-proxy approximation.</p>
-      <p class="panel-note">Real MNQ futures currently require roughly $1,700-1,900 in CME initial margin against a notional value in the tens of thousands of dollars per contract - implied leverage in the ~25-30x range, set by the exchange, not a discretionary choice like the crypto perpetual tracks' 3x. Both tracks here run <strong>unleveraged</strong> instead (position size is simply however many whole MNQ contracts $100,000 of paper capital can cover): the backtest engine only checks for a liquidation-triggering loss at each bar's close, and modeling ~25-30x real margin risk against bar-close-only checks would produce either constant false liquidations or a threshold so loose it stops meaning anything. The real margin/leverage figures above are sourced context, not something simulated.</p>
-      <p class="panel-note">The 5-Minute track's data has one retention limit worth knowing: Yahoo's intraday endpoint only serves the trailing ~60 days per request. Every hourly run merges freshly-fetched bars into the existing history, so the 5-minute track's own record keeps accumulating past that 60-day window going forward - same pattern already used for the memecoin scanner's precise-history coins.</p>
+      <p class="panel-note">All four index futures tracks trade <strong>real prices</strong> - CME Nasdaq-100 E-mini futures (NQ=F) and S&amp;P 500 E-mini futures (ES=F), both continuous front contracts, fetched from Yahoo Finance's public chart endpoint (unauthenticated and keyless, the same way Crypto.com's REST API supplies crypto candles here without needing an account). Each real futures price is paired with its Micro E-mini contract's point-value economics - <strong>MNQ</strong> ($2/index-point, $0.75/side commission) and <strong>MES</strong> ($5/index-point, $0.75/side commission) - since the Micro contracts track the identical index level as their full-size counterparts, just at 1/10th the contract size. Real futures P&amp;L math, not an ETF-proxy approximation.</p>
+      <p class="panel-note">Real overnight margin differs by contract, and that's reported as-is rather than flattened to one number: MNQ currently requires roughly $1,700-1,900 in CME initial margin against tens of thousands of dollars notional (~25-30x implied leverage); MES requires roughly $2,400-2,500 in maintenance margin against a similar notional range, implying meaningfully lower leverage (~10-15x) - the S&amp;P 500 is the less volatile index, and CME's margin-setting reflects that. All four tracks here run <strong>unleveraged</strong> instead of simulating either figure (position size is simply however many whole micro contracts $100,000 of paper capital can cover): the backtest engine only checks for a liquidation-triggering loss at each bar's close, and modeling 10-30x real margin risk against bar-close-only checks would produce either constant false liquidations or a threshold so loose it stops meaning anything. The margin/leverage figures above are sourced context, not something simulated.</p>
+      <p class="panel-note">The 5-Minute tracks' data has one retention limit worth knowing: Yahoo's intraday endpoint only serves the trailing ~60 days per request. Every hourly run merges freshly-fetched bars into the existing history, so each 5-minute track's own record keeps accumulating past that 60-day window going forward - same pattern already used for the memecoin scanner's precise-history coins.</p>
     </div>
 
     <div class="panel" id="lockedStrategyPanel">
@@ -779,6 +781,14 @@
     nq5m: {
       label: 'Nasdaq Futures (5-Min)', symbol: 'MNQ', dateUnit: 'Update', intraday: true,
       positions: __POSITIONS_NQ5M_JSON__, trades: __TRADES_NQ5M_JSON__, trackRecord: __TRACK_RECORD_NQ5M_JSON__, bars: __BARS_NQ5M_JSON__, walkforward: __WALKFORWARD_NQ5M_JSON__, sensitivity: __SENSITIVITY_NQ5M_JSON__, metaStrategy: __META_STRATEGY_NQ5M_JSON__,
+    },
+    es: {
+      label: 'S&P 500 Futures (Daily)', symbol: 'MES', dateUnit: 'Day', intraday: false,
+      positions: __POSITIONS_ES_JSON__, trades: __TRADES_ES_JSON__, trackRecord: __TRACK_RECORD_ES_JSON__, bars: __BARS_ES_JSON__, walkforward: __WALKFORWARD_ES_JSON__, sensitivity: __SENSITIVITY_ES_JSON__, metaStrategy: __META_STRATEGY_ES_JSON__,
+    },
+    es5m: {
+      label: 'S&P 500 Futures (5-Min)', symbol: 'MES', dateUnit: 'Update', intraday: true,
+      positions: __POSITIONS_ES5M_JSON__, trades: __TRADES_ES5M_JSON__, trackRecord: __TRACK_RECORD_ES5M_JSON__, bars: __BARS_ES5M_JSON__, walkforward: __WALKFORWARD_ES5M_JSON__, sensitivity: __SENSITIVITY_ES5M_JSON__, metaStrategy: __META_STRATEGY_ES5M_JSON__,
     },
   };
   const CAPITAL = 100000;
@@ -1182,8 +1192,8 @@
       thinNote.classList.remove('visible');
     }
 
-    document.getElementById('costFilterNote').classList.toggle('visible', trackKey === 'fifteenMin' || trackKey === 'perp15m' || trackKey === 'nq5m');
-    document.getElementById('nqNote').style.display = (trackKey === 'nq' || trackKey === 'nq5m') ? '' : 'none';
+    document.getElementById('costFilterNote').classList.toggle('visible', trackKey === 'fifteenMin' || trackKey === 'perp15m' || trackKey === 'nq5m' || trackKey === 'es5m');
+    document.getElementById('nqNote').style.display = ['nq', 'nq5m', 'es', 'es5m'].includes(trackKey) ? '' : 'none';
 
     const unprofitableNote = document.getElementById('unprofitableNote');
     if (rows.length && rows.every((r) => r.totalReturn <= 0)) {
@@ -1731,7 +1741,7 @@
   // that already scrolls horizontally (a wide table, the tab strip itself)
   // so it never fights with that element's own swipe-to-scroll.
   (function initTabSwipe() {
-    const TRACK_ORDER = ['daily', 'fifteenMin', 'eth', 'sol', 'perp', 'perp15m', 'ethPerp', 'solPerp', 'nq', 'nq5m', 'memecoin'];
+    const TRACK_ORDER = ['daily', 'fifteenMin', 'eth', 'sol', 'perp', 'perp15m', 'ethPerp', 'solPerp', 'nq', 'nq5m', 'es', 'es5m', 'memecoin'];
     let startX = null, startY = null, skip = false;
     const THRESHOLD = 60;
     document.addEventListener('touchstart', (e) => {

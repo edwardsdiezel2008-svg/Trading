@@ -4,7 +4,7 @@ sys.path.insert(0, ".")
 
 import pandas as pd
 
-from scripts.fetch_nasdaq_futures import _df_to_candles
+from scripts.fetch_index_futures import INDEX_FUTURES, _df_to_candles
 
 
 def _make_df(rows, tz=None):
@@ -62,3 +62,13 @@ def test_df_to_candles_multiple_rows_preserve_order():
 def test_df_to_candles_empty_df():
     df = _make_df([])
     assert _df_to_candles(df) == []
+
+
+def test_index_futures_config_has_distinct_paths_per_symbol():
+    symbols = [row[0] for row in INDEX_FUTURES]
+    daily_paths = [row[1] for row in INDEX_FUTURES]
+    five_min_paths = [row[2] for row in INDEX_FUTURES]
+    assert len(symbols) == len(set(symbols)), "duplicate Yahoo symbol"
+    assert len(daily_paths) == len(set(daily_paths)), "daily bars path collision"
+    assert len(five_min_paths) == len(set(five_min_paths)), "5-minute bars path collision"
+    assert "NQ=F" in symbols and "ES=F" in symbols

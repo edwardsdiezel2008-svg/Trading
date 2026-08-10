@@ -1,27 +1,31 @@
-"""Fetch real CME Nasdaq-100 E-mini futures (NQ=F, continuous front contract)
-daily and 5-minute bars from Yahoo Finance's public chart endpoint, via the
+"""Fetch real CME index futures (continuous front contracts) daily and
+5-minute bars from Yahoo Finance's public chart endpoint, via the
 `yfinance` library (already a project dependency).
 
-Why this instead of the QQQ-ETF-proxy approach tried first: that used
-Stooq's per-symbol CSV endpoint, which turned out to return a plain 404 for
-`qqq.us` in production (caught via a live GitHub Actions run, not locally -
-this sandbox can't reach Stooq to have found that in advance). Rather than
-patch a broken proxy source, this switches to Yahoo's `v8/finance/chart`
-endpoint, which is unauthenticated, keyless, and - unlike Stooq - serves the
-real NQ=F futures continuous-contract series directly, at both daily and
-5-minute granularity. That's a strict upgrade over QQQ: real futures prices
-instead of an ETF that merely tracks the same index, paired with the real
-MNQ (Micro E-mini Nasdaq-100) contract's point-value economics
-(InstrumentSpec in src/backtest/instruments.py: $2/point multiplier, $0.75
-commission/side) instead of ETF share economics.
+Started as a Nasdaq-100-only script; generalized once the approach proved
+out live (see git history for that story) to cover the S&P 500 E-mini too,
+reusing the exact same fetch/merge logic for every symbol below rather than
+duplicating it per-instrument.
 
-Two limitations, both from Yahoo's retention policy, not this script:
+Why Yahoo instead of an ETF proxy: an earlier version of the Nasdaq track
+traded QQQ against Stooq's per-symbol CSV endpoint, which turned out to
+return a plain 404 in production (caught via a live GitHub Actions run, not
+locally - this sandbox can't reach Stooq to have found that in advance).
+Yahoo's `v8/finance/chart` endpoint is unauthenticated, keyless, and -
+unlike Stooq - serves the real futures continuous-contract series directly,
+at both daily and 5-minute granularity. That's a strict upgrade over an ETF
+proxy: real futures prices, paired with the real Micro E-mini contract's
+point-value economics (InstrumentSpec in src/backtest/instruments.py)
+instead of ETF share economics.
+
+Two limitations per symbol, both from Yahoo's retention policy, not this
+script:
 - 5-minute bars: only the trailing ~60 days are available per request. This
-  script merges into the existing CSV each run (paper_trading/bars_nq5m.csv)
-  so history accumulates hourly going forward past that 60-day window, the
-  same pattern already used for every other track here.
-- Daily bars: NQ=F's continuous-contract series on Yahoo only goes back a
-  few years (much shorter than BTC's multi-year history), since it's a
+  script merges into the existing CSV each run so history accumulates
+  hourly going forward past that 60-day window, the same pattern already
+  used for every other track here.
+- Daily bars: a continuous-contract series on Yahoo only goes back a few
+  years (much shorter than BTC's multi-year history), since it's a
   rolled/spliced series across quarterly contract expirations, not a single
   continuously-traded instrument like a spot crypto pair.
 """
@@ -35,9 +39,11 @@ sys.path.insert(0, ".")
 
 from scripts.fetch_market_data import merge_bars_csv
 
-FUTURES_SYMBOL = "NQ=F"
-DAILY_BARS_PATH = "paper_trading/bars_nq.csv"
-FIVE_MIN_BARS_PATH = "paper_trading/bars_nq5m.csv"
+# (Yahoo ticker, daily bars path, 5-minute bars path, label for log lines)
+INDEX_FUTURES = [
+    ("NQ=F", "paper_trading/bars_nq.csv", "paper_trading/bars_nq5m.csv", "Nasdaq-100 (NQ=F)"),
+    ("ES=F", "paper_trading/bars_es.csv", "paper_trading/bars_es5m.csv", "S&P 500 (ES=F)"),
+]
 
 
 def _fetch_history(symbol: str, period: str, interval: str, retries: int = 3):
@@ -77,24 +83,25 @@ def _df_to_candles(df) -> list[dict]:
 def main():
     wrote_any = False
 
-    try:
-        daily_df = _fetch_history(FUTURES_SYMBOL, period="10y", interval="1d")
-        n = merge_bars_csv(DAILY_BARS_PATH, _df_to_candles(daily_df), date_only=True)
-        print(f"{DAILY_BARS_PATH}: {n} rows ({len(daily_df)} fetched this run)")
-        wrote_any = True
-    except Exception as exc:
-        print(f"WARN daily NQ=F fetch failed this run - {exc}")
+    for symbol, daily_path, five_min_path, label in INDEX_FUTURES:
+        try:
+            daily_df = _fetch_history(symbol, period="10y", interval="1d")
+            n = merge_bars_csv(daily_path, _df_to_candles(daily_df), date_only=True)
+            print(f"{daily_path}: {n} rows ({len(daily_df)} fetched this run)")
+            wrote_any = True
+        except Exception as exc:
+            print(f"WARN daily {label} fetch failed this run - {exc}")
 
-    try:
-        intraday_df = _fetch_history(FUTURES_SYMBOL, period="60d", interval="5m")
-        n = merge_bars_csv(FIVE_MIN_BARS_PATH, _df_to_candles(intraday_df), date_only=False)
-        print(f"{FIVE_MIN_BARS_PATH}: {n} rows ({len(intraday_df)} fetched this run)")
-        wrote_any = True
-    except Exception as exc:
-        print(f"WARN 5-minute NQ=F fetch failed this run - {exc}")
+        try:
+            intraday_df = _fetch_history(symbol, period="60d", interval="5m")
+            n = merge_bars_csv(five_min_path, _df_to_candles(intraday_df), date_only=False)
+            print(f"{five_min_path}: {n} rows ({len(intraday_df)} fetched this run)")
+            wrote_any = True
+        except Exception as exc:
+            print(f"WARN 5-minute {label} fetch failed this run - {exc}")
 
     if not wrote_any:
-        raise SystemExit("Both NQ=F fetches failed this run - no data written")
+        raise SystemExit("All index futures fetches failed this run - no data written")
 
 
 if __name__ == "__main__":

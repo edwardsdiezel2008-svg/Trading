@@ -1,11 +1,12 @@
-# Crypto + Nasdaq futures paper trading cockpit
+# Crypto + index futures paper trading cockpit
 
-Simulated (no real money) live trading of 12 backtested strategies across 10
+Simulated (no real money) live trading of 12 backtested strategies across 12
 tracks - BTC (daily, 15-minute, 3x leveraged perpetual daily, 3x leveraged
 perpetual 15-minute), ETH (daily, 3x leveraged perpetual), SOL (daily, 3x
-leveraged perpetual), and real Nasdaq-100 futures (daily and 5-minute) -
-against real Crypto.com Exchange and Yahoo Finance data, plus a wide
-memecoin momentum/breakout scanner, updated hourly.
+leveraged perpetual), and real CME index futures - Nasdaq-100 (NQ=F/MNQ)
+and S&P 500 (ES=F/MES), each daily and 5-minute - against real Crypto.com
+Exchange and Yahoo Finance data, plus a wide memecoin momentum/breakout
+scanner, updated hourly.
 
 **Live site:** the root of this repo's GitHub Pages deployment is the
 minimal landing page; `/dashboard.html` is the full detail page with every
@@ -24,14 +25,15 @@ manual `workflow_dispatch`):
 1. `scripts/fetch_market_data.py` - plain HTTP against Crypto.com Exchange's
    public REST API (no auth needed) for BTC/ETH/SOL candles, the wide
    memecoin ticker universe, BTC order book + perpetual funding rate;
-   `scripts/fetch_nasdaq_futures.py` pulls real NQ=F (CME Nasdaq-100
-   E-mini futures) daily and 5-minute bars from Yahoo Finance's free,
-   keyless chart endpoint (see "Nasdaq Futures" below); and
-   `scripts/fetch_news.py` pulls crypto headlines from public RSS feeds
-   (CoinDesk, CoinTelegraph, Bitcoin.com).
+   `scripts/fetch_index_futures.py` pulls real NQ=F and ES=F (CME
+   Nasdaq-100 and S&P 500 E-mini futures) daily and 5-minute bars from
+   Yahoo Finance's free, keyless chart endpoint (see "Index Futures"
+   below); and `scripts/fetch_news.py` pulls crypto headlines from public
+   RSS feeds (CoinDesk, CoinTelegraph, Bitcoin.com).
 2. `scripts/paper_trade_update.py` (once per track: BTC daily, BTC
    15-min, BTC Perpetual daily, BTC Perpetual 15-min, ETH, SOL, ETH
-   Perpetual, SOL Perpetual, Nasdaq Futures daily, Nasdaq Futures 5-min)
+   Perpetual, SOL Perpetual, Nasdaq Futures daily, Nasdaq Futures 5-min,
+   S&P 500 Futures daily, S&P 500 Futures 5-min)
    re-runs the same tested backtest engine (`src/backtest/engine.py`) on
    the full bar history for every strategy
    and derives each one's current position from the last bar of a fresh,
@@ -126,47 +128,53 @@ the same drawdowns that a spot position recovers from can instead trigger a
 permanent liquidation at leverage, which compounds very differently over
 dozens of trades. That's a real result of the simulation, not a bug in it.
 
-## Nasdaq Futures
+## Index Futures
 
-Two tracks (`_nq` daily, `_nq5m` 5-minute) run all 12 strategies against the
-**real NQ=F price** - CME's Nasdaq-100 E-mini futures, continuous front
-contract - fetched from Yahoo Finance's public `v8/finance/chart` endpoint
-via the `yfinance` library. That price is paired with the real **Micro
-E-mini Nasdaq-100 (MNQ)** contract's economics in
-`src/backtest/instruments.py` ($2/index-point multiplier, $0.75/side
-commission, 0.25-point tick size). MNQ and NQ track the identical index
-level - MNQ is just 1/10th the contract size - so this is genuine futures
-point-value P&L math, not an ETF-proxy approximation. (An earlier version of
-this track traded QQQ as a proxy because Stooq's QQQ endpoint looked usable
-locally; a live run showed Stooq actually 404s on that symbol in
-production, which is what prompted switching to Yahoo's real futures feed
-instead of patching the broken proxy.)
+Four tracks (`_nq`/`_nq5m` daily/5-min, `_es`/`_es5m` daily/5-min) run all
+12 strategies against **real futures prices** - CME's Nasdaq-100 E-mini
+(NQ=F) and S&P 500 E-mini (ES=F), both continuous front contracts, fetched
+from Yahoo Finance's public `v8/finance/chart` endpoint via the `yfinance`
+library (`scripts/fetch_index_futures.py`, generalized from a
+Nasdaq-only script once the approach proved out live - see git history).
+Each real futures price is paired with its Micro E-mini contract's
+economics in `src/backtest/instruments.py`: **MNQ** ($2/index-point
+multiplier, $0.75/side commission) and **MES** ($5/index-point multiplier,
+$0.75/side commission), 0.25-point tick size for both. The Micro contracts
+track the identical index level as their full-size counterparts, just at
+1/10th the contract size, so this is genuine futures point-value P&L math,
+not an ETF-proxy approximation. (An earlier version of the Nasdaq track
+traded QQQ as a proxy because Stooq's QQQ endpoint looked usable locally; a
+live run showed Stooq actually 404s on that symbol in production, which is
+what prompted switching to Yahoo's real futures feed instead of patching
+the broken proxy.)
 
 Two honest caveats, both surfaced directly on the dashboard tab:
 
-- **Why unleveraged.** Real MNQ futures currently require roughly
-  $1,700-1,900 in CME initial margin against a notional value in the tens
-  of thousands of dollars per contract - implied leverage in the ~25-30x
-  range, set by the exchange itself, not a discretionary choice like the
-  crypto perpetual tracks' 3x. Both tracks deliberately don't attempt to
-  simulate that: the backtest engine only checks for a liquidation-
-  triggering loss at each bar's *close* (same limitation noted above for
-  the perpetual tracks), and modeling ~25-30x real margin risk against
-  bar-close-only checks - even on 5-minute bars - would produce either
-  constant false liquidations or a threshold so loose it stops meaning
-  anything. Both tracks run unleveraged instead (position size is simply
-  however many whole MNQ contracts $100,000 of paper capital covers), so
-  the real margin/leverage figures above are sourced context, not something
-  simulated.
+- **Why unleveraged.** Real overnight margin differs by contract, and
+  that's reported as-is rather than flattened to one number: MNQ currently
+  requires roughly $1,700-1,900 in CME initial margin against tens of
+  thousands of dollars notional (~25-30x implied leverage); MES requires
+  roughly $2,400-2,500 in maintenance margin against a similar notional
+  range, implying meaningfully lower leverage (~10-15x) - the S&P 500 is
+  the less volatile index, and CME's margin-setting reflects that. All four
+  tracks deliberately don't attempt to simulate either figure: the backtest
+  engine only checks for a liquidation-triggering loss at each bar's
+  *close* (same limitation noted above for the perpetual tracks), and
+  modeling 10-30x real margin risk against bar-close-only checks - even on
+  5-minute bars - would produce either constant false liquidations or a
+  threshold so loose it stops meaning anything. All four tracks run
+  unleveraged instead (position size is simply however many whole micro
+  contracts $100,000 of paper capital covers), so the margin/leverage
+  figures above are sourced context, not something simulated.
 - **5-minute data retention.** Yahoo's intraday endpoint only serves the
   trailing ~60 days per request - a Yahoo policy, not a choice made here.
-  `fetch_nasdaq_futures.py` merges freshly-fetched bars into
-  `bars_nq5m.csv` every hourly run, the same accumulate-forward pattern
-  already used for every other track, so the 5-minute track's own history
-  keeps growing past that 60-day window over time.
+  `fetch_index_futures.py` merges freshly-fetched bars into each 5-minute
+  track's CSV every hourly run, the same accumulate-forward pattern already
+  used for every other track, so each 5-minute track's own history keeps
+  growing past that 60-day window over time.
 
 **Data-quality due diligence.** Before trusting a continuous futures
-series enough to build validation on top of it, its daily history was
+series enough to build validation on top of it, NQ=F's daily history was
 checked for rollover artifacts (a common failure mode: splicing quarterly
 contracts can leave fake gaps at expiration boundaries) - zero OHLC
 internal-consistency violations across 2,514 daily bars, no non-positive
@@ -174,18 +182,23 @@ prices, and ~251 trading days/year (matching the real CME calendar). Every
 single-day move over 5% lines up with a real, independently verifiable
 historical volatility event (Dec 2018, the Feb-Apr 2020 COVID crash, the
 2022 rate-hike selloff), not an artifact. Yahoo's continuous NQ=F series
-checks out clean.
+checks out clean; ES=F is fetched via the exact same code path, so the same
+result is expected but hasn't been separately re-verified yet.
 
-Both tracks now have real walk-forward, sensitivity, and meta-strategy
-snapshots on file (`walkforward_nq*.json`, `sensitivity_nq*.json`,
-`meta_strategy_nq*.json`) - the "🔒 Locked-in strategy" and "🧠 Meta-strategy
-selector" panels are live on both Nasdaq Futures tabs, not just placeholder
-text. As of this writing: the daily track's locked-in pick is
+The two Nasdaq Futures tracks now have real walk-forward, sensitivity, and
+meta-strategy snapshots on file (`walkforward_nq*.json`,
+`sensitivity_nq*.json`, `meta_strategy_nq*.json`) - the "🔒 Locked-in
+strategy" and "🧠 Meta-strategy selector" panels are live there, not just
+placeholder text. As of this writing: the daily track's locked-in pick is
 `RSI_Reversion(14,30/70)` (+17.1% out-of-sample, Sharpe 0.77); the 5-minute
 track's is `Inside_Bar_Breakout(0.6)` (+6.1% OOS, Sharpe 1.44) - one of the
 new pattern-recognition strategies added specifically for intraday
 timeframes, and the only strategy that held up walk-forward-robust on the
-5-minute track once ORB's session-boundary bug (below) was fixed.
+5-minute track once ORB's session-boundary bug (below) was fixed. The two
+S&P 500 Futures tracks are brand new as of this writing - not yet seeded
+with real data (that happens on the next live hourly run) and therefore
+without walk-forward/sensitivity/meta-strategy snapshots yet either; both
+panels will correctly read "not enough history yet" until then.
 
 ## Pattern-recognition strategies
 
@@ -336,13 +349,13 @@ harder to explain by luck than one that only worked on one.
 ## Files
 
 Per track (suffix `""` = BTC daily, `_15m`, `_eth`, `_sol`, `_perp`,
-`_perp_15m`, `_eth_perp`, `_sol_perp`, `_nq`, `_nq5m`):
+`_perp_15m`, `_eth_perp`, `_sol_perp`, `_nq`, `_nq5m`, `_es`, `_es5m`):
 `bars{suffix}.csv`, `positions{suffix}.json`, `trade_log{suffix}.csv`,
 `track_record{suffix}.csv`, `summary{suffix}.md`,
 `walkforward{suffix}.json`, `sensitivity{suffix}.json`, `meta_strategy{suffix}.json`
-(the last three only where a manual snapshot has been run) - `bars_nq.csv`
-and `bars_nq5m.csv` are fetched by `scripts/fetch_nasdaq_futures.py` rather
-than `fetch_market_data.py` (see "Nasdaq Futures" above). Plus `memecoin_scan.json` /
+(the last three only where a manual snapshot has been run) - `bars_nq*.csv`
+and `bars_es*.csv` are fetched by `scripts/fetch_index_futures.py` rather
+than `fetch_market_data.py` (see "Index Futures" above). Plus `memecoin_scan.json` /
 `memecoin_wide_scan.json` / `memecoins_wide_tickers.json` /
 `memecoins/*.csv` (scanner), `rug_watch_history.json` (rolling ~7-day log
 of flagged coins per hourly run, see "Rug Pull Watch" below),
