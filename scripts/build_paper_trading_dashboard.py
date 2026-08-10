@@ -31,18 +31,18 @@ FEAR_GREED_PATH = "paper_trading/fear_greed.json"
 NEWS_PATH = "paper_trading/news.json"
 CAPITAL = 100_000.0
 
-# (file suffix, template placeholder prefix, bars placeholder, walk-forward placeholder, sensitivity placeholder)
+# (file suffix, template placeholder prefix, bars placeholder, walk-forward placeholder, sensitivity placeholder, meta-strategy placeholder)
 TRACKS = [
-    ("", "POSITIONS_JSON", "TRADES_JSON", "TRACK_RECORD_JSON", "BARS_JSON", "WALKFORWARD_JSON", "SENSITIVITY_JSON"),
-    ("_15m", "POSITIONS_15M_JSON", "TRADES_15M_JSON", "TRACK_RECORD_15M_JSON", "BARS_15M_JSON", "WALKFORWARD_15M_JSON", "SENSITIVITY_15M_JSON"),
-    ("_eth", "POSITIONS_ETH_JSON", "TRADES_ETH_JSON", "TRACK_RECORD_ETH_JSON", "BARS_ETH_JSON", "WALKFORWARD_ETH_JSON", "SENSITIVITY_ETH_JSON"),
-    ("_sol", "POSITIONS_SOL_JSON", "TRADES_SOL_JSON", "TRACK_RECORD_SOL_JSON", "BARS_SOL_JSON", "WALKFORWARD_SOL_JSON", "SENSITIVITY_SOL_JSON"),
-    ("_perp", "POSITIONS_PERP_JSON", "TRADES_PERP_JSON", "TRACK_RECORD_PERP_JSON", "BARS_PERP_JSON", "WALKFORWARD_PERP_JSON", "SENSITIVITY_PERP_JSON"),
-    ("_perp_15m", "POSITIONS_PERP_15M_JSON", "TRADES_PERP_15M_JSON", "TRACK_RECORD_PERP_15M_JSON", "BARS_PERP_15M_JSON", "WALKFORWARD_PERP_15M_JSON", "SENSITIVITY_PERP_15M_JSON"),
-    ("_eth_perp", "POSITIONS_ETH_PERP_JSON", "TRADES_ETH_PERP_JSON", "TRACK_RECORD_ETH_PERP_JSON", "BARS_ETH_PERP_JSON", "WALKFORWARD_ETH_PERP_JSON", "SENSITIVITY_ETH_PERP_JSON"),
-    ("_sol_perp", "POSITIONS_SOL_PERP_JSON", "TRADES_SOL_PERP_JSON", "TRACK_RECORD_SOL_PERP_JSON", "BARS_SOL_PERP_JSON", "WALKFORWARD_SOL_PERP_JSON", "SENSITIVITY_SOL_PERP_JSON"),
-    ("_nq", "POSITIONS_NQ_JSON", "TRADES_NQ_JSON", "TRACK_RECORD_NQ_JSON", "BARS_NQ_JSON", "WALKFORWARD_NQ_JSON", "SENSITIVITY_NQ_JSON"),
-    ("_nq5m", "POSITIONS_NQ5M_JSON", "TRADES_NQ5M_JSON", "TRACK_RECORD_NQ5M_JSON", "BARS_NQ5M_JSON", "WALKFORWARD_NQ5M_JSON", "SENSITIVITY_NQ5M_JSON"),
+    ("", "POSITIONS_JSON", "TRADES_JSON", "TRACK_RECORD_JSON", "BARS_JSON", "WALKFORWARD_JSON", "SENSITIVITY_JSON", "META_STRATEGY_JSON"),
+    ("_15m", "POSITIONS_15M_JSON", "TRADES_15M_JSON", "TRACK_RECORD_15M_JSON", "BARS_15M_JSON", "WALKFORWARD_15M_JSON", "SENSITIVITY_15M_JSON", "META_STRATEGY_15M_JSON"),
+    ("_eth", "POSITIONS_ETH_JSON", "TRADES_ETH_JSON", "TRACK_RECORD_ETH_JSON", "BARS_ETH_JSON", "WALKFORWARD_ETH_JSON", "SENSITIVITY_ETH_JSON", "META_STRATEGY_ETH_JSON"),
+    ("_sol", "POSITIONS_SOL_JSON", "TRADES_SOL_JSON", "TRACK_RECORD_SOL_JSON", "BARS_SOL_JSON", "WALKFORWARD_SOL_JSON", "SENSITIVITY_SOL_JSON", "META_STRATEGY_SOL_JSON"),
+    ("_perp", "POSITIONS_PERP_JSON", "TRADES_PERP_JSON", "TRACK_RECORD_PERP_JSON", "BARS_PERP_JSON", "WALKFORWARD_PERP_JSON", "SENSITIVITY_PERP_JSON", "META_STRATEGY_PERP_JSON"),
+    ("_perp_15m", "POSITIONS_PERP_15M_JSON", "TRADES_PERP_15M_JSON", "TRACK_RECORD_PERP_15M_JSON", "BARS_PERP_15M_JSON", "WALKFORWARD_PERP_15M_JSON", "SENSITIVITY_PERP_15M_JSON", "META_STRATEGY_PERP_15M_JSON"),
+    ("_eth_perp", "POSITIONS_ETH_PERP_JSON", "TRADES_ETH_PERP_JSON", "TRACK_RECORD_ETH_PERP_JSON", "BARS_ETH_PERP_JSON", "WALKFORWARD_ETH_PERP_JSON", "SENSITIVITY_ETH_PERP_JSON", "META_STRATEGY_ETH_PERP_JSON"),
+    ("_sol_perp", "POSITIONS_SOL_PERP_JSON", "TRADES_SOL_PERP_JSON", "TRACK_RECORD_SOL_PERP_JSON", "BARS_SOL_PERP_JSON", "WALKFORWARD_SOL_PERP_JSON", "SENSITIVITY_SOL_PERP_JSON", "META_STRATEGY_SOL_PERP_JSON"),
+    ("_nq", "POSITIONS_NQ_JSON", "TRADES_NQ_JSON", "TRACK_RECORD_NQ_JSON", "BARS_NQ_JSON", "WALKFORWARD_NQ_JSON", "SENSITIVITY_NQ_JSON", "META_STRATEGY_NQ_JSON"),
+    ("_nq5m", "POSITIONS_NQ5M_JSON", "TRADES_NQ5M_JSON", "TRACK_RECORD_NQ5M_JSON", "BARS_NQ5M_JSON", "WALKFORWARD_NQ5M_JSON", "SENSITIVITY_NQ5M_JSON", "META_STRATEGY_NQ5M_JSON"),
 ]
 
 # suffix -> (hash-link key used by dashboard_template.html's tab wiring, nav label)
@@ -61,6 +61,11 @@ TRACK_META = {
 
 EMPTY_WALKFORWARD = {"symbol": None, "freq": None, "n_folds": 0, "generated_at_utc": None, "results": []}
 EMPTY_SENSITIVITY = {"symbol": None, "freq": None, "generated_at_utc": None, "results": []}
+EMPTY_META_STRATEGY = {
+    "symbol": None, "freq": None, "generated_at_utc": None,
+    "current_regime": None, "recommended_strategy": None, "live_regime_map": {},
+    "oos_metrics": None, "folds": [],
+}
 EMPTY_POSITIONS = {"symbol": None, "freq": None, "updated_at_utc": None, "latest_bar": None, "bar_count": 0, "strategies": {}}
 CHART_CANDLE_LIMIT = 200
 OVERVIEW_BARS_LIMIT = 30
@@ -78,6 +83,14 @@ def load_sensitivity(suffix):
     path = f"paper_trading/sensitivity{suffix}.json"
     if not os.path.exists(path):
         return dict(EMPTY_SENSITIVITY)
+    with open(path) as f:
+        return json.load(f)
+
+
+def load_meta_strategy(suffix):
+    path = f"paper_trading/meta_strategy{suffix}.json"
+    if not os.path.exists(path):
+        return dict(EMPTY_META_STRATEGY)
     with open(path) as f:
         return json.load(f)
 
@@ -381,7 +394,7 @@ def build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_g
     with open(TEMPLATE_PATH) as f:
         out = f.read()
 
-    for suffix, pos_key, trades_key, track_key, bars_key, wf_key, sens_key in TRACKS:
+    for suffix, pos_key, trades_key, track_key, bars_key, wf_key, sens_key, meta_key in TRACKS:
         d = loaded[suffix]
         out = out.replace(f"__{pos_key}__", json.dumps(d["positions"]))
         out = out.replace(f"__{trades_key}__", json.dumps(d["trades"]))
@@ -389,6 +402,7 @@ def build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_g
         out = out.replace(f"__{bars_key}__", json.dumps(d["bars"]))
         out = out.replace(f"__{wf_key}__", json.dumps(d["walkforward"]))
         out = out.replace(f"__{sens_key}__", json.dumps(d["sensitivity"]))
+        out = out.replace(f"__{meta_key}__", json.dumps(d["meta_strategy"]))
 
     out = out.replace("__MEMECOIN_SCAN_JSON__", json.dumps(memecoin_scan))
     out = out.replace("__WIDE_MEMECOIN_SCAN_JSON__", json.dumps(wide_scan))
@@ -398,8 +412,8 @@ def build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_g
     out = out.replace("__NEWS_JSON__", json.dumps(news))
     out = out.replace("__RUG_WATCH_STREAKS_JSON__", json.dumps(load_rug_watch_streaks()))
 
-    for _, pos_key, trades_key, track_key, bars_key, wf_key, sens_key in TRACKS:
-        for key in (pos_key, trades_key, track_key, bars_key, wf_key, sens_key):
+    for _, pos_key, trades_key, track_key, bars_key, wf_key, sens_key, meta_key in TRACKS:
+        for key in (pos_key, trades_key, track_key, bars_key, wf_key, sens_key, meta_key):
             assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
     for key in ("MEMECOIN_SCAN_JSON", "WIDE_MEMECOIN_SCAN_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "CORRELATIONS_JSON", "NEWS_JSON", "RUG_WATCH_STREAKS_JSON"):
         assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
@@ -472,6 +486,7 @@ def main():
             "bars": load_recent_bars(suffix),
             "walkforward": load_walkforward(suffix),
             "sensitivity": load_sensitivity(suffix),
+            "meta_strategy": load_meta_strategy(suffix),
         }
 
     memecoin_scan = {"ranked": [], "skipped": [], "updated_at_utc": None, "lookback_bars": 20, "atr_period": 14}

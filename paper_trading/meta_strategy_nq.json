@@ -1,0 +1,102 @@
+{
+  "symbol": "MNQ",
+  "freq": "1D",
+  "n_folds": 5,
+  "min_regime_bars": 20,
+  "generated_at_utc": "2026-08-10T07:55:08.290219Z",
+  "current_regime": "ranging/high_vol",
+  "recommended_strategy": "Supertrend(10,m=3.0)",
+  "live_regime_map": {
+    "ranging/low_vol": "Donchian_Breakout(20)",
+    "trending/low_vol": "Supertrend(10,m=3.0)",
+    "ranging/high_vol": "Supertrend(10,m=3.0)",
+    "trending/high_vol": "VWAP_Reversion(20,2%)"
+  },
+  "oos_metrics": {
+    "strategy": "MetaStrategySelector",
+    "instrument": "MNQ",
+    "total_return": 0.2247815699318838,
+    "cagr": 0.02468943101982557,
+    "sharpe": 0.409157044396206,
+    "sortino": 0.5608131625312285,
+    "max_drawdown": -0.14405741447746503,
+    "calmar": 0.17138604846811095,
+    "num_trades": 117,
+    "win_rate": 0.5299145299145299,
+    "profit_factor": 1.3909593422447808,
+    "avg_win": 1290.6532258064517,
+    "avg_loss": -1045.9818181818182,
+    "avg_trade": 192.23504273504273,
+    "avg_bars_held": 16.145299145299145,
+    "total_costs": 234.0,
+    "exposure": NaN,
+    "final_equity": 122478.15699318837
+  },
+  "folds": [
+    {
+      "fold_idx": 1,
+      "test_start": "2018-04-13 00:00:00",
+      "test_end": "2019-12-10 00:00:00",
+      "regime_map": {
+        "trending/low_vol": "MA_Crossover(10/50)",
+        "ranging/low_vol": "Inside_Bar_Breakout(0.6)",
+        "ranging/high_vol": "Supertrend(10,m=3.0)",
+        "trending/high_vol": "VWAP_Reversion(20,2%)"
+      },
+      "test_total_return": -0.0029400000000000537,
+      "test_sharpe": -0.0514867970227213
+    },
+    {
+      "fold_idx": 2,
+      "test_start": "2019-12-11 00:00:00",
+      "test_end": "2021-08-10 00:00:00",
+      "regime_map": {
+        "ranging/low_vol": "Donchian_Breakout(20)",
+        "trending/low_vol": "Supertrend(10,m=3.0)",
+        "trending/high_vol": "ZScore_Reversion(20,z=2.0)",
+        "ranging/high_vol": "ATR_Vol_Breakout(14,k=1.5)"
+      },
+      "test_total_return": -0.055235000000000034,
+      "test_sharpe": -0.5954806137540876
+    },
+    {
+      "fold_idx": 3,
+      "test_start": "2021-08-11 00:00:00",
+      "test_end": "2023-04-11 00:00:00",
+      "regime_map": {
+        "ranging/low_vol": "MA_Crossover(10/50)",
+        "trending/low_vol": "Supertrend(10,m=3.0)",
+        "ranging/high_vol": "Inside_Bar_Breakout(0.6)",
+        "trending/high_vol": "ZScore_Reversion(20,z=2.0)"
+      },
+      "test_total_return": -0.015880000000000005,
+      "test_sharpe": -0.11165182823660007
+    },
+    {
+      "fold_idx": 4,
+      "test_start": "2023-04-12 00:00:00",
+      "test_end": "2024-12-06 00:00:00",
+      "regime_map": {
+        "ranging/low_vol": "MA_Crossover(10/50)",
+        "trending/low_vol": "Supertrend(10,m=3.0)",
+        "ranging/high_vol": "Supertrend(10,m=3.0)",
+        "trending/high_vol": "ZScore_Reversion(20,z=2.0)"
+      },
+      "test_total_return": 0.1606700000000001,
+      "test_sharpe": 1.7054865238465473
+    },
+    {
+      "fold_idx": 5,
+      "test_start": "2024-12-09 00:00:00",
+      "test_end": "2026-08-10 00:00:00",
+      "regime_map": {
+        "ranging/low_vol": "Donchian_Breakout(20)",
+        "trending/low_vol": "Supertrend(10,m=3.0)",
+        "ranging/high_vol": "Supertrend(10,m=3.0)",
+        "trending/high_vol": "VWAP_Reversion(20,2%)"
+      },
+      "test_total_return": 0.1383000000000001,
+      "test_sharpe": 0.8334286458707238
+    }
+  ]
+}

@@ -536,6 +536,14 @@
       <p class="panel-note" id="lockedStrategyText">Once this track has enough live history for a walk-forward + sensitivity snapshot (see "Robustness (walk-forward)" below), the single strategy that's actually profitable, walk-forward-robust, and parameter-stable gets called out here as the one this track effectively trades - rather than leaving every strategy listed side by side with no verdict. Not enough history yet.</p>
     </div>
 
+    <div class="panel" id="metaStrategyPanel">
+      <div class="panel-head">
+        <h2>🧠 Meta-strategy selector</h2>
+      </div>
+      <p class="panel-note" id="metaStrategyText">Not run yet for this track - see scripts/meta_strategy_snapshot.py.</p>
+      <p class="panel-note" id="metaStrategyCaveat" style="display:none;">Honest caveat: this operates on a genuinely small dataset by ML standards (a few thousand bars, a handful of regime buckets). A regime only gets a strategy assignment if it had enough history <em>and</em> a real historical edge in walk-forward TRAIN data - anything thinner is left flat rather than guessed at - but that reduces overfitting risk, it doesn't eliminate it. Treat the out-of-sample number above with the same skepticism as any other walk-forward result, not more. See "Meta-strategy selector, honestly" on the Learn page for the full methodology.</p>
+    </div>
+
     <div class="panel">
       <div class="panel-head">
         <h2>Equity curve (full backtest)</h2>
@@ -734,43 +742,43 @@
   const TRACKS = {
     daily: {
       label: 'Daily', symbol: 'BTC/USDT', dateUnit: 'Day', intraday: false,
-      positions: __POSITIONS_JSON__, trades: __TRADES_JSON__, trackRecord: __TRACK_RECORD_JSON__, bars: __BARS_JSON__, walkforward: __WALKFORWARD_JSON__, sensitivity: __SENSITIVITY_JSON__,
+      positions: __POSITIONS_JSON__, trades: __TRADES_JSON__, trackRecord: __TRACK_RECORD_JSON__, bars: __BARS_JSON__, walkforward: __WALKFORWARD_JSON__, sensitivity: __SENSITIVITY_JSON__, metaStrategy: __META_STRATEGY_JSON__,
     },
     fifteenMin: {
       label: '15-Minute', symbol: 'BTC/USDT', dateUnit: 'Update', intraday: true,
-      positions: __POSITIONS_15M_JSON__, trades: __TRADES_15M_JSON__, trackRecord: __TRACK_RECORD_15M_JSON__, bars: __BARS_15M_JSON__, walkforward: __WALKFORWARD_15M_JSON__, sensitivity: __SENSITIVITY_15M_JSON__,
+      positions: __POSITIONS_15M_JSON__, trades: __TRADES_15M_JSON__, trackRecord: __TRACK_RECORD_15M_JSON__, bars: __BARS_15M_JSON__, walkforward: __WALKFORWARD_15M_JSON__, sensitivity: __SENSITIVITY_15M_JSON__, metaStrategy: __META_STRATEGY_15M_JSON__,
     },
     eth: {
       label: 'ETH Daily', symbol: 'ETH/USDT', dateUnit: 'Day', intraday: false,
-      positions: __POSITIONS_ETH_JSON__, trades: __TRADES_ETH_JSON__, trackRecord: __TRACK_RECORD_ETH_JSON__, bars: __BARS_ETH_JSON__, walkforward: __WALKFORWARD_ETH_JSON__, sensitivity: __SENSITIVITY_ETH_JSON__,
+      positions: __POSITIONS_ETH_JSON__, trades: __TRADES_ETH_JSON__, trackRecord: __TRACK_RECORD_ETH_JSON__, bars: __BARS_ETH_JSON__, walkforward: __WALKFORWARD_ETH_JSON__, sensitivity: __SENSITIVITY_ETH_JSON__, metaStrategy: __META_STRATEGY_ETH_JSON__,
     },
     sol: {
       label: 'SOL Daily', symbol: 'SOL/USDT', dateUnit: 'Day', intraday: false,
-      positions: __POSITIONS_SOL_JSON__, trades: __TRADES_SOL_JSON__, trackRecord: __TRACK_RECORD_SOL_JSON__, bars: __BARS_SOL_JSON__, walkforward: __WALKFORWARD_SOL_JSON__, sensitivity: __SENSITIVITY_SOL_JSON__,
+      positions: __POSITIONS_SOL_JSON__, trades: __TRADES_SOL_JSON__, trackRecord: __TRACK_RECORD_SOL_JSON__, bars: __BARS_SOL_JSON__, walkforward: __WALKFORWARD_SOL_JSON__, sensitivity: __SENSITIVITY_SOL_JSON__, metaStrategy: __META_STRATEGY_SOL_JSON__,
     },
     perp: {
       label: 'BTC Perpetual', symbol: 'BTC/USDT', dateUnit: 'Day', intraday: false, spotLabel: 'BTC Daily', barUnit: 'daily candle',
-      positions: __POSITIONS_PERP_JSON__, trades: __TRADES_PERP_JSON__, trackRecord: __TRACK_RECORD_PERP_JSON__, bars: __BARS_PERP_JSON__, walkforward: __WALKFORWARD_PERP_JSON__, sensitivity: __SENSITIVITY_PERP_JSON__,
+      positions: __POSITIONS_PERP_JSON__, trades: __TRADES_PERP_JSON__, trackRecord: __TRACK_RECORD_PERP_JSON__, bars: __BARS_PERP_JSON__, walkforward: __WALKFORWARD_PERP_JSON__, sensitivity: __SENSITIVITY_PERP_JSON__, metaStrategy: __META_STRATEGY_PERP_JSON__,
     },
     perp15m: {
       label: 'BTC Perp 15-Min', symbol: 'BTC/USDT', dateUnit: 'Update', intraday: true, spotLabel: 'BTC 15-Minute', barUnit: '15-minute candle',
-      positions: __POSITIONS_PERP_15M_JSON__, trades: __TRADES_PERP_15M_JSON__, trackRecord: __TRACK_RECORD_PERP_15M_JSON__, bars: __BARS_PERP_15M_JSON__, walkforward: __WALKFORWARD_PERP_15M_JSON__, sensitivity: __SENSITIVITY_PERP_15M_JSON__,
+      positions: __POSITIONS_PERP_15M_JSON__, trades: __TRADES_PERP_15M_JSON__, trackRecord: __TRACK_RECORD_PERP_15M_JSON__, bars: __BARS_PERP_15M_JSON__, walkforward: __WALKFORWARD_PERP_15M_JSON__, sensitivity: __SENSITIVITY_PERP_15M_JSON__, metaStrategy: __META_STRATEGY_PERP_15M_JSON__,
     },
     ethPerp: {
       label: 'ETH Perpetual', symbol: 'ETH/USDT', dateUnit: 'Day', intraday: false, spotLabel: 'ETH Daily', barUnit: 'daily candle',
-      positions: __POSITIONS_ETH_PERP_JSON__, trades: __TRADES_ETH_PERP_JSON__, trackRecord: __TRACK_RECORD_ETH_PERP_JSON__, bars: __BARS_ETH_PERP_JSON__, walkforward: __WALKFORWARD_ETH_PERP_JSON__, sensitivity: __SENSITIVITY_ETH_PERP_JSON__,
+      positions: __POSITIONS_ETH_PERP_JSON__, trades: __TRADES_ETH_PERP_JSON__, trackRecord: __TRACK_RECORD_ETH_PERP_JSON__, bars: __BARS_ETH_PERP_JSON__, walkforward: __WALKFORWARD_ETH_PERP_JSON__, sensitivity: __SENSITIVITY_ETH_PERP_JSON__, metaStrategy: __META_STRATEGY_ETH_PERP_JSON__,
     },
     solPerp: {
       label: 'SOL Perpetual', symbol: 'SOL/USDT', dateUnit: 'Day', intraday: false, spotLabel: 'SOL Daily', barUnit: 'daily candle',
-      positions: __POSITIONS_SOL_PERP_JSON__, trades: __TRADES_SOL_PERP_JSON__, trackRecord: __TRACK_RECORD_SOL_PERP_JSON__, bars: __BARS_SOL_PERP_JSON__, walkforward: __WALKFORWARD_SOL_PERP_JSON__, sensitivity: __SENSITIVITY_SOL_PERP_JSON__,
+      positions: __POSITIONS_SOL_PERP_JSON__, trades: __TRADES_SOL_PERP_JSON__, trackRecord: __TRACK_RECORD_SOL_PERP_JSON__, bars: __BARS_SOL_PERP_JSON__, walkforward: __WALKFORWARD_SOL_PERP_JSON__, sensitivity: __SENSITIVITY_SOL_PERP_JSON__, metaStrategy: __META_STRATEGY_SOL_PERP_JSON__,
     },
     nq: {
       label: 'Nasdaq Futures (Daily)', symbol: 'MNQ', dateUnit: 'Day', intraday: false,
-      positions: __POSITIONS_NQ_JSON__, trades: __TRADES_NQ_JSON__, trackRecord: __TRACK_RECORD_NQ_JSON__, bars: __BARS_NQ_JSON__, walkforward: __WALKFORWARD_NQ_JSON__, sensitivity: __SENSITIVITY_NQ_JSON__,
+      positions: __POSITIONS_NQ_JSON__, trades: __TRADES_NQ_JSON__, trackRecord: __TRACK_RECORD_NQ_JSON__, bars: __BARS_NQ_JSON__, walkforward: __WALKFORWARD_NQ_JSON__, sensitivity: __SENSITIVITY_NQ_JSON__, metaStrategy: __META_STRATEGY_NQ_JSON__,
     },
     nq5m: {
       label: 'Nasdaq Futures (5-Min)', symbol: 'MNQ', dateUnit: 'Update', intraday: true,
-      positions: __POSITIONS_NQ5M_JSON__, trades: __TRADES_NQ5M_JSON__, trackRecord: __TRACK_RECORD_NQ5M_JSON__, bars: __BARS_NQ5M_JSON__, walkforward: __WALKFORWARD_NQ5M_JSON__, sensitivity: __SENSITIVITY_NQ5M_JSON__,
+      positions: __POSITIONS_NQ5M_JSON__, trades: __TRADES_NQ5M_JSON__, trackRecord: __TRACK_RECORD_NQ5M_JSON__, bars: __BARS_NQ5M_JSON__, walkforward: __WALKFORWARD_NQ5M_JSON__, sensitivity: __SENSITIVITY_NQ5M_JSON__, metaStrategy: __META_STRATEGY_NQ5M_JSON__,
     },
   };
   const CAPITAL = 100000;
@@ -1199,6 +1207,8 @@
       document.getElementById('wfHint').textContent = '—';
       document.getElementById('wfTbody').innerHTML = '';
       document.getElementById('lockedStrategyText').textContent = 'Not enough history yet.';
+      document.getElementById('metaStrategyText').textContent = 'Not run yet for this track - see scripts/meta_strategy_snapshot.py.';
+      document.getElementById('metaStrategyCaveat').style.display = 'none';
       drawCompareChart([]);
       drawTrackRecordChart(track, []);
       drawEquityCurveChart(track, []);
@@ -1285,6 +1295,7 @@
 
     renderWalkforward(track, rows);
     renderLockedStrategy(track, rows);
+    renderMetaStrategy(track);
     renderPerpRiskPanel(track, rows);
     drawCompareChart(rows);
     drawTrackRecordChart(track, order);
@@ -1423,6 +1434,28 @@
     candidates.sort((a, b) => b.oosSharpe - a.oosSharpe);
     const best = candidates[0];
     el.innerHTML = `<strong>${best.name}</strong> - the strategy this track effectively trades right now. Profitable on the full backtest (${fmtSignedPct(best.totalReturn)}), walk-forward-robust on unseen data (${fmtSignedPct(best.oosRet)} out-of-sample, Sharpe ${best.oosSharpe.toFixed(2)}), and stable across ${Math.round(best.fracProfitable * 100)}% of nearby parameter values. Picked automatically from the walk-forward + sensitivity results below whenever this track has enough history to run them - not a permanent or hand-picked choice.`;
+  }
+
+  function renderMetaStrategy(track) {
+    const el = document.getElementById('metaStrategyText');
+    const caveat = document.getElementById('metaStrategyCaveat');
+    const meta = track.metaStrategy;
+    if (!meta || !meta.generated_at_utc) {
+      el.textContent = 'Not run yet for this track - see scripts/meta_strategy_snapshot.py.';
+      caveat.style.display = 'none';
+      return;
+    }
+    const regime = meta.current_regime || 'unclassified';
+    const rec = meta.recommended_strategy;
+    const oos = meta.oos_metrics;
+    const oosLine = oos
+      ? ` Out-of-sample (walk-forward, not in-sample): ${fmtSignedPct(oos.total_return)} total return, Sharpe ${isFinite(oos.sharpe) ? oos.sharpe.toFixed(2) : '—'} across ${meta.folds.length} folds.`
+      : '';
+    const recLine = rec
+      ? `Current regime <strong>${regime}</strong> - the regime-conditional meta-selector currently recommends <strong>${rec}</strong>, the strategy with the best historical edge in this specific regime.`
+      : `Current regime <strong>${regime}</strong> - no strategy has a confirmed historical edge in this specific regime yet, so the meta-selector would stay flat here rather than guess.`;
+    el.innerHTML = recLine + oosLine + ` Generated ${fmtUpdated(meta.generated_at_utc)}.`;
+    caveat.style.display = '';
   }
 
   // ---------- memecoin scanner ----------

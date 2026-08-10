@@ -1,0 +1,66 @@
+{
+  "symbol": "BTC_USDT",
+  "freq": "15min",
+  "n_folds": 3,
+  "min_regime_bars": 20,
+  "generated_at_utc": "2026-08-10T07:55:26.437695Z",
+  "current_regime": "ranging/high_vol",
+  "recommended_strategy": null,
+  "live_regime_map": {
+    "ranging/low_vol": "Inside_Bar_Breakout(0.6)",
+    "trending/high_vol": "ZScore_Reversion(20,z=2.0)"
+  },
+  "oos_metrics": {
+    "strategy": "MetaStrategySelector",
+    "instrument": "BTC_USDT",
+    "total_return": -0.02533326632699795,
+    "cagr": NaN,
+    "sharpe": -9.419952300885944,
+    "sortino": -6.471571199084197,
+    "max_drawdown": -0.0271100969991053,
+    "calmar": NaN,
+    "num_trades": 5,
+    "win_rate": 0.0,
+    "profit_factor": 0.0,
+    "avg_win": NaN,
+    "avg_loss": -506.6653265399611,
+    "avg_trade": -506.6653265399611,
+    "avg_bars_held": 16.2,
+    "total_costs": 1235.869214658265,
+    "exposure": NaN,
+    "final_equity": 97466.6733673002
+  },
+  "folds": [
+    {
+      "fold_idx": 1,
+      "test_start": "2026-08-07 10:30:00",
+      "test_end": "2026-08-08 08:30:00",
+      "regime_map": {},
+      "test_total_return": 0.0,
+      "test_sharpe": NaN
+    },
+    {
+      "fold_idx": 2,
+      "test_start": "2026-08-08 08:45:00",
+      "test_end": "2026-08-09 06:45:00",
+      "regime_map": {
+        "trending/high_vol": "Engulfing_Reversal(0.3)",
+        "ranging/high_vol": "Inside_Bar_Breakout(0.6)"
+      },
+      "test_total_return": 0.0,
+      "test_sharpe": NaN
+    },
+    {
+      "fold_idx": 3,
+      "test_start": "2026-08-09 07:00:00",
+      "test_end": "2026-08-10 05:00:00",
+      "regime_map": {
+        "ranging/low_vol": "Inside_Bar_Breakout(0.6)",
+        "trending/high_vol": "Engulfing_Reversal(0.3)",
+        "ranging/high_vol": "Inside_Bar_Breakout(0.6)"
+      },
+      "test_total_return": -0.02533326632699795,
+      "test_sharpe": -16.54394365770425
+    }
+  ]
+}

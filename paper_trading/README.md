@@ -204,6 +204,60 @@ walk-forward + sensitivity snapshot on file - brand new tracks like Nasdaq
 Futures (5-min) will read "not enough history yet" until one is run against
 real accumulated data.
 
+## Meta-strategy selector
+
+`scripts/meta_strategy_snapshot.py` (methodology in
+`src/backtest/meta_strategy.py`) answers a different question than the
+locked-in strategy above: not "which single strategy has the best overall
+track record," but "which strategy should be trusted *given the current
+market regime*." Built directly on `src/backtest/regime.py`'s existing
+ADX-based trend/volatility classification and per-regime P&L attribution -
+no new regime detection, just a decision layer on top of it:
+
+1. Split the bar history into the same chronological, expanding-window
+   folds `walkforward.py` uses.
+2. On each fold's TRAIN window only: run every strategy's full backtest at
+   its default parameters, bucket each one's P&L by regime
+   (`attribute_performance()`), and for each regime pick whichever strategy
+   had the best mean P&L per bar *while that regime was in effect* - but
+   only if that regime saw at least `--min-regime-bars` (default 20) bars
+   of history, and only if the best strategy found was actually net
+   profitable in that regime. Thinner or unprofitable regimes are left
+   unassigned rather than guessed at.
+3. On the following, unseen TEST window: at each bar, look up its regime
+   (classified causally, so this doesn't use any information not available
+   at that bar) and apply whichever strategy TRAIN assigned to that regime
+   - or stay flat if nothing was assigned. The chosen signal is replayed
+   through the exact same `run_backtest()` execution/cost/liquidation logic
+   every other strategy uses, via a thin internal adapter
+   (`_PrecomputedSignalStrategy`), so switching strategies mid-stream still
+   pays real trading costs like any other position change.
+4. Stitch each fold's test-period equity into one continuous out-of-sample
+   curve, exactly like `walkforward.py` does for a single strategy.
+
+The regime -> strategy mapping trained on *all* available data (not just one
+fold) becomes the "live" recommendation shown on the dashboard: current
+regime, and whichever strategy has the best confirmed edge in it right now.
+
+**Stated limitation, not a footnote.** This runs on a genuinely small
+dataset by ML standards - a few thousand bars, a handful of regime buckets,
+a handful of assets - so a learned mapping like this is *easier* to overfit
+than the simple rule-based strategies it's choosing between, not harder.
+The `min_regime_bars` + profitability gate reduces that risk, it doesn't
+eliminate it. Real, observed out-of-sample results across the six tracks
+this has been run against so far range from +80.6% (BTC daily) to -84.9%
+(ETH daily) - a genuinely honest spread, not cherry-picked, and a reminder
+that "regime-aware" doesn't automatically mean "better." Treat every number
+this produces with the same skepticism as any other walk-forward result.
+
+Also not part of the hourly pipeline (same reasoning as walk-forward/
+sensitivity below - it re-backtests every strategy per fold, expensive next
+to a single backtest). Run manually:
+
+```
+python scripts/meta_strategy_snapshot.py --bars paper_trading/bars.csv --symbol BTC_USDT --freq 1D --output paper_trading/meta_strategy.json
+```
+
 ## Robustness checks (not part of the hourly pipeline - run manually)
 
 Two separate questions, both expensive (grid search per fold/parameter
@@ -243,10 +297,10 @@ Per track (suffix `""` = BTC daily, `_15m`, `_eth`, `_sol`, `_perp`,
 `_perp_15m`, `_eth_perp`, `_sol_perp`, `_nq`, `_nq5m`):
 `bars{suffix}.csv`, `positions{suffix}.json`, `trade_log{suffix}.csv`,
 `track_record{suffix}.csv`, `summary{suffix}.md`,
-`walkforward{suffix}.json`, `sensitivity{suffix}.json` (the last two only
-where a manual snapshot has been run) - `bars_nq.csv` and `bars_nq5m.csv`
-are fetched by `scripts/fetch_nasdaq_futures.py` rather than
-`fetch_market_data.py` (see "Nasdaq Futures" above). Plus `memecoin_scan.json` /
+`walkforward{suffix}.json`, `sensitivity{suffix}.json`, `meta_strategy{suffix}.json`
+(the last three only where a manual snapshot has been run) - `bars_nq.csv`
+and `bars_nq5m.csv` are fetched by `scripts/fetch_nasdaq_futures.py` rather
+than `fetch_market_data.py` (see "Nasdaq Futures" above). Plus `memecoin_scan.json` /
 `memecoin_wide_scan.json` / `memecoins_wide_tickers.json` /
 `memecoins/*.csv` (scanner), `rug_watch_history.json` (rolling ~7-day log
 of flagged coins per hourly run, see "Rug Pull Watch" below),
