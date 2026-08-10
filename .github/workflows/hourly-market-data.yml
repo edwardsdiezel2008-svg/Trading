@@ -84,6 +84,7 @@ jobs:
           mkdir -p _site
           cp paper_trading/index.html _site/index.html
           cp paper_trading/dashboard.html _site/dashboard.html
+          cp paper_trading/learn.html _site/learn.html
           echo "site_ready=true" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-pages-artifact@v3
