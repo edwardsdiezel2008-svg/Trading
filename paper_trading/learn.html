@@ -100,7 +100,7 @@
   :focus-visible { outline: 2px solid var(--scan); outline-offset: 2px; }
   a { color: inherit; }
 
-  .shell { max-width: 880px; margin: 0 auto; padding: 28px 20px 48px; display: flex; flex-direction: column; gap: 22px; }
+  .shell { max-width: 880px; margin: 0 auto; padding: 28px 20px 48px; display: flex; flex-direction: column; gap: 30px; }
 
   .hero { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
   .hero-tag {
@@ -300,3 +300,26 @@
     <p>Rebuilt every hourly check-in from real Crypto.com Exchange data via GitHub Actions - independent of any chat session being open.</p>
   </footer>
 </div>
+
+<script>
+  // Touch swipe to move between pages - right goes back to the landing
+  // page, left goes to the full dashboard. Guarded to a dominant,
+  // deliberate horizontal motion so it never fires on an ordinary vertical
+  // scroll of this fairly long page.
+  (function initSwipeNav() {
+    let startX = null, startY = null;
+    const THRESHOLD = 60;
+    document.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) return;
+      startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    }, { passive: true });
+    document.addEventListener('touchend', (e) => {
+      if (startX === null) return;
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      startX = null;
+      if (Math.abs(dx) < THRESHOLD || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      location.href = dx < 0 ? 'dashboard.html' : 'index.html';
+    }, { passive: true });
+  })();
+</script>
