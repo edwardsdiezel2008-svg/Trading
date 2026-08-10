@@ -48,9 +48,11 @@ MAX_LOSS_FRACTION = 0.5
 # --- Leveraged/perpetual-futures specific helpers (only active when
 # --leverage != 1.0) ---
 
-# 0.5% - a reasonable, clearly-approximate stand-in for a real exchange's
-# lowest-tier BTC perpetual maintenance margin requirement. Real schedules
-# vary by position size/tier; this system doesn't model per-tier margin.
+# 0.5% - matches Bybit's published lowest-tier maintenance margin rate for
+# BTC/ETH/SOL USDT perpetuals (positions up to $2M notional; Binance's base
+# tier is close, ~0.4%). Real schedules step up in tiers as position size
+# grows; this system doesn't model per-tier margin, just the base tier every
+# position here would actually sit in.
 MAINTENANCE_MARGIN_RATIO = 0.005
 
 
@@ -86,12 +88,16 @@ def accrue_funding(prior_accrued_usd, prior_ts, now, direction: int, notional, f
     against re-applying within min_interval_minutes (protects against a
     manual re-trigger double-charging funding that a real ~hourly cadence
     wouldn't). Applies the currently-reported live funding rate once per
-    check-in that clears the guard, directly - not scaled to a specific
-    settlement interval, since this system has no way to verify Crypto.com
-    perpetuals' exact funding cadence without live access to their API
-    docs. Funding is zero-sum for the position holder: a positive rate is
-    paid BY longs TO shorts (and vice versa for a negative rate), so
-    direction - not just price - determines the sign.
+    check-in that clears the guard, directly - not divided by some assumed
+    interval. This matches how Crypto.com Exchange actually runs funding:
+    the rate is recalculated every 4 hours but *settled* hourly against
+    open positions, using that window's rate at each settlement (see
+    help.crypto.com/en/articles/4894449-funding-and-session-settlement) -
+    reading the current rate once per hourly check-in and applying it
+    directly is the right shape for that, not a rough stand-in for it.
+    Funding is zero-sum for the position holder: a positive rate is paid BY
+    longs TO shorts (and vice versa for a negative rate), so direction -
+    not just price - determines the sign.
 
     Returns (new_accrued_usd, new_timestamp, applied). The very first call
     for a strategy (prior_ts is None) only establishes the baseline
@@ -132,6 +138,11 @@ def parse_args(argv=None):
                     help="Explicit bars CSV path, overriding the default paper_trading/bars<suffix>.csv - lets a "
                          "leveraged track reuse an existing spot track's bars (e.g. bars.csv for a BTC perp track) "
                          "without a separate data fetch.")
+    p.add_argument("--funding-snapshot-file", default="paper_trading/btc_market_snapshot.json",
+                    help="Path to the market-snapshot JSON this track reads its live funding_rate.rate from - only "
+                         "read when --leverage != 1.0. Each asset's funding rate reflects that asset's own long/"
+                         "short positioning, so a leveraged ETH or SOL track needs its own snapshot file "
+                         "(eth_market_snapshot.json / sol_market_snapshot.json), not BTC's.")
     return p.parse_args(argv)
 
 
@@ -193,7 +204,7 @@ def _update_track_record(bars, strategy_name, result, capital, tracking_start, t
     updated.to_csv(track_record_path, index=False)
 
 
-def _load_btc_funding_rate(path="paper_trading/btc_market_snapshot.json"):
+def _load_funding_rate(path="paper_trading/btc_market_snapshot.json"):
     if not os.path.exists(path):
         return None
     try:
@@ -224,7 +235,7 @@ def main(argv=None):
     funding_rate = None
     now = datetime.now(timezone.utc)
     if is_leveraged:
-        funding_rate = _load_btc_funding_rate()
+        funding_rate = _load_funding_rate(args.funding_snapshot_file)
         if os.path.exists(positions_path):
             with open(positions_path) as f:
                 prior_positions = (json.load(f).get("strategies")) or {}

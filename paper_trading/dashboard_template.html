@@ -215,7 +215,7 @@
   .tab-btn { border: none; background: transparent; color: var(--ink-2); font-family: var(--font-ui); font-size: 0.85rem; font-weight: 600; padding: 7px 16px; border-radius: 7px; cursor: pointer; }
   .tab-btn.active { background: var(--accent); color: var(--surface); }
   .tab-btn[data-track="memecoin"].active { background: var(--scan); box-shadow: 0 0 12px var(--scan-glow); }
-  .tab-btn[data-track="perp"].active { background: var(--critical); box-shadow: 0 0 12px rgba(224,88,91,0.45); }
+  .tab-btn[data-track="perp"].active, .tab-btn[data-track="perp15m"].active, .tab-btn[data-track="ethPerp"].active, .tab-btn[data-track="solPerp"].active { background: var(--critical); box-shadow: 0 0 12px rgba(224,88,91,0.45); }
 
   .thin-data-note {
     display: none; gap: 10px; align-items: flex-start; background: var(--critical-wash); border: 1px solid var(--border);
@@ -421,6 +421,9 @@
     <button class="tab-btn" data-track="eth">ETH Daily</button>
     <button class="tab-btn" data-track="sol">SOL Daily</button>
     <button class="tab-btn" data-track="perp">⚡ BTC Perpetual</button>
+    <button class="tab-btn" data-track="perp15m">⚡ BTC Perp 15-Min</button>
+    <button class="tab-btn" data-track="ethPerp">⚡ ETH Perpetual</button>
+    <button class="tab-btn" data-track="solPerp">⚡ SOL Perpetual</button>
     <button class="tab-btn" data-track="memecoin">Memecoin Scanner</button>
   </div>
 
@@ -497,7 +500,7 @@
         <h2>⚡ Leverage &amp; liquidation</h2>
         <span class="panel-hint" id="perpLeverageHint">—</span>
       </div>
-      <p class="panel-note">This track sizes every position at <strong id="perpLeverageInline">—</strong> notional exposure per dollar of equity - the same price moves as the spot BTC Daily track, amplified. A much smaller adverse price swing is enough to force-close a leg here than the unleveraged tracks' flat 50%-loss floor requires; "Distance to liquidation" is how far the latest price sits from that force-close level right now. Backtest gap risk: the engine only checks for a liquidation-triggering loss at each bar's close, not continuously - a single daily candle large enough can jump straight past the threshold, showing as an outsized loss rather than a clean stop at the liquidation price. That's a known simplification, not a bug, and it's the reason a leveraged strategy's equity can occasionally show as more deeply negative than the liquidation math alone would suggest. Funding is the periodic payment perpetual contracts exchange between longs and shorts to stay anchored to spot price - shown here as a real running total using the live rate this system fetches each check-in, applied once per check-in going forward. It is <strong>not</strong> included in the Total Return / equity figures above (which come from the historical backtest), since Crypto.com's public API only exposes the current funding rate, not a historical series that could be backtested honestly.</p>
+      <p class="panel-note">This track sizes every position at <strong id="perpLeverageInline">—</strong> notional exposure per dollar of equity - the same price moves as the spot <strong id="perpSpotRefInline">—</strong> track, amplified. A much smaller adverse price swing is enough to force-close a leg here than the unleveraged tracks' flat 50%-loss floor requires; "Distance to liquidation" is how far the latest price sits from that force-close level right now. Backtest gap risk: the engine only checks for a liquidation-triggering loss at each bar's close, not continuously - a single <strong id="perpBarUnitInline">bar</strong> large enough can jump straight past the threshold, showing as an outsized loss rather than a clean stop at the liquidation price. That's a known simplification, not a bug, and it's the reason a leveraged strategy's equity can occasionally show as more deeply negative than the liquidation math alone would suggest. Funding is the periodic payment perpetual contracts exchange between longs and shorts to stay anchored to spot price - Crypto.com Exchange recalculates the rate every 4 hours and settles it hourly against open positions; this track applies the live rate once per hourly check-in, matching that cadence, and tracks it as a real running total. It is <strong>not</strong> included in the Total Return / equity figures above (which come from the historical backtest), since Crypto.com's public API only exposes the current funding rate, not a historical series that could be backtested honestly.</p>
       <div class="table-wrap">
         <table id="perpRiskTable">
           <thead>
@@ -728,8 +731,20 @@
       positions: __POSITIONS_SOL_JSON__, trades: __TRADES_SOL_JSON__, trackRecord: __TRACK_RECORD_SOL_JSON__, bars: __BARS_SOL_JSON__, walkforward: __WALKFORWARD_SOL_JSON__, sensitivity: __SENSITIVITY_SOL_JSON__,
     },
     perp: {
-      label: 'BTC Perpetual', symbol: 'BTC/USDT', dateUnit: 'Day', intraday: false,
+      label: 'BTC Perpetual', symbol: 'BTC/USDT', dateUnit: 'Day', intraday: false, spotLabel: 'BTC Daily', barUnit: 'daily candle',
       positions: __POSITIONS_PERP_JSON__, trades: __TRADES_PERP_JSON__, trackRecord: __TRACK_RECORD_PERP_JSON__, bars: __BARS_PERP_JSON__, walkforward: __WALKFORWARD_PERP_JSON__, sensitivity: __SENSITIVITY_PERP_JSON__,
+    },
+    perp15m: {
+      label: 'BTC Perp 15-Min', symbol: 'BTC/USDT', dateUnit: 'Update', intraday: true, spotLabel: 'BTC 15-Minute', barUnit: '15-minute candle',
+      positions: __POSITIONS_PERP_15M_JSON__, trades: __TRADES_PERP_15M_JSON__, trackRecord: __TRACK_RECORD_PERP_15M_JSON__, bars: __BARS_PERP_15M_JSON__, walkforward: __WALKFORWARD_PERP_15M_JSON__, sensitivity: __SENSITIVITY_PERP_15M_JSON__,
+    },
+    ethPerp: {
+      label: 'ETH Perpetual', symbol: 'ETH/USDT', dateUnit: 'Day', intraday: false, spotLabel: 'ETH Daily', barUnit: 'daily candle',
+      positions: __POSITIONS_ETH_PERP_JSON__, trades: __TRADES_ETH_PERP_JSON__, trackRecord: __TRACK_RECORD_ETH_PERP_JSON__, bars: __BARS_ETH_PERP_JSON__, walkforward: __WALKFORWARD_ETH_PERP_JSON__, sensitivity: __SENSITIVITY_ETH_PERP_JSON__,
+    },
+    solPerp: {
+      label: 'SOL Perpetual', symbol: 'SOL/USDT', dateUnit: 'Day', intraday: false, spotLabel: 'SOL Daily', barUnit: 'daily candle',
+      positions: __POSITIONS_SOL_PERP_JSON__, trades: __TRADES_SOL_PERP_JSON__, trackRecord: __TRACK_RECORD_SOL_PERP_JSON__, bars: __BARS_SOL_PERP_JSON__, walkforward: __WALKFORWARD_SOL_PERP_JSON__, sensitivity: __SENSITIVITY_SOL_PERP_JSON__,
     },
   };
   const CAPITAL = 100000;
@@ -1133,7 +1148,7 @@
       thinNote.classList.remove('visible');
     }
 
-    document.getElementById('costFilterNote').classList.toggle('visible', trackKey === 'fifteenMin');
+    document.getElementById('costFilterNote').classList.toggle('visible', trackKey === 'fifteenMin' || trackKey === 'perp15m');
 
     const unprofitableNote = document.getElementById('unprofitableNote');
     if (rows.length && rows.every((r) => r.totalReturn <= 0)) {
@@ -1257,6 +1272,8 @@
     }
     panel.style.display = '';
     document.getElementById('perpLeverageHint').textContent = `${leverage}x notional exposure per $1 of equity`;
+    document.getElementById('perpSpotRefInline').textContent = track.spotLabel || track.label;
+    document.getElementById('perpBarUnitInline').textContent = track.barUnit || 'bar';
     document.getElementById('perpLeverageInline').textContent = `${leverage}x`;
 
     const strategies = track.positions.strategies;
@@ -1619,7 +1636,7 @@
   // that already scrolls horizontally (a wide table, the tab strip itself)
   // so it never fights with that element's own swipe-to-scroll.
   (function initTabSwipe() {
-    const TRACK_ORDER = ['daily', 'fifteenMin', 'eth', 'sol', 'perp', 'memecoin'];
+    const TRACK_ORDER = ['daily', 'fifteenMin', 'eth', 'sol', 'perp', 'perp15m', 'ethPerp', 'solPerp', 'memecoin'];
     let startX = null, startY = null, skip = false;
     const THRESHOLD = 60;
     document.addEventListener('touchstart', (e) => {

@@ -454,7 +454,7 @@
   }
 
   function renderNavCards() {
-    const order = ['daily', 'fifteenMin', 'eth', 'sol', 'perp'];
+    const order = ['daily', 'fifteenMin', 'eth', 'sol', 'perp', 'perp15m', 'ethPerp', 'solPerp'];
     const cards = order.map((key) => {
       const s = TRACK_SUMMARIES[key];
       if (!s) return '';

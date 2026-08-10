@@ -42,7 +42,9 @@ BACKFILL_MAX_CANDLES = 6000
 BTC_SYMBOL = "BTC_USDT"
 BTC_PERP_SYMBOL = "BTCUSD-PERP"
 ETH_SYMBOL = "ETH_USDT"
+ETH_PERP_SYMBOL = "ETHUSD-PERP"
 SOL_SYMBOL = "SOL_USDT"
+SOL_PERP_SYMBOL = "SOLUSD-PERP"
 
 # (symbol, bars file) - the other liquid instruments tracked alongside BTC,
 # added so paper-trading results can be checked for whether a strategy's
@@ -429,6 +431,29 @@ def main():
                 "funding_rate": funding,
             }, f, indent=2)
         print("btc_market_snapshot.json written")
+
+    # ETH/SOL perpetual funding rates - only field the leveraged ETH/SOL
+    # perp tracks need (no order book fetch for these, unlike BTC, since
+    # nothing currently reads one for them). Each asset's rate is genuinely
+    # different (it reflects that asset's own long/short positioning
+    # imbalance) so this can't be approximated by reusing BTC's.
+    for label, perp_symbol, out_path in [
+        ("ETH", ETH_PERP_SYMBOL, "paper_trading/eth_market_snapshot.json"),
+        ("SOL", SOL_PERP_SYMBOL, "paper_trading/sol_market_snapshot.json"),
+    ]:
+        try:
+            asset_funding = fetch_funding_rate(perp_symbol)
+            print(f"{label} funding rate: {asset_funding}")
+        except Exception as e:
+            print(f"WARN: {label} funding rate fetch failed: {e}")
+            continue
+        if asset_funding is not None:
+            with open(out_path, "w") as f:
+                json.dump({
+                    "updated_at_utc": datetime.datetime.utcnow().isoformat() + "Z",
+                    "funding_rate": asset_funding,
+                }, f, indent=2)
+            print(f"{out_path} written")
 
     try:
         fng = fetch_fear_greed()

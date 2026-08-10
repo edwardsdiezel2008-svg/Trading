@@ -38,6 +38,9 @@ TRACKS = [
     ("_eth", "POSITIONS_ETH_JSON", "TRADES_ETH_JSON", "TRACK_RECORD_ETH_JSON", "BARS_ETH_JSON", "WALKFORWARD_ETH_JSON", "SENSITIVITY_ETH_JSON"),
     ("_sol", "POSITIONS_SOL_JSON", "TRADES_SOL_JSON", "TRACK_RECORD_SOL_JSON", "BARS_SOL_JSON", "WALKFORWARD_SOL_JSON", "SENSITIVITY_SOL_JSON"),
     ("_perp", "POSITIONS_PERP_JSON", "TRADES_PERP_JSON", "TRACK_RECORD_PERP_JSON", "BARS_PERP_JSON", "WALKFORWARD_PERP_JSON", "SENSITIVITY_PERP_JSON"),
+    ("_perp_15m", "POSITIONS_PERP_15M_JSON", "TRADES_PERP_15M_JSON", "TRACK_RECORD_PERP_15M_JSON", "BARS_PERP_15M_JSON", "WALKFORWARD_PERP_15M_JSON", "SENSITIVITY_PERP_15M_JSON"),
+    ("_eth_perp", "POSITIONS_ETH_PERP_JSON", "TRADES_ETH_PERP_JSON", "TRACK_RECORD_ETH_PERP_JSON", "BARS_ETH_PERP_JSON", "WALKFORWARD_ETH_PERP_JSON", "SENSITIVITY_ETH_PERP_JSON"),
+    ("_sol_perp", "POSITIONS_SOL_PERP_JSON", "TRADES_SOL_PERP_JSON", "TRACK_RECORD_SOL_PERP_JSON", "BARS_SOL_PERP_JSON", "WALKFORWARD_SOL_PERP_JSON", "SENSITIVITY_SOL_PERP_JSON"),
 ]
 
 # suffix -> (hash-link key used by dashboard_template.html's tab wiring, nav label)
@@ -47,6 +50,9 @@ TRACK_META = {
     "_eth": ("eth", "ETH Daily"),
     "_sol": ("sol", "SOL Daily"),
     "_perp": ("perp", "BTC Perpetual"),
+    "_perp_15m": ("perp15m", "BTC Perp 15-Min"),
+    "_eth_perp": ("ethPerp", "ETH Perpetual"),
+    "_sol_perp": ("solPerp", "SOL Perpetual"),
 }
 
 EMPTY_WALKFORWARD = {"symbol": None, "freq": None, "n_folds": 0, "generated_at_utc": None, "results": []}
@@ -72,11 +78,12 @@ def load_sensitivity(suffix):
         return json.load(f)
 
 
-#  The _perp track has no bars file of its own - it's the same BTC price
-#  history as the base daily track (paper_trade_update.py --bars-file), just
-#  leveraged/liquidation-aware. Route reads back to the file that actually
-#  exists instead of duplicating it.
-BARS_FILE_OVERRIDES = {"_perp": ""}
+#  None of the leveraged (_perp*) tracks have a bars file of their own -
+#  each is the same price history as its spot equivalent (paper_trade_
+#  update.py --bars-file), just leveraged/liquidation-aware. Route reads
+#  back to the spot suffix's file that actually exists instead of
+#  duplicating it.
+BARS_FILE_OVERRIDES = {"_perp": "", "_perp_15m": "_15m", "_eth_perp": "_eth", "_sol_perp": "_sol"}
 
 
 def load_recent_bars(suffix, limit=CHART_CANDLE_LIMIT):
@@ -408,7 +415,10 @@ def build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_gre
 
     summaries = {}
     for suffix, (key, label) in TRACK_META.items():
-        symbol = loaded[suffix]["positions"].get("symbol") or {"": "BTC/USDT", "_15m": "BTC/USDT", "_eth": "ETH/USDT", "_sol": "SOL/USDT", "_perp": "BTC/USDT"}[suffix]
+        symbol = loaded[suffix]["positions"].get("symbol") or {
+            "": "BTC/USDT", "_15m": "BTC/USDT", "_eth": "ETH/USDT", "_sol": "SOL/USDT",
+            "_perp": "BTC/USDT", "_perp_15m": "BTC/USDT", "_eth_perp": "ETH/USDT", "_sol_perp": "SOL/USDT",
+        }[suffix]
         summaries[key] = summarize_track(loaded[suffix]["positions"], label, symbol)
     out = out.replace("__TRACK_SUMMARIES_JSON__", json.dumps(summaries))
 

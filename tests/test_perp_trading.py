@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 sys.path.insert(0, ".")
 
 from scripts.paper_trade_update import (
-    _load_btc_funding_rate,
+    _load_funding_rate,
     accrue_funding,
     liquidation_price,
     perp_max_loss_fraction,
@@ -92,23 +92,23 @@ def test_accrue_funding_missing_rate_applies_no_delta():
     assert applied is True
 
 
-def test_load_btc_funding_rate_missing_file_returns_none(tmp_path):
-    assert _load_btc_funding_rate(str(tmp_path / "missing.json")) is None
+def test_load_funding_rate_missing_file_returns_none(tmp_path):
+    assert _load_funding_rate(str(tmp_path / "missing.json")) is None
 
 
-def test_load_btc_funding_rate_parses_the_nested_rate_string(tmp_path):
+def test_load_funding_rate_parses_the_nested_rate_string(tmp_path):
     path = tmp_path / "snapshot.json"
     path.write_text(json.dumps({"funding_rate": {"rate": "0.0001119", "timestamp": "t", "instrument_name": "BTCUSD-PERP"}}))
-    assert _load_btc_funding_rate(str(path)) == 0.0001119
+    assert _load_funding_rate(str(path)) == 0.0001119
 
 
-def test_load_btc_funding_rate_missing_key_returns_none(tmp_path):
+def test_load_funding_rate_missing_key_returns_none(tmp_path):
     path = tmp_path / "snapshot.json"
     path.write_text(json.dumps({"order_book": {}}))
-    assert _load_btc_funding_rate(str(path)) is None
+    assert _load_funding_rate(str(path)) is None
 
 
-def test_load_btc_funding_rate_malformed_json_returns_none(tmp_path):
+def test_load_funding_rate_malformed_json_returns_none(tmp_path):
     path = tmp_path / "snapshot.json"
     path.write_text("{not valid json")
-    assert _load_btc_funding_rate(str(path)) is None
+    assert _load_funding_rate(str(path)) is None
