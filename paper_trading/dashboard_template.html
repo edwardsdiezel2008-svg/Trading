@@ -532,6 +532,7 @@
               <th>Direction</th>
               <th>Entry</th>
               <th>Exit</th>
+              <th class="num">Duration</th>
               <th class="num">Entry Px</th>
               <th class="num">Exit Px</th>
               <th class="num">Net P&amp;L</th>
@@ -729,6 +730,20 @@
       : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   }
   function fmtUpdated(s) { if (!s) return 'not seeded yet'; const d = new Date(s); return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }); }
+  function fmtDuration(entryTime, exitTime) {
+    // How long a trade was actually held - tells apart a strategy that
+    // scalps in and out within hours from one that rides a position for
+    // weeks, context the entry/exit dates alone don't make obvious at a
+    // glance.
+    const entry = new Date(entryTime.replace(' ', 'T') + 'Z');
+    const exit = new Date(exitTime.replace(' ', 'T') + 'Z');
+    const ms = exit - entry;
+    if (!isFinite(ms) || ms < 0) return '—';
+    const hours = ms / 3600000;
+    if (hours >= 24) return (hours / 24).toFixed(1) + 'd';
+    if (hours >= 1) return hours.toFixed(1) + 'h';
+    return Math.round(ms / 60000) + 'm';
+  }
   function escHtml(s) { return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
   function fmtNewsAge(s) {
     if (!s) return '';
@@ -1170,6 +1185,7 @@
         <td><span class="pill pill-accent">${dirLabel}</span></td>
         <td class="mono">${fmtDate(t.entry_time, track.intraday)}</td>
         <td class="mono">${fmtDate(t.exit_time, track.intraday)}</td>
+        <td class="num mono">${fmtDuration(t.entry_time, t.exit_time)}</td>
         <td class="num mono">${fmtMoney(t.entry_price)}</td>
         <td class="num mono">${fmtMoney(t.exit_price)}</td>
         <td class="num mono ${cls}">${fmtSigned(t.net_pnl)}</td>
