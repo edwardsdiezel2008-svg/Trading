@@ -417,6 +417,32 @@ panel whenever the current pick's interval still includes zero - the pick
 itself doesn't change (it still clears the plain profitable/robust/stable
 bars), but the caveat makes the added uncertainty impossible to miss.
 
+**The real result, run across every one of the 20 walkforward snapshots
+(240 strategy-track combinations total), is sobering and reported in
+full rather than softened:** 76 of those 240 (31.7%) clear the plain
+"robust" bar (positive OOS return and positive OOS Sharpe). Only **5**
+(2.1%) also have a 90% confidence interval that excludes zero -
+statistically distinguishable from no real edge at all, given how much
+data actually went into each estimate. Those five:
+
+- `RSI_Reversion(14,30/70)` on Nasdaq daily: +17.1% OOS, 90% CI [+7.6%, +28.6%]
+- `RSI_Reversion(14,30/70)` on S&P 500 daily: +6.6% OOS, 90% CI [+0.8%, +14.2%]
+- `RSI_Reversion(14,30/70)` on Dow daily: +4.5% OOS, 90% CI [+0.0%, +10.5%]
+- `MA_Crossover(10/50)` on Gold daily: +22.4% OOS, 90% CI [+2.2%, +50.5%]
+- `Donchian_Breakout(20)` on Gold daily: +22.2% OOS, 90% CI [+2.2%, +47.3%]
+
+Every one of those five is a daily track; not a single 5-minute or
+crypto/perpetual result survived. `RSI_Reversion` shows up 3 of the 5
+times, on three independent equity-index futures - the same instrument-
+family consistency the "Cross-futures validated" panel already surfaces,
+now with actual statistical backing behind it rather than just a plain
+positive-Sharpe count. This doesn't mean the other 71 "robust" results are
+worthless - a real edge can still exist below what this sample size can
+statistically confirm - but it does mean roughly 9 out of 10 walk-forward
+"robust" verdicts on this dashboard, taken alone, are not yet distinguishable
+from noise. That is exactly the honest answer to "what's actually
+profitable" this feature was built to surface.
+
 ## Robustness checks (not part of the hourly pipeline - run manually)
 
 Two separate questions, both expensive (grid search per fold/parameter
