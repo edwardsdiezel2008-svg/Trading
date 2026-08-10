@@ -2,7 +2,7 @@ import sys
 
 sys.path.insert(0, ".")
 
-from scripts.build_paper_trading_dashboard import diversify_news
+from scripts.build_paper_trading_dashboard import compute_rug_watch_summary, diversify_news
 
 
 def _item(source, i):
@@ -42,3 +42,35 @@ def test_diversify_news_preserves_recency_order_within_the_cap():
     items = [_item("A", i) for i in range(5)]
     top = diversify_news(items, limit=6, max_per_source=5)
     assert [it["title"] for it in top] == [it["title"] for it in items]
+
+
+def _coin(symbol, change_24h_pct, pct_from_24h_high):
+    return {"symbol": symbol, "change_24h_pct": change_24h_pct, "pct_from_24h_high": pct_from_24h_high}
+
+
+def test_rug_watch_summary_empty_when_nothing_crosses_thresholds():
+    wide_scan = {"ranked": [_coin("A", 5, -2)], "not_moving": [_coin("B", -10, -12)]}
+    summary = compute_rug_watch_summary(wide_scan)
+    assert summary == {"flagged_count": 0, "severe_count": 0, "top_symbol": None}
+
+
+def test_rug_watch_summary_flags_by_either_threshold():
+    # WORST triggers on 24h change alone; DRAWDOWN triggers on drawdown-from-high alone.
+    wide_scan = {
+        "ranked": [],
+        "not_moving": [_coin("WORST", -20, -5), _coin("DRAWDOWN", -1, -30), _coin("FINE", -5, -5)],
+    }
+    summary = compute_rug_watch_summary(wide_scan)
+    assert summary["flagged_count"] == 2
+    assert summary["severe_count"] == 0
+
+
+def test_rug_watch_summary_counts_severe_separately_and_picks_the_worst_as_top():
+    wide_scan = {
+        "ranked": [],
+        "not_moving": [_coin("MILD", -16, -10), _coin("CRASHED", -55, -60)],
+    }
+    summary = compute_rug_watch_summary(wide_scan)
+    assert summary["flagged_count"] == 2
+    assert summary["severe_count"] == 1
+    assert summary["top_symbol"] == "CRASHED"

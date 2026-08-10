@@ -232,6 +232,11 @@
     font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
     color: var(--scan); background: var(--scan-wash); border-radius: 999px; padding: 1px 7px;
   }
+  .rug-badge {
+    font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--critical); background: var(--critical-wash); border-radius: 999px; padding: 1px 7px;
+    white-space: nowrap;
+  }
 
   .robust-header, .robust-row { display: grid; grid-template-columns: 1fr repeat(3, 40px); align-items: center; gap: 8px; }
   .robust-header { padding: 0 4px 6px; font-size: var(--fs-xs); color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.05em; }
@@ -318,6 +323,7 @@
   const TOP_NEWS = __TOP_NEWS_JSON__;
   const CROSS_ASSET_ROBUSTNESS = __CROSS_ASSET_ROBUSTNESS_JSON__;
   const REGIMES = __REGIMES_JSON__;
+  const RUG_WATCH = __RUG_WATCH_JSON__;
 
   const FONT_MONO = 'ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace';
 
@@ -465,8 +471,18 @@
       </a>`;
     }).join('');
     const memeTop = TOP_MOVERS && TOP_MOVERS[0];
+    const rugCount = (RUG_WATCH && RUG_WATCH.flagged_count) || 0;
+    const rugBadge = rugCount
+      ? `<span class="rug-badge">🚩 ${rugCount} flagged</span>`
+      : '';
     const memeCard = `<a class="nav-card" href="dashboard.html#memecoin">
-      <div class="nav-card-top"><span class="nav-card-label">Memecoin Scanner</span><span class="nav-card-arrow">→</span></div>
+      <div class="nav-card-top">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span class="nav-card-label">Memecoin Scanner</span>
+          ${rugBadge}
+        </div>
+        <span class="nav-card-arrow">→</span>
+      </div>
       <span class="nav-card-stat">${WIDE_UNIVERSE_SIZE} coins tracked</span>
       <span class="nav-card-sub">${memeTop ? `Top mover: ${memeTop.symbol} ${fmtSignedPct(memeTop.change_24h_pct / 100)}` : 'Breakout + wide-scan heatmap'}</span>
     </a>`;

@@ -166,6 +166,36 @@ def compute_current_regimes():
     return out
 
 
+# Same thresholds as the "Rug Pull Watch" panel's JS (dashboard_template.html
+# rugSeverityFor) - kept in sync manually since one is Python (landing page
+# summary) and one is JS (full table); duplicated rather than shared because
+# the two pages don't share a runtime.
+RUG_SEVERE = {"change": -30, "from_high": -40}
+RUG_ELEVATED = {"change": -15, "from_high": -25}
+
+
+def _rug_severity_for(coin):
+    change, from_high = coin.get("change_24h_pct", 0), coin.get("pct_from_24h_high", 0)
+    if change <= RUG_SEVERE["change"] or from_high <= RUG_SEVERE["from_high"]:
+        return "severe"
+    if change <= RUG_ELEVATED["change"] or from_high <= RUG_ELEVATED["from_high"]:
+        return "elevated"
+    return None
+
+
+def compute_rug_watch_summary(wide_scan):
+    """Lightweight landing-page summary of the Rug Pull Watch panel - just
+    enough to show a warning badge on the Memecoin Scanner nav card without
+    duplicating the full flagged-coin table there."""
+    all_coins = (wide_scan.get("ranked") or []) + (wide_scan.get("not_moving") or [])
+    flagged = [(c, _rug_severity_for(c)) for c in all_coins]
+    flagged = [(c, sev) for c, sev in flagged if sev]
+    flagged.sort(key=lambda cs: min(cs[0].get("change_24h_pct", 0), cs[0].get("pct_from_24h_high", 0)))
+    severe_count = sum(1 for _, sev in flagged if sev == "severe")
+    top = flagged[0][0]["symbol"] if flagged else None
+    return {"flagged_count": len(flagged), "severe_count": severe_count, "top_symbol": top}
+
+
 def diversify_news(items, limit=6, max_per_source=2):
     """The full news list is pure-recency sorted across several RSS feeds
     that don't post at the same rate - a single high-frequency outlet can
@@ -353,7 +383,10 @@ def build_index_page(loaded, wide_scan, market_snapshot, fear_greed, news, regim
 
     out = out.replace("__REGIMES_JSON__", json.dumps(regimes))
 
-    for key in ("TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE", "TOP_NEWS_JSON", "CROSS_ASSET_ROBUSTNESS_JSON", "REGIMES_JSON"):
+    rug_watch = compute_rug_watch_summary(wide_scan)
+    out = out.replace("__RUG_WATCH_JSON__", json.dumps(rug_watch))
+
+    for key in ("TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE", "TOP_NEWS_JSON", "CROSS_ASSET_ROBUSTNESS_JSON", "REGIMES_JSON", "RUG_WATCH_JSON"):
         assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
 
     with open(INDEX_OUTPUT_PATH, "w") as f:

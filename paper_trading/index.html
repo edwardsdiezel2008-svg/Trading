@@ -232,6 +232,11 @@
     font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
     color: var(--scan); background: var(--scan-wash); border-radius: 999px; padding: 1px 7px;
   }
+  .rug-badge {
+    font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--critical); background: var(--critical-wash); border-radius: 999px; padding: 1px 7px;
+    white-space: nowrap;
+  }
 
   .robust-header, .robust-row { display: grid; grid-template-columns: 1fr repeat(3, 40px); align-items: center; gap: 8px; }
   .robust-header { padding: 0 4px 6px; font-size: var(--fs-xs); color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.05em; }
@@ -318,6 +323,7 @@
   const TOP_NEWS = [{"title": "CLARITY Act Odds Sink as Senate Delay Threatens 2026 Crypto Vote", "link": "https://news.bitcoin.com/regulation-and-legal/clarity-act-odds-sink-as-senate-delay-threatens-2026-crypto-vote/", "source": "Bitcoin.com", "published_utc": "2026-08-09T23:30:59Z", "tags": ["Regulation"]}, {"title": "Tokenized RWA Sector Hits $38B as Treasury Debt Dominates Market", "link": "https://news.bitcoin.com/crypto-news/tokenized-rwa-sector-hits-38b-as-treasury-debt-dominates-market/", "source": "Bitcoin.com", "published_utc": "2026-08-09T22:12:13Z", "tags": []}, {"title": "Is Clarity's delay a blessing in disguise?: State of Crypto", "link": "https://www.coindesk.com/policy/2026/08/09/is-clarity-s-delay-a-blessing-in-disguise-state-of-crypto", "source": "CoinDesk", "published_utc": "2026-08-09T18:30:00Z", "tags": ["Regulation"]}, {"title": "Hyperliquid\u2019s RWA perps boom is eating into the revenue that backs HYPE", "link": "https://www.coindesk.com/business/2026/08/09/hyperliquid-s-rwa-perps-boom-is-eating-into-the-revenue-that-backs-hype", "source": "CoinDesk", "published_utc": "2026-08-09T15:00:00Z", "tags": []}, {"title": "BIP-110 Bitcoin branch stalls after two blocks as gap widens", "link": "https://cointelegraph.com/news/bitcoin-bip-110-branch-stalls-miner-support?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound", "source": "CoinTelegraph", "published_utc": "2026-08-09T11:00:53Z", "tags": ["BTC"]}, {"title": "Brazil targets crypto fraud with up to 24-hour transfer hold", "link": "https://cointelegraph.com/news/brazil-targets-crypto-fraud-with-up-to-24-hour-transfer-hold?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound", "source": "CoinTelegraph", "published_utc": "2026-08-09T09:10:39Z", "tags": []}];
   const CROSS_ASSET_ROBUSTNESS = [{"strategy": "ATR_Vol_Breakout(14,k=1.5)", "assets": {"BTC": true, "ETH": true, "SOL": true}, "robust_count": 3, "assets_tested": 3}, {"strategy": "MACD_Momentum(12/26/9)", "assets": {"BTC": false, "ETH": true, "SOL": true}, "robust_count": 2, "assets_tested": 3}, {"strategy": "Bollinger_Reversion(20,2sd)", "assets": {"BTC": false, "ETH": false, "SOL": true}, "robust_count": 1, "assets_tested": 3}, {"strategy": "RSI_Reversion(14,30/70)", "assets": {"BTC": true, "ETH": false, "SOL": false}, "robust_count": 1, "assets_tested": 3}, {"strategy": "Supertrend(10,m=3.0)", "assets": {"BTC": false, "ETH": false, "SOL": true}, "robust_count": 1, "assets_tested": 3}, {"strategy": "Donchian_Breakout(20)", "assets": {"BTC": false, "ETH": false, "SOL": false}, "robust_count": 0, "assets_tested": 3}, {"strategy": "MA_Crossover(10/50)", "assets": {"BTC": false, "ETH": false, "SOL": false}, "robust_count": 0, "assets_tested": 3}, {"strategy": "VWAP_Reversion(20,2%)", "assets": {"BTC": false, "ETH": false, "SOL": false}, "robust_count": 0, "assets_tested": 3}, {"strategy": "ZScore_Reversion(20,z=2.0)", "assets": {"BTC": false, "ETH": false, "SOL": false}, "robust_count": 0, "assets_tested": 3}];
   const REGIMES = {"BTC": {"trend_regime": "ranging", "vol_regime": "low_vol", "adx": 11.1}, "ETH": {"trend_regime": "ranging", "vol_regime": "low_vol", "adx": 19.3}, "SOL": {"trend_regime": "ranging", "vol_regime": "low_vol", "adx": 12.8}};
+  const RUG_WATCH = {"flagged_count": 0, "severe_count": 0, "top_symbol": null};
 
   const FONT_MONO = 'ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace';
 
@@ -465,8 +471,18 @@
       </a>`;
     }).join('');
     const memeTop = TOP_MOVERS && TOP_MOVERS[0];
+    const rugCount = (RUG_WATCH && RUG_WATCH.flagged_count) || 0;
+    const rugBadge = rugCount
+      ? `<span class="rug-badge">🚩 ${rugCount} flagged</span>`
+      : '';
     const memeCard = `<a class="nav-card" href="dashboard.html#memecoin">
-      <div class="nav-card-top"><span class="nav-card-label">Memecoin Scanner</span><span class="nav-card-arrow">→</span></div>
+      <div class="nav-card-top">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span class="nav-card-label">Memecoin Scanner</span>
+          ${rugBadge}
+        </div>
+        <span class="nav-card-arrow">→</span>
+      </div>
       <span class="nav-card-stat">${WIDE_UNIVERSE_SIZE} coins tracked</span>
       <span class="nav-card-sub">${memeTop ? `Top mover: ${memeTop.symbol} ${fmtSignedPct(memeTop.change_24h_pct / 100)}` : 'Breakout + wide-scan heatmap'}</span>
     </a>`;
