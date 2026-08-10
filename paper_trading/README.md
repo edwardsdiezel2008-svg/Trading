@@ -112,6 +112,16 @@ the full table - a persistent flag is a stronger signal than a one-off
 dip). The full table on `dashboard.html` re-implements the same thresholds
 in JS, since that page has no build step to share Python with.
 
+The 24h check alone misses a coin that peaked a few days ago and has been
+grinding down slowly since - no single day's change looks severe, even
+though the cumulative slide is. For the 11 coins with full hourly history
+(`memecoin_scan_update.py`'s precise scan, ~12 days of bars), the same
+drawdown thresholds are also applied against each coin's trailing window
+high (`severity_for_multiday_drawdown()`), not just its 24h high. A coin
+flagged by both checks keeps the worse of the two severities; the table
+tags each row with which check caught it ("24h" or "multi-day") so it's
+clear why a coin showed up.
+
 Honest caveat, worth repeating: this is a crash proxy from CEX ticker data
 (24h change, volume) alone - there's no holder-concentration or liquidity-
 lock signal available from this data source, and Crypto.com Exchange is a

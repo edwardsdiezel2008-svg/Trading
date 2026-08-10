@@ -167,17 +167,45 @@ def compute_current_regimes():
     return out
 
 
-def compute_rug_watch_summary(wide_scan):
+RUG_SEVERITY_RANK = {"elevated": 1, "severe": 2}
+
+
+def compute_rug_watch_summary(wide_scan, memecoin_scan=None):
     """Lightweight landing-page summary of the Rug Pull Watch panel - just
     enough to show a warning badge on the Memecoin Scanner nav card without
     duplicating the full flagged-coin table there. Severity thresholds live
     in scripts/rug_watch.py, shared with memecoin_wide_scan.py's history
     logging (the full table on dashboard.html re-implements the same
-    thresholds in JS, since that page has no build step to share with)."""
+    thresholds in JS, since that page has no build step to share with).
+
+    Merges two signal sources, keeping the worse severity per symbol when
+    both flag it: the 24h wide-scan snapshot, and (if memecoin_scan is
+    given) the precise-scan coins' multi-day drawdown-from-window-high -
+    mirrors dashboard_template.html's renderRugWatch() merge logic."""
     all_coins = (wide_scan.get("ranked") or []) + (wide_scan.get("not_moving") or [])
-    flagged = [(c, rug_watch.severity_for(c)) for c in all_coins]
-    flagged = [(c, sev) for c, sev in flagged if sev]
-    flagged.sort(key=lambda cs: min(cs[0].get("change_24h_pct", 0), cs[0].get("pct_from_24h_high", 0)))
+    by_symbol = {}
+    for c in all_coins:
+        sev = rug_watch.severity_for(c)
+        if sev:
+            by_symbol[c["symbol"]] = (c, sev)
+
+    for p in (memecoin_scan or {}).get("ranked") or []:
+        pct = p.get("drawdown_from_window_high_pct")
+        if pct is None:
+            continue
+        sev = rug_watch.severity_for_multiday_drawdown(pct)
+        if not sev:
+            continue
+        prior = by_symbol.get(p["symbol"])
+        if prior and RUG_SEVERITY_RANK[prior[1]] >= RUG_SEVERITY_RANK[sev]:
+            continue
+        by_symbol[p["symbol"]] = (
+            {"symbol": p["symbol"], "change_24h_pct": None, "pct_from_24h_high": pct},
+            sev,
+        )
+
+    flagged = list(by_symbol.values())
+    flagged.sort(key=lambda cs: min(cs[0].get("change_24h_pct") if cs[0].get("change_24h_pct") is not None else 0, cs[0].get("pct_from_24h_high", 0)))
     severe_count = sum(1 for _, sev in flagged if sev == "severe")
     top = flagged[0][0]["symbol"] if flagged else None
     return {"flagged_count": len(flagged), "severe_count": severe_count, "top_symbol": top}
@@ -359,7 +387,7 @@ def build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_g
     print(f"Wrote {OUTPUT_PATH} ({os.path.getsize(OUTPUT_PATH) / 1024:.1f} KB)")
 
 
-def build_index_page(loaded, wide_scan, market_snapshot, fear_greed, news, regimes):
+def build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_greed, news, regimes):
     if not os.path.exists(INDEX_TEMPLATE_PATH):
         print(f"Skipping {INDEX_OUTPUT_PATH}: {INDEX_TEMPLATE_PATH} not found")
         return
@@ -396,7 +424,7 @@ def build_index_page(loaded, wide_scan, market_snapshot, fear_greed, news, regim
 
     out = out.replace("__REGIMES_JSON__", json.dumps(regimes))
 
-    rug_watch = compute_rug_watch_summary(wide_scan)
+    rug_watch = compute_rug_watch_summary(wide_scan, memecoin_scan)
     out = out.replace("__RUG_WATCH_JSON__", json.dumps(rug_watch))
 
     for key in ("TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE", "TOP_NEWS_JSON", "CROSS_ASSET_ROBUSTNESS_JSON", "REGIMES_JSON", "RUG_WATCH_JSON"):
@@ -449,7 +477,7 @@ def main():
     regimes = compute_current_regimes()
 
     build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_greed, correlations, news)
-    build_index_page(loaded, wide_scan, market_snapshot, fear_greed, news, regimes)
+    build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_greed, news, regimes)
 
 
 if __name__ == "__main__":

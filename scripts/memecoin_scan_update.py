@@ -76,6 +76,14 @@ def scan_coin(symbol: str) -> dict | None:
         (latest_close - latest_prior_high) / latest_atr if latest_atr > 0 else 0.0
     )
 
+    # Drawdown from the highest close over the *entire* available history
+    # (as much as ~12 days of hourly bars) - a longer lookback than the 24h
+    # ticker snapshot Rug Pull Watch otherwise relies on, so a coin that
+    # peaked a few days ago and has been grinding down since (rather than
+    # crashing hard in the last 24h) still gets caught.
+    window_high = float(close.max())
+    drawdown_from_window_high_pct = (latest_close / window_high - 1) * 100 if window_high else 0.0
+
     return {
         "symbol": symbol,
         "status": "ok",
@@ -85,6 +93,8 @@ def scan_coin(symbol: str) -> dict | None:
         "is_breakout": bool(is_breakout),
         "breakout_pct": round(breakout_pct, 3),
         "breakout_strength_atr": round(breakout_strength_atr, 3),
+        "window_high": window_high,
+        "drawdown_from_window_high_pct": round(drawdown_from_window_high_pct, 3),
         "bar_count": len(bars),
         "as_of": str(bars.index[-1]),
     }

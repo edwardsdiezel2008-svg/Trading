@@ -27,3 +27,16 @@ def severity_for(coin: dict) -> str | None:
     if change <= ELEVATED["change"] or from_high <= ELEVATED["from_high"]:
         return "elevated"
     return None
+
+
+def severity_for_multiday_drawdown(pct_from_window_high: float) -> str | None:
+    """Same drawdown thresholds as severity_for(), applied to a longer-
+    window high (e.g. the ~12-day precise-scan history in
+    memecoin_scan_update.py) instead of the 24h ticker snapshot - catches a
+    coin that peaked a few days ago and has been grinding down since,
+    which a single day's change could easily miss."""
+    if pct_from_window_high <= SEVERE["from_high"]:
+        return "severe"
+    if pct_from_window_high <= ELEVATED["from_high"]:
+        return "elevated"
+    return None

@@ -2,7 +2,7 @@ import sys
 
 sys.path.insert(0, ".")
 
-from scripts.rug_watch import severity_for
+from scripts.rug_watch import severity_for, severity_for_multiday_drawdown
 
 
 def _coin(change_24h_pct, pct_from_24h_high):
@@ -33,3 +33,20 @@ def test_severity_boundary_values_are_inclusive():
     # Exactly at the threshold should trigger, not just past it.
     assert severity_for(_coin(-15, 0)) == "elevated"
     assert severity_for(_coin(-30, 0)) == "severe"
+
+
+def test_multiday_drawdown_none_below_threshold():
+    assert severity_for_multiday_drawdown(-10) is None
+
+
+def test_multiday_drawdown_elevated():
+    assert severity_for_multiday_drawdown(-25) == "elevated"
+
+
+def test_multiday_drawdown_severe():
+    assert severity_for_multiday_drawdown(-40) == "severe"
+
+
+def test_multiday_drawdown_boundary_values_are_inclusive():
+    assert severity_for_multiday_drawdown(-25) == "elevated"
+    assert severity_for_multiday_drawdown(-40) == "severe"

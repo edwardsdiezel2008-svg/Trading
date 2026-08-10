@@ -82,6 +82,46 @@ def test_rug_watch_summary_counts_severe_separately_and_picks_the_worst_as_top()
     assert summary["top_symbol"] == "CRASHED"
 
 
+def _precise(symbol, drawdown_from_window_high_pct):
+    return {"symbol": symbol, "drawdown_from_window_high_pct": drawdown_from_window_high_pct}
+
+
+def test_rug_watch_summary_flags_a_coin_only_the_multiday_drawdown_catches():
+    # SLIDER never crosses the 24h thresholds but has been grinding down for
+    # days - only the precise-scan multi-day check should catch it.
+    wide_scan = {"ranked": [], "not_moving": [_coin("SLIDER", -3, -5)]}
+    memecoin_scan = {"ranked": [_precise("SLIDER", -35)]}
+    summary = compute_rug_watch_summary(wide_scan, memecoin_scan)
+    assert summary["flagged_count"] == 1
+    assert summary["severe_count"] == 0
+    assert summary["top_symbol"] == "SLIDER"
+
+
+def test_rug_watch_summary_keeps_the_worse_severity_when_both_sources_flag_a_coin():
+    # 24h check alone says elevated; the multi-day check on the same coin
+    # says severe - the merge must keep severe, not silently downgrade it.
+    wide_scan = {"ranked": [], "not_moving": [_coin("BOTH", -16, -10)]}
+    memecoin_scan = {"ranked": [_precise("BOTH", -45)]}
+    summary = compute_rug_watch_summary(wide_scan, memecoin_scan)
+    assert summary["flagged_count"] == 1
+    assert summary["severe_count"] == 1
+
+
+def test_rug_watch_summary_does_not_downgrade_a_severe_24h_flag_with_a_milder_multiday_reading():
+    wide_scan = {"ranked": [], "not_moving": [_coin("STRONG", -55, -60)]}
+    memecoin_scan = {"ranked": [_precise("STRONG", -26)]}
+    summary = compute_rug_watch_summary(wide_scan, memecoin_scan)
+    assert summary["flagged_count"] == 1
+    assert summary["severe_count"] == 1
+
+
+def test_rug_watch_summary_ignores_precise_scan_rows_without_the_drawdown_field():
+    wide_scan = {"ranked": [], "not_moving": []}
+    memecoin_scan = {"ranked": [{"symbol": "NOFIELD"}]}
+    summary = compute_rug_watch_summary(wide_scan, memecoin_scan)
+    assert summary == {"flagged_count": 0, "severe_count": 0, "top_symbol": None}
+
+
 def _write_history(path, runs):
     with open(path, "w") as f:
         json.dump({"runs": runs}, f)
