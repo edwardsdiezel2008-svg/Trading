@@ -1,10 +1,11 @@
 # Crypto paper trading cockpit
 
-Simulated (no real money) live trading of 9 backtested strategies against
-real Crypto.com Exchange data across 8 tracks - BTC (daily, 15-minute,
-3x leveraged perpetual daily, 3x leveraged perpetual 15-minute), ETH
-(daily, 3x leveraged perpetual), SOL (daily, 3x leveraged perpetual) -
-plus a wide memecoin momentum/breakout scanner, updated hourly.
+Simulated (no real money) live trading of 9 backtested strategies across 9
+tracks - BTC (daily, 15-minute, 3x leveraged perpetual daily, 3x leveraged
+perpetual 15-minute), ETH (daily, 3x leveraged perpetual), SOL (daily, 3x
+leveraged perpetual), and Nasdaq-100 Futures (QQQ proxy, daily) - against
+real Crypto.com Exchange and Stooq data, plus a wide memecoin momentum/
+breakout scanner, updated hourly.
 
 **Live site:** the root of this repo's GitHub Pages deployment is the
 minimal landing page; `/dashboard.html` is the full detail page with every
@@ -22,13 +23,15 @@ manual `workflow_dispatch`):
 
 1. `scripts/fetch_market_data.py` - plain HTTP against Crypto.com Exchange's
    public REST API (no auth needed) for BTC/ETH/SOL candles, the wide
-   memecoin ticker universe, BTC order book + perpetual funding rate, and
+   memecoin ticker universe, BTC order book + perpetual funding rate;
+   `scripts/fetch_nasdaq_data.py` pulls QQQ daily bars from Stooq's free,
+   keyless CSV endpoint (see "Nasdaq-100 Futures" below); and
    `scripts/fetch_news.py` pulls crypto headlines from public RSS feeds
    (CoinDesk, CoinTelegraph, Bitcoin.com).
 2. `scripts/paper_trade_update.py` (once per track: BTC daily, BTC
    15-min, BTC Perpetual daily, BTC Perpetual 15-min, ETH, SOL, ETH
-   Perpetual, SOL Perpetual) re-runs the same tested backtest engine
-   (`src/backtest/engine.py`) on the full bar history for every strategy
+   Perpetual, SOL Perpetual, Nasdaq-100 Futures) re-runs the same tested
+   backtest engine (`src/backtest/engine.py`) on the full bar history for every strategy
    and derives each one's current position from the last bar of a fresh,
    complete backtest - no separate incremental "live execution" logic that
    could drift out of sync with what the engine actually validated. Both
@@ -120,6 +123,42 @@ instead trigger a permanent liquidation at leverage, which compounds very
 differently over dozens of trades. That's a real result of the simulation,
 not a bug in it.
 
+## Nasdaq-100 Futures
+
+A ninth track (`_nq`) runs the same 9 strategies against **QQQ** (the
+Invesco QQQ Trust), not real CME NQ/MNQ futures contracts. Three honest
+caveats, all surfaced directly on the dashboard tab, not just here:
+
+- **Why QQQ, not real futures data.** Genuine Nasdaq-100 futures tick/bar
+  history isn't available from any free, no-API-key, no-CAPTCHA public
+  source - every option checked (EODHD, Financial Modeling Prep, Databento,
+  kibot, firstratedata) requires at least a free account, and this
+  unattended hourly pipeline has no way to hold credentials for one. QQQ is
+  the most liquid public proxy for the index, and Stooq
+  (`https://stooq.com/q/d/l/?s=qqq.us&i=d`) serves its full daily history as
+  a plain, keyless CSV - `scripts/fetch_nasdaq_data.py` fetches it the same
+  way `fetch_market_data.py` fetches crypto candles, no auth required.
+- **Why unleveraged.** Real Micro E-mini Nasdaq-100 (MNQ) futures currently
+  require roughly $1,650 in CME initial margin against a notional value of
+  tens of thousands of dollars - implied leverage in the ~25-30x range, set
+  by the exchange itself, not a discretionary choice like the crypto
+  perpetual tracks' 3x. This track deliberately does not attempt to
+  simulate that: the backtest engine only checks for a liquidation-
+  triggering loss at each bar's *close* (same limitation noted above for
+  the perpetual tracks), and daily bars are far too coarse to responsibly
+  model ~25-30x margin risk without either constant false liquidations or a
+  liquidation threshold so loose it stops meaning anything. The track runs
+  unleveraged instead (plain equity economics: $0 commission, matching most
+  modern brokers' ETF trades, plus 0.05% slippage), so the real
+  leverage/liquidation risk of actual futures trading is context here, not
+  something simulated.
+- **Why daily-only.** Stooq's per-symbol download only serves daily/weekly/
+  monthly data without a key; true intraday data exists there but only via
+  a CAPTCHA-gated bulk archive that can't be automated in an unattended
+  pipeline. Real NQ/MNQ futures also trade nearly 24 hours a day, while QQQ
+  only trades during exchange session hours - another reason intraday
+  wouldn't be an honest proxy even if the data existed.
+
 ## Robustness checks (not part of the hourly pipeline - run manually)
 
 Two separate questions, both expensive (grid search per fold/parameter
@@ -155,11 +194,14 @@ harder to explain by luck than one that only worked on one.
 
 ## Files
 
-Per track (suffix `""` = BTC daily, `_15m`, `_eth`, `_sol`):
+Per track (suffix `""` = BTC daily, `_15m`, `_eth`, `_sol`, `_perp`,
+`_perp_15m`, `_eth_perp`, `_sol_perp`, `_nq`):
 `bars{suffix}.csv`, `positions{suffix}.json`, `trade_log{suffix}.csv`,
 `track_record{suffix}.csv`, `summary{suffix}.md`,
 `walkforward{suffix}.json`, `sensitivity{suffix}.json` (the last two only
-where a manual snapshot has been run). Plus `memecoin_scan.json` /
+where a manual snapshot has been run) - `bars_nq.csv` is fetched by
+`scripts/fetch_nasdaq_data.py` rather than `fetch_market_data.py` (see
+"Nasdaq-100 Futures" above). Plus `memecoin_scan.json` /
 `memecoin_wide_scan.json` / `memecoins_wide_tickers.json` /
 `memecoins/*.csv` (scanner), `rug_watch_history.json` (rolling ~7-day log
 of flagged coins per hourly run, see "Rug Pull Watch" below),

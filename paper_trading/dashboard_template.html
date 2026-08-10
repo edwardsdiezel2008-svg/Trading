@@ -424,6 +424,7 @@
     <button class="tab-btn" data-track="perp15m">⚡ BTC Perp 15-Min</button>
     <button class="tab-btn" data-track="ethPerp">⚡ ETH Perpetual</button>
     <button class="tab-btn" data-track="solPerp">⚡ SOL Perpetual</button>
+    <button class="tab-btn" data-track="nq">📈 Nasdaq-100 Futures</button>
     <button class="tab-btn" data-track="memecoin">Memecoin Scanner</button>
   </div>
 
@@ -516,6 +517,15 @@
           <tbody id="perpRiskTbody"></tbody>
         </table>
       </div>
+    </div>
+
+    <div class="panel" id="nqNote" style="display:none;">
+      <div class="panel-head">
+        <h2>📈 Nasdaq-100 Futures, honestly</h2>
+      </div>
+      <p class="panel-note">This track trades <strong>QQQ</strong> (the Invesco QQQ Trust), not real CME NQ/MNQ futures contracts. Genuine Nasdaq-100 futures tick/bar history isn't available from any free, no-API-key, no-CAPTCHA public source - every option checked (EODHD, Financial Modeling Prep, Databento, kibot, firstratedata) requires at least a free account, which this unattended hourly pipeline has no way to hold credentials for. QQQ is the most liquid public proxy: it tracks the Nasdaq-100 index closely and Stooq serves its full daily history as a plain, keyless CSV.</p>
+      <p class="panel-note">Real Micro E-mini Nasdaq-100 (MNQ) futures currently require roughly $1,650 in CME initial margin against a notional value of tens of thousands of dollars - implied leverage in the ~25-30x range, set by the exchange, not a discretionary choice like the crypto perpetual tracks' 3x. This track deliberately does <strong>not</strong> attempt to simulate that: the backtest engine only checks for a liquidation-triggering loss at each bar's close, and daily bars are far too coarse to responsibly model ~25-30x margin risk without either constant false liquidations or a liquidation threshold so loose it stops meaning anything. This track runs unleveraged instead, so the real leverage/liquidation risk of actual futures trading is context here, not something simulated.</p>
+      <p class="panel-note">Daily bars only - no intraday timeframe is included. Stooq's per-symbol download only serves daily/weekly/monthly data without a key; true intraday data exists there but only via a CAPTCHA-gated bulk archive that can't be automated. Real NQ/MNQ futures also trade nearly 24 hours a day, while QQQ only trades during exchange session hours - another reason intraday wouldn't be an honest proxy even if the data existed.</p>
     </div>
 
     <div class="panel">
@@ -745,6 +755,10 @@
     solPerp: {
       label: 'SOL Perpetual', symbol: 'SOL/USDT', dateUnit: 'Day', intraday: false, spotLabel: 'SOL Daily', barUnit: 'daily candle',
       positions: __POSITIONS_SOL_PERP_JSON__, trades: __TRADES_SOL_PERP_JSON__, trackRecord: __TRACK_RECORD_SOL_PERP_JSON__, bars: __BARS_SOL_PERP_JSON__, walkforward: __WALKFORWARD_SOL_PERP_JSON__, sensitivity: __SENSITIVITY_SOL_PERP_JSON__,
+    },
+    nq: {
+      label: 'Nasdaq-100 Futures', symbol: 'QQQ', dateUnit: 'Day', intraday: false,
+      positions: __POSITIONS_NQ_JSON__, trades: __TRADES_NQ_JSON__, trackRecord: __TRACK_RECORD_NQ_JSON__, bars: __BARS_NQ_JSON__, walkforward: __WALKFORWARD_NQ_JSON__, sensitivity: __SENSITIVITY_NQ_JSON__,
     },
   };
   const CAPITAL = 100000;
@@ -1149,6 +1163,7 @@
     }
 
     document.getElementById('costFilterNote').classList.toggle('visible', trackKey === 'fifteenMin' || trackKey === 'perp15m');
+    document.getElementById('nqNote').style.display = trackKey === 'nq' ? '' : 'none';
 
     const unprofitableNote = document.getElementById('unprofitableNote');
     if (rows.length && rows.every((r) => r.totalReturn <= 0)) {
@@ -1636,7 +1651,7 @@
   // that already scrolls horizontally (a wide table, the tab strip itself)
   // so it never fights with that element's own swipe-to-scroll.
   (function initTabSwipe() {
-    const TRACK_ORDER = ['daily', 'fifteenMin', 'eth', 'sol', 'perp', 'perp15m', 'ethPerp', 'solPerp', 'memecoin'];
+    const TRACK_ORDER = ['daily', 'fifteenMin', 'eth', 'sol', 'perp', 'perp15m', 'ethPerp', 'solPerp', 'nq', 'memecoin'];
     let startX = null, startY = null, skip = false;
     const THRESHOLD = 60;
     document.addEventListener('touchstart', (e) => {
