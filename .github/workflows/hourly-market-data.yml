@@ -49,6 +49,10 @@ jobs:
           python scripts/paper_trade_update.py
           python scripts/paper_trade_update.py --suffix _15m --freq 15min --tracking-start "2026-08-08 08:45:00" --cost-aware-min-multiple 1.0
 
+      - name: Update BTC Perpetual paper-trading state (3x leveraged)
+        run: |
+          python scripts/paper_trade_update.py --suffix _perp --symbol BTC_USDT --tracking-start "2026-08-10" --leverage 3.0 --bars-file paper_trading/bars.csv
+
       - name: Update ETH/SOL paper-trading state (daily)
         run: |
           python scripts/paper_trade_update.py --suffix _eth --symbol ETH_USDT --tracking-start "2026-08-09"
