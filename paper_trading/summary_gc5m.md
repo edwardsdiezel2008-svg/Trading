@@ -1,19 +1,19 @@
-# MGC Paper Trading (5min) — updated 2026-08-10T18:05:31.576657+00:00
+# MGC Paper Trading (5min) — updated 2026-08-10T18:48:53.874675+00:00
 
-Latest bar: 2026-08-10 17:55:00 · 13,608 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-10 18:35:00 · 13,619 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $96,769 | -3.2% | — | 1 |
-| Opening_Range_Breakout(6) | LONG | $105,646 | +5.6% | 1.58 | 119 |
-| MA_Crossover(10/50) | LONG | $105,395 | +5.4% | 1.39 | 350 |
-| Inside_Bar_Breakout(0.6) | LONG | $103,322 | +3.3% | 0.87 | 119 |
-| MACD_Momentum(12/26/9) | SHORT | $103,099 | +3.1% | 0.81 | 1051 |
-| Donchian_Breakout(20) | LONG | $102,988 | +3.0% | 0.79 | 314 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $102,162 | +2.2% | 0.58 | 215 |
-| Supertrend(10,m=3.0) | LONG | $100,576 | +0.6% | 0.18 | 328 |
-| RSI_Reversion(14,30/70) | FLAT | $100,165 | +0.2% | 0.11 | 374 |
+| *Buy & Hold (benchmark)* | — | $97,249 | -2.8% | — | 1 |
+| Opening_Range_Breakout(6) | LONG | $105,865 | +5.9% | 1.64 | 119 |
+| MA_Crossover(10/50) | LONG | $105,618 | +5.6% | 1.44 | 350 |
+| Donchian_Breakout(20) | LONG | $103,207 | +3.2% | 0.85 | 314 |
+| MACD_Momentum(12/26/9) | LONG | $103,170 | +3.2% | 0.83 | 1052 |
+| Inside_Bar_Breakout(0.6) | LONG | $102,596 | +2.6% | 0.69 | 117 |
+| ATR_Vol_Breakout(14,k=1.5) | LONG | $101,966 | +2.0% | 0.53 | 216 |
+| Supertrend(10,m=3.0) | LONG | $100,795 | +0.8% | 0.23 | 328 |
+| RSI_Reversion(14,30/70) | SHORT | $100,140 | +0.1% | 0.10 | 375 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $98,247 | -1.8% | -0.65 | 532 |
-| Engulfing_Reversal(0.3) | SHORT | $97,311 | -2.7% | -0.64 | 835 |
-| Bollinger_Reversion(20,2sd) | FLAT | $96,295 | -3.7% | -1.25 | 479 |
+| ZScore_Reversion(20,z=2.0) | SHORT | $98,402 | -1.6% | -0.59 | 534 |
+| Engulfing_Reversal(0.3) | SHORT | $97,092 | -2.9% | -0.70 | 835 |
+| Bollinger_Reversion(20,2sd) | SHORT | $96,281 | -3.7% | -1.25 | 480 |
