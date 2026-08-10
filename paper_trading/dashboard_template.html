@@ -467,6 +467,7 @@
               <th class="num">Total Return</th>
               <th class="num">Max Drawdown</th>
               <th class="num">Win Rate</th>
+              <th class="num">Profit Factor</th>
               <th class="num">Closed Trades</th>
               <th class="num">Total Trades</th>
               <th>Open since</th>
@@ -1035,7 +1036,17 @@
       const maxDrawdown = Math.max(computeMaxDrawdown(p.equity_curve || []), -1);
       const wins = closedTrades.filter((t) => t.net_pnl > 0).length;
       const winRate = closedTrades.length ? wins / closedTrades.length : null;
-      return { name, ...p, equity, closedTradeCount: closedTrades.length, totalReturn, wipedOut, maxDrawdown, winRate };
+      // Profit factor: gross profit / gross loss. Complements win rate - a
+      // strategy can win a minority of its trades and still be strongly
+      // profitable if its average win dwarfs its average loss (MA_Crossover
+      // is the textbook case: ~41% win rate, but its wins are much larger
+      // than its losses).
+      const grossProfit = closedTrades.filter((t) => t.net_pnl > 0).reduce((s, t) => s + t.net_pnl, 0);
+      const grossLoss = -closedTrades.filter((t) => t.net_pnl < 0).reduce((s, t) => s + t.net_pnl, 0);
+      const profitFactor = closedTrades.length
+        ? (grossLoss > 0 ? grossProfit / grossLoss : (grossProfit > 0 ? Infinity : null))
+        : null;
+      return { name, ...p, equity, closedTradeCount: closedTrades.length, totalReturn, wipedOut, maxDrawdown, winRate, profitFactor };
     }).sort((a, b) => b.totalReturn - a.totalReturn);
   }
 
@@ -1126,6 +1137,8 @@
       const openSince = r.open_trade ? fmtDate(r.open_trade.entry_time, track.intraday) + ' @ ' + fmtMoney(r.open_trade.entry_price) : '—';
       const equityCell = r.wipedOut ? '<span class="pill liq-thin" title="Backtest equity went to/below zero - the engine does not model margin calls, so this is not a realistic trading outcome.">wiped out</span>' : fmtMoney(r.equity);
       const ddClass = r.maxDrawdown < -0.0001 ? 'critical' : '';
+      const pfCell = r.profitFactor == null ? '—' : (r.profitFactor === Infinity ? '∞' : r.profitFactor.toFixed(2));
+      const pfClass = r.profitFactor == null ? '' : (r.profitFactor >= 1 ? 'good' : 'critical');
       return `<tr>
         <td class="strategy-name">${r.name}</td>
         <td><span class="pill ${posClass}">${posLabel}</span></td>
@@ -1133,6 +1146,7 @@
         <td class="num mono ${retClass}">${fmtSignedPct(r.totalReturn)}</td>
         <td class="num mono ${ddClass}">${fmtSignedPct(r.maxDrawdown)}</td>
         <td class="num mono">${r.winRate == null ? '—' : Math.round(r.winRate * 100) + '%'}</td>
+        <td class="num mono ${pfClass}">${pfCell}</td>
         <td class="num mono">${r.closedTradeCount}</td>
         <td class="num mono">${r.closedTradeCount + (r.open_trade ? 1 : 0)}</td>
         <td class="mono">${openSince}</td>
