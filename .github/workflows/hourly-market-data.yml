@@ -44,9 +44,9 @@ jobs:
       - name: Fetch fresh market data
         run: python scripts/fetch_market_data.py
 
-      - name: Fetch Nasdaq futures data (real NQ=F, daily + 5-minute, free/no-auth Yahoo Finance source)
+      - name: Fetch index futures data (real NQ=F/ES=F, daily + 5-minute, free/no-auth Yahoo Finance source)
         run: |
-          python scripts/fetch_nasdaq_futures.py || echo "WARN Nasdaq futures (NQ=F) fetch failed this run - continuing without fresh data"
+          python scripts/fetch_index_futures.py || echo "WARN index futures fetch failed this run - continuing without fresh data"
 
       - name: Update BTC paper-trading state (daily + 15-min)
         run: |
@@ -79,6 +79,19 @@ jobs:
             python scripts/paper_trade_update.py --suffix _nq5m --symbol MNQ --freq 5min --tracking-start "2026-08-10" --cost-aware-min-multiple 1.0 --bars-file paper_trading/bars_nq5m.csv
           else
             echo "Skipping Nasdaq Futures (5-min) update - no bars_nq5m.csv yet (first fetch hasn't succeeded)"
+          fi
+
+      - name: Update S&P 500 Futures paper-trading state (real ES=F price, MES contract economics)
+        run: |
+          if [ -f paper_trading/bars_es.csv ]; then
+            python scripts/paper_trade_update.py --suffix _es --symbol MES --tracking-start "2026-08-10" --bars-file paper_trading/bars_es.csv
+          else
+            echo "Skipping S&P 500 Futures (daily) update - no bars_es.csv yet (first fetch hasn't succeeded)"
+          fi
+          if [ -f paper_trading/bars_es5m.csv ]; then
+            python scripts/paper_trade_update.py --suffix _es5m --symbol MES --freq 5min --tracking-start "2026-08-10" --cost-aware-min-multiple 1.0 --bars-file paper_trading/bars_es5m.csv
+          else
+            echo "Skipping S&P 500 Futures (5-min) update - no bars_es5m.csv yet (first fetch hasn't succeeded)"
           fi
 
       - name: Update memecoin scanners (precise + wide)
