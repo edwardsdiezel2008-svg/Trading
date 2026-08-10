@@ -40,6 +40,7 @@ TRACK_SUFFIXES = [
     "", "_15m", "_eth", "_sol",
     "_perp", "_perp_15m", "_eth_perp", "_sol_perp",
     "_nq", "_nq5m", "_es", "_es5m", "_ym", "_ym5m", "_gc", "_gc5m",
+    "_rty", "_rty5m", "_cl", "_cl5m",
 ]
 
 
@@ -72,6 +73,10 @@ TRACK_META = {
     "_ym5m": ("ym5m", "Dow Futures (5-Min)"),
     "_gc": ("gc", "Gold Futures (Daily)"),
     "_gc5m": ("gc5m", "Gold Futures (5-Min)"),
+    "_rty": ("rty", "Russell 2000 Futures (Daily)"),
+    "_rty5m": ("rty5m", "Russell 2000 Futures (5-Min)"),
+    "_cl": ("cl", "Crude Oil Futures (Daily)"),
+    "_cl5m": ("cl5m", "Crude Oil Futures (5-Min)"),
 }
 
 EMPTY_WALKFORWARD = {"symbol": None, "freq": None, "n_folds": 0, "generated_at_utc": None, "results": []}
@@ -453,6 +458,7 @@ def build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_gre
             "_perp": "BTC/USDT", "_perp_15m": "BTC/USDT", "_eth_perp": "ETH/USDT", "_sol_perp": "SOL/USDT",
             "_nq": "MNQ", "_nq5m": "MNQ", "_es": "MES", "_es5m": "MES",
             "_ym": "MYM", "_ym5m": "MYM", "_gc": "MGC", "_gc5m": "MGC",
+            "_rty": "M2K", "_rty5m": "M2K", "_cl": "MCL", "_cl5m": "MCL",
         }[suffix]
         summaries[key] = summarize_track(loaded[suffix]["positions"], label, symbol)
     out = out.replace("__TRACK_SUMMARIES_JSON__", json.dumps(summaries))

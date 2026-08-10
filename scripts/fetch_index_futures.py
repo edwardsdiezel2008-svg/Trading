@@ -2,9 +2,9 @@
 bars from Yahoo Finance's public chart endpoint, via the `yfinance` library
 (already a project dependency). Despite the module name (kept for history -
 it started Nasdaq-only), this now covers CME equity index futures
-(Nasdaq-100, S&P 500, Dow) and a commodity future (Gold) too, reusing the
-exact same fetch/merge logic for every symbol below rather than duplicating
-it per-instrument.
+(Nasdaq-100, S&P 500, Dow, Russell 2000) and commodity futures (Gold, WTI
+Crude Oil) too, reusing the exact same fetch/merge logic for every symbol
+below rather than duplicating it per-instrument.
 
 Why Yahoo instead of an ETF proxy: an earlier version of the Nasdaq track
 traded QQQ against Stooq's per-symbol CSV endpoint, which turned out to
@@ -44,6 +44,8 @@ INDEX_FUTURES = [
     ("ES=F", "paper_trading/bars_es.csv", "paper_trading/bars_es5m.csv", "S&P 500 (ES=F)"),
     ("YM=F", "paper_trading/bars_ym.csv", "paper_trading/bars_ym5m.csv", "Dow (YM=F)"),
     ("GC=F", "paper_trading/bars_gc.csv", "paper_trading/bars_gc5m.csv", "Gold (GC=F)"),
+    ("RTY=F", "paper_trading/bars_rty.csv", "paper_trading/bars_rty5m.csv", "Russell 2000 (RTY=F)"),
+    ("CL=F", "paper_trading/bars_cl.csv", "paper_trading/bars_cl5m.csv", "WTI Crude Oil (CL=F)"),
 ]
 
 

@@ -1,12 +1,13 @@
 # Crypto + index futures paper trading cockpit
 
-Simulated (no real money) live trading of 12 backtested strategies across 16
+Simulated (no real money) live trading of 12 backtested strategies across 20
 tracks - BTC (daily, 15-minute, 3x leveraged perpetual daily, 3x leveraged
 perpetual 15-minute), ETH (daily, 3x leveraged perpetual), SOL (daily, 3x
-leveraged perpetual), and real CME futures across four markets - Nasdaq-100
-(NQ=F/MNQ), S&P 500 (ES=F/MES), Dow (YM=F/MYM), and Gold (GC=F/MGC), each
-daily and 5-minute - against real Crypto.com Exchange and Yahoo Finance
-data, plus a wide memecoin momentum/breakout scanner, updated hourly.
+leveraged perpetual), and real CME/COMEX/NYMEX futures across six markets -
+Nasdaq-100 (NQ=F/MNQ), S&P 500 (ES=F/MES), Dow (YM=F/MYM), Russell 2000
+(RTY=F/M2K), Gold (GC=F/MGC), and WTI Crude Oil (CL=F/MCL), each daily and
+5-minute - against real Crypto.com Exchange and Yahoo Finance data, plus a
+wide memecoin momentum/breakout scanner, updated hourly.
 
 **Live site:** the root of this repo's GitHub Pages deployment is the
 minimal landing page; `/dashboard.html` is the full detail page with every
@@ -25,17 +26,16 @@ manual `workflow_dispatch`):
 1. `scripts/fetch_market_data.py` - plain HTTP against Crypto.com Exchange's
    public REST API (no auth needed) for BTC/ETH/SOL candles, the wide
    memecoin ticker universe, BTC order book + perpetual funding rate;
-   `scripts/fetch_index_futures.py` pulls real NQ=F, ES=F, YM=F, and GC=F
-   (CME Nasdaq-100, S&P 500, and Dow E-mini futures, plus COMEX Gold)
-   daily and 5-minute bars from Yahoo Finance's free, keyless chart
-   endpoint (see "Index Futures" below); and `scripts/fetch_news.py` pulls
-   crypto headlines from public RSS feeds (CoinDesk, CoinTelegraph,
-   Bitcoin.com).
+   `scripts/fetch_index_futures.py` pulls real NQ=F, ES=F, YM=F, RTY=F,
+   GC=F, and CL=F (CME Nasdaq-100, S&P 500, Dow, and Russell 2000 E-mini
+   futures, plus COMEX Gold and NYMEX WTI Crude Oil) daily and 5-minute
+   bars from Yahoo Finance's free, keyless chart endpoint (see "Index
+   Futures" below); and `scripts/fetch_news.py` pulls crypto headlines
+   from public RSS feeds (CoinDesk, CoinTelegraph, Bitcoin.com).
 2. `scripts/paper_trade_update.py` (once per track: BTC daily, BTC
    15-min, BTC Perpetual daily, BTC Perpetual 15-min, ETH, SOL, ETH
-   Perpetual, SOL Perpetual, Nasdaq Futures daily, Nasdaq Futures 5-min,
-   S&P 500 Futures daily, S&P 500 Futures 5-min, Dow Futures daily, Dow
-   Futures 5-min, Gold Futures daily, Gold Futures 5-min)
+   Perpetual, SOL Perpetual, Nasdaq/S&P 500/Dow/Russell 2000/Gold/Crude
+   Oil Futures, each daily and 5-min)
    re-runs the same tested backtest engine (`src/backtest/engine.py`) on
    the full bar history for every strategy
    and derives each one's current position from the last bar of a fresh,
@@ -132,24 +132,27 @@ dozens of trades. That's a real result of the simulation, not a bug in it.
 
 ## Index Futures
 
-Eight tracks (`_nq`/`_nq5m`, `_es`/`_es5m`, `_ym`/`_ym5m`, `_gc`/`_gc5m`,
-each daily/5-min) run all 12 strategies against **real futures prices** -
-CME's Nasdaq-100 E-mini (NQ=F), S&P 500 E-mini (ES=F), and Dow E-mini
-(YM=F), plus COMEX Gold (GC=F), all continuous front contracts, fetched
-from Yahoo Finance's public `v8/finance/chart` endpoint via the `yfinance`
-library (`scripts/fetch_index_futures.py`, generalized from a
-Nasdaq-only script once the approach proved out live - see git history).
-Each real futures price is paired with its Micro contract's economics in
-`src/backtest/instruments.py`: **MNQ** ($2/index-point multiplier,
-$0.75/side commission, 0.25-point tick), **MES** ($5/index-point
+Twelve tracks (`_nq`/`_nq5m`, `_es`/`_es5m`, `_ym`/`_ym5m`, `_gc`/`_gc5m`,
+`_rty`/`_rty5m`, `_cl`/`_cl5m`, each daily/5-min) run all 12 strategies
+against **real futures prices** - CME's Nasdaq-100 E-mini (NQ=F), S&P 500
+E-mini (ES=F), Dow E-mini (YM=F), and Russell 2000 E-mini (RTY=F), plus
+COMEX Gold (GC=F) and NYMEX WTI Crude Oil (CL=F), all continuous front
+contracts, fetched from Yahoo Finance's public `v8/finance/chart` endpoint
+via the `yfinance` library (`scripts/fetch_index_futures.py`, generalized
+from a Nasdaq-only script once the approach proved out live - see git
+history). Each real futures price is paired with its Micro contract's
+economics in `src/backtest/instruments.py`: **MNQ** ($2/index-point
+multiplier, $0.75/side commission, 0.25-point tick), **MES** ($5/index-point
 multiplier, $0.75/side commission, 0.25-point tick), **MYM** ($0.50/point
-multiplier, $0.75/side commission, 1-point tick), and **MGC** ($10/oz
-multiplier, $0.75/side commission, 0.10-point tick). The Micro contracts
-track the identical price level as their full-size counterparts, just at a
-fraction of the contract size (1/10th for MNQ/MES/MYM, 1/10th for MGC vs
-GC), so this is genuine futures point-value P&L math, not an ETF-proxy
-approximation. (An earlier version of the Nasdaq track traded QQQ as a
-proxy because Stooq's QQQ endpoint looked usable locally; a live run
+multiplier, $0.75/side commission, 1-point tick), **MGC** ($10/oz
+multiplier, $0.75/side commission, 0.10-point tick), **M2K**
+($5/index-point multiplier, $0.75/side commission, 0.10-point tick), and
+**MCL** ($100/barrel-point multiplier, $0.75/side commission, 0.01-point
+tick). The Micro contracts track the identical price level as their
+full-size counterparts, just at a fraction of the contract size (1/10th in
+every case here), so this is genuine futures point-value P&L math, not an
+ETF-proxy approximation. (An earlier version of the Nasdaq track traded QQQ
+as a proxy because Stooq's QQQ endpoint looked usable locally; a live run
 showed Stooq actually 404s on that symbol in production, which is what
 prompted switching to Yahoo's real futures feed instead of patching the
 broken proxy.)
@@ -166,13 +169,18 @@ Two honest caveats, both surfaced directly on the dashboard tab:
   requires roughly $1,400-1,600 in maintenance margin at typical notional
   (~15-20x); MGC requires roughly $1,700 in maintenance margin at typical
   notional (~15-20x) - gold's own volatility profile sits between the
-  equity indices. All eight tracks deliberately don't attempt to simulate
+  equity indices; M2K requires roughly $500-600 in maintenance margin
+  against ~$11,000 typical notional (~18-22x); MCL requires roughly
+  $500-600 in maintenance margin against ~$7,000 typical notional
+  (~12-15x) - both smaller Micro contracts carry higher implied leverage
+  since their dollar margin requirement doesn't shrink as fast as their
+  notional does. All twelve tracks deliberately don't attempt to simulate
   any of these figures: the backtest engine only checks for a
   liquidation-triggering loss at each bar's *close* (same limitation noted
-  above for the perpetual tracks), and modeling 15-30x real margin risk
+  above for the perpetual tracks), and modeling 10-30x real margin risk
   against bar-close-only checks - even on 5-minute bars - would produce
   either constant false liquidations or a threshold so loose it stops
-  meaning anything. All eight tracks run unleveraged instead (position
+  meaning anything. All twelve tracks run unleveraged instead (position
   size is simply however many whole micro contracts $100,000 of paper
   capital covers), so the margin/leverage figures above are sourced
   context, not something simulated.
@@ -191,33 +199,34 @@ internal-consistency violations across 2,514 daily bars, no non-positive
 prices, and ~251 trading days/year (matching the real CME calendar). Every
 single-day move over 5% lines up with a real, independently verifiable
 historical volatility event (Dec 2018, the Feb-Apr 2020 COVID crash, the
-2022 rate-hike selloff), not an artifact. ES=F, YM=F, and GC=F are fetched
-via the exact same code path, so the same result is expected but hasn't
-been separately re-verified yet for each one.
+2022 rate-hike selloff), not an artifact. ES=F, YM=F, GC=F, RTY=F, and
+CL=F are fetched via the exact same code path, so the same result is
+expected but hasn't been separately re-verified yet for each one.
 
-The Nasdaq Futures tracks have real walk-forward, sensitivity, and
-meta-strategy snapshots on file (`walkforward_nq*.json`,
-`sensitivity_nq*.json`, `meta_strategy_nq*.json`) - the "🔒 Locked-in
-strategy" and "🧠 Meta-strategy selector" panels are live there, not just
-placeholder text. As of this writing: the daily track's locked-in pick is
-`RSI_Reversion(14,30/70)` (+17.1% out-of-sample, Sharpe 0.77); the 5-minute
-track's is `Inside_Bar_Breakout(0.6)` (+6.1% OOS, Sharpe 1.44) - one of the
-new pattern-recognition strategies added specifically for intraday
+The Nasdaq, S&P 500, Dow, and Gold Futures tracks all have real
+walk-forward, sensitivity, and meta-strategy snapshots on file
+(`walkforward_{nq,es,ym,gc}*.json` etc.) - the "🔒 Locked-in strategy" and
+"🧠 Meta-strategy selector" panels are live there, not just placeholder
+text. As of this writing: Nasdaq daily's locked-in pick is
+`RSI_Reversion(14,30/70)` (+17.1% out-of-sample, Sharpe 0.77); Nasdaq
+5-minute's is `Inside_Bar_Breakout(0.6)` (+6.1% OOS, Sharpe 1.44) - one of
+the new pattern-recognition strategies added specifically for intraday
 timeframes, and the only strategy that held up walk-forward-robust on the
-5-minute track once ORB's session-boundary bug (below) was fixed. The S&P
-500 Futures tracks seeded with real data immediately on their first
-live run (Yahoo returns full history in one request) and now have their
-own real snapshots too (`walkforward_es*.json`, `sensitivity_es*.json`,
-`meta_strategy_es*.json`). As of this writing: the daily track's locked-in
-pick is `RSI_Reversion(14,30/70)` (+6.6% out-of-sample, Sharpe 0.71, 90%
-parameter-stable); the 5-minute track's is `ZScore_Reversion(20,z=2.0)`
-(+0.9% OOS, Sharpe 1.64, 86% parameter-stable) - a different winner than
-Nasdaq's 5-minute track (`Inside_Bar_Breakout`), a useful cross-check that
-these aren't just picking the same strategy everywhere regardless of the
-underlying instrument. Dow and Gold Futures were added most recently using
-the same proven pipeline; their walk-forward/sensitivity/meta-strategy
-snapshots get run once real accumulated bar history exists for them (see
-git history / commit log for when that happened).
+5-minute track once ORB's session-boundary bug (below) was fixed. S&P 500
+daily's locked-in pick is `RSI_Reversion(14,30/70)` (+6.6% out-of-sample,
+Sharpe 0.71, 90% parameter-stable); S&P 500 5-minute's is
+`ZScore_Reversion(20,z=2.0)` (+0.9% OOS, Sharpe 1.64, 86%
+parameter-stable) - a different winner than Nasdaq's 5-minute track, a
+useful cross-check that these aren't just picking the same strategy
+everywhere regardless of the underlying instrument. Dow daily's locked-in
+pick is `RSI_Reversion(14,30/70)` (+4.5% OOS, Sharpe 0.63, 90%
+parameter-stable); Gold daily's is `MA_Crossover(10/50)` (+22.7% OOS,
+Sharpe 0.56, 100% parameter-stable) - both 5-minute tracks currently have
+no strategy clearing all three Locked-in Strategy bars. Russell 2000 and
+WTI Crude Oil Futures were added most recently using the same proven
+pipeline; their walk-forward/sensitivity/meta-strategy snapshots get run
+once real accumulated bar history exists for them (see git history /
+commit log for when that happened).
 
 ## Pattern-recognition strategies
 
@@ -388,14 +397,14 @@ harder to explain by luck than one that only worked on one.
 
 Per track (suffix `""` = BTC daily, `_15m`, `_eth`, `_sol`, `_perp`,
 `_perp_15m`, `_eth_perp`, `_sol_perp`, `_nq`, `_nq5m`, `_es`, `_es5m`,
-`_ym`, `_ym5m`, `_gc`, `_gc5m`):
+`_ym`, `_ym5m`, `_gc`, `_gc5m`, `_rty`, `_rty5m`, `_cl`, `_cl5m`):
 `bars{suffix}.csv`, `positions{suffix}.json`, `trade_log{suffix}.csv`,
 `track_record{suffix}.csv`, `summary{suffix}.md`,
 `walkforward{suffix}.json`, `sensitivity{suffix}.json`, `meta_strategy{suffix}.json`
 (the last three only where a manual snapshot has been run) - `bars_nq*.csv`,
-`bars_es*.csv`, `bars_ym*.csv`, and `bars_gc*.csv` are fetched by
-`scripts/fetch_index_futures.py` rather than `fetch_market_data.py` (see
-"Index Futures" above). Plus `memecoin_scan.json` /
+`bars_es*.csv`, `bars_ym*.csv`, `bars_gc*.csv`, `bars_rty*.csv`, and
+`bars_cl*.csv` are fetched by `scripts/fetch_index_futures.py` rather than
+`fetch_market_data.py` (see "Index Futures" above). Plus `memecoin_scan.json` /
 `memecoin_wide_scan.json` / `memecoins_wide_tickers.json` /
 `memecoins/*.csv` (scanner), `rug_watch_history.json` (rolling ~7-day log
 of flagged coins per hourly run, see "Rug Pull Watch" below),

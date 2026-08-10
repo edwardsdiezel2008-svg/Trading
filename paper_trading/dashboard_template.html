@@ -432,6 +432,10 @@
     <button class="tab-btn" data-track="ym5m">📉 Dow Futures (5-Min)</button>
     <button class="tab-btn" data-track="gc">🥇 Gold Futures (Daily)</button>
     <button class="tab-btn" data-track="gc5m">🥇 Gold Futures (5-Min)</button>
+    <button class="tab-btn" data-track="rty">🏘️ Russell 2000 Futures (Daily)</button>
+    <button class="tab-btn" data-track="rty5m">🏘️ Russell 2000 Futures (5-Min)</button>
+    <button class="tab-btn" data-track="cl">🛢️ Crude Oil Futures (Daily)</button>
+    <button class="tab-btn" data-track="cl5m">🛢️ Crude Oil Futures (5-Min)</button>
     <button class="tab-btn" data-track="memecoin">Memecoin Scanner</button>
   </div>
 
@@ -530,8 +534,8 @@
       <div class="panel-head">
         <h2>📈 Futures, honestly</h2>
       </div>
-      <p class="panel-note">All eight futures tracks trade <strong>real prices</strong> - CME Nasdaq-100 (NQ=F), S&amp;P 500 (ES=F), and Dow (YM=F) E-mini futures, plus Gold futures (GC=F), all continuous front contracts, fetched from Yahoo Finance's public chart endpoint (unauthenticated and keyless, the same way Crypto.com's REST API supplies crypto candles here without needing an account). Each real futures price is paired with its Micro contract's point-value economics - <strong>MNQ</strong> ($2/index-point), <strong>MES</strong> ($5/index-point), <strong>MYM</strong> ($0.50/index-point), and <strong>MGC</strong> ($10/oz), each $0.75/side commission - since the Micro contracts track the identical price as their full-size counterparts, just at a smaller contract size. Real futures P&amp;L math, not an ETF-proxy approximation.</p>
-      <p class="panel-note">Real overnight margin differs by contract, and that's reported as-is rather than flattened to one number: MNQ requires roughly $1,700-1,900 in CME initial margin (~25-30x implied leverage); MES roughly $2,400-2,500 maintenance margin (~10-15x); MYM roughly $1,400-1,600 maintenance margin (~15-20x at typical notional); MGC roughly $1,700 maintenance margin (~15-20x at typical notional) - the S&amp;P 500's lower implied leverage reflects it being the least volatile of the three indices, and CME's margin-setting follows that. All eight tracks here run <strong>unleveraged</strong> instead of simulating any of these figures (position size is simply however many whole micro contracts $100,000 of paper capital can cover): the backtest engine only checks for a liquidation-triggering loss at each bar's close, and modeling 10-30x real margin risk against bar-close-only checks would produce either constant false liquidations or a threshold so loose it stops meaning anything. The margin/leverage figures above are sourced context, not something simulated.</p>
+      <p class="panel-note">All twelve futures tracks trade <strong>real prices</strong> - CME Nasdaq-100 (NQ=F), S&amp;P 500 (ES=F), Dow (YM=F), and Russell 2000 (RTY=F) E-mini futures, plus Gold (GC=F) and WTI Crude Oil (CL=F) futures, all continuous front contracts, fetched from Yahoo Finance's public chart endpoint (unauthenticated and keyless, the same way Crypto.com's REST API supplies crypto candles here without needing an account). Each real futures price is paired with its Micro contract's point-value economics - <strong>MNQ</strong> ($2/index-point), <strong>MES</strong> ($5/index-point), <strong>MYM</strong> ($0.50/index-point), <strong>MGC</strong> ($10/oz), <strong>M2K</strong> ($5/index-point), and <strong>MCL</strong> ($100/barrel-point), each $0.75/side commission - since the Micro contracts track the identical price as their full-size counterparts, just at a smaller contract size. Real futures P&amp;L math, not an ETF-proxy approximation.</p>
+      <p class="panel-note">Real overnight margin differs by contract, and that's reported as-is rather than flattened to one number: MNQ requires roughly $1,700-1,900 in CME initial margin (~25-30x implied leverage); MES roughly $2,400-2,500 maintenance margin (~10-15x); MYM roughly $1,400-1,600 maintenance margin (~15-20x at typical notional); MGC roughly $1,700 maintenance margin (~15-20x at typical notional); M2K roughly $500-600 maintenance margin against ~$11,000 typical notional (~18-22x); MCL roughly $500-600 maintenance margin against ~$7,000 typical notional (~12-15x) - the smaller Micro contracts carry the highest implied leverage since their absolute margin requirement doesn't scale down as fast as their notional does. All twelve tracks here run <strong>unleveraged</strong> instead of simulating any of these figures (position size is simply however many whole micro contracts $100,000 of paper capital can cover): the backtest engine only checks for a liquidation-triggering loss at each bar's close, and modeling 10-30x real margin risk against bar-close-only checks would produce either constant false liquidations or a threshold so loose it stops meaning anything. The margin/leverage figures above are sourced context, not something simulated.</p>
       <p class="panel-note">The 5-Minute tracks' data has one retention limit worth knowing: Yahoo's intraday endpoint only serves the trailing ~60 days per request. Every hourly run merges freshly-fetched bars into the existing history, so each 5-minute track's own record keeps accumulating past that 60-day window going forward - same pattern already used for the memecoin scanner's precise-history coins.</p>
     </div>
 
@@ -809,6 +813,22 @@
     gc5m: {
       label: 'Gold Futures (5-Min)', symbol: 'MGC', dateUnit: 'Update', intraday: true,
       positions: __POSITIONS_GC5M_JSON__, trades: __TRADES_GC5M_JSON__, trackRecord: __TRACK_RECORD_GC5M_JSON__, bars: __BARS_GC5M_JSON__, walkforward: __WALKFORWARD_GC5M_JSON__, sensitivity: __SENSITIVITY_GC5M_JSON__, metaStrategy: __META_STRATEGY_GC5M_JSON__,
+    },
+    rty: {
+      label: 'Russell 2000 Futures (Daily)', symbol: 'M2K', dateUnit: 'Day', intraday: false,
+      positions: __POSITIONS_RTY_JSON__, trades: __TRADES_RTY_JSON__, trackRecord: __TRACK_RECORD_RTY_JSON__, bars: __BARS_RTY_JSON__, walkforward: __WALKFORWARD_RTY_JSON__, sensitivity: __SENSITIVITY_RTY_JSON__, metaStrategy: __META_STRATEGY_RTY_JSON__,
+    },
+    rty5m: {
+      label: 'Russell 2000 Futures (5-Min)', symbol: 'M2K', dateUnit: 'Update', intraday: true,
+      positions: __POSITIONS_RTY5M_JSON__, trades: __TRADES_RTY5M_JSON__, trackRecord: __TRACK_RECORD_RTY5M_JSON__, bars: __BARS_RTY5M_JSON__, walkforward: __WALKFORWARD_RTY5M_JSON__, sensitivity: __SENSITIVITY_RTY5M_JSON__, metaStrategy: __META_STRATEGY_RTY5M_JSON__,
+    },
+    cl: {
+      label: 'Crude Oil Futures (Daily)', symbol: 'MCL', dateUnit: 'Day', intraday: false,
+      positions: __POSITIONS_CL_JSON__, trades: __TRADES_CL_JSON__, trackRecord: __TRACK_RECORD_CL_JSON__, bars: __BARS_CL_JSON__, walkforward: __WALKFORWARD_CL_JSON__, sensitivity: __SENSITIVITY_CL_JSON__, metaStrategy: __META_STRATEGY_CL_JSON__,
+    },
+    cl5m: {
+      label: 'Crude Oil Futures (5-Min)', symbol: 'MCL', dateUnit: 'Update', intraday: true,
+      positions: __POSITIONS_CL5M_JSON__, trades: __TRADES_CL5M_JSON__, trackRecord: __TRACK_RECORD_CL5M_JSON__, bars: __BARS_CL5M_JSON__, walkforward: __WALKFORWARD_CL5M_JSON__, sensitivity: __SENSITIVITY_CL5M_JSON__, metaStrategy: __META_STRATEGY_CL5M_JSON__,
     },
   };
   const CAPITAL = 100000;
@@ -1212,8 +1232,8 @@
       thinNote.classList.remove('visible');
     }
 
-    document.getElementById('costFilterNote').classList.toggle('visible', ['fifteenMin', 'perp15m', 'nq5m', 'es5m', 'ym5m', 'gc5m'].includes(trackKey));
-    document.getElementById('nqNote').style.display = ['nq', 'nq5m', 'es', 'es5m', 'ym', 'ym5m', 'gc', 'gc5m'].includes(trackKey) ? '' : 'none';
+    document.getElementById('costFilterNote').classList.toggle('visible', ['fifteenMin', 'perp15m', 'nq5m', 'es5m', 'ym5m', 'gc5m', 'rty5m', 'cl5m'].includes(trackKey));
+    document.getElementById('nqNote').style.display = ['nq', 'nq5m', 'es', 'es5m', 'ym', 'ym5m', 'gc', 'gc5m', 'rty', 'rty5m', 'cl', 'cl5m'].includes(trackKey) ? '' : 'none';
 
     const unprofitableNote = document.getElementById('unprofitableNote');
     if (rows.length && rows.every((r) => r.totalReturn <= 0)) {
@@ -1761,7 +1781,7 @@
   // that already scrolls horizontally (a wide table, the tab strip itself)
   // so it never fights with that element's own swipe-to-scroll.
   (function initTabSwipe() {
-    const TRACK_ORDER = ['daily', 'fifteenMin', 'eth', 'sol', 'perp', 'perp15m', 'ethPerp', 'solPerp', 'nq', 'nq5m', 'es', 'es5m', 'ym', 'ym5m', 'gc', 'gc5m', 'memecoin'];
+    const TRACK_ORDER = ['daily', 'fifteenMin', 'eth', 'sol', 'perp', 'perp15m', 'ethPerp', 'solPerp', 'nq', 'nq5m', 'es', 'es5m', 'ym', 'ym5m', 'gc', 'gc5m', 'rty', 'rty5m', 'cl', 'cl5m', 'memecoin'];
     let startX = null, startY = null, skip = false;
     const THRESHOLD = 60;
     document.addEventListener('touchstart', (e) => {

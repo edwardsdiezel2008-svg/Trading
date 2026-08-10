@@ -44,7 +44,7 @@ jobs:
       - name: Fetch fresh market data
         run: python scripts/fetch_market_data.py
 
-      - name: Fetch futures data (real NQ=F/ES=F/YM=F/GC=F, daily + 5-minute, free/no-auth Yahoo Finance source)
+      - name: Fetch futures data (real NQ=F/ES=F/YM=F/GC=F/RTY=F/CL=F, daily + 5-minute, free/no-auth Yahoo Finance source)
         run: |
           python scripts/fetch_index_futures.py || echo "WARN index futures fetch failed this run - continuing without fresh data"
 
@@ -70,8 +70,8 @@ jobs:
 
       - name: Update Index/Commodity Futures paper-trading state (real Yahoo Finance prices, Micro contract economics)
         run: |
-          declare -A SYMS=( [nq]=MNQ [es]=MES [ym]=MYM [gc]=MGC )
-          for suffix in nq es ym gc; do
+          declare -A SYMS=( [nq]=MNQ [es]=MES [ym]=MYM [gc]=MGC [rty]=M2K [cl]=MCL )
+          for suffix in nq es ym gc rty cl; do
             symbol=${SYMS[$suffix]}
             if [ -f "paper_trading/bars_${suffix}.csv" ]; then
               python scripts/paper_trade_update.py --suffix "_${suffix}" --symbol "$symbol" --tracking-start "2026-08-10" --bars-file "paper_trading/bars_${suffix}.csv"

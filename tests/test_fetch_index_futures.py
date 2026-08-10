@@ -72,3 +72,4 @@ def test_index_futures_config_has_distinct_paths_per_symbol():
     assert len(daily_paths) == len(set(daily_paths)), "daily bars path collision"
     assert len(five_min_paths) == len(set(five_min_paths)), "5-minute bars path collision"
     assert "NQ=F" in symbols and "ES=F" in symbols and "YM=F" in symbols and "GC=F" in symbols
+    assert "RTY=F" in symbols and "CL=F" in symbols
