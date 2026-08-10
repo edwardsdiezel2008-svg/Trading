@@ -199,9 +199,55 @@ internal-consistency violations across 2,514 daily bars, no non-positive
 prices, and ~251 trading days/year (matching the real CME calendar). Every
 single-day move over 5% lines up with a real, independently verifiable
 historical volatility event (Dec 2018, the Feb-Apr 2020 COVID crash, the
-2022 rate-hike selloff), not an artifact. ES=F, YM=F, GC=F, RTY=F, and
-CL=F are fetched via the exact same code path, so the same result is
-expected but hasn't been separately re-verified yet for each one.
+2022 rate-hike selloff), not an artifact. ES=F and GC=F check out equally
+clean on the same structural tests (zero OHLC violations, ~251 trading
+days/year); ES=F's >5% moves land on the same well-known dates as NQ=F's
+(Feb 2018's "Volmageddon", the COVID crash, the 2025 tariff-selloff week),
+which is expected since both track the same equity-market shocks. GC=F's
+handful of >5% moves are plausible for a commodity but include dates past
+this due-diligence pass's ability to independently corroborate against
+known news (2025-10-21, 2026-01-30 to 2026-02-03) - flagged as unverified
+rather than asserted. RTY=F checks out clean too (zero OHLC violations
+across 2,287 bars, ~252 trading days/year; its >5% moves land on the same
+dates as NQ=F/ES=F's during 2018/2020/2022/2025 shocks, plus a few small-cap-
+specific ones like Nov 2020/2024 - both US election weeks, when Russell
+2000 characteristically moves harder than the large-cap indices).
+
+**Two real findings from this pass, reported as-is rather than smoothed
+over:**
+
+- **CL=F correctly captures the April 2020 negative-oil-price crash.**
+  2020-04-20 closes at **-$37.63** and 2020-04-21 opens at **-$14.00** -
+  the two `non-positive price` bars this due-diligence check flags for
+  CL=F are the real WTI storage-capacity collapse (COVID demand crash
+  colliding with near-zero remaining Cushing, Oklahoma storage capacity),
+  not a data error - those are the actual historical settlement prices.
+  The knock-on effect: CL=F's single-day-move check reports 133 moves
+  over 5% (vs. ~15-20 for the equity index futures) - real WTI crude is
+  simply far more volatile than an equity index at any point-value scale,
+  and a handful of the extreme percentages right around April 20-21, 2020
+  (some exceeding 100%) are a mathematical artifact of computing percent
+  change across a price crossing through zero, not a sign of 133 separate
+  anomalies. The live `_cl`/`_cl5m` paper-trading runs already process
+  this event without crashing or producing NaN equity (confirmed from the
+  first live hourly run's output) - P&L is driven by `multiplier *
+  price_change`, a delta that doesn't care about the sign of the
+  underlying price - but this hasn't been separately stress-tested per
+  strategy, so it's flagged here rather than asserted as fully verified.
+- **YM=F is not as clean as the other five.** 11 of 2,514 daily bars
+  (0.4%) have `close > high` by 3-100 points - a genuine OHLC
+  inconsistency, not present at all in NQ=F/ES=F/GC=F/RTY=F/CL=F's
+  history. The violation dates don't cluster on quarterly
+  futures-expiration weeks (they're scattered across 2024-2025, e.g.
+  2024-08-01, 2024-10-30, 2025-02-26), which rules out the "rollover
+  splice" explanation checked for above - this looks like a Yahoo
+  data-vendor artifact specific to how YM=F's daily close gets
+  aggregated, not a contract-splicing gap. Small in magnitude relative to
+  Dow futures' typical daily range and rare enough (11 bars) that it's
+  unlikely to meaningfully distort the walk-forward results already on
+  file for `_ym`/`_ym5m`, but it's a real blemish in the source data and
+  is reported here rather than silently ignored because it didn't break
+  anything obvious.
 
 The Nasdaq, S&P 500, Dow, and Gold Futures tracks all have real
 walk-forward, sensitivity, and meta-strategy snapshots on file
@@ -222,11 +268,15 @@ everywhere regardless of the underlying instrument. Dow daily's locked-in
 pick is `RSI_Reversion(14,30/70)` (+4.5% OOS, Sharpe 0.63, 90%
 parameter-stable); Gold daily's is `MA_Crossover(10/50)` (+22.7% OOS,
 Sharpe 0.56, 100% parameter-stable) - both 5-minute tracks currently have
-no strategy clearing all three Locked-in Strategy bars. Russell 2000 and
-WTI Crude Oil Futures were added most recently using the same proven
-pipeline; their walk-forward/sensitivity/meta-strategy snapshots get run
-once real accumulated bar history exists for them (see git history /
-commit log for when that happened).
+no strategy clearing all three Locked-in Strategy bars. Russell 2000 daily's
+locked-in pick is `VWAP_Reversion(20,2%)` (+2.8% OOS, Sharpe 0.22, 88%
+parameter-stable); WTI Crude Oil daily's is `ZScore_Reversion(20,z=2.0)`
+(+6.9% OOS, Sharpe 0.42, 100% parameter-stable) - both 5-minute tracks
+currently have no strategy clearing all three bars either, continuing the
+pattern that intraday futures tracks are harder to validate than daily
+ones. Russell 2000 and WTI Crude Oil Futures were the most recent
+additions, using the same proven pipeline - their real data landed and
+these snapshots were run in the same round these instruments were added.
 
 ## Pattern-recognition strategies
 
