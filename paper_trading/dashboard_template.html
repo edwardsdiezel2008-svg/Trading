@@ -466,6 +466,7 @@
               <th class="num">Equity</th>
               <th class="num">Total Return</th>
               <th class="num">Max Drawdown</th>
+              <th class="num">Win Rate</th>
               <th class="num">Closed Trades</th>
               <th class="num">Total Trades</th>
               <th>Open since</th>
@@ -1032,7 +1033,9 @@
       // unconstrained short sizing can drive the simulated equity curve
       // below zero, which isn't a real percentage decline.
       const maxDrawdown = Math.max(computeMaxDrawdown(p.equity_curve || []), -1);
-      return { name, ...p, equity, closedTradeCount: closedTrades.length, totalReturn, wipedOut, maxDrawdown };
+      const wins = closedTrades.filter((t) => t.net_pnl > 0).length;
+      const winRate = closedTrades.length ? wins / closedTrades.length : null;
+      return { name, ...p, equity, closedTradeCount: closedTrades.length, totalReturn, wipedOut, maxDrawdown, winRate };
     }).sort((a, b) => b.totalReturn - a.totalReturn);
   }
 
@@ -1129,6 +1132,7 @@
         <td class="num mono">${equityCell}</td>
         <td class="num mono ${retClass}">${fmtSignedPct(r.totalReturn)}</td>
         <td class="num mono ${ddClass}">${fmtSignedPct(r.maxDrawdown)}</td>
+        <td class="num mono">${r.winRate == null ? '—' : Math.round(r.winRate * 100) + '%'}</td>
         <td class="num mono">${r.closedTradeCount}</td>
         <td class="num mono">${r.closedTradeCount + (r.open_trade ? 1 : 0)}</td>
         <td class="mono">${openSince}</td>
