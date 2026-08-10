@@ -1,8 +1,14 @@
+import json
 import sys
 
 sys.path.insert(0, ".")
 
-from scripts.build_paper_trading_dashboard import compute_rug_watch_summary, diversify_news
+import scripts.rug_watch as rug_watch
+from scripts.build_paper_trading_dashboard import (
+    compute_rug_watch_summary,
+    diversify_news,
+    load_rug_watch_streaks,
+)
 
 
 def _item(source, i):
@@ -74,3 +80,37 @@ def test_rug_watch_summary_counts_severe_separately_and_picks_the_worst_as_top()
     assert summary["flagged_count"] == 2
     assert summary["severe_count"] == 1
     assert summary["top_symbol"] == "CRASHED"
+
+
+def _write_history(path, runs):
+    with open(path, "w") as f:
+        json.dump({"runs": runs}, f)
+
+
+def test_rug_watch_streaks_empty_without_a_history_file(tmp_path, monkeypatch):
+    monkeypatch.setattr(rug_watch, "HISTORY_PATH", str(tmp_path / "missing.json"))
+    assert load_rug_watch_streaks() == {}
+
+
+def test_rug_watch_streaks_counts_consecutive_runs_from_the_end(tmp_path, monkeypatch):
+    path = tmp_path / "history.json"
+    monkeypatch.setattr(rug_watch, "HISTORY_PATH", str(path))
+    _write_history(path, [
+        {"timestamp": "t0", "flagged": {"A": "elevated"}},
+        {"timestamp": "t1", "flagged": {}},
+        {"timestamp": "t2", "flagged": {"A": "elevated"}},
+        {"timestamp": "t3", "flagged": {"A": "severe"}},
+    ])
+    # A was flagged in t3 and t2 (consecutive) but t1 broke the streak - t0
+    # doesn't count even though A was flagged there too.
+    assert load_rug_watch_streaks() == {"A": 2}
+
+
+def test_rug_watch_streaks_only_reports_symbols_flagged_in_the_latest_run(tmp_path, monkeypatch):
+    path = tmp_path / "history.json"
+    monkeypatch.setattr(rug_watch, "HISTORY_PATH", str(path))
+    _write_history(path, [
+        {"timestamp": "t0", "flagged": {"STALE": "elevated"}},
+        {"timestamp": "t1", "flagged": {"FRESH": "severe"}},
+    ])
+    assert load_rug_watch_streaks() == {"FRESH": 1}

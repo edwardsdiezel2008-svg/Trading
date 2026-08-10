@@ -632,7 +632,7 @@
         <h2>🚩 Rug Pull Watch</h2>
         <span class="panel-hint" id="rugAsOfHint">—</span>
       </div>
-      <p class="panel-note">Flags coins with a severe 24h decline or drawdown from their own 24h high - the price-action <em>aftermath</em> a rug pull leaves behind (liquidity drained, price collapses), not the on-chain cause. This exchange is a curated, mainstream listing where a literal on-chain rug pull (LP drain, honeypot contract) is rare - most flags here will be ordinary high-volatility drawdowns, a broad market selloff, or a thin-liquidity air pocket, not an actual rug. There's no holder-concentration or liquidity-lock data behind this - it's a crash proxy from price/volume alone, not a verdict.</p>
+      <p class="panel-note">Flags coins with a severe 24h decline or drawdown from their own 24h high - the price-action <em>aftermath</em> a rug pull leaves behind (liquidity drained, price collapses), not the on-chain cause. This exchange is a curated, mainstream listing where a literal on-chain rug pull (LP drain, honeypot contract) is rare - most flags here will be ordinary high-volatility drawdowns, a broad market selloff, or a thin-liquidity air pocket, not an actual rug. There's no holder-concentration or liquidity-lock data behind this - it's a crash proxy from price/volume alone, not a verdict. "Flagged for" tracks how many consecutive hourly checks a coin has stayed flagged - a persistent flag is a stronger signal than a one-off dip.</p>
       <div class="stat-tiles" id="rugStatTiles"></div>
       <div class="table-wrap" style="margin-top: 12px;">
         <table id="rugTable">
@@ -644,6 +644,7 @@
               <th class="num">24h Volume</th>
               <th>Liquidity</th>
               <th>Severity</th>
+              <th class="num">Flagged For</th>
             </tr>
           </thead>
           <tbody id="rugTbody"></tbody>
@@ -667,6 +668,7 @@
   const FEAR_GREED = __FEAR_GREED_JSON__;
   const CORRELATIONS = __CORRELATIONS_JSON__;
   const NEWS = __NEWS_JSON__;
+  const RUG_WATCH_STREAKS = __RUG_WATCH_STREAKS_JSON__;
   const TRACKS = {
     daily: {
       label: 'Daily', symbol: 'BTC/USDT', dateUnit: 'Day', intraday: false,
@@ -1372,6 +1374,8 @@
       const sevPill = severity === 'severe'
         ? '<span class="pill liq-thin">🚩 severe</span>'
         : '<span class="pill pill-accent">⚠ elevated</span>';
+      const streak = RUG_WATCH_STREAKS[r.symbol] || 1;
+      const streakStr = streak <= 1 ? 'just now' : `${streak} runs running`;
       return `<tr>
         <td class="strategy-name">${r.symbol}</td>
         <td class="num mono critical">${fmtSignedPct(r.change_24h_pct / 100)}</td>
@@ -1379,8 +1383,9 @@
         <td class="num mono">${fmtMoney(r.volume_24h_usd)}</td>
         <td>${liqPill}</td>
         <td>${sevPill}</td>
+        <td class="num mono">${streakStr}</td>
       </tr>`;
-    }).join('') : '<tr><td colspan="6" class="scope-note">Nothing crossing the crash thresholds right now - checked every hourly update.</td></tr>';
+    }).join('') : '<tr><td colspan="7" class="scope-note">Nothing crossing the crash thresholds right now - checked every hourly update.</td></tr>';
   }
 
   // ---------- tab wiring ----------

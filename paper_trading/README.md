@@ -92,10 +92,32 @@ Per track (suffix `""` = BTC daily, `_15m`, `_eth`, `_sol`):
 `walkforward{suffix}.json`, `sensitivity{suffix}.json` (the last two only
 where a manual snapshot has been run). Plus `memecoin_scan.json` /
 `memecoin_wide_scan.json` / `memecoins_wide_tickers.json` /
-`memecoins/*.csv` (scanner), `btc_market_snapshot.json` (order book +
-funding), `fear_greed.json`, `news.json`, `index.html` + `dashboard.html`
-(built output - regenerate with `python scripts/build_paper_trading_dashboard.py`,
-never hand-edit).
+`memecoins/*.csv` (scanner), `rug_watch_history.json` (rolling ~7-day log
+of flagged coins per hourly run, see "Rug Pull Watch" below),
+`btc_market_snapshot.json` (order book + funding), `fear_greed.json`,
+`news.json`, `index.html` + `dashboard.html` (built output - regenerate
+with `python scripts/build_paper_trading_dashboard.py`, never hand-edit).
+
+## Rug Pull Watch
+
+A panel on the memecoin scanner tab (and a compact badge on the landing
+page) flagging coins with a severe 24h decline or drawdown from their own
+24h high - the price-action *aftermath* a rug pull leaves behind, not the
+on-chain cause. Severity thresholds live in `scripts/rug_watch.py`, the one
+shared source of truth between `memecoin_wide_scan.py` (which logs flagged
+coins to `rug_watch_history.json` each hourly run) and
+`build_paper_trading_dashboard.py` (which summarizes that history for the
+landing page and computes each flagged coin's consecutive-run streak for
+the full table - a persistent flag is a stronger signal than a one-off
+dip). The full table on `dashboard.html` re-implements the same thresholds
+in JS, since that page has no build step to share Python with.
+
+Honest caveat, worth repeating: this is a crash proxy from CEX ticker data
+(24h change, volume) alone - there's no holder-concentration or liquidity-
+lock signal available from this data source, and Crypto.com Exchange is a
+curated, mainstream listing where an actual on-chain rug pull (LP drain,
+honeypot contract) is rare. Most flags will be ordinary high-volatility
+drawdowns or thin-liquidity air pockets, not literal rugs.
 
 ## Caveats
 

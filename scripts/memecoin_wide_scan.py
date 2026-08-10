@@ -20,11 +20,39 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from datetime import datetime, timezone
+
+sys.path.insert(0, ".")
+
+import scripts.rug_watch as rug_watch
 
 TICKERS_PATH = "paper_trading/memecoins_wide_tickers.json"
 OUTPUT_PATH = "paper_trading/memecoin_wide_scan.json"
 MIN_VOLUME_USD = 10_000  # below this, liquidity is thin enough that the range/price can be easily distorted
+
+
+def _update_rug_watch_history(rows, now_iso):
+    """Append this run's flagged coins to a rolling history log, so the
+    dashboard can show whether a flag is a one-off blip or has been
+    persistent across several hourly checks - a much stronger signal than
+    any single snapshot."""
+    flagged = {r["symbol"]: rug_watch.severity_for(r) for r in rows if rug_watch.severity_for(r)}
+
+    history = []
+    if os.path.exists(rug_watch.HISTORY_PATH):
+        try:
+            with open(rug_watch.HISTORY_PATH) as f:
+                history = json.load(f).get("runs", [])
+        except (json.JSONDecodeError, OSError):
+            history = []
+
+    history.append({"timestamp": now_iso, "flagged": flagged})
+    history = history[-rug_watch.HISTORY_MAX_ENTRIES:]
+
+    with open(rug_watch.HISTORY_PATH, "w") as f:
+        json.dump({"runs": history}, f, indent=2)
+    return history
 
 
 def main():
@@ -67,8 +95,9 @@ def main():
         key=lambda r: r["change_24h_pct"], reverse=True,
     )
 
+    now_iso = datetime.now(timezone.utc).isoformat()
     out = {
-        "updated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "updated_at_utc": now_iso,
         "universe_size": len(rows),
         "min_volume_usd": MIN_VOLUME_USD,
         "ranked": ranked,
@@ -81,6 +110,10 @@ def main():
     for r in ranked[:8]:
         thin = " (thin liquidity)" if r["thin_liquidity"] else ""
         print(f"  #{r['rank']} {r['symbol']}: {r['change_24h_pct']:+.2f}% 24h, {r['pct_from_24h_high']:+.2f}% from high{thin}")
+
+    history = _update_rug_watch_history(rows, now_iso)
+    flagged_now = history[-1]["flagged"]
+    print(f"Rug watch: {len(flagged_now)} flagged this run, {len(history)} runs in history")
 
 
 if __name__ == "__main__":

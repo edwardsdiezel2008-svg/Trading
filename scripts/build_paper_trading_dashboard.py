@@ -16,6 +16,7 @@ import sys
 
 sys.path.insert(0, ".")
 
+import scripts.rug_watch as rug_watch
 from src.backtest.data_loader import load_bars
 from src.backtest.regime import classify_regimes
 
@@ -166,34 +167,45 @@ def compute_current_regimes():
     return out
 
 
-# Same thresholds as the "Rug Pull Watch" panel's JS (dashboard_template.html
-# rugSeverityFor) - kept in sync manually since one is Python (landing page
-# summary) and one is JS (full table); duplicated rather than shared because
-# the two pages don't share a runtime.
-RUG_SEVERE = {"change": -30, "from_high": -40}
-RUG_ELEVATED = {"change": -15, "from_high": -25}
-
-
-def _rug_severity_for(coin):
-    change, from_high = coin.get("change_24h_pct", 0), coin.get("pct_from_24h_high", 0)
-    if change <= RUG_SEVERE["change"] or from_high <= RUG_SEVERE["from_high"]:
-        return "severe"
-    if change <= RUG_ELEVATED["change"] or from_high <= RUG_ELEVATED["from_high"]:
-        return "elevated"
-    return None
-
-
 def compute_rug_watch_summary(wide_scan):
     """Lightweight landing-page summary of the Rug Pull Watch panel - just
     enough to show a warning badge on the Memecoin Scanner nav card without
-    duplicating the full flagged-coin table there."""
+    duplicating the full flagged-coin table there. Severity thresholds live
+    in scripts/rug_watch.py, shared with memecoin_wide_scan.py's history
+    logging (the full table on dashboard.html re-implements the same
+    thresholds in JS, since that page has no build step to share with)."""
     all_coins = (wide_scan.get("ranked") or []) + (wide_scan.get("not_moving") or [])
-    flagged = [(c, _rug_severity_for(c)) for c in all_coins]
+    flagged = [(c, rug_watch.severity_for(c)) for c in all_coins]
     flagged = [(c, sev) for c, sev in flagged if sev]
     flagged.sort(key=lambda cs: min(cs[0].get("change_24h_pct", 0), cs[0].get("pct_from_24h_high", 0)))
     severe_count = sum(1 for _, sev in flagged if sev == "severe")
     top = flagged[0][0]["symbol"] if flagged else None
     return {"flagged_count": len(flagged), "severe_count": severe_count, "top_symbol": top}
+
+
+def load_rug_watch_streaks():
+    """For each symbol flagged in the most recent memecoin_wide_scan run,
+    count consecutive prior runs (including the current one) it was also
+    flagged in - a coin that's tripped the threshold for several hourly
+    checks running is a much stronger signal than one that just crossed it
+    once. Streak resets the moment a run doesn't have it flagged."""
+    if not os.path.exists(rug_watch.HISTORY_PATH):
+        return {}
+    with open(rug_watch.HISTORY_PATH) as f:
+        runs = json.load(f).get("runs", [])
+    if not runs:
+        return {}
+    current_flagged = runs[-1].get("flagged", {})
+    streaks = {}
+    for symbol in current_flagged:
+        streak = 0
+        for run in reversed(runs):
+            if symbol in (run.get("flagged") or {}):
+                streak += 1
+            else:
+                break
+        streaks[symbol] = streak
+    return streaks
 
 
 def diversify_news(items, limit=6, max_per_source=2):
@@ -334,11 +346,12 @@ def build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_g
     out = out.replace("__FEAR_GREED_JSON__", json.dumps(fear_greed))
     out = out.replace("__CORRELATIONS_JSON__", json.dumps(correlations))
     out = out.replace("__NEWS_JSON__", json.dumps(news))
+    out = out.replace("__RUG_WATCH_STREAKS_JSON__", json.dumps(load_rug_watch_streaks()))
 
     for _, pos_key, trades_key, track_key, bars_key, wf_key, sens_key in TRACKS:
         for key in (pos_key, trades_key, track_key, bars_key, wf_key, sens_key):
             assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
-    for key in ("MEMECOIN_SCAN_JSON", "WIDE_MEMECOIN_SCAN_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "CORRELATIONS_JSON", "NEWS_JSON"):
+    for key in ("MEMECOIN_SCAN_JSON", "WIDE_MEMECOIN_SCAN_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "CORRELATIONS_JSON", "NEWS_JSON", "RUG_WATCH_STREAKS_JSON"):
         assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
 
     with open(OUTPUT_PATH, "w") as f:
