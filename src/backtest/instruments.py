@@ -34,10 +34,12 @@ DEFAULT_SPECS = {
     "NQ": InstrumentSpec("NQ", "future", multiplier=20.0, tick_size=0.25, commission_per_unit=2.25),
     "MNQ": InstrumentSpec("MNQ", "future", multiplier=2.0, tick_size=0.25, commission_per_unit=0.75),
     "YM": InstrumentSpec("YM", "future", multiplier=5.0, tick_size=1.0, commission_per_unit=2.25),
+    "MYM": InstrumentSpec("MYM", "future", multiplier=0.5, tick_size=1.0, commission_per_unit=0.75),
     "RTY": InstrumentSpec("RTY", "future", multiplier=50.0, tick_size=0.10, commission_per_unit=2.25),
     # Energy / metals
     "CL": InstrumentSpec("CL", "future", multiplier=1000.0, tick_size=0.01, commission_per_unit=2.50),
     "GC": InstrumentSpec("GC", "future", multiplier=100.0, tick_size=0.10, commission_per_unit=2.50),
+    "MGC": InstrumentSpec("MGC", "future", multiplier=10.0, tick_size=0.10, commission_per_unit=0.75),
     # Crypto - fractional units matter here: BTC at $60k+ means a $100 account
     # can't buy a whole "1 unit" the way a stock/futures position sizer assumes.
     #

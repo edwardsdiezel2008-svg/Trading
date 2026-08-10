@@ -428,6 +428,10 @@
     <button class="tab-btn" data-track="nq5m">📈 Nasdaq Futures (5-Min)</button>
     <button class="tab-btn" data-track="es">📊 S&amp;P 500 Futures (Daily)</button>
     <button class="tab-btn" data-track="es5m">📊 S&amp;P 500 Futures (5-Min)</button>
+    <button class="tab-btn" data-track="ym">📉 Dow Futures (Daily)</button>
+    <button class="tab-btn" data-track="ym5m">📉 Dow Futures (5-Min)</button>
+    <button class="tab-btn" data-track="gc">🥇 Gold Futures (Daily)</button>
+    <button class="tab-btn" data-track="gc5m">🥇 Gold Futures (5-Min)</button>
     <button class="tab-btn" data-track="memecoin">Memecoin Scanner</button>
   </div>
 
@@ -524,10 +528,10 @@
 
     <div class="panel" id="nqNote" style="display:none;">
       <div class="panel-head">
-        <h2>📈 Index Futures, honestly</h2>
+        <h2>📈 Futures, honestly</h2>
       </div>
-      <p class="panel-note">All four index futures tracks trade <strong>real prices</strong> - CME Nasdaq-100 E-mini futures (NQ=F) and S&amp;P 500 E-mini futures (ES=F), both continuous front contracts, fetched from Yahoo Finance's public chart endpoint (unauthenticated and keyless, the same way Crypto.com's REST API supplies crypto candles here without needing an account). Each real futures price is paired with its Micro E-mini contract's point-value economics - <strong>MNQ</strong> ($2/index-point, $0.75/side commission) and <strong>MES</strong> ($5/index-point, $0.75/side commission) - since the Micro contracts track the identical index level as their full-size counterparts, just at 1/10th the contract size. Real futures P&amp;L math, not an ETF-proxy approximation.</p>
-      <p class="panel-note">Real overnight margin differs by contract, and that's reported as-is rather than flattened to one number: MNQ currently requires roughly $1,700-1,900 in CME initial margin against tens of thousands of dollars notional (~25-30x implied leverage); MES requires roughly $2,400-2,500 in maintenance margin against a similar notional range, implying meaningfully lower leverage (~10-15x) - the S&amp;P 500 is the less volatile index, and CME's margin-setting reflects that. All four tracks here run <strong>unleveraged</strong> instead of simulating either figure (position size is simply however many whole micro contracts $100,000 of paper capital can cover): the backtest engine only checks for a liquidation-triggering loss at each bar's close, and modeling 10-30x real margin risk against bar-close-only checks would produce either constant false liquidations or a threshold so loose it stops meaning anything. The margin/leverage figures above are sourced context, not something simulated.</p>
+      <p class="panel-note">All eight futures tracks trade <strong>real prices</strong> - CME Nasdaq-100 (NQ=F), S&amp;P 500 (ES=F), and Dow (YM=F) E-mini futures, plus Gold futures (GC=F), all continuous front contracts, fetched from Yahoo Finance's public chart endpoint (unauthenticated and keyless, the same way Crypto.com's REST API supplies crypto candles here without needing an account). Each real futures price is paired with its Micro contract's point-value economics - <strong>MNQ</strong> ($2/index-point), <strong>MES</strong> ($5/index-point), <strong>MYM</strong> ($0.50/index-point), and <strong>MGC</strong> ($10/oz), each $0.75/side commission - since the Micro contracts track the identical price as their full-size counterparts, just at a smaller contract size. Real futures P&amp;L math, not an ETF-proxy approximation.</p>
+      <p class="panel-note">Real overnight margin differs by contract, and that's reported as-is rather than flattened to one number: MNQ requires roughly $1,700-1,900 in CME initial margin (~25-30x implied leverage); MES roughly $2,400-2,500 maintenance margin (~10-15x); MYM roughly $1,400-1,600 maintenance margin (~15-20x at typical notional); MGC roughly $1,700 maintenance margin (~15-20x at typical notional) - the S&amp;P 500's lower implied leverage reflects it being the least volatile of the three indices, and CME's margin-setting follows that. All eight tracks here run <strong>unleveraged</strong> instead of simulating any of these figures (position size is simply however many whole micro contracts $100,000 of paper capital can cover): the backtest engine only checks for a liquidation-triggering loss at each bar's close, and modeling 10-30x real margin risk against bar-close-only checks would produce either constant false liquidations or a threshold so loose it stops meaning anything. The margin/leverage figures above are sourced context, not something simulated.</p>
       <p class="panel-note">The 5-Minute tracks' data has one retention limit worth knowing: Yahoo's intraday endpoint only serves the trailing ~60 days per request. Every hourly run merges freshly-fetched bars into the existing history, so each 5-minute track's own record keeps accumulating past that 60-day window going forward - same pattern already used for the memecoin scanner's precise-history coins.</p>
     </div>
 
@@ -789,6 +793,22 @@
     es5m: {
       label: 'S&P 500 Futures (5-Min)', symbol: 'MES', dateUnit: 'Update', intraday: true,
       positions: __POSITIONS_ES5M_JSON__, trades: __TRADES_ES5M_JSON__, trackRecord: __TRACK_RECORD_ES5M_JSON__, bars: __BARS_ES5M_JSON__, walkforward: __WALKFORWARD_ES5M_JSON__, sensitivity: __SENSITIVITY_ES5M_JSON__, metaStrategy: __META_STRATEGY_ES5M_JSON__,
+    },
+    ym: {
+      label: 'Dow Futures (Daily)', symbol: 'MYM', dateUnit: 'Day', intraday: false,
+      positions: __POSITIONS_YM_JSON__, trades: __TRADES_YM_JSON__, trackRecord: __TRACK_RECORD_YM_JSON__, bars: __BARS_YM_JSON__, walkforward: __WALKFORWARD_YM_JSON__, sensitivity: __SENSITIVITY_YM_JSON__, metaStrategy: __META_STRATEGY_YM_JSON__,
+    },
+    ym5m: {
+      label: 'Dow Futures (5-Min)', symbol: 'MYM', dateUnit: 'Update', intraday: true,
+      positions: __POSITIONS_YM5M_JSON__, trades: __TRADES_YM5M_JSON__, trackRecord: __TRACK_RECORD_YM5M_JSON__, bars: __BARS_YM5M_JSON__, walkforward: __WALKFORWARD_YM5M_JSON__, sensitivity: __SENSITIVITY_YM5M_JSON__, metaStrategy: __META_STRATEGY_YM5M_JSON__,
+    },
+    gc: {
+      label: 'Gold Futures (Daily)', symbol: 'MGC', dateUnit: 'Day', intraday: false,
+      positions: __POSITIONS_GC_JSON__, trades: __TRADES_GC_JSON__, trackRecord: __TRACK_RECORD_GC_JSON__, bars: __BARS_GC_JSON__, walkforward: __WALKFORWARD_GC_JSON__, sensitivity: __SENSITIVITY_GC_JSON__, metaStrategy: __META_STRATEGY_GC_JSON__,
+    },
+    gc5m: {
+      label: 'Gold Futures (5-Min)', symbol: 'MGC', dateUnit: 'Update', intraday: true,
+      positions: __POSITIONS_GC5M_JSON__, trades: __TRADES_GC5M_JSON__, trackRecord: __TRACK_RECORD_GC5M_JSON__, bars: __BARS_GC5M_JSON__, walkforward: __WALKFORWARD_GC5M_JSON__, sensitivity: __SENSITIVITY_GC5M_JSON__, metaStrategy: __META_STRATEGY_GC5M_JSON__,
     },
   };
   const CAPITAL = 100000;
@@ -1192,8 +1212,8 @@
       thinNote.classList.remove('visible');
     }
 
-    document.getElementById('costFilterNote').classList.toggle('visible', trackKey === 'fifteenMin' || trackKey === 'perp15m' || trackKey === 'nq5m' || trackKey === 'es5m');
-    document.getElementById('nqNote').style.display = ['nq', 'nq5m', 'es', 'es5m'].includes(trackKey) ? '' : 'none';
+    document.getElementById('costFilterNote').classList.toggle('visible', ['fifteenMin', 'perp15m', 'nq5m', 'es5m', 'ym5m', 'gc5m'].includes(trackKey));
+    document.getElementById('nqNote').style.display = ['nq', 'nq5m', 'es', 'es5m', 'ym', 'ym5m', 'gc', 'gc5m'].includes(trackKey) ? '' : 'none';
 
     const unprofitableNote = document.getElementById('unprofitableNote');
     if (rows.length && rows.every((r) => r.totalReturn <= 0)) {
@@ -1741,7 +1761,7 @@
   // that already scrolls horizontally (a wide table, the tab strip itself)
   // so it never fights with that element's own swipe-to-scroll.
   (function initTabSwipe() {
-    const TRACK_ORDER = ['daily', 'fifteenMin', 'eth', 'sol', 'perp', 'perp15m', 'ethPerp', 'solPerp', 'nq', 'nq5m', 'es', 'es5m', 'memecoin'];
+    const TRACK_ORDER = ['daily', 'fifteenMin', 'eth', 'sol', 'perp', 'perp15m', 'ethPerp', 'solPerp', 'nq', 'nq5m', 'es', 'es5m', 'ym', 'ym5m', 'gc', 'gc5m', 'memecoin'];
     let startX = null, startY = null, skip = false;
     const THRESHOLD = 60;
     document.addEventListener('touchstart', (e) => {

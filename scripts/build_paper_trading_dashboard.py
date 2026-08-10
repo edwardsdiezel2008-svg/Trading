@@ -31,21 +31,28 @@ FEAR_GREED_PATH = "paper_trading/fear_greed.json"
 NEWS_PATH = "paper_trading/news.json"
 CAPITAL = 100_000.0
 
-# (file suffix, template placeholder prefix, bars placeholder, walk-forward placeholder, sensitivity placeholder, meta-strategy placeholder)
-TRACKS = [
-    ("", "POSITIONS_JSON", "TRADES_JSON", "TRACK_RECORD_JSON", "BARS_JSON", "WALKFORWARD_JSON", "SENSITIVITY_JSON", "META_STRATEGY_JSON"),
-    ("_15m", "POSITIONS_15M_JSON", "TRADES_15M_JSON", "TRACK_RECORD_15M_JSON", "BARS_15M_JSON", "WALKFORWARD_15M_JSON", "SENSITIVITY_15M_JSON", "META_STRATEGY_15M_JSON"),
-    ("_eth", "POSITIONS_ETH_JSON", "TRADES_ETH_JSON", "TRACK_RECORD_ETH_JSON", "BARS_ETH_JSON", "WALKFORWARD_ETH_JSON", "SENSITIVITY_ETH_JSON", "META_STRATEGY_ETH_JSON"),
-    ("_sol", "POSITIONS_SOL_JSON", "TRADES_SOL_JSON", "TRACK_RECORD_SOL_JSON", "BARS_SOL_JSON", "WALKFORWARD_SOL_JSON", "SENSITIVITY_SOL_JSON", "META_STRATEGY_SOL_JSON"),
-    ("_perp", "POSITIONS_PERP_JSON", "TRADES_PERP_JSON", "TRACK_RECORD_PERP_JSON", "BARS_PERP_JSON", "WALKFORWARD_PERP_JSON", "SENSITIVITY_PERP_JSON", "META_STRATEGY_PERP_JSON"),
-    ("_perp_15m", "POSITIONS_PERP_15M_JSON", "TRADES_PERP_15M_JSON", "TRACK_RECORD_PERP_15M_JSON", "BARS_PERP_15M_JSON", "WALKFORWARD_PERP_15M_JSON", "SENSITIVITY_PERP_15M_JSON", "META_STRATEGY_PERP_15M_JSON"),
-    ("_eth_perp", "POSITIONS_ETH_PERP_JSON", "TRADES_ETH_PERP_JSON", "TRACK_RECORD_ETH_PERP_JSON", "BARS_ETH_PERP_JSON", "WALKFORWARD_ETH_PERP_JSON", "SENSITIVITY_ETH_PERP_JSON", "META_STRATEGY_ETH_PERP_JSON"),
-    ("_sol_perp", "POSITIONS_SOL_PERP_JSON", "TRADES_SOL_PERP_JSON", "TRACK_RECORD_SOL_PERP_JSON", "BARS_SOL_PERP_JSON", "WALKFORWARD_SOL_PERP_JSON", "SENSITIVITY_SOL_PERP_JSON", "META_STRATEGY_SOL_PERP_JSON"),
-    ("_nq", "POSITIONS_NQ_JSON", "TRADES_NQ_JSON", "TRACK_RECORD_NQ_JSON", "BARS_NQ_JSON", "WALKFORWARD_NQ_JSON", "SENSITIVITY_NQ_JSON", "META_STRATEGY_NQ_JSON"),
-    ("_nq5m", "POSITIONS_NQ5M_JSON", "TRADES_NQ5M_JSON", "TRACK_RECORD_NQ5M_JSON", "BARS_NQ5M_JSON", "WALKFORWARD_NQ5M_JSON", "SENSITIVITY_NQ5M_JSON", "META_STRATEGY_NQ5M_JSON"),
-    ("_es", "POSITIONS_ES_JSON", "TRADES_ES_JSON", "TRACK_RECORD_ES_JSON", "BARS_ES_JSON", "WALKFORWARD_ES_JSON", "SENSITIVITY_ES_JSON", "META_STRATEGY_ES_JSON"),
-    ("_es5m", "POSITIONS_ES5M_JSON", "TRADES_ES5M_JSON", "TRACK_RECORD_ES5M_JSON", "BARS_ES5M_JSON", "WALKFORWARD_ES5M_JSON", "SENSITIVITY_ES5M_JSON", "META_STRATEGY_ES5M_JSON"),
+# Every track's template placeholder names follow one mechanical rule -
+# UPPERCASE(suffix) spliced into POSITIONS{tag}_JSON etc. - so the whole
+# TRACKS table (previously ~16 hand-written 8-tuples, one new line of
+# copy-pasted boilerplate per track added) is generated from just the
+# suffix list below. Adding a track is now a one-line change.
+TRACK_SUFFIXES = [
+    "", "_15m", "_eth", "_sol",
+    "_perp", "_perp_15m", "_eth_perp", "_sol_perp",
+    "_nq", "_nq5m", "_es", "_es5m", "_ym", "_ym5m", "_gc", "_gc5m",
 ]
+
+
+def _track_placeholder_keys(suffix: str) -> tuple[str, ...]:
+    tag = suffix.upper()
+    return (
+        f"POSITIONS{tag}_JSON", f"TRADES{tag}_JSON", f"TRACK_RECORD{tag}_JSON",
+        f"BARS{tag}_JSON", f"WALKFORWARD{tag}_JSON", f"SENSITIVITY{tag}_JSON", f"META_STRATEGY{tag}_JSON",
+    )
+
+
+# (file suffix, template placeholder prefix, bars placeholder, walk-forward placeholder, sensitivity placeholder, meta-strategy placeholder)
+TRACKS = [(suffix, *_track_placeholder_keys(suffix)) for suffix in TRACK_SUFFIXES]
 
 # suffix -> (hash-link key used by dashboard_template.html's tab wiring, nav label)
 TRACK_META = {
@@ -61,6 +68,10 @@ TRACK_META = {
     "_nq5m": ("nq5m", "Nasdaq Futures (5-Min)"),
     "_es": ("es", "S&P 500 Futures (Daily)"),
     "_es5m": ("es5m", "S&P 500 Futures (5-Min)"),
+    "_ym": ("ym", "Dow Futures (Daily)"),
+    "_ym5m": ("ym5m", "Dow Futures (5-Min)"),
+    "_gc": ("gc", "Gold Futures (Daily)"),
+    "_gc5m": ("gc5m", "Gold Futures (5-Min)"),
 }
 
 EMPTY_WALKFORWARD = {"symbol": None, "freq": None, "n_folds": 0, "generated_at_utc": None, "results": []}
@@ -441,6 +452,7 @@ def build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_gre
             "": "BTC/USDT", "_15m": "BTC/USDT", "_eth": "ETH/USDT", "_sol": "SOL/USDT",
             "_perp": "BTC/USDT", "_perp_15m": "BTC/USDT", "_eth_perp": "ETH/USDT", "_sol_perp": "SOL/USDT",
             "_nq": "MNQ", "_nq5m": "MNQ", "_es": "MES", "_es5m": "MES",
+            "_ym": "MYM", "_ym5m": "MYM", "_gc": "MGC", "_gc5m": "MGC",
         }[suffix]
         summaries[key] = summarize_track(loaded[suffix]["positions"], label, symbol)
     out = out.replace("__TRACK_SUMMARIES_JSON__", json.dumps(summaries))

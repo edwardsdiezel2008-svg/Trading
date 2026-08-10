@@ -1,11 +1,10 @@
-"""Fetch real CME index futures (continuous front contracts) daily and
-5-minute bars from Yahoo Finance's public chart endpoint, via the
-`yfinance` library (already a project dependency).
-
-Started as a Nasdaq-100-only script; generalized once the approach proved
-out live (see git history for that story) to cover the S&P 500 E-mini too,
-reusing the exact same fetch/merge logic for every symbol below rather than
-duplicating it per-instrument.
+"""Fetch real CME futures (continuous front contracts) daily and 5-minute
+bars from Yahoo Finance's public chart endpoint, via the `yfinance` library
+(already a project dependency). Despite the module name (kept for history -
+it started Nasdaq-only), this now covers CME equity index futures
+(Nasdaq-100, S&P 500, Dow) and a commodity future (Gold) too, reusing the
+exact same fetch/merge logic for every symbol below rather than duplicating
+it per-instrument.
 
 Why Yahoo instead of an ETF proxy: an earlier version of the Nasdaq track
 traded QQQ against Stooq's per-symbol CSV endpoint, which turned out to
@@ -43,6 +42,8 @@ from scripts.fetch_market_data import merge_bars_csv
 INDEX_FUTURES = [
     ("NQ=F", "paper_trading/bars_nq.csv", "paper_trading/bars_nq5m.csv", "Nasdaq-100 (NQ=F)"),
     ("ES=F", "paper_trading/bars_es.csv", "paper_trading/bars_es5m.csv", "S&P 500 (ES=F)"),
+    ("YM=F", "paper_trading/bars_ym.csv", "paper_trading/bars_ym5m.csv", "Dow (YM=F)"),
+    ("GC=F", "paper_trading/bars_gc.csv", "paper_trading/bars_gc5m.csv", "Gold (GC=F)"),
 ]
 
 
