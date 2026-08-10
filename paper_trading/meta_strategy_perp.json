@@ -3,34 +3,33 @@
   "freq": "1D",
   "n_folds": 5,
   "min_regime_bars": 20,
-  "generated_at_utc": "2026-08-10T17:19:42.413108Z",
+  "generated_at_utc": "2026-08-10T17:21:36.202018Z",
   "current_regime": "ranging/low_vol",
   "recommended_strategy": "Engulfing_Reversal(0.3)",
   "live_regime_map": {
     "trending/high_vol": "Inside_Bar_Breakout(0.6)",
-    "trending/low_vol": "MA_Crossover(10/50)",
-    "ranging/high_vol": "ZScore_Reversion(20,z=2.0)",
+    "trending/low_vol": "Donchian_Breakout(20)",
     "ranging/low_vol": "Engulfing_Reversal(0.3)"
   },
   "oos_metrics": {
     "strategy": "MetaStrategySelector",
     "instrument": "BTC_USDT",
-    "total_return": 0.8334554610045664,
-    "cagr": 0.08903808126790191,
-    "sharpe": 0.41300750684330384,
-    "sortino": 0.5885507139748403,
-    "max_drawdown": -0.5471873768337433,
-    "calmar": 0.16271954551129042,
-    "num_trades": 107,
-    "win_rate": 0.3925233644859813,
-    "profit_factor": 1.4446491605614413,
-    "avg_win": 10075.444409617096,
-    "avg_loss": -4506.483189630089,
-    "avg_trade": 1217.2640923174035,
-    "avg_bars_held": 15.682242990654206,
-    "total_costs": 24981.423304531043,
+    "total_return": -0.695662881572844,
+    "cagr": -0.15412493961123397,
+    "sharpe": 0.6715819289721908,
+    "sortino": 0.9696547272325371,
+    "max_drawdown": -0.9923781416623167,
+    "calmar": -0.15530868037163914,
+    "num_trades": 89,
+    "win_rate": 0.4157303370786517,
+    "profit_factor": 1.2798746407361514,
+    "avg_win": 25421.983277234074,
+    "avg_loss": -14133.195779186206,
+    "avg_trade": 2311.0921431458237,
+    "avg_bars_held": 18.49438202247191,
+    "total_costs": 64442.07838336667,
     "exposure": NaN,
-    "final_equity": 183345.54610045665
+    "final_equity": 30433.711842715606
   },
   "folds": [
     {
@@ -38,13 +37,13 @@
       "test_start": "2021-09-15 00:00:00",
       "test_end": "2022-09-07 00:00:00",
       "regime_map": {
-        "trending/high_vol": "MA_Crossover(10/50)",
+        "trending/high_vol": "Inside_Bar_Breakout(0.6)",
         "ranging/high_vol": "Inside_Bar_Breakout(0.6)",
-        "trending/low_vol": "Donchian_Breakout(20)",
-        "ranging/low_vol": "Inside_Bar_Breakout(0.6)"
+        "ranging/low_vol": "Inside_Bar_Breakout(0.6)",
+        "trending/low_vol": "Inside_Bar_Breakout(0.6)"
       },
-      "test_total_return": 0.9417629695499561,
-      "test_sharpe": 1.2237360545288245
+      "test_total_return": -0.921383533149706,
+      "test_sharpe": 0.8638271732794435
     },
     {
       "fold_idx": 2,
@@ -54,10 +53,10 @@
         "trending/high_vol": "Inside_Bar_Breakout(0.6)",
         "trending/low_vol": "Donchian_Breakout(20)",
         "ranging/high_vol": "Inside_Bar_Breakout(0.6)",
-        "ranging/low_vol": "MACD_Momentum(12/26/9)"
+        "ranging/low_vol": "Engulfing_Reversal(0.3)"
       },
-      "test_total_return": -0.25747077351021075,
-      "test_sharpe": -0.3241088608618205
+      "test_total_return": 0.17306359792255632,
+      "test_sharpe": 0.67587916739432
     },
     {
       "fold_idx": 3,
@@ -67,10 +66,10 @@
         "trending/high_vol": "Inside_Bar_Breakout(0.6)",
         "trending/low_vol": "Donchian_Breakout(20)",
         "ranging/high_vol": "Inside_Bar_Breakout(0.6)",
-        "ranging/low_vol": "MACD_Momentum(12/26/9)"
+        "ranging/low_vol": "Engulfing_Reversal(0.3)"
       },
-      "test_total_return": 1.0356437099109437,
-      "test_sharpe": 1.4087839418745973
+      "test_total_return": 2.7555779429159055,
+      "test_sharpe": 1.454674648175917
     },
     {
       "fold_idx": 4,
@@ -79,11 +78,10 @@
       "regime_map": {
         "trending/high_vol": "Inside_Bar_Breakout(0.6)",
         "trending/low_vol": "Donchian_Breakout(20)",
-        "ranging/high_vol": "ZScore_Reversion(20,z=2.0)",
-        "ranging/low_vol": "MACD_Momentum(12/26/9)"
+        "ranging/low_vol": "Engulfing_Reversal(0.3)"
       },
-      "test_total_return": -0.24646512038637025,
-      "test_sharpe": -0.40788348745692427
+      "test_total_return": 0.43896210879588127,
+      "test_sharpe": 0.7452495373111845
     },
     {
       "fold_idx": 5,
@@ -91,12 +89,11 @@
       "test_end": "2026-08-10 00:00:00",
       "regime_map": {
         "trending/high_vol": "Inside_Bar_Breakout(0.6)",
-        "trending/low_vol": "ATR_Vol_Breakout(14,k=1.5)",
-        "ranging/low_vol": "Engulfing_Reversal(0.3)",
-        "ranging/high_vol": "ZScore_Reversion(20,z=2.0)"
+        "trending/low_vol": "Donchian_Breakout(20)",
+        "ranging/low_vol": "Engulfing_Reversal(0.3)"
       },
-      "test_total_return": -0.17099820678469568,
-      "test_sharpe": -0.3298735830533301
+      "test_total_return": -0.38934810908485296,
+      "test_sharpe": 0.018486691492712388
     }
   ]
 }

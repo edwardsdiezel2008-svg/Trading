@@ -1,0 +1,140 @@
+{
+  "symbol": "BTC_USDT",
+  "freq": "1D",
+  "n_folds": 5,
+  "generated_at_utc": "2026-08-10T17:21:21.056378Z",
+  "results": [
+    {
+      "strategy": "MA_Crossover(10/50)",
+      "oos_total_return": -0.9044910642960757,
+      "oos_sharpe": 0.11482406215827992,
+      "oos_max_drawdown": -0.9883978233199268,
+      "oos_num_trades": 44,
+      "baseline_total_return": -0.704755788188663,
+      "baseline_sharpe": 0.3394698999338172,
+      "vs_fixed_default_ratio": 1.2834106217428378,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Donchian_Breakout(20)",
+      "oos_total_return": -1.01197073758877,
+      "oos_sharpe": -0.1863359512207611,
+      "oos_max_drawdown": -1.164062476898006,
+      "oos_num_trades": 20,
+      "baseline_total_return": -1.0597126473321297,
+      "baseline_sharpe": -0.6877386936489022,
+      "vs_fixed_default_ratio": 0.9549482495433533,
+      "n_folds": 5
+    },
+    {
+      "strategy": "MACD_Momentum(12/26/9)",
+      "oos_total_return": -0.9968046492478998,
+      "oos_sharpe": -0.10063437673793127,
+      "oos_max_drawdown": -0.9984227343580308,
+      "oos_num_trades": 170,
+      "baseline_total_return": -0.9140741455176529,
+      "baseline_sharpe": 0.29658705439054156,
+      "vs_fixed_default_ratio": 1.0905074321770643,
+      "n_folds": 5
+    },
+    {
+      "strategy": "RSI_Reversion(14,30/70)",
+      "oos_total_return": 0.35483075126977437,
+      "oos_sharpe": 0.29169646392226634,
+      "oos_max_drawdown": -0.4264111425881477,
+      "oos_num_trades": 18,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Bollinger_Reversion(20,2sd)",
+      "oos_total_return": 0.0,
+      "oos_sharpe": NaN,
+      "oos_max_drawdown": 0.0,
+      "oos_num_trades": 0,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "ZScore_Reversion(20,z=2.0)",
+      "oos_total_return": -1.0552659442843235,
+      "oos_sharpe": -0.18393034352614396,
+      "oos_max_drawdown": -1.031387258435471,
+      "oos_num_trades": 11,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "ATR_Vol_Breakout(14,k=1.5)",
+      "oos_total_return": -1.0001302112698913,
+      "oos_sharpe": -0.4087036800984823,
+      "oos_max_drawdown": -1.0066249618133154,
+      "oos_num_trades": 57,
+      "baseline_total_return": -0.7563270298325308,
+      "baseline_sharpe": 0.40447718811652533,
+      "vs_fixed_default_ratio": 1.3223515381849364,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Supertrend(10,m=3.0)",
+      "oos_total_return": -0.9979990893617525,
+      "oos_sharpe": -0.32803484572523184,
+      "oos_max_drawdown": -0.9990991099687161,
+      "oos_num_trades": 49,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "VWAP_Reversion(20,2%)",
+      "oos_total_return": 0.0,
+      "oos_sharpe": NaN,
+      "oos_max_drawdown": 0.0,
+      "oos_num_trades": 0,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Engulfing_Reversal(0.3)",
+      "oos_total_return": 4.157365228954081,
+      "oos_sharpe": 0.8566449533925241,
+      "oos_max_drawdown": -0.9701667753517695,
+      "oos_num_trades": 80,
+      "baseline_total_return": 11.553198392766063,
+      "baseline_sharpe": 0.8951728822700785,
+      "vs_fixed_default_ratio": 0.3598453941167651,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Inside_Bar_Breakout(0.6)",
+      "oos_total_return": -0.8246947184407425,
+      "oos_sharpe": 0.5888330318213265,
+      "oos_max_drawdown": -0.9941087054927723,
+      "oos_num_trades": 29,
+      "baseline_total_return": -1.0090805921165937,
+      "baseline_sharpe": 0.36601742912210355,
+      "vs_fixed_default_ratio": 0.8172733921191634,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Opening_Range_Breakout(6)",
+      "oos_total_return": 0.0,
+      "oos_sharpe": NaN,
+      "oos_max_drawdown": 0.0,
+      "oos_num_trades": 0,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    }
+  ]
+}

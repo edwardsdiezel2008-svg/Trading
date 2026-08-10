@@ -22,6 +22,7 @@ import sys
 
 sys.path.insert(0, ".")
 
+from scripts.paper_trade_update import perp_max_loss_fraction
 from src.backtest.data_loader import load_bars
 from src.backtest.instruments import get_spec
 from src.backtest.sensitivity import param_sensitivity
@@ -41,6 +42,10 @@ def parse_args(argv=None):
     p.add_argument("--symbol", required=True, help="Instrument symbol for spec lookup, e.g. BTC_USDT.")
     p.add_argument("--freq", default="1D")
     p.add_argument("--capital", type=float, default=100_000.0)
+    p.add_argument("--leverage", type=float, default=1.0,
+                    help="Leverage for a perpetual futures track (sets capital_fraction and swaps the "
+                         "flat MAX_LOSS_FRACTION for the maintenance-margin-based liquidation floor, "
+                         "matching paper_trade_update.py - a flat floor is economically meaningless at leverage).")
     p.add_argument("--output", required=True)
     return p.parse_args(argv)
 
@@ -49,6 +54,7 @@ def main(argv=None):
     args = parse_args(argv)
     bars = load_bars(args.bars, freq=args.freq)
     spec = get_spec(args.symbol)
+    max_loss_fraction = perp_max_loss_fraction(args.leverage) if args.leverage != 1.0 else MAX_LOSS_FRACTION
 
     results = []
     for cls in ALL_STRATEGY_CLASSES:
@@ -57,7 +63,7 @@ def main(argv=None):
         try:
             res = param_sensitivity(
                 bars, cls, spec, freq_hint=args.freq, initial_capital=args.capital,
-                max_loss_fraction=MAX_LOSS_FRACTION,
+                max_loss_fraction=max_loss_fraction, capital_fraction=args.leverage,
             )
         except ValueError as e:
             print(f"  skipped: {e}")

@@ -1,0 +1,140 @@
+{
+  "symbol": "SOL_USDT",
+  "freq": "1D",
+  "n_folds": 5,
+  "generated_at_utc": "2026-08-10T17:22:36.212816Z",
+  "results": [
+    {
+      "strategy": "MA_Crossover(10/50)",
+      "oos_total_return": -0.9957582100753252,
+      "oos_sharpe": 0.30854569572915164,
+      "oos_max_drawdown": -0.9990749751817379,
+      "oos_num_trades": 86,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Donchian_Breakout(20)",
+      "oos_total_return": -1.0114964834698374,
+      "oos_sharpe": -0.2801030235062917,
+      "oos_max_drawdown": -1.0076208355279361,
+      "oos_num_trades": 4,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "MACD_Momentum(12/26/9)",
+      "oos_total_return": -0.9827977495295659,
+      "oos_sharpe": 0.8365641486062295,
+      "oos_max_drawdown": -0.9998683480759167,
+      "oos_num_trades": 167,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "RSI_Reversion(14,30/70)",
+      "oos_total_return": -0.5050673758675897,
+      "oos_sharpe": 0.19483180581751103,
+      "oos_max_drawdown": -0.7411440749214941,
+      "oos_num_trades": 9,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Bollinger_Reversion(20,2sd)",
+      "oos_total_return": 0.06067969842704102,
+      "oos_sharpe": 0.27544846890838925,
+      "oos_max_drawdown": -0.5984532355989629,
+      "oos_num_trades": 6,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "ZScore_Reversion(20,z=2.0)",
+      "oos_total_return": 0.0,
+      "oos_sharpe": NaN,
+      "oos_max_drawdown": 0.0,
+      "oos_num_trades": 0,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "ATR_Vol_Breakout(14,k=1.5)",
+      "oos_total_return": -1.0050530516770448,
+      "oos_sharpe": 0.7071569343742513,
+      "oos_max_drawdown": -2.309040855644807,
+      "oos_num_trades": 23,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Supertrend(10,m=3.0)",
+      "oos_total_return": -1.0008178589997712,
+      "oos_sharpe": 0.27745305779806856,
+      "oos_max_drawdown": -1.0186772197745964,
+      "oos_num_trades": 40,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "VWAP_Reversion(20,2%)",
+      "oos_total_return": 0.0,
+      "oos_sharpe": NaN,
+      "oos_max_drawdown": 0.0,
+      "oos_num_trades": 0,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Engulfing_Reversal(0.3)",
+      "oos_total_return": -1.1593796336559143,
+      "oos_sharpe": -0.6161148968854828,
+      "oos_max_drawdown": -1.1478551563218569,
+      "oos_num_trades": 1,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Inside_Bar_Breakout(0.6)",
+      "oos_total_return": 0.0,
+      "oos_sharpe": NaN,
+      "oos_max_drawdown": 0.0,
+      "oos_num_trades": 0,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    },
+    {
+      "strategy": "Opening_Range_Breakout(6)",
+      "oos_total_return": 0.0,
+      "oos_sharpe": NaN,
+      "oos_max_drawdown": 0.0,
+      "oos_num_trades": 0,
+      "baseline_total_return": 0.0,
+      "baseline_sharpe": NaN,
+      "vs_fixed_default_ratio": null,
+      "n_folds": 5
+    }
+  ]
+}

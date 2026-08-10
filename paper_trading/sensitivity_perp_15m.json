@@ -1,63 +1,63 @@
 {
   "symbol": "BTC_USDT",
   "freq": "15min",
-  "generated_at_utc": "2026-08-10T17:19:46.948795Z",
+  "generated_at_utc": "2026-08-10T17:21:40.551971Z",
   "results": [
     {
       "strategy": "MA_Crossover(10/50)",
       "n_values_tested": 10,
       "frac_profitable": 0.0,
-      "sharpe_min": -7.534182937478783,
-      "sharpe_max": -3.916191456855356
+      "sharpe_min": -7.551656179479799,
+      "sharpe_max": -3.9084436064062706
     },
     {
       "strategy": "Donchian_Breakout(20)",
       "n_values_tested": 6,
       "frac_profitable": 0.16666666666666666,
-      "sharpe_min": -7.567997481126427,
-      "sharpe_max": 1.5224773060293435
+      "sharpe_min": -7.582875027199665,
+      "sharpe_max": 1.5750715050116237
     },
     {
       "strategy": "MACD_Momentum(12/26/9)",
       "n_values_tested": 9,
       "frac_profitable": 0.0,
-      "sharpe_min": -15.851608704434152,
-      "sharpe_max": -5.934685993208212
+      "sharpe_min": -15.890724926204895,
+      "sharpe_max": -5.956931331057478
     },
     {
       "strategy": "RSI_Reversion(14,30/70)",
       "n_values_tested": 10,
       "frac_profitable": 0.0,
-      "sharpe_min": -22.16665201792117,
-      "sharpe_max": -10.049961020290695
+      "sharpe_min": -22.13544880758408,
+      "sharpe_max": -10.032949760435063
     },
     {
       "strategy": "Bollinger_Reversion(20,2sd)",
       "n_values_tested": 7,
       "frac_profitable": 0.0,
-      "sharpe_min": -12.504594797420337,
-      "sharpe_max": -8.301633445100409
+      "sharpe_min": -12.447335150231618,
+      "sharpe_max": -8.269636691709522
     },
     {
       "strategy": "ZScore_Reversion(20,z=2.0)",
       "n_values_tested": 7,
       "frac_profitable": 0.0,
-      "sharpe_min": -13.959422380593722,
-      "sharpe_max": -7.957209283407082
+      "sharpe_min": -13.896841307995862,
+      "sharpe_max": -7.929552829214215
     },
     {
       "strategy": "ATR_Vol_Breakout(14,k=1.5)",
       "n_values_tested": 8,
       "frac_profitable": 0.0,
-      "sharpe_min": -8.548800757797682,
-      "sharpe_max": -4.398127046892708
+      "sharpe_min": -8.524592724615632,
+      "sharpe_max": -4.473106895772723
     },
     {
       "strategy": "Supertrend(10,m=3.0)",
       "n_values_tested": 8,
       "frac_profitable": 0.0,
-      "sharpe_min": -11.866240072324347,
-      "sharpe_max": -2.0231794322470606
+      "sharpe_min": -11.873024687565493,
+      "sharpe_max": -2.0003830561894214
     },
     {
       "strategy": "VWAP_Reversion(20,2%)",
@@ -70,22 +70,22 @@
       "strategy": "Engulfing_Reversal(0.3)",
       "n_values_tested": 4,
       "frac_profitable": 0.0,
-      "sharpe_min": -14.226586739048663,
-      "sharpe_max": -13.364793333150459
+      "sharpe_min": -14.116765604205783,
+      "sharpe_max": -13.256400144927099
     },
     {
       "strategy": "Inside_Bar_Breakout(0.6)",
       "n_values_tested": 4,
       "frac_profitable": 0.5,
-      "sharpe_min": -3.2347660002866467,
-      "sharpe_max": 3.735831839658095
+      "sharpe_min": -3.22297883819675,
+      "sharpe_max": 3.781626922591295
     },
     {
       "strategy": "Opening_Range_Breakout(6)",
       "n_values_tested": 4,
       "frac_profitable": 0.0,
-      "sharpe_min": -9.72893094292734,
-      "sharpe_max": -6.4306925909764425
+      "sharpe_min": -9.7155632665407,
+      "sharpe_max": -6.407340661590062
     }
   ]
 }

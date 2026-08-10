@@ -333,6 +333,25 @@ value), so neither runs on every hourly update:
   were also profitable (`sensitivity*.json`). Answers "is the edge a
   plateau, or a spike at exactly one setting."
 
+Both scripts (plus `meta_strategy_snapshot.py`) accept `--leverage`, which
+sets `capital_fraction` and swaps in the maintenance-margin-based
+liquidation floor (`perp_max_loss_fraction()`, imported directly from
+`paper_trade_update.py` rather than duplicated) instead of the flat
+unleveraged floor - a flat floor is economically meaningless at leverage,
+same reasoning as the live perp tracks. This closed a real gap: all four
+perpetual futures tracks had **zero** walk-forward/sensitivity/meta-strategy
+validation until this was added - their Locked-in Strategy and
+Meta-strategy Selector panels were placeholder text despite the tracks
+themselves running live for a full session. Real result, now that they're
+actually validated: none of the four leveraged tracks currently has a
+strategy that clears all three Locked-in Strategy bars (profitable,
+walk-forward-robust, parameter-stable) at once - a stronger, more precise
+version of the "leverage punishes drawdowns" finding below, not just an
+in-sample observation anymore. The four daily/15-min/ETH/SOL spot
+snapshots were also refreshed while at it - the previous ones predated the
+three pattern-recognition strategies entirely, so they were structurally
+incomplete, not just stale.
+
 The dashboard's "Robustness (walk-forward)" table shows both together per
 track, and the landing page's "Cross-asset validated" panel cross-
 references walk-forward results across the three daily tracks (BTC/ETH/

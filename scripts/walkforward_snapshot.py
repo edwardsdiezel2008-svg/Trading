@@ -20,6 +20,7 @@ import sys
 
 sys.path.insert(0, ".")
 
+from scripts.paper_trade_update import perp_max_loss_fraction
 from src.backtest.data_loader import load_bars
 from src.backtest.instruments import get_spec
 from src.backtest.strategies import ALL_STRATEGY_CLASSES
@@ -33,6 +34,9 @@ def parse_args(argv=None):
     p.add_argument("--freq", default="1D")
     p.add_argument("--n-folds", type=int, default=5)
     p.add_argument("--capital", type=float, default=100_000.0)
+    p.add_argument("--leverage", type=float, default=1.0,
+                    help="Leverage for a perpetual futures track (sets capital_fraction and the "
+                         "maintenance-margin-based liquidation floor, matching paper_trade_update.py).")
     p.add_argument("--output", required=True)
     return p.parse_args(argv)
 
@@ -41,13 +45,16 @@ def main(argv=None):
     args = parse_args(argv)
     bars = load_bars(args.bars, freq=args.freq)
     spec = get_spec(args.symbol)
+    engine_kwargs = {"capital_fraction": args.leverage}
+    if args.leverage != 1.0:
+        engine_kwargs["max_loss_fraction"] = perp_max_loss_fraction(args.leverage)
 
     results = []
     for cls in ALL_STRATEGY_CLASSES:
         name = cls().name
         print(f"Walk-forward: {name}...")
         try:
-            wf = run_walk_forward(bars, cls, spec, n_folds=args.n_folds, initial_capital=args.capital, freq_hint=args.freq)
+            wf = run_walk_forward(bars, cls, spec, n_folds=args.n_folds, initial_capital=args.capital, freq_hint=args.freq, **engine_kwargs)
         except ValueError as e:
             print(f"  skipped: {e}")
             results.append({"strategy": name, "error": str(e)})
