@@ -1,0 +1,302 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    color-scheme: light;
+    --page: #EEF1F5;
+    --surface: #FBFCFE;
+    --surface-2: #F1F4F8;
+    --ink: #10141C;
+    --ink-2: #4A5568;
+    --ink-muted: #8A93A3;
+    --border: rgba(16,20,28,0.10);
+    --grid: #E2E6ED;
+    --accent: #B5792C;
+    --accent-wash: rgba(181,121,44,0.14);
+    --good: #0ca30c;
+    --good-wash: rgba(12,163,12,0.12);
+    --critical: #d03b3b;
+    --critical-wash: rgba(208,59,59,0.12);
+    --neutral-wash: rgba(74,85,104,0.09);
+    --scan: #0891b2;
+    --scan-wash: rgba(8,145,178,0.10);
+    --scan-glow: rgba(8,145,178,0.35);
+    --shadow: 0 1px 2px rgba(16,20,28,0.06), 0 10px 28px -14px rgba(16,20,28,0.22);
+    --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Liberation Mono", Menlo, Consolas, monospace;
+    --fs-xs: 0.6875rem; --fs-sm: 0.8125rem; --fs-base: 0.9375rem; --fs-lg: 1.125rem;
+    --fs-display: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page: #0B0E14; --surface: #131822; --surface-2: #171D28;
+      --ink: #E8ECF3; --ink-2: #AEB6C4; --ink-muted: #6B7385;
+      --border: rgba(255,255,255,0.10); --grid: #232A38;
+      --accent: #D69A4E; --accent-wash: rgba(214,154,78,0.16);
+      --good: #0ca30c; --good-wash: rgba(12,163,12,0.18);
+      --critical: #e0585b; --critical-wash: rgba(224,88,91,0.18);
+      --neutral-wash: rgba(174,182,196,0.10);
+      --scan: #22d3ee; --scan-wash: rgba(34,211,238,0.14); --scan-glow: rgba(34,211,238,0.55);
+      --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 10px 28px -14px rgba(0,0,0,0.55);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0B0E14; --surface: #131822; --surface-2: #171D28;
+    --ink: #E8ECF3; --ink-2: #AEB6C4; --ink-muted: #6B7385;
+    --border: rgba(255,255,255,0.10); --grid: #232A38;
+    --accent: #D69A4E; --accent-wash: rgba(214,154,78,0.16);
+    --good: #0ca30c; --good-wash: rgba(12,163,12,0.18);
+    --critical: #e0585b; --critical-wash: rgba(224,88,91,0.18);
+    --neutral-wash: rgba(174,182,196,0.10);
+    --scan: #22d3ee; --scan-wash: rgba(34,211,238,0.14); --scan-glow: rgba(34,211,238,0.55);
+    --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 10px 28px -14px rgba(0,0,0,0.55);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    background-image:
+      radial-gradient(circle at 12% -5%, var(--scan-wash), transparent 40%),
+      radial-gradient(circle at 88% 105%, var(--scan-wash), transparent 40%);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-size: var(--fs-base);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  .ambient-field { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .ambient-grid {
+    position: absolute; inset: -10% -10%; opacity: 0.35;
+    background-image:
+      repeating-linear-gradient(0deg, var(--scan-wash) 0, var(--scan-wash) 1px, transparent 1px, transparent 64px),
+      repeating-linear-gradient(90deg, var(--scan-wash) 0, var(--scan-wash) 1px, transparent 1px, transparent 64px);
+    animation: ambient-grid-drift 34s linear infinite;
+    mask-image: radial-gradient(circle at 50% 15%, black, transparent 72%);
+    -webkit-mask-image: radial-gradient(circle at 50% 15%, black, transparent 72%);
+  }
+  @keyframes ambient-grid-drift { from { background-position: 0 0, 0 0; } to { background-position: 64px 64px, -64px 64px; } }
+  .ambient-dot {
+    position: absolute; border-radius: 50%; filter: blur(1px);
+    background: radial-gradient(circle, var(--scan-glow), transparent 70%);
+    animation: ambient-drift 16s ease-in-out infinite;
+  }
+  @keyframes ambient-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+    50% { transform: translate(16px, -24px) scale(1.15); opacity: 0.65; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-grid, .ambient-dot { animation: none; }
+  }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .good { color: var(--good); }
+  .critical { color: var(--critical); }
+  :focus-visible { outline: 2px solid var(--scan); outline-offset: 2px; }
+  a { color: inherit; }
+
+  .shell { max-width: 880px; margin: 0 auto; padding: 28px 20px 48px; display: flex; flex-direction: column; gap: 22px; }
+
+  .hero { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: var(--fs-xs);
+    font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--scan);
+  }
+  .hero h1 {
+    margin: 0; font-size: var(--fs-display); font-weight: 800; letter-spacing: -0.02em; text-wrap: balance;
+    background: linear-gradient(90deg, var(--ink), var(--scan) 130%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero-sub { margin: 0; font-size: var(--fs-sm); color: var(--ink-muted); max-width: 62ch; }
+  .hero-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .details-link {
+    display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: var(--fs-xs);
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--scan); text-decoration: none;
+    background: var(--scan-wash); border: 1px solid var(--scan-wash); border-radius: 999px; padding: 5px 12px;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .details-link:hover { box-shadow: 0 0 12px var(--scan-glow); border-color: var(--scan); }
+
+  .section-label {
+    display: flex; align-items: center; gap: 8px; margin: 4px 2px 0;
+    font-family: var(--font-mono); font-size: var(--fs-sm); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--scan);
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--scan-wash), transparent); }
+
+  .panel {
+    position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: var(--shadow), 0 0 0 1px var(--scan-wash) inset; padding: 18px; overflow: hidden;
+  }
+  .panel::before, .panel::after { content: ''; position: absolute; width: 12px; height: 12px; pointer-events: none; z-index: 1; }
+  .panel::before { top: -1px; left: -1px; border-top: 2px solid var(--scan); border-left: 2px solid var(--scan); }
+  .panel::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--scan); border-right: 2px solid var(--scan); }
+  .panel p { margin: 0 0 10px; font-size: var(--fs-sm); color: var(--ink-2); }
+  .panel p:last-child { margin-bottom: 0; }
+  .panel ul { margin: 0; padding-left: 20px; font-size: var(--fs-sm); color: var(--ink-2); display: flex; flex-direction: column; gap: 6px; }
+
+  .pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 999px; font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+  .pill-trend { background: var(--scan-wash); color: var(--scan); }
+  .pill-revert { background: var(--accent-wash); color: var(--accent); }
+  .pill-breakout { background: var(--good-wash); color: var(--good); }
+
+  .strategy-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media (max-width: 700px) { .strategy-grid { grid-template-columns: 1fr; } }
+  .strategy-card {
+    position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    box-shadow: var(--shadow); padding: 14px; display: flex; flex-direction: column; gap: 6px; overflow: hidden;
+  }
+  .strategy-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--scan), transparent 85%); opacity: 0.8; }
+  .strategy-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .strategy-name { font-weight: 700; font-size: var(--fs-sm); font-family: var(--font-mono); }
+  .strategy-desc { margin: 0; font-size: var(--fs-sm); color: var(--ink-2); }
+  .strategy-needs { margin: 0; font-size: var(--fs-xs); color: var(--ink-muted); }
+
+  .glossary { display: flex; flex-direction: column; gap: 12px; }
+  .gloss-row { display: flex; flex-direction: column; gap: 2px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .gloss-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .gloss-term { font-weight: 700; font-size: var(--fs-sm); font-family: var(--font-mono); color: var(--ink); }
+  .gloss-def { margin: 0; font-size: var(--fs-sm); color: var(--ink-2); }
+
+  .step-list { display: flex; flex-direction: column; gap: 10px; counter-reset: step; }
+  .step { display: flex; gap: 10px; align-items: flex-start; }
+  .step-num {
+    flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--scan-wash); color: var(--scan);
+    font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 700; display: flex; align-items: center; justify-content: center;
+  }
+  .step p { margin: 0; font-size: var(--fs-sm); color: var(--ink-2); }
+  .step strong { color: var(--ink); }
+
+  .foot { padding: 6px 4px 0; display: flex; flex-direction: column; gap: 4px; }
+  .foot p { margin: 0; font-size: var(--fs-xs); color: var(--ink-muted); }
+</style>
+
+<div class="ambient-field" aria-hidden="true">
+  <div class="ambient-grid"></div>
+  <div class="ambient-dot" style="top:6%; left:3%; width:120px; height:120px; animation-delay:0s;"></div>
+  <div class="ambient-dot" style="top:70%; left:95%; width:160px; height:160px; animation-delay:-4s;"></div>
+  <div class="ambient-dot" style="top:38%; left:97%; width:90px; height:90px; animation-delay:-9s;"></div>
+  <div class="ambient-dot" style="top:90%; left:6%; width:110px; height:110px; animation-delay:-6s;"></div>
+</div>
+
+<div class="shell">
+  <header class="hero">
+    <span class="hero-tag"><span></span>Reference</span>
+    <h1>Learn</h1>
+    <p class="hero-sub">What this system actually does, how each strategy trades, how results get tested before anyone should trust them, and what every number on the dashboard means.</p>
+    <div class="hero-row">
+      <a class="details-link" href="index.html">← Landing page</a>
+      <a class="details-link" href="dashboard.html">Full Dashboard →</a>
+    </div>
+  </header>
+
+  <div class="section-label">What this actually is</div>
+  <div class="panel">
+    <p>A fully autonomous paper-trading research system. A GitHub Actions pipeline checks in on real BTC/ETH/SOL and memecoin market data roughly once an hour, runs nine backtested strategies against it per asset, and rebuilds this site - all independent of anyone having a chat session open. No real money is ever at risk: every position, fill, and P&amp;L figure here is simulated against real prices, not placed on a real exchange.</p>
+    <p>The point isn't to promise a strategy that works. It's to be honest about which of nine reasonable, well-known trading ideas actually hold up against real data, and to show the evidence - including the ones that don't hold up - rather than curate a highlight reel.</p>
+  </div>
+
+  <div class="section-label">The nine strategies</div>
+  <div class="strategy-grid">
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">MA_Crossover</span><span class="pill pill-trend">Trend</span></div>
+      <p class="strategy-desc">Long while the fast moving average (10) sits above the slow one (50), short while it sits below. The oldest trend-following idea there is.</p>
+      <p class="strategy-needs">Needs: a market that trends for a while once it starts moving.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">Donchian_Breakout</span><span class="pill pill-breakout">Breakout</span></div>
+      <p class="strategy-desc">Long on a close above the 20-bar high, short on a close below the 20-bar low - the "turtle trading" channel breakout.</p>
+      <p class="strategy-needs">Needs: breakouts that follow through instead of immediately reversing.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">MACD_Momentum</span><span class="pill pill-trend">Trend</span></div>
+      <p class="strategy-desc">Trades the sign of the MACD histogram - the gap between a 12/26-period EMA difference and its own 9-period signal line.</p>
+      <p class="strategy-needs">Needs: sustained momentum, not chop.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">RSI_Reversion</span><span class="pill pill-revert">Mean-Reversion</span></div>
+      <p class="strategy-desc">Buys when 14-period RSI drops under 30 (oversold), shorts when it tops 70 (overbought), on the bet that extremes snap back.</p>
+      <p class="strategy-needs">Needs: a range-bound market - actively hurt by strong trends.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">Bollinger_Reversion</span><span class="pill pill-revert">Mean-Reversion</span></div>
+      <p class="strategy-desc">Fades a close outside the 20-period, 2-standard-deviation band back toward its own moving-average midline.</p>
+      <p class="strategy-needs">Needs: volatility that mean-reverts rather than expands.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">ZScore_Reversion</span><span class="pill pill-revert">Mean-Reversion</span></div>
+      <p class="strategy-desc">Same idea as Bollinger Reversion, expressed as a raw statistical z-score of price vs. its 20-period mean instead of a band.</p>
+      <p class="strategy-needs">Needs: a range-bound market.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">ATR_Vol_Breakout</span><span class="pill pill-breakout">Breakout</span></div>
+      <p class="strategy-desc">Enters in the direction of a move larger than 1.5x the 14-period Average True Range - a volatility-scaled breakout instead of a fixed price level.</p>
+      <p class="strategy-needs">Needs: volatility expansions that mark the start of a real move.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">Supertrend</span><span class="pill pill-trend">Trend</span></div>
+      <p class="strategy-desc">A trailing ATR band (10-period, 3.0x multiplier) that only ever ratchets in the trend's favor - price closing through it flips the position.</p>
+      <p class="strategy-needs">Needs: a trend, with a built-in trailing stop baked into the signal itself.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">VWAP_Reversion</span><span class="pill pill-revert">Mean-Reversion</span></div>
+      <p class="strategy-desc">Fades price more than 2% away from a rolling volume-weighted average price - the only strategy here that actually uses trading volume, not just close price.</p>
+      <p class="strategy-needs">Needs: a range-bound market where volume-weighted fair value holds.</p>
+    </div>
+  </div>
+
+  <div class="section-label">How we test before trusting a strategy</div>
+  <div class="panel">
+    <div class="step-list">
+      <div class="step"><span class="step-num">1</span><p><strong>Full-backtest return.</strong> Every strategy's total return over the whole available price history, starting from $100,000. This alone is a weak signal - it's one long in-sample fit, and a strategy can look great by luck over one specific history.</p></div>
+      <div class="step"><span class="step-num">2</span><p><strong>Walk-forward validation.</strong> Parameters get re-optimized on a rolling training window and scored only on the data right after it, which the fit never saw. A strategy is only called "robust" here if it made money out-of-sample, not just in hindsight.</p></div>
+      <div class="step"><span class="step-num">3</span><p><strong>Parameter stability.</strong> A real edge tends to hold up across a plateau of nearby settings (a lookback of 18 or 22, not just exactly 20). We sweep nearby parameter values and report the fraction that were also profitable - a strategy that only works at one exact number is more likely overfit.</p></div>
+      <div class="step"><span class="step-num">4</span><p><strong>Cross-asset robustness.</strong> A strategy that's walk-forward-robust on BTC alone could just be that one price history getting lucky. We check whether it's independently robust on ETH and SOL too - three unrelated histories agreeing is much harder to explain by chance.</p></div>
+    </div>
+  </div>
+
+  <div class="section-label">Reading the numbers</div>
+  <div class="panel">
+    <div class="glossary">
+      <div class="gloss-row"><span class="gloss-term">Total Return</span><p class="gloss-def">Ending equity vs. the $100,000 starting capital, over the full backtest history.</p></div>
+      <div class="gloss-row"><span class="gloss-term">Max Drawdown</span><p class="gloss-def">The single largest peak-to-trough decline in a strategy's equity curve. Two strategies can end with the same total return and have very different rides getting there - this is the "how bad could it get" number that total return alone hides.</p></div>
+      <div class="gloss-row"><span class="gloss-term">Win Rate</span><p class="gloss-def">% of closed trades that were profitable. A low win rate isn't automatically bad - trend-followers often win under half their trades but let the winners run far larger than the losers.</p></div>
+      <div class="gloss-row"><span class="gloss-term">Profit Factor</span><p class="gloss-def">Gross profit divided by gross loss. Above 1.0 means profitable overall even with a low win rate; the natural companion stat to Win Rate.</p></div>
+      <div class="gloss-row"><span class="gloss-term">Out-of-Sample Sharpe</span><p class="gloss-def">Return per unit of volatility, measured only on the walk-forward test windows a strategy's parameters were never fit to.</p></div>
+      <div class="gloss-row"><span class="gloss-term">Duration</span><p class="gloss-def">How long a closed trade was held, entry to exit - tells apart a scalp (minutes to hours) from a multi-day swing at a glance.</p></div>
+      <div class="gloss-row"><span class="gloss-term">Buy &amp; Hold benchmark</span><p class="gloss-def">What simply buying at the start and holding would have returned - the bar every active strategy has to actually beat to justify trading at all.</p></div>
+      <div class="gloss-row"><span class="gloss-term">Regime (Trending / Ranging)</span><p class="gloss-def">Classified from ADX on recent price action. Trend-following strategies need a trending regime to have anything to catch; mean-reversion strategies need a ranging one.</p></div>
+    </div>
+  </div>
+
+  <div class="section-label">Rug Pull Watch, honestly</div>
+  <div class="panel">
+    <p>The memecoin scanner's Rug Pull Watch panel flags coins with a severe 24-hour decline, a severe drawdown from their 24h high, or (for the 11 coins with full hourly history) a slow multi-day slide from their own trailing high. That's a <strong>price-action crash proxy from CEX ticker data</strong> - the aftermath a rug pull leaves behind - not on-chain rug detection. There's no holder-concentration or liquidity-lock signal behind it, and this exchange is a curated, mainstream listing where an actual on-chain rug pull (LP drain, honeypot contract) is rare. Most flags are ordinary high-volatility drawdowns or thin-liquidity air pockets, not literal rugs.</p>
+  </div>
+
+  <div class="section-label">The pipeline</div>
+  <div class="panel">
+    <p>A GitHub Actions workflow runs on a schedule (roughly hourly), independent of any browser tab or chat session being open. Each run: fetches fresh BTC/ETH/SOL and memecoin candles plus order book, funding rate, Fear &amp; Greed, and news data from public sources (mainly Crypto.com Exchange's REST API); updates every paper-trading track's simulated positions; refreshes the memecoin scanners; rebuilds both HTML pages; commits the result; and redeploys to GitHub Pages. This page you're reading is served from that same deploy.</p>
+    <p>Costs are modeled, not ignored: every simulated crypto trade pays Crypto.com's published taker fee (0.075%) plus an assumed 0.05% slippage, both round-trip - a strategy has to clear that bar on every single trade, not just be directionally right.</p>
+  </div>
+
+  <div class="section-label">Caveats worth repeating</div>
+  <div class="panel">
+    <ul>
+      <li><strong>Simulated, not real money.</strong> No trades are ever actually placed anywhere. Nothing here is investment advice.</li>
+      <li><strong>Hourly, not real-time.</strong> The system checks in on the market roughly once an hour; it doesn't react intraday beyond that cadence.</li>
+      <li><strong>New tracks are noisy.</strong> A strategy with only a few dozen bars of history can look great or terrible by chance alone - the dashboard flags this explicitly wherever a track is still thin on data.</li>
+      <li><strong>The backtest engine doesn't model margin calls.</strong> Unconstrained short position sizing can push a simulated account's equity to or below zero over a long enough history - the dashboard labels this "wiped out" rather than showing a confusing negative dollar figure.</li>
+    </ul>
+  </div>
+
+  <footer class="foot">
+    <p>Simulated, not real money - no trades are ever actually placed. Not investment advice.</p>
+    <p>Rebuilt every hourly check-in from real Crypto.com Exchange data via GitHub Actions - independent of any chat session being open.</p>
+  </footer>
+</div>

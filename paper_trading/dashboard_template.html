@@ -1,3 +1,4 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   :root {
     color-scheme: light;
@@ -132,7 +133,7 @@
     background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
     padding: 5px 12px; white-space: nowrap;
   }
-  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .overview-link {
     display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: var(--fs-xs);
     font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--scan); text-decoration: none;
@@ -347,6 +348,7 @@
     </div>
     <div class="topbar-right">
       <a class="overview-link" href="index.html"><span class="scan-pulse-dot" style="width:6px; height:6px;"></span>Overview</a>
+      <a class="overview-link" href="learn.html">Learn</a>
       <span class="updated-badge mono" id="updatedBadge">—</span>
     </div>
   </header>

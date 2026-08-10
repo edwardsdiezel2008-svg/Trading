@@ -6,7 +6,10 @@ real Crypto.com Exchange data - BTC (daily + 15-minute), ETH (daily), SOL
 
 **Live site:** the root of this repo's GitHub Pages deployment is the
 minimal landing page; `/dashboard.html` is the full detail page with every
-track, chart, and table.
+track, chart, and table; `/learn.html` is a static methodology/glossary
+page - what each strategy trades, how results get validated (walk-forward,
+param stability, cross-asset robustness), and what every metric on the
+dashboard means.
 
 ## How it actually works
 
@@ -37,8 +40,10 @@ manual `workflow_dispatch`):
 4. `scripts/build_paper_trading_dashboard.py` rebuilds both HTML pages from
    the current state.
 5. Commits and pushes everything under `paper_trading/` if anything
-   changed, then stages `index.html` + `dashboard.html` and deploys them to
-   GitHub Pages via `actions/deploy-pages@v4`.
+   changed, then stages `index.html` + `dashboard.html` + `learn.html` and
+   deploys them to GitHub Pages via `actions/deploy-pages@v4`. `learn.html`
+   is static (no data placeholders) and isn't touched by the build script -
+   it's hand-edited directly and just gets copied through unchanged.
 
 ## Risk floor (applies to every live track)
 
