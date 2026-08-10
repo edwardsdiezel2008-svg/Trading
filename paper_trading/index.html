@@ -69,7 +69,9 @@
     font-size: var(--fs-base);
     line-height: 1.45;
     -webkit-font-smoothing: antialiased;
+    animation: page-fade-in 0.28s ease;
   }
+  @keyframes page-fade-in { from { opacity: 0; } to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
@@ -596,6 +598,13 @@
   (function initSwipeNav() {
     let startX = null, startY = null;
     const THRESHOLD = 60;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function navigateWithSlide(href, dx) {
+      document.body.style.transition = 'opacity 0.16s ease, transform 0.16s ease';
+      document.body.style.opacity = '0';
+      document.body.style.transform = 'translateX(' + (dx < 0 ? '-24px' : '24px') + ')';
+      setTimeout(() => { location.href = href; }, reduced ? 0 : 150);
+    }
     document.addEventListener('touchstart', (e) => {
       if (e.touches.length !== 1) return;
       startX = e.touches[0].clientX; startY = e.touches[0].clientY;
@@ -606,7 +615,7 @@
       const dy = e.changedTouches[0].clientY - startY;
       startX = null;
       if (Math.abs(dx) < THRESHOLD || Math.abs(dx) < Math.abs(dy) * 1.5) return;
-      location.href = dx < 0 ? 'dashboard.html' : 'learn.html';
+      navigateWithSlide(dx < 0 ? 'dashboard.html' : 'learn.html', dx);
     }, { passive: true });
   })();
 })();

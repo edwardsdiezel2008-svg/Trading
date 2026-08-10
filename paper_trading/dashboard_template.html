@@ -86,12 +86,22 @@
     font-size: var(--fs-base);
     line-height: 1.45;
     -webkit-font-smoothing: antialiased;
+    animation: page-fade-in 0.28s ease;
   }
+  @keyframes page-fade-in { from { opacity: 0; } to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
   .view-fade { animation: view-fade-in 0.25s ease; }
   @keyframes view-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  /* Directional variants used when a tab change comes from a swipe, so the
+     new tab visibly enters from the side you swiped toward instead of just
+     fading in place - the plain vertical fade above stays the default for
+     clicking a tab directly. */
+  .view-slide-left { animation: view-slide-left-in 0.22s ease; }
+  @keyframes view-slide-left-in { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
+  .view-slide-right { animation: view-slide-right-in 0.22s ease; }
+  @keyframes view-slide-right-in { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: translateX(0); } }
 
   .ambient-field { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
   .ambient-grid {
@@ -1489,23 +1499,26 @@
     else render(activeKey);
   }
 
-  function activateTab(track) {
+  const VIEW_ANIM_CLASSES = ['view-fade', 'view-slide-left', 'view-slide-right'];
+
+  function activateTab(track, animClass) {
     const btn = document.querySelector(`.tab-btn[data-track="${track}"]`);
     if (!btn) return false;
+    const cls = animClass || 'view-fade';
     document.querySelectorAll('.tab-btn').forEach((b) => b.classList.toggle('active', b === btn));
     if (track === 'memecoin') {
       activeView = 'memecoin';
       document.getElementById('btcTrackView').style.display = 'none';
       const meme = document.getElementById('memecoinView');
       meme.style.display = '';
-      meme.classList.remove('view-fade'); void meme.offsetWidth; meme.classList.add('view-fade');
+      meme.classList.remove(...VIEW_ANIM_CLASSES); void meme.offsetWidth; meme.classList.add(cls);
       renderMemecoinScanner();
     } else {
       activeView = 'btc';
       document.getElementById('memecoinView').style.display = 'none';
       const btcView = document.getElementById('btcTrackView');
       btcView.style.display = '';
-      btcView.classList.remove('view-fade'); void btcView.offsetWidth; btcView.classList.add('view-fade');
+      btcView.classList.remove(...VIEW_ANIM_CLASSES); void btcView.offsetWidth; btcView.classList.add(cls);
       render(track);
     }
     btn.scrollIntoView({ block: 'nearest', inline: 'center' });
@@ -1552,7 +1565,7 @@
       const idx = TRACK_ORDER.indexOf(current);
       if (idx === -1) return;
       const nextIdx = dx < 0 ? (idx + 1) % TRACK_ORDER.length : (idx - 1 + TRACK_ORDER.length) % TRACK_ORDER.length;
-      activateTab(TRACK_ORDER[nextIdx]);
+      activateTab(TRACK_ORDER[nextIdx], dx < 0 ? 'view-slide-left' : 'view-slide-right');
     }, { passive: true });
   })();
 
