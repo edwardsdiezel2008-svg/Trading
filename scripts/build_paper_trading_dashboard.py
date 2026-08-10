@@ -42,6 +42,7 @@ TRACKS = [
     ("_eth_perp", "POSITIONS_ETH_PERP_JSON", "TRADES_ETH_PERP_JSON", "TRACK_RECORD_ETH_PERP_JSON", "BARS_ETH_PERP_JSON", "WALKFORWARD_ETH_PERP_JSON", "SENSITIVITY_ETH_PERP_JSON"),
     ("_sol_perp", "POSITIONS_SOL_PERP_JSON", "TRADES_SOL_PERP_JSON", "TRACK_RECORD_SOL_PERP_JSON", "BARS_SOL_PERP_JSON", "WALKFORWARD_SOL_PERP_JSON", "SENSITIVITY_SOL_PERP_JSON"),
     ("_nq", "POSITIONS_NQ_JSON", "TRADES_NQ_JSON", "TRACK_RECORD_NQ_JSON", "BARS_NQ_JSON", "WALKFORWARD_NQ_JSON", "SENSITIVITY_NQ_JSON"),
+    ("_nq5m", "POSITIONS_NQ5M_JSON", "TRADES_NQ5M_JSON", "TRACK_RECORD_NQ5M_JSON", "BARS_NQ5M_JSON", "WALKFORWARD_NQ5M_JSON", "SENSITIVITY_NQ5M_JSON"),
 ]
 
 # suffix -> (hash-link key used by dashboard_template.html's tab wiring, nav label)
@@ -54,7 +55,8 @@ TRACK_META = {
     "_perp_15m": ("perp15m", "BTC Perp 15-Min"),
     "_eth_perp": ("ethPerp", "ETH Perpetual"),
     "_sol_perp": ("solPerp", "SOL Perpetual"),
-    "_nq": ("nq", "Nasdaq-100 Futures"),
+    "_nq": ("nq", "Nasdaq Futures (Daily)"),
+    "_nq5m": ("nq5m", "Nasdaq Futures (5-Min)"),
 }
 
 EMPTY_WALKFORWARD = {"symbol": None, "freq": None, "n_folds": 0, "generated_at_utc": None, "results": []}
@@ -420,7 +422,7 @@ def build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_gre
         symbol = loaded[suffix]["positions"].get("symbol") or {
             "": "BTC/USDT", "_15m": "BTC/USDT", "_eth": "ETH/USDT", "_sol": "SOL/USDT",
             "_perp": "BTC/USDT", "_perp_15m": "BTC/USDT", "_eth_perp": "ETH/USDT", "_sol_perp": "SOL/USDT",
-            "_nq": "QQQ",
+            "_nq": "MNQ", "_nq5m": "MNQ",
         }[suffix]
         summaries[key] = summarize_track(loaded[suffix]["positions"], label, symbol)
     out = out.replace("__TRACK_SUMMARIES_JSON__", json.dumps(summaries))

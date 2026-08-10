@@ -199,11 +199,11 @@
 
   <div class="section-label">What this actually is</div>
   <div class="panel">
-    <p>A fully autonomous paper-trading research system. A GitHub Actions pipeline checks in on real BTC/ETH/SOL and memecoin market data roughly once an hour, runs nine backtested strategies against it per asset, and rebuilds this site - all independent of anyone having a chat session open. No real money is ever at risk: every position, fill, and P&amp;L figure here is simulated against real prices, not placed on a real exchange.</p>
-    <p>The point isn't to promise a strategy that works. It's to be honest about which of nine reasonable, well-known trading ideas actually hold up against real data, and to show the evidence - including the ones that don't hold up - rather than curate a highlight reel.</p>
+    <p>A fully autonomous paper-trading research system. A GitHub Actions pipeline checks in on real BTC/ETH/SOL, Nasdaq futures, and memecoin market data roughly once an hour, runs 12 backtested strategies against it per asset, and rebuilds this site - all independent of anyone having a chat session open. No real money is ever at risk: every position, fill, and P&amp;L figure here is simulated against real prices, not placed on a real exchange.</p>
+    <p>The point isn't to promise a strategy that works. It's to be honest about which of 12 reasonable, well-known trading ideas actually hold up against real data, and to show the evidence - including the ones that don't hold up - rather than curate a highlight reel.</p>
   </div>
 
-  <div class="section-label">The nine strategies</div>
+  <div class="section-label">The 12 strategies</div>
   <div class="strategy-grid">
     <div class="strategy-card">
       <div class="strategy-top"><span class="strategy-name">MA_Crossover</span><span class="pill pill-trend">Trend</span></div>
@@ -247,8 +247,23 @@
     </div>
     <div class="strategy-card">
       <div class="strategy-top"><span class="strategy-name">VWAP_Reversion</span><span class="pill pill-revert">Mean-Reversion</span></div>
-      <p class="strategy-desc">Fades price more than 2% away from a rolling volume-weighted average price - the only strategy here that actually uses trading volume, not just close price.</p>
+      <p class="strategy-desc">Fades price more than 2% away from a rolling volume-weighted average price - the only one of the indicator-based strategies that actually uses trading volume, not just close price.</p>
       <p class="strategy-needs">Needs: a range-bound market where volume-weighted fair value holds.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">Engulfing_Reversal</span><span class="pill pill-revert">Pattern</span></div>
+      <p class="strategy-desc">A two-candle reversal: a bullish engulfing candle (green body fully covering the prior red candle's body) after a down move signals long; bearish engulfing signals short.</p>
+      <p class="strategy-needs">Needs: real conviction behind the reversal candle - weak, doji-like bodies are filtered out.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">Inside_Bar_Breakout</span><span class="pill pill-breakout">Pattern</span></div>
+      <p class="strategy-desc">Trades a consolidation-then-breakout setup: an "inside bar" contained entirely within the prior "mother" bar's range, followed by a close beyond that mother bar's high or low.</p>
+      <p class="strategy-needs">Needs: a genuine pause before the move, not constant chop.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">Opening_Range_Breakout</span><span class="pill pill-breakout">Pattern</span></div>
+      <p class="strategy-desc">The standard 5-minute ORB day-trading setup: the first few bars of each session set an "opening range," and a breakout of that range confirmed by VWAP triggers an entry held until session end.</p>
+      <p class="strategy-needs">Needs: an intraday timeframe with real session structure - correctly never fires on daily bars.</p>
     </div>
   </div>
 
@@ -276,22 +291,36 @@
       <div class="gloss-row"><span class="gloss-term">Leverage</span><p class="gloss-def">Position notional as a multiple of equity - every perpetual futures track runs at 3x, so the same price move produces roughly 3x the gain or loss of that track's spot equivalent.</p></div>
       <div class="gloss-row"><span class="gloss-term">Liquidation Price</span><p class="gloss-def">The price at which a leveraged position gets force-closed because it's lost too much of the margin backing it - the leveraged-specific risk the spot tracks don't have at all. "Distance to liquidation" on the BTC Perpetual tab is how far the current price sits from that level.</p></div>
       <div class="gloss-row"><span class="gloss-term">Funding Accrued</span><p class="gloss-def">A real running total of the periodic payment perpetual contracts exchange between longs and shorts, using the live rate fetched each hourly check-in. Tracked separately from Total Return/Equity, not blended into them - see "BTC Perpetual, honestly" below.</p></div>
+      <div class="gloss-row"><span class="gloss-term">Locked-in Strategy</span><p class="gloss-def">The single strategy on a track, if any, currently profitable on the full backtest, walk-forward-robust, and parameter-stable all at once - computed live from that track's robustness data, not hand-picked. See "Locked-in strategy, honestly" below.</p></div>
+      <div class="gloss-row"><span class="gloss-term">NQ=F / MNQ</span><p class="gloss-def">NQ=F is Yahoo Finance's ticker for the real CME Nasdaq-100 E-mini futures continuous contract - the actual price both Nasdaq Futures tabs trade. MNQ is the Micro E-mini version of the same contract: identical index price, 1/10th the point-value multiplier, which is the contract economics used for P&amp;L math here.</p></div>
     </div>
   </div>
 
   <div class="section-label">Perpetual futures, honestly</div>
   <div class="panel">
-    <p>Four tabs (BTC Perpetual, BTC Perp 15-Min, ETH Perpetual, SOL Perpetual) run the same 9 strategies at 3x leverage against the same price history as their spot equivalent - same price moves, amplified gains <em>and</em> losses. 3x sits inside the 1x-5x leverage range widely recommended for beginners on crypto perpetuals. A few things worth being upfront about:</p>
-    <p><strong>Leverage doesn't just scale returns by 3x.</strong> It changes the compounding dynamics: a position that would have simply drawn down and recovered unleveraged can instead get liquidated at 3x, permanently losing the capital that would have ridden out the recovery. As of this writing, the ETH and SOL Perpetual tabs show <strong>zero</strong> profitable strategies, against 3/9 and 5/9 profitable on their unleveraged spot equivalents - the more volatile an asset, the harder leverage punishes exactly this dynamic. That's a real finding, not a bug in the simulation - compare any strategy's Total Return here against its spot-track equivalent and it's frequently <em>lower</em>, not higher.</p>
+    <p>Four tabs (BTC Perpetual, BTC Perp 15-Min, ETH Perpetual, SOL Perpetual) run the full strategy library at 3x leverage against the same price history as their spot equivalent - same price moves, amplified gains <em>and</em> losses. 3x sits inside the 1x-5x leverage range widely recommended for beginners on crypto perpetuals. A few things worth being upfront about:</p>
+    <p><strong>Leverage doesn't just scale returns by 3x.</strong> It changes the compounding dynamics: a position that would have simply drawn down and recovered unleveraged can instead get liquidated at 3x, permanently losing the capital that would have ridden out the recovery. The ETH and SOL Perpetual tabs have consistently shown far fewer profitable strategies than their unleveraged spot equivalents (see the live tabs for current counts) - the more volatile an asset, the harder leverage punishes exactly this dynamic. That's a real finding, not a bug in the simulation - compare any strategy's Total Return here against its spot-track equivalent and it's frequently <em>lower</em>, not higher.</p>
     <p><strong>Funding cost isn't backtested, only tracked going forward.</strong> Crypto.com's public API only exposes the <em>current</em> funding rate per asset, not a historical series, so there's no honest way to reconstruct what funding would have cost over the multi-year backtest period. The "Funding Accrued" figure is real, not simulated - it accrues from each asset's own live rate at each hourly check-in (BTC, ETH, and SOL funding rates are fetched and tracked independently, since each reflects that asset's own long/short positioning) - but it only started counting from when this feature launched, and it's shown separately from Total Return/Equity rather than silently folded into them. Crypto.com Exchange recalculates funding every 4 hours and settles it hourly against open positions, so applying the live rate once per hourly check-in matches its real cadence rather than approximating it.</p>
   </div>
 
-  <div class="section-label">Nasdaq-100 Futures, honestly</div>
+  <div class="section-label">Nasdaq Futures, honestly</div>
   <div class="panel">
-    <p>The Nasdaq-100 Futures tab runs the same 9 strategies against <strong>QQQ</strong> (the Invesco QQQ Trust), not real CME NQ/MNQ futures contracts. A few things worth being upfront about:</p>
-    <p><strong>Why QQQ, not real futures data.</strong> Genuine Nasdaq-100 futures tick/bar history isn't available from any free, no-API-key, no-CAPTCHA public source - every option checked (EODHD, Financial Modeling Prep, Databento, kibot, firstratedata) requires at least a free account, which this unattended hourly pipeline has no way to hold credentials for. QQQ is the most liquid public proxy for the index, and it tracks the Nasdaq-100 closely; Stooq serves its full daily history as a plain, keyless CSV, the same way Crypto.com Exchange's public API serves crypto candles without needing an account.</p>
-    <p><strong>Why unleveraged.</strong> Real Micro E-mini Nasdaq-100 (MNQ) futures currently require roughly $1,650 in CME initial margin against a notional value of tens of thousands of dollars - implied leverage in the ~25-30x range, set by the exchange, not a discretionary choice like the crypto perpetual tabs' 3x. This track deliberately doesn't attempt to simulate that: the backtest engine only checks for a liquidation-triggering loss at each bar's <em>close</em>, and daily bars are far too coarse to responsibly model ~25-30x margin risk without either constant false liquidations or a threshold so loose it stops meaning anything. The track runs unleveraged instead, so real futures' leverage and liquidation risk are context here, not something simulated.</p>
-    <p><strong>Why daily-only.</strong> Stooq's per-symbol download only serves daily/weekly/monthly data without a key - true intraday data exists there but only via a CAPTCHA-gated bulk archive that can't be automated. Real NQ/MNQ futures also trade nearly 24 hours a day, while QQQ only trades during exchange session hours, another reason intraday wouldn't be an honest proxy even if the data existed.</p>
+    <p>The two Nasdaq Futures tabs (Daily and 5-Min) run the full strategy library against the <strong>real NQ=F price</strong> - CME's Nasdaq-100 E-mini futures, continuous front contract - fetched from Yahoo Finance's public, keyless chart endpoint the same way Crypto.com Exchange's public API supplies crypto candles here without needing an account. That real price is paired with the real <strong>Micro E-mini Nasdaq-100 (MNQ)</strong> contract's point-value economics ($2/index-point multiplier, $0.75/side commission) - MNQ tracks the identical index level as full-size NQ, just at 1/10th the contract size, so this is genuine futures P&amp;L math rather than an ETF-proxy approximation. A few things worth being upfront about:</p>
+    <p><strong>Why unleveraged.</strong> Real MNQ futures currently require roughly $1,700-1,900 in CME initial margin against a notional value in the tens of thousands of dollars per contract - implied leverage in the ~25-30x range, set by the exchange, not a discretionary choice like the crypto perpetual tabs' 3x. Both tabs deliberately don't attempt to simulate that: the backtest engine only checks for a liquidation-triggering loss at each bar's <em>close</em>, and modeling ~25-30x real margin risk against bar-close-only checks - even on 5-minute bars - would produce either constant false liquidations or a threshold so loose it stops meaning anything. Both tabs run unleveraged instead, so real futures' leverage and liquidation risk are sourced context here, not something simulated.</p>
+    <p><strong>5-minute data retention.</strong> Yahoo's intraday endpoint only serves the trailing ~60 days per request - a Yahoo policy, not a choice made here. Every hourly run merges freshly-fetched bars into the 5-Min tab's own history, so it keeps accumulating past that 60-day window over time, same as every other track here.</p>
+  </div>
+
+  <div class="section-label">Pattern-recognition strategies, honestly</div>
+  <div class="panel">
+    <p>Three strategies in the library read the raw shape of the candles rather than an indicator series, added specifically because intraday timeframes - the 5-minute Nasdaq Futures tab most of all - show far more of these setups per session than a daily chart does. All three are standard, publicly documented price-action setups:</p>
+    <p><strong>Engulfing Reversal</strong> - a two-candle reversal: a bullish engulfing candle (a green candle whose body fully engulfs the prior red candle's body) after a down move signals long; a bearish engulfing candle signals short.</p>
+    <p><strong>Inside Bar Breakout</strong> - a consolidation-then-breakout setup: an "inside bar" (a bar whose entire range sits inside the prior "mother" bar's range) followed by a close beyond the mother bar's high or low.</p>
+    <p><strong>Opening Range Breakout</strong> - the standard 5-minute ORB day-trading setup: the high/low of the first few bars of each session becomes the "opening range"; a breakout of that range, confirmed by sitting on the same side of the session's cumulative VWAP, triggers an entry held until the opposite breakout or session end. On daily bars this correctly never fires - ORB is an inherently intraday concept.</p>
+  </div>
+
+  <div class="section-label">Locked-in strategy, honestly</div>
+  <div class="panel">
+    <p>Every tab now shows a "🔒 Locked-in strategy" call-out above the full comparison table, computed live in the browser from that track's walk-forward and sensitivity results: the one strategy, if any, that's simultaneously profitable on the full backtest, walk-forward-robust on out-of-sample data, and stable across nearby parameter values. If more than one clears all three bars, the highest out-of-sample Sharpe wins; if none do, the panel says so rather than picking one anyway. This is computed fresh from whatever robustness data exists for that track - it needs an actual walk-forward + sensitivity snapshot on file first, so a brand new track (like the 5-minute Nasdaq Futures tab right after launch) will read "not enough history yet" until real data accumulates and a snapshot is run.</p>
   </div>
 
   <div class="section-label">Rug Pull Watch, honestly</div>

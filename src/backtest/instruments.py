@@ -35,12 +35,6 @@ DEFAULT_SPECS = {
     "MNQ": InstrumentSpec("MNQ", "future", multiplier=2.0, tick_size=0.25, commission_per_unit=0.75),
     "YM": InstrumentSpec("YM", "future", multiplier=5.0, tick_size=1.0, commission_per_unit=2.25),
     "RTY": InstrumentSpec("RTY", "future", multiplier=50.0, tick_size=0.10, commission_per_unit=2.25),
-    # QQQ (Invesco QQQ Trust) - the Nasdaq-100 dashboard track's underlying:
-    # real NQ/MNQ futures tick data isn't available from any free, no-API-key
-    # source, so this liquid ETF proxy is traded instead with plain equity
-    # economics ($0 commission matches most modern brokers' ETF trades; 0.05%
-    # slippage is a conservative estimate for a highly liquid product).
-    "QQQ": InstrumentSpec("QQQ", "equity", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0, commission_pct=0.0, slippage_pct=0.0005),
     # Energy / metals
     "CL": InstrumentSpec("CL", "future", multiplier=1000.0, tick_size=0.01, commission_per_unit=2.50),
     "GC": InstrumentSpec("GC", "future", multiplier=100.0, tick_size=0.10, commission_per_unit=2.50),

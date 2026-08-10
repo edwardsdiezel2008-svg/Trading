@@ -424,7 +424,8 @@
     <button class="tab-btn" data-track="perp15m">⚡ BTC Perp 15-Min</button>
     <button class="tab-btn" data-track="ethPerp">⚡ ETH Perpetual</button>
     <button class="tab-btn" data-track="solPerp">⚡ SOL Perpetual</button>
-    <button class="tab-btn" data-track="nq">📈 Nasdaq-100 Futures</button>
+    <button class="tab-btn" data-track="nq">📈 Nasdaq Futures (Daily)</button>
+    <button class="tab-btn" data-track="nq5m">📈 Nasdaq Futures (5-Min)</button>
     <button class="tab-btn" data-track="memecoin">Memecoin Scanner</button>
   </div>
 
@@ -521,11 +522,18 @@
 
     <div class="panel" id="nqNote" style="display:none;">
       <div class="panel-head">
-        <h2>📈 Nasdaq-100 Futures, honestly</h2>
+        <h2>📈 Nasdaq Futures, honestly</h2>
       </div>
-      <p class="panel-note">This track trades <strong>QQQ</strong> (the Invesco QQQ Trust), not real CME NQ/MNQ futures contracts. Genuine Nasdaq-100 futures tick/bar history isn't available from any free, no-API-key, no-CAPTCHA public source - every option checked (EODHD, Financial Modeling Prep, Databento, kibot, firstratedata) requires at least a free account, which this unattended hourly pipeline has no way to hold credentials for. QQQ is the most liquid public proxy: it tracks the Nasdaq-100 index closely and Stooq serves its full daily history as a plain, keyless CSV.</p>
-      <p class="panel-note">Real Micro E-mini Nasdaq-100 (MNQ) futures currently require roughly $1,650 in CME initial margin against a notional value of tens of thousands of dollars - implied leverage in the ~25-30x range, set by the exchange, not a discretionary choice like the crypto perpetual tracks' 3x. This track deliberately does <strong>not</strong> attempt to simulate that: the backtest engine only checks for a liquidation-triggering loss at each bar's close, and daily bars are far too coarse to responsibly model ~25-30x margin risk without either constant false liquidations or a liquidation threshold so loose it stops meaning anything. This track runs unleveraged instead, so the real leverage/liquidation risk of actual futures trading is context here, not something simulated.</p>
-      <p class="panel-note">Daily bars only - no intraday timeframe is included. Stooq's per-symbol download only serves daily/weekly/monthly data without a key; true intraday data exists there but only via a CAPTCHA-gated bulk archive that can't be automated. Real NQ/MNQ futures also trade nearly 24 hours a day, while QQQ only trades during exchange session hours - another reason intraday wouldn't be an honest proxy even if the data existed.</p>
+      <p class="panel-note">Both Nasdaq Futures tracks trade the <strong>real NQ=F price</strong> (CME Nasdaq-100 E-mini futures, continuous front contract), fetched from Yahoo Finance's public chart endpoint - unauthenticated and keyless, the same way Crypto.com's REST API supplies crypto candles here without needing an account. That real futures price is paired with the real <strong>Micro E-mini Nasdaq-100 (MNQ)</strong> contract's point-value economics ($2/index-point multiplier, $0.75/side commission) - MNQ and NQ track the identical index level, just at 1/10th the contract size, so this is real futures P&L math, not an ETF-proxy approximation.</p>
+      <p class="panel-note">Real MNQ futures currently require roughly $1,700-1,900 in CME initial margin against a notional value in the tens of thousands of dollars per contract - implied leverage in the ~25-30x range, set by the exchange, not a discretionary choice like the crypto perpetual tracks' 3x. Both tracks here run <strong>unleveraged</strong> instead (position size is simply however many whole MNQ contracts $100,000 of paper capital can cover): the backtest engine only checks for a liquidation-triggering loss at each bar's close, and modeling ~25-30x real margin risk against bar-close-only checks would produce either constant false liquidations or a threshold so loose it stops meaning anything. The real margin/leverage figures above are sourced context, not something simulated.</p>
+      <p class="panel-note">The 5-Minute track's data has one retention limit worth knowing: Yahoo's intraday endpoint only serves the trailing ~60 days per request. Every hourly run merges freshly-fetched bars into the existing history, so the 5-minute track's own record keeps accumulating past that 60-day window going forward - same pattern already used for the memecoin scanner's precise-history coins.</p>
+    </div>
+
+    <div class="panel" id="lockedStrategyPanel">
+      <div class="panel-head">
+        <h2>🔒 Locked-in strategy</h2>
+      </div>
+      <p class="panel-note" id="lockedStrategyText">Once this track has enough live history for a walk-forward + sensitivity snapshot (see "Robustness (walk-forward)" below), the single strategy that's actually profitable, walk-forward-robust, and parameter-stable gets called out here as the one this track effectively trades - rather than leaving every strategy listed side by side with no verdict. Not enough history yet.</p>
     </div>
 
     <div class="panel">
@@ -757,8 +765,12 @@
       positions: __POSITIONS_SOL_PERP_JSON__, trades: __TRADES_SOL_PERP_JSON__, trackRecord: __TRACK_RECORD_SOL_PERP_JSON__, bars: __BARS_SOL_PERP_JSON__, walkforward: __WALKFORWARD_SOL_PERP_JSON__, sensitivity: __SENSITIVITY_SOL_PERP_JSON__,
     },
     nq: {
-      label: 'Nasdaq-100 Futures', symbol: 'QQQ', dateUnit: 'Day', intraday: false,
+      label: 'Nasdaq Futures (Daily)', symbol: 'MNQ', dateUnit: 'Day', intraday: false,
       positions: __POSITIONS_NQ_JSON__, trades: __TRADES_NQ_JSON__, trackRecord: __TRACK_RECORD_NQ_JSON__, bars: __BARS_NQ_JSON__, walkforward: __WALKFORWARD_NQ_JSON__, sensitivity: __SENSITIVITY_NQ_JSON__,
+    },
+    nq5m: {
+      label: 'Nasdaq Futures (5-Min)', symbol: 'MNQ', dateUnit: 'Update', intraday: true,
+      positions: __POSITIONS_NQ5M_JSON__, trades: __TRADES_NQ5M_JSON__, trackRecord: __TRACK_RECORD_NQ5M_JSON__, bars: __BARS_NQ5M_JSON__, walkforward: __WALKFORWARD_NQ5M_JSON__, sensitivity: __SENSITIVITY_NQ5M_JSON__,
     },
   };
   const CAPITAL = 100000;
@@ -1162,8 +1174,8 @@
       thinNote.classList.remove('visible');
     }
 
-    document.getElementById('costFilterNote').classList.toggle('visible', trackKey === 'fifteenMin' || trackKey === 'perp15m');
-    document.getElementById('nqNote').style.display = trackKey === 'nq' ? '' : 'none';
+    document.getElementById('costFilterNote').classList.toggle('visible', trackKey === 'fifteenMin' || trackKey === 'perp15m' || trackKey === 'nq5m');
+    document.getElementById('nqNote').style.display = (trackKey === 'nq' || trackKey === 'nq5m') ? '' : 'none';
 
     const unprofitableNote = document.getElementById('unprofitableNote');
     if (rows.length && rows.every((r) => r.totalReturn <= 0)) {
@@ -1186,6 +1198,7 @@
       document.getElementById('equityCurveLegend').innerHTML = '';
       document.getElementById('wfHint').textContent = '—';
       document.getElementById('wfTbody').innerHTML = '';
+      document.getElementById('lockedStrategyText').textContent = 'Not enough history yet.';
       drawCompareChart([]);
       drawTrackRecordChart(track, []);
       drawEquityCurveChart(track, []);
@@ -1271,6 +1284,7 @@
     ).join('') + '<span><i class="swatch" style="background:var(--ink); opacity:0.6;"></i>Buy &amp; Hold (benchmark, dashed)</span>';
 
     renderWalkforward(track, rows);
+    renderLockedStrategy(track, rows);
     renderPerpRiskPanel(track, rows);
     drawCompareChart(rows);
     drawTrackRecordChart(track, order);
@@ -1376,6 +1390,39 @@
         <td class="num">${stabilityCell}</td>
       </tr>`;
     }).join('');
+  }
+
+  function renderLockedStrategy(track, rows) {
+    const el = document.getElementById('lockedStrategyText');
+    const wfResults = (track.walkforward && track.walkforward.results) || [];
+    if (!wfResults.length) {
+      el.innerHTML = 'Once this track has enough live history for a walk-forward + sensitivity snapshot (see "Robustness (walk-forward)" below), the single strategy that\'s actually profitable, walk-forward-robust, and parameter-stable gets called out here as the one this track effectively trades - rather than leaving every strategy listed side by side with no verdict. Not enough history yet.';
+      return;
+    }
+    const byName = {};
+    wfResults.forEach((r) => { byName[r.strategy] = r; });
+    const sens = track.sensitivity;
+    const sensByName = {};
+    ((sens && sens.results) || []).forEach((r) => { sensByName[r.strategy] = r; });
+
+    const candidates = rows.map((r) => {
+      const wfRow = byName[r.name];
+      const sensRow = sensByName[r.name];
+      if (!wfRow || wfRow.error) return null;
+      const oosRet = wfRow.oos_total_return, oosSharpe = wfRow.oos_sharpe;
+      const robust = oosRet > 0 && isFinite(oosSharpe) && oosSharpe > 0;
+      const stable = sensRow && !sensRow.error && sensRow.frac_profitable >= 0.5;
+      if (!robust || !stable || r.totalReturn <= 0) return null;
+      return { name: r.name, oosRet, oosSharpe, fracProfitable: sensRow.frac_profitable, totalReturn: r.totalReturn };
+    }).filter(Boolean);
+
+    if (!candidates.length) {
+      el.innerHTML = 'No strategy on this track currently clears all three bars at once (profitable on the full backtest, walk-forward-robust on unseen data, and stable across nearby parameter values) - see the full comparison table below instead of a single pick.';
+      return;
+    }
+    candidates.sort((a, b) => b.oosSharpe - a.oosSharpe);
+    const best = candidates[0];
+    el.innerHTML = `<strong>${best.name}</strong> - the strategy this track effectively trades right now. Profitable on the full backtest (${fmtSignedPct(best.totalReturn)}), walk-forward-robust on unseen data (${fmtSignedPct(best.oosRet)} out-of-sample, Sharpe ${best.oosSharpe.toFixed(2)}), and stable across ${Math.round(best.fracProfitable * 100)}% of nearby parameter values. Picked automatically from the walk-forward + sensitivity results below whenever this track has enough history to run them - not a permanent or hand-picked choice.`;
   }
 
   // ---------- memecoin scanner ----------
@@ -1651,7 +1698,7 @@
   // that already scrolls horizontally (a wide table, the tab strip itself)
   // so it never fights with that element's own swipe-to-scroll.
   (function initTabSwipe() {
-    const TRACK_ORDER = ['daily', 'fifteenMin', 'eth', 'sol', 'perp', 'perp15m', 'ethPerp', 'solPerp', 'nq', 'memecoin'];
+    const TRACK_ORDER = ['daily', 'fifteenMin', 'eth', 'sol', 'perp', 'perp15m', 'ethPerp', 'solPerp', 'nq', 'nq5m', 'memecoin'];
     let startX = null, startY = null, skip = false;
     const THRESHOLD = 60;
     document.addEventListener('touchstart', (e) => {

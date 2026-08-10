@@ -44,9 +44,9 @@ jobs:
       - name: Fetch fresh market data
         run: python scripts/fetch_market_data.py
 
-      - name: Fetch Nasdaq-100 data (QQQ proxy, free/no-auth Stooq source)
+      - name: Fetch Nasdaq futures data (real NQ=F, daily + 5-minute, free/no-auth Yahoo Finance source)
         run: |
-          python scripts/fetch_nasdaq_data.py || echo "WARN Nasdaq-100 (QQQ) fetch failed this run - continuing without fresh data"
+          python scripts/fetch_nasdaq_futures.py || echo "WARN Nasdaq futures (NQ=F) fetch failed this run - continuing without fresh data"
 
       - name: Update BTC paper-trading state (daily + 15-min)
         run: |
@@ -68,12 +68,17 @@ jobs:
           python scripts/paper_trade_update.py --suffix _eth_perp --symbol ETH_USDT --tracking-start "2026-08-09" --leverage 3.0 --bars-file paper_trading/bars_eth.csv --funding-snapshot-file paper_trading/eth_market_snapshot.json
           python scripts/paper_trade_update.py --suffix _sol_perp --symbol SOL_USDT --tracking-start "2026-08-09" --leverage 3.0 --bars-file paper_trading/bars_sol.csv --funding-snapshot-file paper_trading/sol_market_snapshot.json
 
-      - name: Update Nasdaq-100 Futures paper-trading state (QQQ proxy)
+      - name: Update Nasdaq Futures paper-trading state (real NQ=F price, MNQ contract economics)
         run: |
           if [ -f paper_trading/bars_nq.csv ]; then
-            python scripts/paper_trade_update.py --suffix _nq --symbol QQQ --tracking-start "2026-08-10" --bars-file paper_trading/bars_nq.csv
+            python scripts/paper_trade_update.py --suffix _nq --symbol MNQ --tracking-start "2026-08-10" --bars-file paper_trading/bars_nq.csv
           else
-            echo "Skipping Nasdaq-100 update - no bars_nq.csv yet (first fetch hasn't succeeded)"
+            echo "Skipping Nasdaq Futures (daily) update - no bars_nq.csv yet (first fetch hasn't succeeded)"
+          fi
+          if [ -f paper_trading/bars_nq5m.csv ]; then
+            python scripts/paper_trade_update.py --suffix _nq5m --symbol MNQ --freq 5min --tracking-start "2026-08-10" --cost-aware-min-multiple 1.0 --bars-file paper_trading/bars_nq5m.csv
+          else
+            echo "Skipping Nasdaq Futures (5-min) update - no bars_nq5m.csv yet (first fetch hasn't succeeded)"
           fi
 
       - name: Update memecoin scanners (precise + wide)

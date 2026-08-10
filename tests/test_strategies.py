@@ -6,8 +6,11 @@ from src.backtest.strategies import (
     ATRVolatilityBreakout,
     BollingerReversion,
     DonchianBreakout,
+    EngulfingReversal,
+    InsideBarBreakout,
     MACDMomentum,
     MovingAverageCrossover,
+    OpeningRangeBreakout,
     RSIReversion,
     Supertrend,
     VWAPReversion,
@@ -25,6 +28,9 @@ ALL = [
     ATRVolatilityBreakout(),
     Supertrend(),
     VWAPReversion(),
+    EngulfingReversal(),
+    InsideBarBreakout(),
+    OpeningRangeBreakout(),
 ]
 
 
@@ -50,8 +56,8 @@ def test_signals_are_valid_positions(strategy):
 
 def test_build_default_strategies_returns_one_of_each():
     strategies = build_default_strategies()
-    assert len(strategies) == 9
-    assert len({s.name for s in strategies}) == 9
+    assert len(strategies) == 12
+    assert len({s.name for s in strategies}) == 12
 
 
 def test_ma_crossover_flips_on_clean_trend_reversal():
@@ -120,3 +126,92 @@ def test_vwap_reversion_flat_when_price_tracks_vwap():
     strategy = VWAPReversion(params={"window": 20, "entry_pct": 0.02, "exit_pct": 0.005})
     signals = strategy.generate_signals(bars)
     assert (signals.iloc[20:] == 0).all()
+
+
+def _bar(o, h, l, c, v=100):
+    return {"open": o, "high": h, "low": l, "close": c, "volume": v}
+
+
+def test_engulfing_reversal_goes_long_on_bullish_engulfing():
+    # A red candle (10 -> 9) followed by a green candle that fully engulfs
+    # its body (8.5 -> 10.5) is a textbook bullish engulfing pattern.
+    rows = [_bar(10.0, 10.2, 8.8, 9.0)] * 5 + [_bar(8.5, 10.6, 8.4, 10.5)]
+    idx = pd.date_range("2026-01-05", periods=len(rows), freq="1min")
+    bars = pd.DataFrame(rows, index=idx)
+    strategy = EngulfingReversal(params={"min_body_pct": 0.3})
+    signals = strategy.generate_signals(bars)
+    assert signals.iloc[-1] == 1
+
+
+def test_engulfing_reversal_ignores_weak_body_below_threshold():
+    # The engulfing candle's body barely covers half its range (mostly
+    # wick) - below a strict min_body_pct this shouldn't count as a signal.
+    rows = [_bar(10.0, 10.2, 8.8, 9.0)] * 5 + [_bar(9.4, 12.0, 8.0, 9.6)]
+    idx = pd.date_range("2026-01-05", periods=len(rows), freq="1min")
+    bars = pd.DataFrame(rows, index=idx)
+    strategy = EngulfingReversal(params={"min_body_pct": 0.9})
+    signals = strategy.generate_signals(bars)
+    assert signals.iloc[-1] == 0
+
+
+def test_inside_bar_breakout_goes_long_on_upside_breakout():
+    # Mother bar with a wide range, then an inside bar contained within it,
+    # then a close above the mother bar's high.
+    rows = [
+        _bar(100.0, 110.0, 90.0, 105.0),   # mother bar: range 90-110
+        _bar(103.0, 106.0, 102.0, 104.0),  # inside bar: range 102-106, well inside
+        _bar(105.0, 112.0, 104.0, 111.0),  # breaks above mother high (110)
+    ]
+    idx = pd.date_range("2026-01-05", periods=len(rows), freq="1min")
+    bars = pd.DataFrame(rows, index=idx)
+    strategy = InsideBarBreakout(params={"max_range_ratio": 0.6})
+    signals = strategy.generate_signals(bars)
+    assert signals.iloc[-1] == 1
+
+
+def test_inside_bar_breakout_flat_without_a_breakout():
+    rows = [
+        _bar(100.0, 110.0, 90.0, 105.0),
+        _bar(103.0, 106.0, 102.0, 104.0),
+        _bar(104.0, 105.0, 103.5, 104.5),  # stays inside the mother range
+    ]
+    idx = pd.date_range("2026-01-05", periods=len(rows), freq="1min")
+    bars = pd.DataFrame(rows, index=idx)
+    strategy = InsideBarBreakout(params={"max_range_ratio": 0.6})
+    signals = strategy.generate_signals(bars)
+    assert signals.iloc[-1] == 0
+
+
+def test_opening_range_breakout_goes_long_above_range_and_vwap():
+    # First 3 bars (the opening range) trade flat around 100; a later bar
+    # closes well above both the opening range high and VWAP.
+    rows = [_bar(100.0, 100.5, 99.5, 100.0)] * 3 + [_bar(100.0, 100.2, 99.9, 100.0)] * 2 + [_bar(100.0, 103.0, 100.0, 102.5)]
+    idx = pd.date_range("2026-01-05 09:30", periods=len(rows), freq="5min")
+    bars = pd.DataFrame(rows, index=idx)
+    strategy = OpeningRangeBreakout(params={"range_bars": 3})
+    signals = strategy.generate_signals(bars)
+    assert signals.iloc[-1] == 1
+
+
+def test_opening_range_breakout_resets_flat_at_new_session():
+    rows = [_bar(100.0, 100.5, 99.5, 100.0)] * 3 + [_bar(100.0, 100.2, 99.9, 100.0)] * 2 + [_bar(100.0, 103.0, 100.0, 102.5)]
+    idx = pd.date_range("2026-01-05 09:30", periods=len(rows), freq="5min")
+    bars_day1 = pd.DataFrame(rows, index=idx)
+    idx_day2 = pd.date_range("2026-01-06 09:30", periods=3, freq="5min")
+    bars_day2 = pd.DataFrame([_bar(100.0, 100.5, 99.5, 100.0)] * 3, index=idx_day2)
+    bars = pd.concat([bars_day1, bars_day2])
+    strategy = OpeningRangeBreakout(params={"range_bars": 3})
+    signals = strategy.generate_signals(bars)
+    # Day 2's opening range bars haven't broken out of anything yet - flat.
+    assert (signals.iloc[-3:] == 0).all()
+
+
+def test_opening_range_breakout_never_fires_on_daily_bars():
+    # One bar per session means bar_num is always 0 < range_bars - the
+    # strategy should correctly stay flat the whole time.
+    price = 100 + np.cumsum(np.random.default_rng(3).normal(0, 1, 50))
+    idx = pd.date_range("2026-01-05", periods=50, freq="1D")
+    bars = pd.DataFrame({"open": price, "high": price + 1, "low": price - 1, "close": price, "volume": 1000}, index=idx)
+    strategy = OpeningRangeBreakout(params={"range_bars": 6})
+    signals = strategy.generate_signals(bars)
+    assert (signals == 0).all()
