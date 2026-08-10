@@ -44,7 +44,7 @@ jobs:
       - name: Fetch fresh market data
         run: python scripts/fetch_market_data.py
 
-      - name: Fetch index futures data (real NQ=F/ES=F, daily + 5-minute, free/no-auth Yahoo Finance source)
+      - name: Fetch futures data (real NQ=F/ES=F/YM=F/GC=F, daily + 5-minute, free/no-auth Yahoo Finance source)
         run: |
           python scripts/fetch_index_futures.py || echo "WARN index futures fetch failed this run - continuing without fresh data"
 
@@ -68,31 +68,22 @@ jobs:
           python scripts/paper_trade_update.py --suffix _eth_perp --symbol ETH_USDT --tracking-start "2026-08-09" --leverage 3.0 --bars-file paper_trading/bars_eth.csv --funding-snapshot-file paper_trading/eth_market_snapshot.json
           python scripts/paper_trade_update.py --suffix _sol_perp --symbol SOL_USDT --tracking-start "2026-08-09" --leverage 3.0 --bars-file paper_trading/bars_sol.csv --funding-snapshot-file paper_trading/sol_market_snapshot.json
 
-      - name: Update Nasdaq Futures paper-trading state (real NQ=F price, MNQ contract economics)
+      - name: Update Index/Commodity Futures paper-trading state (real Yahoo Finance prices, Micro contract economics)
         run: |
-          if [ -f paper_trading/bars_nq.csv ]; then
-            python scripts/paper_trade_update.py --suffix _nq --symbol MNQ --tracking-start "2026-08-10" --bars-file paper_trading/bars_nq.csv
-          else
-            echo "Skipping Nasdaq Futures (daily) update - no bars_nq.csv yet (first fetch hasn't succeeded)"
-          fi
-          if [ -f paper_trading/bars_nq5m.csv ]; then
-            python scripts/paper_trade_update.py --suffix _nq5m --symbol MNQ --freq 5min --tracking-start "2026-08-10" --cost-aware-min-multiple 1.0 --bars-file paper_trading/bars_nq5m.csv
-          else
-            echo "Skipping Nasdaq Futures (5-min) update - no bars_nq5m.csv yet (first fetch hasn't succeeded)"
-          fi
-
-      - name: Update S&P 500 Futures paper-trading state (real ES=F price, MES contract economics)
-        run: |
-          if [ -f paper_trading/bars_es.csv ]; then
-            python scripts/paper_trade_update.py --suffix _es --symbol MES --tracking-start "2026-08-10" --bars-file paper_trading/bars_es.csv
-          else
-            echo "Skipping S&P 500 Futures (daily) update - no bars_es.csv yet (first fetch hasn't succeeded)"
-          fi
-          if [ -f paper_trading/bars_es5m.csv ]; then
-            python scripts/paper_trade_update.py --suffix _es5m --symbol MES --freq 5min --tracking-start "2026-08-10" --cost-aware-min-multiple 1.0 --bars-file paper_trading/bars_es5m.csv
-          else
-            echo "Skipping S&P 500 Futures (5-min) update - no bars_es5m.csv yet (first fetch hasn't succeeded)"
-          fi
+          declare -A SYMS=( [nq]=MNQ [es]=MES [ym]=MYM [gc]=MGC )
+          for suffix in nq es ym gc; do
+            symbol=${SYMS[$suffix]}
+            if [ -f "paper_trading/bars_${suffix}.csv" ]; then
+              python scripts/paper_trade_update.py --suffix "_${suffix}" --symbol "$symbol" --tracking-start "2026-08-10" --bars-file "paper_trading/bars_${suffix}.csv"
+            else
+              echo "Skipping ${suffix} (daily) update - no bars_${suffix}.csv yet (first fetch hasn't succeeded)"
+            fi
+            if [ -f "paper_trading/bars_${suffix}5m.csv" ]; then
+              python scripts/paper_trade_update.py --suffix "_${suffix}5m" --symbol "$symbol" --freq 5min --tracking-start "2026-08-10" --cost-aware-min-multiple 1.0 --bars-file "paper_trading/bars_${suffix}5m.csv"
+            else
+              echo "Skipping ${suffix} (5-min) update - no bars_${suffix}5m.csv yet (first fetch hasn't succeeded)"
+            fi
+          done
 
       - name: Update memecoin scanners (precise + wide)
         run: |
