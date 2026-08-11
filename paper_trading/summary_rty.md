@@ -1,19 +1,19 @@
-# M2K Paper Trading (1D) — updated 2026-08-11T04:07:37.591514+00:00
+# M2K Paper Trading (1D) — updated 2026-08-11T08:15:06.867159+00:00
 
-Latest bar: 2026-08-10 00:00:00 · 2,287 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-11 00:00:00 · 2,288 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $214,737 | +114.7% | — | 1 |
-| VWAP_Reversion(20,2%) | SHORT | $106,303 | +6.3% | 0.38 | 141 |
-| Bollinger_Reversion(20,2sd) | SHORT | $104,693 | +4.7% | 0.32 | 83 |
-| ZScore_Reversion(20,z=2.0) | SHORT | $102,702 | +2.7% | 0.21 | 89 |
-| MACD_Momentum(12/26/9) | LONG | $100,535 | +0.5% | 0.04 | 178 |
+| *Buy & Hold (benchmark)* | — | $215,099 | +115.1% | — | 1 |
+| VWAP_Reversion(20,2%) | SHORT | $106,277 | +6.3% | 0.38 | 141 |
+| Bollinger_Reversion(20,2sd) | SHORT | $104,668 | +4.7% | 0.32 | 83 |
+| ZScore_Reversion(20,z=2.0) | SHORT | $102,676 | +2.7% | 0.21 | 89 |
+| MACD_Momentum(12/26/9) | LONG | $100,561 | +0.6% | 0.04 | 178 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
-| Engulfing_Reversal(0.3) | LONG | $99,933 | -0.1% | 0.01 | 115 |
-| MA_Crossover(10/50) | LONG | $99,666 | -0.3% | -0.01 | 64 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $99,347 | -0.7% | -0.02 | 27 |
-| Donchian_Breakout(20) | LONG | $99,209 | -0.8% | -0.03 | 54 |
-| Inside_Bar_Breakout(0.6) | LONG | $98,520 | -1.5% | -0.06 | 19 |
-| Supertrend(10,m=3.0) | LONG | $98,354 | -1.6% | -0.07 | 58 |
+| Engulfing_Reversal(0.3) | LONG | $99,958 | -0.0% | 0.01 | 115 |
+| MA_Crossover(10/50) | LONG | $99,692 | -0.3% | -0.00 | 64 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $99,322 | -0.7% | -0.02 | 27 |
+| Donchian_Breakout(20) | LONG | $99,235 | -0.8% | -0.03 | 54 |
+| Inside_Bar_Breakout(0.6) | LONG | $98,545 | -1.5% | -0.06 | 19 |
+| Supertrend(10,m=3.0) | LONG | $98,379 | -1.6% | -0.07 | 58 |
 | RSI_Reversion(14,30/70) | FLAT | $98,289 | -1.7% | -0.21 | 62 |
