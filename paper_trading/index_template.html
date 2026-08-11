@@ -1,3 +1,4 @@
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   :root {
@@ -248,6 +249,14 @@
 
   .robust-header, .robust-row { display: grid; grid-template-columns: 1fr repeat(3, 40px); align-items: center; gap: 8px; }
   .robust-header.wide, .robust-row.wide { grid-template-columns: 1fr repeat(6, 34px); }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+  th { text-align: left; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); font-weight: 600; padding: 6px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  th.num, td.num { text-align: right; }
+  td.strategy-name { white-space: normal; font-weight: 600; }
   .robust-header { padding: 0 4px 6px; font-size: var(--fs-xs); color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.05em; }
   .robust-header span:not(:first-child) { text-align: center; }
   .robust-row { padding: 7px 4px; border-bottom: 1px solid var(--border); font-size: var(--fs-sm); }
@@ -307,6 +316,17 @@
     </div>
   </div>
 
+  <div id="survivorStressSection" style="display:none; flex-direction:column; gap:22px;">
+    <div class="section-label">Survivor stress test</div>
+    <div class="panel">
+      <p style="margin:0 0 10px; font-size:var(--fs-xs); color:var(--ink-muted);">Of 240 strategy-track combinations checked, only 5 have a walk-forward result statistically distinguishable from noise (see "Statistical significance" in the README). Passing that bar is necessary but not sufficient for real confidence, so each of the 5 survivors gets three more checks: is the edge spread across multiple independent fold periods (not one lucky stretch), does it survive 3x the normal execution-cost assumption, and how concentrated is its P&amp;L in a single market regime.</p>
+      <div class="table-wrap"><table id="survivorTable">
+        <thead><tr><th>Strategy</th><th>Track</th><th class="num">Folds Positive</th><th class="num">3x-Cost Stress</th><th class="num">Top Regime Share</th></tr></thead>
+        <tbody id="survivorTbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
   <div class="section-label">Memecoin momentum</div>
   <div class="panel">
     <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
@@ -341,6 +361,7 @@
   const TOP_NEWS = __TOP_NEWS_JSON__;
   const CROSS_ASSET_ROBUSTNESS = __CROSS_ASSET_ROBUSTNESS_JSON__;
   const CROSS_FUTURES_ROBUSTNESS = __CROSS_FUTURES_ROBUSTNESS_JSON__;
+  const SURVIVOR_STRESS_TEST = __SURVIVOR_STRESS_TEST_JSON__;
   const REGIMES = __REGIMES_JSON__;
   const RUG_WATCH = __RUG_WATCH_JSON__;
 
@@ -623,6 +644,30 @@
     document.getElementById('futuresRobustTable').innerHTML = header + body;
   }
 
+  function renderSurvivorStressTest() {
+    const rows = (SURVIVOR_STRESS_TEST && SURVIVOR_STRESS_TEST.results) || [];
+    const section = document.getElementById('survivorStressSection');
+    if (!rows.length) {
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = 'flex';
+    document.getElementById('survivorTbody').innerHTML = rows.map((r) => {
+      const foldsClass = r.folds_positive === r.n_folds ? 'good' : '';
+      const costCell = r.survives_cost_stress
+        ? '<span class="good">&#10003; holds</span>'
+        : '<span class="critical">&times; fails</span>';
+      const regimePct = r.top_regime_pct_of_pnl == null ? '—' : fmtSignedPct(Math.abs(r.top_regime_pct_of_pnl)).replace('+', '');
+      return `<tr>
+        <td class="strategy-name">${escHtml(r.strategy)}</td>
+        <td>${escHtml(r.label)}</td>
+        <td class="num mono ${foldsClass}">${r.folds_positive}/${r.n_folds}</td>
+        <td class="num">${costCell}</td>
+        <td class="num mono">${regimePct}</td>
+      </tr>`;
+    }).join('');
+  }
+
   function checkStaleness() {
     const timestamps = [
       ...Object.values(TRACK_SUMMARIES).map((s) => s && s.updated_at_utc),
@@ -660,6 +705,7 @@
     renderHeadlines();
     renderRobustness();
     renderFuturesRobustness();
+    renderSurvivorStressTest();
     checkStaleness();
   }
 

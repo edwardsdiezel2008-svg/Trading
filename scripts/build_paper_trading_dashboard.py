@@ -29,6 +29,7 @@ WIDE_MEMECOIN_SCAN_PATH = "paper_trading/memecoin_wide_scan.json"
 BTC_MARKET_SNAPSHOT_PATH = "paper_trading/btc_market_snapshot.json"
 FEAR_GREED_PATH = "paper_trading/fear_greed.json"
 NEWS_PATH = "paper_trading/news.json"
+SURVIVOR_STRESS_TEST_PATH = "paper_trading/survivor_stress_test.json"
 CAPITAL = 100_000.0
 
 # Every track's template placeholder names follow one mechanical rule -
@@ -462,7 +463,7 @@ def build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_g
     print(f"Wrote {OUTPUT_PATH} ({os.path.getsize(OUTPUT_PATH) / 1024:.1f} KB)")
 
 
-def build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_greed, news, regimes):
+def build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_greed, news, regimes, survivor_stress_test):
     if not os.path.exists(INDEX_TEMPLATE_PATH):
         print(f"Skipping {INDEX_OUTPUT_PATH}: {INDEX_TEMPLATE_PATH} not found")
         return
@@ -506,12 +507,14 @@ def build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_gre
     cross_futures_robustness = compute_cross_futures_robustness(loaded)
     out = out.replace("__CROSS_FUTURES_ROBUSTNESS_JSON__", json.dumps(cross_futures_robustness))
 
+    out = out.replace("__SURVIVOR_STRESS_TEST_JSON__", json.dumps(survivor_stress_test))
+
     out = out.replace("__REGIMES_JSON__", json.dumps(regimes))
 
     rug_watch = compute_rug_watch_summary(wide_scan, memecoin_scan)
     out = out.replace("__RUG_WATCH_JSON__", json.dumps(rug_watch))
 
-    for key in ("TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE", "TOP_NEWS_JSON", "CROSS_ASSET_ROBUSTNESS_JSON", "CROSS_FUTURES_ROBUSTNESS_JSON", "REGIMES_JSON", "RUG_WATCH_JSON"):
+    for key in ("TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE", "TOP_NEWS_JSON", "CROSS_ASSET_ROBUSTNESS_JSON", "CROSS_FUTURES_ROBUSTNESS_JSON", "SURVIVOR_STRESS_TEST_JSON", "REGIMES_JSON", "RUG_WATCH_JSON"):
         assert f"__{key}__" not in out, f"unfilled placeholder __{key}__"
 
     with open(INDEX_OUTPUT_PATH, "w") as f:
@@ -558,11 +561,16 @@ def main():
         with open(NEWS_PATH) as f:
             news = json.load(f)
 
+    survivor_stress_test = {"generated_at_utc": None, "results": []}
+    if os.path.exists(SURVIVOR_STRESS_TEST_PATH):
+        with open(SURVIVOR_STRESS_TEST_PATH) as f:
+            survivor_stress_test = json.load(f)
+
     correlations = compute_correlations()
     regimes = compute_current_regimes()
 
     build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_greed, correlations, news)
-    build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_greed, news, regimes)
+    build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_greed, news, regimes, survivor_stress_test)
 
 
 if __name__ == "__main__":

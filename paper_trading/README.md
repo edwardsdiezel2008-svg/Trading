@@ -443,6 +443,57 @@ statistically confirm - but it does mean roughly 9 out of 10 walk-forward
 from noise. That is exactly the honest answer to "what's actually
 profitable" this feature was built to surface.
 
+## Survivor stress test
+
+Clearing the bootstrap significance bar is necessary, not sufficient, for
+real confidence - a single significant walk-forward result could still be
+one lucky fold, an edge thin enough that slightly worse execution erases
+it, or a P&L concentrated in one narrow market condition that might not
+recur. `scripts/survivor_stress_test.py` runs three more checks against
+each of the 5 significant survivors, none of which the walk-forward
+snapshot alone answers:
+
+1. **Fold-by-fold consistency** - re-reads the same 5-fold walk-forward
+   split and reports whether each individual fold's test-period return was
+   positive, not just the stitched aggregate. A strategy positive in 5/5
+   folds is a broader, more consistent edge than one carried by a single
+   strong fold.
+2. **Cost stress test** - re-runs the full walk-forward (fresh grid search
+   included) at 3x the normal slippage assumption (`slippage_ticks=3.0`
+   instead of the default 1.0). If the bootstrap CI no longer excludes
+   zero under those tougher assumptions, the edge was thin enough that
+   realistic execution friction alone could erase it.
+3. **Regime concentration** - `src/backtest/regime.py`'s
+   `attribute_performance()` on the full-history default-params backtest,
+   reporting what share of total P&L came from the single largest regime
+   bucket. A profit concentrated almost entirely in one regime is a
+   narrower bet than one spread across conditions.
+
+**Real results** (`paper_trading/survivor_stress_test.json`), reported as-is:
+
+| Strategy | Track | Folds Positive | 3x-Cost Stress | Top Regime Share |
+|---|---|---|---|---|
+| RSI_Reversion(14,30/70) | Nasdaq daily | 5/5 | ✓ holds | 69.3% (trending/high_vol) |
+| RSI_Reversion(14,30/70) | S&P 500 daily | 4/5 | ✓ holds | 86.2% |
+| RSI_Reversion(14,30/70) | Dow daily | 3/5 | **✗ fails** | 80.0% |
+| MA_Crossover(10/50) | Gold daily | 4/5 | ✓ holds | 59.3% |
+| Donchian_Breakout(20) | Gold daily | 4/5 | ✓ holds | 64.4% |
+
+**Nasdaq's `RSI_Reversion` is the strongest of the five** - positive in
+every one of the 5 independent fold periods, and its edge survives tripling
+the slippage assumption with the point estimate barely moving (17.1% ->
+17.0% OOS). **Dow's `RSI_Reversion` is the weakest and the one real caution
+flag here**: only 3 of 5 folds were positive, and its already-marginal 90%
+CI (which had a lower bound of exactly +0.0% in the base snapshot) flips to
+including zero once slippage triples - meaning this particular result's
+significance is fragile enough that a small, entirely plausible change in
+execution-cost assumptions erases it. All five show meaningful regime
+concentration (59-86% of P&L from one bucket), which isn't disqualifying on
+its own - most real trading edges are regime-dependent by nature - but it
+does mean each of these should be read as "works well in [that regime],"
+not "works everywhere." Surfaced on the landing page's "Survivor stress
+test" panel, sourced from the same JSON.
+
 ## Robustness checks (not part of the hourly pipeline - run manually)
 
 Two separate questions, both expensive (grid search per fold/parameter

@@ -1,0 +1,410 @@
+{
+  "generated_at_utc": "2026-08-11T00:54:55.234844Z",
+  "results": [
+    {
+      "label": "Nasdaq Futures (Daily)",
+      "symbol": "MNQ",
+      "freq": "1D",
+      "strategy": "RSI_Reversion(14,30/70)",
+      "n_folds": 5,
+      "folds_positive": 5,
+      "fold_returns": [
+        {
+          "fold": 1,
+          "test_start": "2018-04-13",
+          "test_end": "2019-12-10",
+          "test_return": 0.02102180568633938,
+          "test_sharpe": 1.1483569378304128
+        },
+        {
+          "fold": 2,
+          "test_start": "2019-12-11",
+          "test_end": "2021-08-10",
+          "test_return": 0.04497267176017172,
+          "test_sharpe": 1.4847960571583507
+        },
+        {
+          "fold": 3,
+          "test_start": "2021-08-11",
+          "test_end": "2023-04-11",
+          "test_return": 0.0025548242048689662,
+          "test_sharpe": 0.16362009928451646
+        },
+        {
+          "fold": 4,
+          "test_start": "2023-04-12",
+          "test_end": "2024-12-06",
+          "test_return": 0.03395148931069625,
+          "test_sharpe": 0.9674818890323895
+        },
+        {
+          "fold": 5,
+          "test_start": "2024-12-09",
+          "test_end": "2026-08-10",
+          "test_return": 0.05834910093611945,
+          "test_sharpe": 0.7611883695529471
+        }
+      ],
+      "normal_oos_return": 0.17051555551339637,
+      "normal_ci_low": 0.07595837308359692,
+      "normal_ci_high": 0.28553736729663914,
+      "normal_significant": true,
+      "stressed_oos_return": 0.16987380457981516,
+      "stressed_ci_low": 0.07528551130259789,
+      "stressed_ci_high": 0.2849428295987918,
+      "stressed_significant": true,
+      "survives_cost_stress": true,
+      "regime_breakdown": [
+        {
+          "regime": "trending/high_vol",
+          "total_pnl": 8595.5,
+          "pct_of_total_pnl": 0.6933811963054087,
+          "bar_count": 514
+        },
+        {
+          "regime": "ranging/high_vol",
+          "total_pnl": 949.0,
+          "pct_of_total_pnl": 0.0765538660105675,
+          "bar_count": 717
+        },
+        {
+          "regime": "ranging/low_vol",
+          "total_pnl": -506.919921875,
+          "pct_of_total_pnl": -0.04089218100875247,
+          "bar_count": 715
+        },
+        {
+          "regime": "trending/low_vol",
+          "total_pnl": -2345.080078125,
+          "pct_of_total_pnl": -0.18917275667527125,
+          "bar_count": 469
+        }
+      ],
+      "top_regime_pct_of_pnl": 0.6933811963054087
+    },
+    {
+      "label": "S&P 500 Futures (Daily)",
+      "symbol": "MES",
+      "freq": "1D",
+      "strategy": "RSI_Reversion(14,30/70)",
+      "n_folds": 5,
+      "folds_positive": 4,
+      "fold_returns": [
+        {
+          "fold": 1,
+          "test_start": "2018-04-13",
+          "test_end": "2019-12-10",
+          "test_return": 0.0039597738839447505,
+          "test_sharpe": 0.2890838075924808
+        },
+        {
+          "fold": 2,
+          "test_start": "2019-12-11",
+          "test_end": "2021-08-10",
+          "test_return": 0.0349475279446505,
+          "test_sharpe": 1.4504909288546384
+        },
+        {
+          "fold": 3,
+          "test_start": "2021-08-11",
+          "test_end": "2023-04-11",
+          "test_return": 0.0,
+          "test_sharpe": NaN
+        },
+        {
+          "fold": 4,
+          "test_start": "2023-04-12",
+          "test_end": "2024-12-06",
+          "test_return": 0.0021631496603831124,
+          "test_sharpe": 0.7946349629165292
+        },
+        {
+          "fold": 5,
+          "test_start": "2024-12-09",
+          "test_end": "2026-08-10",
+          "test_return": 0.023564800822459597,
+          "test_sharpe": 0.7919442621415768
+        }
+      ],
+      "normal_oos_return": 0.0658311666125595,
+      "normal_ci_low": 0.007756242370231646,
+      "normal_ci_high": 0.14163708281235537,
+      "normal_significant": true,
+      "stressed_oos_return": 0.06573437270957427,
+      "stressed_ci_low": 0.007707803695360648,
+      "stressed_ci_high": 0.14151736408047327,
+      "stressed_significant": true,
+      "survives_cost_stress": true,
+      "regime_breakdown": [
+        {
+          "regime": "trending/high_vol",
+          "total_pnl": 7306.35009765625,
+          "pct_of_total_pnl": 0.8617249120042754,
+          "bar_count": 524
+        },
+        {
+          "regime": "trending/low_vol",
+          "total_pnl": 319.39990234375,
+          "pct_of_total_pnl": 0.03767063568848592,
+          "bar_count": 455
+        },
+        {
+          "regime": "ranging/high_vol",
+          "total_pnl": -411.0,
+          "pct_of_total_pnl": -0.048474126492702344,
+          "bar_count": 616
+        },
+        {
+          "regime": "ranging/low_vol",
+          "total_pnl": -442.0,
+          "pct_of_total_pnl": -0.05213032581453634,
+          "bar_count": 820
+        }
+      ],
+      "top_regime_pct_of_pnl": 0.8617249120042754
+    },
+    {
+      "label": "Dow Futures (Daily)",
+      "symbol": "MYM",
+      "freq": "1D",
+      "strategy": "RSI_Reversion(14,30/70)",
+      "n_folds": 5,
+      "folds_positive": 3,
+      "fold_returns": [
+        {
+          "fold": 1,
+          "test_start": "2018-04-13",
+          "test_end": "2019-12-10",
+          "test_return": 0.0015659459622763272,
+          "test_sharpe": 0.1156649720189823
+        },
+        {
+          "fold": 2,
+          "test_start": "2019-12-11",
+          "test_end": "2021-08-10",
+          "test_return": 0.03151853884924405,
+          "test_sharpe": 1.4513602170360644
+        },
+        {
+          "fold": 3,
+          "test_start": "2021-08-11",
+          "test_end": "2023-04-11",
+          "test_return": 0.0,
+          "test_sharpe": NaN
+        },
+        {
+          "fold": 4,
+          "test_start": "2023-04-12",
+          "test_end": "2024-12-06",
+          "test_return": 0.0,
+          "test_sharpe": NaN
+        },
+        {
+          "fold": 5,
+          "test_start": "2024-12-09",
+          "test_end": "2026-08-10",
+          "test_return": 0.011915474151693806,
+          "test_sharpe": 0.6286200853971589
+        }
+      ],
+      "normal_oos_return": 0.04544412071951398,
+      "normal_ci_low": 7.70233731991141e-05,
+      "normal_ci_high": 0.10538059675227095,
+      "normal_significant": true,
+      "stressed_oos_return": 0.04479652780360377,
+      "stressed_ci_low": -0.0002510999554068763,
+      "stressed_ci_high": 0.10472516984051197,
+      "stressed_significant": false,
+      "survives_cost_stress": false,
+      "regime_breakdown": [
+        {
+          "regime": "trending/high_vol",
+          "total_pnl": 6483.724609375,
+          "pct_of_total_pnl": 0.799773679891721,
+          "bar_count": 494
+        },
+        {
+          "regime": "ranging/low_vol",
+          "total_pnl": 335.5,
+          "pct_of_total_pnl": 0.04138424837102043,
+          "bar_count": 893
+        },
+        {
+          "regime": "ranging/high_vol",
+          "total_pnl": -547.25,
+          "pct_of_total_pnl": -0.06750381496584479,
+          "bar_count": 656
+        },
+        {
+          "regime": "trending/low_vol",
+          "total_pnl": -740.474609375,
+          "pct_of_total_pnl": -0.0913382567714138,
+          "bar_count": 372
+        }
+      ],
+      "top_regime_pct_of_pnl": 0.799773679891721
+    },
+    {
+      "label": "Gold Futures (Daily)",
+      "symbol": "MGC",
+      "freq": "1D",
+      "strategy": "MA_Crossover(10/50)",
+      "n_folds": 5,
+      "folds_positive": 4,
+      "fold_returns": [
+        {
+          "fold": 1,
+          "test_start": "2018-04-13",
+          "test_end": "2019-12-10",
+          "test_return": 0.005290858319850544,
+          "test_sharpe": 0.19753355690584165
+        },
+        {
+          "fold": 2,
+          "test_start": "2019-12-11",
+          "test_end": "2021-08-10",
+          "test_return": -0.026915942214895128,
+          "test_sharpe": -0.4523169927138325
+        },
+        {
+          "fold": 3,
+          "test_start": "2021-08-11",
+          "test_end": "2023-04-10",
+          "test_return": 0.018967125109304206,
+          "test_sharpe": 0.48034731727284663
+        },
+        {
+          "fold": 4,
+          "test_start": "2023-04-11",
+          "test_end": "2024-12-06",
+          "test_return": 0.04303609699893274,
+          "test_sharpe": 0.832455234307984
+        },
+        {
+          "fold": 5,
+          "test_start": "2024-12-09",
+          "test_end": "2026-08-10",
+          "test_return": 0.17742063245521655,
+          "test_sharpe": 1.1686686995190787
+        }
+      ],
+      "normal_oos_return": 0.2241460733557028,
+      "normal_ci_low": 0.022207692322895208,
+      "normal_ci_high": 0.5051932665339024,
+      "normal_significant": true,
+      "stressed_oos_return": 0.2239758065289046,
+      "stressed_ci_low": 0.021966337533789668,
+      "stressed_ci_high": 0.5050861355300583,
+      "stressed_significant": true,
+      "survives_cost_stress": true,
+      "regime_breakdown": [
+        {
+          "regime": "trending/low_vol",
+          "total_pnl": 21186.894628906215,
+          "pct_of_total_pnl": 0.5932935888468459,
+          "bar_count": 558
+        },
+        {
+          "regime": "ranging/low_vol",
+          "total_pnl": 4801.005615234026,
+          "pct_of_total_pnl": 0.13444187557575563,
+          "bar_count": 674
+        },
+        {
+          "regime": "ranging/high_vol",
+          "total_pnl": -2185.401708984631,
+          "pct_of_total_pnl": -0.061197492398274086,
+          "bar_count": 732
+        },
+        {
+          "regime": "trending/high_vol",
+          "total_pnl": -7537.339501953189,
+          "pct_of_total_pnl": -0.21106704317912434,
+          "bar_count": 449
+        }
+      ],
+      "top_regime_pct_of_pnl": 0.5932935888468459
+    },
+    {
+      "label": "Gold Futures (Daily)",
+      "symbol": "MGC",
+      "freq": "1D",
+      "strategy": "Donchian_Breakout(20)",
+      "n_folds": 5,
+      "folds_positive": 4,
+      "fold_returns": [
+        {
+          "fold": 1,
+          "test_start": "2018-04-13",
+          "test_end": "2019-12-10",
+          "test_return": 0.007352932733868389,
+          "test_sharpe": 0.2811920994022063
+        },
+        {
+          "fold": 2,
+          "test_start": "2019-12-11",
+          "test_end": "2021-08-10",
+          "test_return": -0.016438365722832082,
+          "test_sharpe": -0.2793813527330748
+        },
+        {
+          "fold": 3,
+          "test_start": "2021-08-11",
+          "test_end": "2023-04-10",
+          "test_return": 0.032166150203715826,
+          "test_sharpe": 0.7681892407364421
+        },
+        {
+          "fold": 4,
+          "test_start": "2023-04-11",
+          "test_end": "2024-12-06",
+          "test_return": 0.04417905893301266,
+          "test_sharpe": 0.8571289155176113
+        },
+        {
+          "fold": 5,
+          "test_start": "2024-12-09",
+          "test_end": "2026-08-10",
+          "test_return": 0.14407451370968816,
+          "test_sharpe": 0.9660008582975362
+        }
+      ],
+      "normal_oos_return": 0.2216931464907137,
+      "normal_ci_low": 0.021529560588248575,
+      "normal_ci_high": 0.4728068740966571,
+      "normal_significant": true,
+      "stressed_oos_return": 0.2215231488231333,
+      "stressed_ci_low": 0.021387536835482612,
+      "stressed_ci_high": 0.47267346393099524,
+      "stressed_significant": true,
+      "survives_cost_stress": true,
+      "regime_breakdown": [
+        {
+          "regime": "trending/low_vol",
+          "total_pnl": 21981.79218749993,
+          "pct_of_total_pnl": 0.6440996185909621,
+          "bar_count": 558
+        },
+        {
+          "regime": "ranging/low_vol",
+          "total_pnl": 1410.6017089841189,
+          "pct_of_total_pnl": 0.041332754626672005,
+          "bar_count": 674
+        },
+        {
+          "regime": "trending/high_vol",
+          "total_pnl": -4491.345849609439,
+          "pct_of_total_pnl": -0.13160319795665204,
+          "bar_count": 449
+        },
+        {
+          "regime": "ranging/high_vol",
+          "total_pnl": -6244.198779297178,
+          "pct_of_total_pnl": -0.18296442882571384,
+          "bar_count": 732
+        }
+      ],
+      "top_regime_pct_of_pnl": 0.6440996185909621
+    }
+  ]
+}
