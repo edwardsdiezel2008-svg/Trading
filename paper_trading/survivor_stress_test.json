@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-08-11T00:54:55.234844Z",
+  "generated_at_utc": "2026-08-11T02:18:00.352154Z",
   "results": [
     {
       "label": "Nasdaq Futures (Daily)",
@@ -284,16 +284,16 @@
           "fold": 5,
           "test_start": "2024-12-09",
           "test_end": "2026-08-10",
-          "test_return": 0.17742063245521655,
-          "test_sharpe": 1.1686686995190787
+          "test_return": 0.17654164617285595,
+          "test_sharpe": 1.1628480948129465
         }
       ],
-      "normal_oos_return": 0.2241460733557028,
-      "normal_ci_low": 0.022207692322895208,
+      "normal_oos_return": 0.22323220487367923,
+      "normal_ci_low": 0.0219368224561644,
       "normal_ci_high": 0.5051932665339024,
       "normal_significant": true,
-      "stressed_oos_return": 0.2239758065289046,
-      "stressed_ci_low": 0.021966337533789668,
+      "stressed_oos_return": 0.22306196462010086,
+      "stressed_ci_low": 0.02170035898464026,
       "stressed_ci_high": 0.5050861355300583,
       "stressed_significant": true,
       "survives_cost_stress": true,
@@ -301,29 +301,29 @@
         {
           "regime": "trending/low_vol",
           "total_pnl": 21186.894628906215,
-          "pct_of_total_pnl": 0.5932935888468459,
+          "pct_of_total_pnl": 0.5917194544744409,
           "bar_count": 558
         },
         {
           "regime": "ranging/low_vol",
           "total_pnl": 4801.005615234026,
-          "pct_of_total_pnl": 0.13444187557575563,
+          "pct_of_total_pnl": 0.13408517261888442,
           "bar_count": 674
         },
         {
           "regime": "ranging/high_vol",
           "total_pnl": -2185.401708984631,
-          "pct_of_total_pnl": -0.061197492398274086,
+          "pct_of_total_pnl": -0.061035122404564296,
           "bar_count": 732
         },
         {
           "regime": "trending/high_vol",
-          "total_pnl": -7537.339501953189,
-          "pct_of_total_pnl": -0.21106704317912434,
+          "total_pnl": -7632.339501953189,
+          "pct_of_total_pnl": -0.21316025050211043,
           "bar_count": 449
         }
       ],
-      "top_regime_pct_of_pnl": 0.5932935888468459
+      "top_regime_pct_of_pnl": 0.5917194544744409
     },
     {
       "label": "Gold Futures (Daily)",
@@ -365,46 +365,118 @@
           "fold": 5,
           "test_start": "2024-12-09",
           "test_end": "2026-08-10",
-          "test_return": 0.14407451370968816,
-          "test_sharpe": 0.9660008582975362
+          "test_return": 0.14319755594141736,
+          "test_sharpe": 0.9601437001694413
         }
       ],
-      "normal_oos_return": 0.2216931464907137,
-      "normal_ci_low": 0.021529560588248575,
-      "normal_ci_high": 0.4728068740966571,
+      "normal_oos_return": 0.22075669236782258,
+      "normal_ci_low": 0.02068000315743286,
+      "normal_ci_high": 0.47167793589033463,
       "normal_significant": true,
-      "stressed_oos_return": 0.2215231488231333,
-      "stressed_ci_low": 0.021387536835482612,
-      "stressed_ci_high": 0.47267346393099524,
+      "stressed_oos_return": 0.22058674945234924,
+      "stressed_ci_low": 0.020547045671857857,
+      "stressed_ci_high": 0.4715445368972884,
       "stressed_significant": true,
       "survives_cost_stress": true,
       "regime_breakdown": [
         {
           "regime": "trending/low_vol",
           "total_pnl": 21981.79218749993,
-          "pct_of_total_pnl": 0.6440996185909621,
+          "pct_of_total_pnl": 0.6458975668850976,
           "bar_count": 558
         },
         {
           "regime": "ranging/low_vol",
           "total_pnl": 1410.6017089841189,
-          "pct_of_total_pnl": 0.041332754626672005,
+          "pct_of_total_pnl": 0.04144813143101714,
           "bar_count": 674
         },
         {
           "regime": "trending/high_vol",
-          "total_pnl": -4491.345849609439,
-          "pct_of_total_pnl": -0.13160319795665204,
+          "total_pnl": -4396.345849609439,
+          "pct_of_total_pnl": -0.12917914350327095,
           "bar_count": 449
         },
         {
           "regime": "ranging/high_vol",
           "total_pnl": -6244.198779297178,
-          "pct_of_total_pnl": -0.18296442882571384,
+          "pct_of_total_pnl": -0.18347515818061438,
           "bar_count": 732
         }
       ],
-      "top_regime_pct_of_pnl": 0.6440996185909621
+      "top_regime_pct_of_pnl": 0.6458975668850976
     }
-  ]
+  ],
+  "portfolio_analysis": {
+    "aligned_start": "2018-04-16",
+    "aligned_end": "2026-08-10",
+    "aligned_bar_count": 2093,
+    "correlation_matrix": {
+      "RSI_Reversion(14,30/70) / Nasdaq Futures (Daily)": {
+        "RSI_Reversion(14,30/70) / Nasdaq Futures (Daily)": 1.0,
+        "RSI_Reversion(14,30/70) / S&P 500 Futures (Daily)": 0.522,
+        "RSI_Reversion(14,30/70) / Dow Futures (Daily)": 0.47,
+        "MA_Crossover(10/50) / Gold Futures (Daily)": 0.029,
+        "Donchian_Breakout(20) / Gold Futures (Daily)": 0.029
+      },
+      "RSI_Reversion(14,30/70) / S&P 500 Futures (Daily)": {
+        "RSI_Reversion(14,30/70) / Nasdaq Futures (Daily)": 0.522,
+        "RSI_Reversion(14,30/70) / S&P 500 Futures (Daily)": 1.0,
+        "RSI_Reversion(14,30/70) / Dow Futures (Daily)": 0.949,
+        "MA_Crossover(10/50) / Gold Futures (Daily)": -0.005,
+        "Donchian_Breakout(20) / Gold Futures (Daily)": -0.008
+      },
+      "RSI_Reversion(14,30/70) / Dow Futures (Daily)": {
+        "RSI_Reversion(14,30/70) / Nasdaq Futures (Daily)": 0.47,
+        "RSI_Reversion(14,30/70) / S&P 500 Futures (Daily)": 0.949,
+        "RSI_Reversion(14,30/70) / Dow Futures (Daily)": 1.0,
+        "MA_Crossover(10/50) / Gold Futures (Daily)": -0.017,
+        "Donchian_Breakout(20) / Gold Futures (Daily)": -0.019
+      },
+      "MA_Crossover(10/50) / Gold Futures (Daily)": {
+        "RSI_Reversion(14,30/70) / Nasdaq Futures (Daily)": 0.029,
+        "RSI_Reversion(14,30/70) / S&P 500 Futures (Daily)": -0.005,
+        "RSI_Reversion(14,30/70) / Dow Futures (Daily)": -0.017,
+        "MA_Crossover(10/50) / Gold Futures (Daily)": 1.0,
+        "Donchian_Breakout(20) / Gold Futures (Daily)": 0.904
+      },
+      "Donchian_Breakout(20) / Gold Futures (Daily)": {
+        "RSI_Reversion(14,30/70) / Nasdaq Futures (Daily)": 0.029,
+        "RSI_Reversion(14,30/70) / S&P 500 Futures (Daily)": -0.008,
+        "RSI_Reversion(14,30/70) / Dow Futures (Daily)": -0.019,
+        "MA_Crossover(10/50) / Gold Futures (Daily)": 0.904,
+        "Donchian_Breakout(20) / Gold Futures (Daily)": 1.0
+      }
+    },
+    "mean_pairwise_correlation": 0.285,
+    "individual_aligned": {
+      "RSI_Reversion(14,30/70) / Nasdaq Futures (Daily)": {
+        "total_return": 0.17051555551339703,
+        "sharpe": 0.7716937402287849
+      },
+      "RSI_Reversion(14,30/70) / S&P 500 Futures (Daily)": {
+        "total_return": 0.06583116661255928,
+        "sharpe": 0.7065395008402291
+      },
+      "RSI_Reversion(14,30/70) / Dow Futures (Daily)": {
+        "total_return": 0.04544412071951376,
+        "sharpe": 0.6258863466407024
+      },
+      "MA_Crossover(10/50) / Gold Futures (Daily)": {
+        "total_return": 0.22245243094901102,
+        "sharpe": 0.5517717290578685
+      },
+      "Donchian_Breakout(20) / Gold Futures (Daily)": {
+        "total_return": 0.21997871499578392,
+        "sharpe": 0.5447715424811197
+      }
+    },
+    "average_individual_return": 0.144844397758053,
+    "average_individual_sharpe": 0.6401325718497409,
+    "portfolio_total_return": 0.14528157434657074,
+    "portfolio_sharpe": 0.8447435987476261,
+    "portfolio_ci_low": 0.0609976121345183,
+    "portfolio_ci_high": 0.2512843857475933,
+    "portfolio_significant": true
+  }
 }

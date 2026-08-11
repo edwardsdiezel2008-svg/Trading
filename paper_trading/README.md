@@ -476,8 +476,8 @@ snapshot alone answers:
 | RSI_Reversion(14,30/70) | Nasdaq daily | 5/5 | ✓ holds | 69.3% (trending/high_vol) |
 | RSI_Reversion(14,30/70) | S&P 500 daily | 4/5 | ✓ holds | 86.2% |
 | RSI_Reversion(14,30/70) | Dow daily | 3/5 | **✗ fails** | 80.0% |
-| MA_Crossover(10/50) | Gold daily | 4/5 | ✓ holds | 59.3% |
-| Donchian_Breakout(20) | Gold daily | 4/5 | ✓ holds | 64.4% |
+| MA_Crossover(10/50) | Gold daily | 4/5 | ✓ holds | 59.2% |
+| Donchian_Breakout(20) | Gold daily | 4/5 | ✓ holds | 64.6% |
 
 **Nasdaq's `RSI_Reversion` is the strongest of the five** - positive in
 every one of the 5 independent fold periods, and its edge survives tripling
@@ -493,6 +493,35 @@ its own - most real trading edges are regime-dependent by nature - but it
 does mean each of these should be read as "works well in [that regime],"
 not "works everywhere." Surfaced on the landing page's "Survivor stress
 test" panel, sourced from the same JSON.
+
+**Portfolio combination.** None of the checks above answer a different,
+natural next question: does combining all 5 survivors into a single
+equal-weighted portfolio actually diversify anything, or are they all just
+riding the same underlying factor (plausible - 3 of the 5 are equity-index
+futures)? `portfolio_analysis()` aligns the 5 OOS equity curves on their
+common date intersection (2018-04-16 to 2026-08-10, 2,093 trading days -
+almost the full window, since all five tracks share nearly identical
+10-year Yahoo histories and the same 5-fold split) and bootstraps a
+confidence interval on the equal-weighted combination exactly like each
+individual survivor was checked.
+
+**Real result: yes, genuinely.** Mean pairwise daily-return correlation
+across the 5 is just 0.285 - but that low average hides real structure,
+not five independent bets. The correlation matrix splits cleanly into two
+clusters: the two Gold strategies correlate at 0.90 with each other (same
+instrument, both trend-following), the three equity-index `RSI_Reversion`
+strategies correlate at 0.47-0.95 with each other (same macro risk
+factor), but Gold and the equity-index cluster sit at essentially zero
+correlation with each other (-0.02 to +0.03). Combining them at equal
+weight over the same aligned window produces the same average return
+(+14.5%, identical to the plain average of the five individually) but a
+meaningfully higher Sharpe ratio - 0.84 for the portfolio vs. 0.64 average
+for the five taken separately, still comfortably statistically significant
+(90% CI excludes zero). That's the textbook diversification benefit,
+earned honestly from combining one uncorrelated commodity edge with a
+correlated equity-index cluster - not from five genuinely independent
+signals, which the correlation matrix makes clear is not what's actually
+happening here.
 
 ## Robustness checks (not part of the hourly pipeline - run manually)
 

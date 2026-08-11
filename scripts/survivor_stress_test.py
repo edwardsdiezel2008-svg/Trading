@@ -18,6 +18,16 @@ snapshot alone answers:
    trend/volatility regimes. A profit concentrated in one regime bucket is
    a narrower, more fragile edge than one spread across conditions.
 
+Plus one cross-survivor question none of the per-track checks above can
+answer alone: does combining all 5 into an equal-weighted portfolio
+actually diversify anything, or are they all just riding the same
+underlying risk factor (plausible here - 3 of the 5 are equity-index
+futures that plainly correlate with each other)? Answered by aligning the
+5 OOS equity curves on their common date intersection, computing their
+pairwise return correlation, and bootstrapping a confidence interval on
+the combined portfolio the same way each individual survivor was checked -
+directly comparable to the average of the five individually.
+
 Deliberately a one-off analysis script, not part of the hourly pipeline or
 even the regular walk-forward/sensitivity snapshot cadence - re-run manually
 whenever the "5 survivors" list changes (e.g. after adding more instruments
@@ -32,6 +42,9 @@ import argparse
 import datetime
 import json
 import sys
+
+import numpy as np
+import pandas as pd
 
 sys.path.insert(0, ".")
 
@@ -95,7 +108,7 @@ def run_one(label, bars_path, symbol, freq, strategy_cls):
     ]
     top_regime_pct = regime_breakdown[0]["pct_of_total_pnl"] if regime_breakdown else None
 
-    return {
+    result = {
         "label": label,
         "symbol": symbol,
         "freq": freq,
@@ -115,10 +128,63 @@ def run_one(label, bars_path, symbol, freq, strategy_cls):
         "regime_breakdown": regime_breakdown,
         "top_regime_pct_of_pnl": top_regime_pct,
     }
+    return result, wf.oos_equity_curve
 
 
 def pd_isna(v):
     return v != v  # NaN check without importing pandas at module scope for this alone
+
+
+def _annualized_sharpe(returns: pd.Series) -> float:
+    if len(returns) < 2 or returns.std() == 0:
+        return float("nan")
+    return float(returns.mean() / returns.std() * np.sqrt(252))
+
+
+def portfolio_analysis(curves: dict[str, pd.Series]) -> dict:
+    """Equal-weighted combination of the survivors' OOS equity curves,
+    aligned on their common date intersection (an inner join - each curve
+    only has values on its own instrument's trading days, and CME futures
+    calendars aren't perfectly identical across index/commodity products).
+    """
+    returns = {name: eq.pct_change().dropna() for name, eq in curves.items()}
+    df = pd.DataFrame(returns).dropna()
+    if df.empty or len(df) < 10:
+        return {"note": "too few overlapping bars across survivors for a meaningful portfolio analysis"}
+
+    corr = df.corr()
+    portfolio_returns = df.mean(axis=1)  # equal-weighted daily return
+    portfolio_equity = (1.0 + portfolio_returns).cumprod() * 100_000.0
+    portfolio_equity = pd.concat([pd.Series([100_000.0], index=[df.index[0] - pd.Timedelta(days=1)]), portfolio_equity])
+    ci = bootstrap_return_ci(portfolio_equity)
+
+    # Recompute each individual's own return/Sharpe restricted to the same
+    # aligned window, so "does combining help" compares like with like
+    # rather than the portfolio's shorter intersected window against each
+    # individual's original, longer, un-intersected OOS window.
+    individual_aligned = {}
+    for name, r in returns.items():
+        r_aligned = r.reindex(df.index).dropna()
+        individual_aligned[name] = {
+            "total_return": float((1.0 + r_aligned).prod() - 1.0),
+            "sharpe": _annualized_sharpe(r_aligned),
+        }
+
+    return {
+        "aligned_start": str(df.index.min().date()),
+        "aligned_end": str(df.index.max().date()),
+        "aligned_bar_count": len(df),
+        "correlation_matrix": {a: {b: (None if pd_isna(corr.loc[a, b]) else round(float(corr.loc[a, b]), 3)) for b in corr.columns} for a in corr.index},
+        "mean_pairwise_correlation": round(float(np.mean([corr.loc[a, b] for i, a in enumerate(corr.index) for b in corr.columns[i + 1:]])), 3) if len(corr) > 1 else None,
+        "individual_aligned": individual_aligned,
+        "average_individual_return": float(np.mean([v["total_return"] for v in individual_aligned.values()])),
+        "average_individual_sharpe": float(np.mean([v["sharpe"] for v in individual_aligned.values()])),
+        "portfolio_total_return": float(portfolio_equity.iloc[-1] / 100_000.0 - 1.0),
+        "portfolio_sharpe": _annualized_sharpe(portfolio_returns),
+        "portfolio_ci_low": ci["ci_low"],
+        "portfolio_ci_high": ci["ci_high"],
+        "portfolio_significant": ci["significant"],
+    }
 
 
 def main(argv=None):
@@ -127,19 +193,31 @@ def main(argv=None):
     args = p.parse_args(argv)
 
     results = []
+    curves = {}
     for label, bars_path, symbol, freq, strategy_cls in SURVIVORS:
         name = strategy_cls().name
         print(f"Stress-testing {name} on {label}...")
-        r = run_one(label, bars_path, symbol, freq, strategy_cls)
+        r, oos_equity_curve = run_one(label, bars_path, symbol, freq, strategy_cls)
         results.append(r)
+        curves[f"{name} / {label}"] = oos_equity_curve
         print(f"  folds positive: {r['folds_positive']}/{r['n_folds']}")
         print(f"  normal: {r['normal_oos_return']*100:.1f}% OOS, significant={r['normal_significant']}")
         print(f"  3x-slippage: {r['stressed_oos_return']*100:.1f}% OOS, significant={r['stressed_significant']}")
         print(f"  top regime share of P&L: {r['top_regime_pct_of_pnl']}")
 
+    print("\nCombining survivors into an equal-weighted portfolio...")
+    portfolio = portfolio_analysis(curves)
+    if "note" in portfolio:
+        print(f"  {portfolio['note']}")
+    else:
+        print(f"  mean pairwise correlation: {portfolio['mean_pairwise_correlation']}")
+        print(f"  average individual: {portfolio['average_individual_return']*100:.1f}% return, Sharpe {portfolio['average_individual_sharpe']:.2f}")
+        print(f"  portfolio: {portfolio['portfolio_total_return']*100:.1f}% return, Sharpe {portfolio['portfolio_sharpe']:.2f}, significant={portfolio['portfolio_significant']}")
+
     out = {
         "generated_at_utc": datetime.datetime.utcnow().isoformat() + "Z",
         "results": results,
+        "portfolio_analysis": portfolio,
     }
     with open(args.output, "w") as f:
         json.dump(out, f, indent=2)

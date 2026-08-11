@@ -324,6 +324,7 @@
         <thead><tr><th>Strategy</th><th>Track</th><th class="num">Folds Positive</th><th class="num">3x-Cost Stress</th><th class="num">Top Regime Share</th></tr></thead>
         <tbody id="survivorTbody"></tbody>
       </table></div>
+      <p id="survivorPortfolioText" style="margin:14px 0 0; font-size:var(--fs-sm); color:var(--ink-2);"></p>
     </div>
   </div>
 
@@ -666,6 +667,15 @@
         <td class="num mono">${regimePct}</td>
       </tr>`;
     }).join('');
+
+    const port = SURVIVOR_STRESS_TEST && SURVIVOR_STRESS_TEST.portfolio_analysis;
+    const portEl = document.getElementById('survivorPortfolioText');
+    if (port && port.portfolio_total_return != null) {
+      const sharpeDelta = port.portfolio_sharpe - port.average_individual_sharpe;
+      portEl.innerHTML = `<strong>Combined into one equal-weighted portfolio</strong> (aligned on the ${port.aligned_bar_count} trading days all five share, ${port.aligned_start} to ${port.aligned_end}): mean pairwise correlation is just ${port.mean_pairwise_correlation.toFixed(2)} - the two Gold strategies move together (0.90+), the three equity-index strategies move together (0.47-0.95), but Gold and the equity-index cluster are essentially uncorrelated (near 0). That structure is why the portfolio's Sharpe (${port.portfolio_sharpe.toFixed(2)}) beats the average of the five taken individually (${port.average_individual_sharpe.toFixed(2)}, ${sharpeDelta >= 0 ? '+' : ''}${sharpeDelta.toFixed(2)}) at essentially the same combined return (${fmtSignedPct(port.portfolio_total_return)} vs ${fmtSignedPct(port.average_individual_return)} average) - real diversification from combining an equity-index cluster with an uncorrelated commodity, not five independent bets.`;
+    } else if (port && port.note) {
+      portEl.textContent = port.note;
+    }
   }
 
   function checkStaleness() {
