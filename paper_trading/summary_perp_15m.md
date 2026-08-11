@@ -1,19 +1,19 @@
-# BTC/USDT Paper Trading (15min) — updated 2026-08-11T15:32:54.251818+00:00
+# BTC/USDT Paper Trading (15min) — updated 2026-08-11T18:16:48.907620+00:00
 
-Latest bar: 2026-08-11 15:30:00 · 494 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-11 18:15:00 · 505 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $98,846 | -1.2% | — | 1 |
-| Inside_Bar_Breakout(0.6) | SHORT | $105,794 | +5.8% | 3.51 | 2 |
-| MA_Crossover(10/50) | SHORT | $104,639 | +4.6% | 2.51 | 4 |
-| Opening_Range_Breakout(6) | SHORT | $103,842 | +3.8% | 2.24 | 2 |
-| Supertrend(10,m=3.0) | SHORT | $102,335 | +2.3% | 1.34 | 2 |
-| Donchian_Breakout(20) | SHORT | $101,093 | +1.1% | 0.75 | 2 |
+| *Buy & Hold (benchmark)* | — | $98,509 | -1.5% | — | 1 |
+| Inside_Bar_Breakout(0.6) | SHORT | $106,796 | +6.8% | 3.93 | 2 |
+| MA_Crossover(10/50) | SHORT | $105,630 | +5.6% | 2.91 | 4 |
+| Opening_Range_Breakout(6) | SHORT | $104,855 | +4.9% | 2.69 | 2 |
+| Supertrend(10,m=3.0) | SHORT | $103,334 | +3.3% | 1.80 | 2 |
+| Donchian_Breakout(20) | SHORT | $102,080 | +2.1% | 1.28 | 2 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| Bollinger_Reversion(20,2sd) | LONG | $99,342 | -0.7% | -0.40 | 2 |
-| RSI_Reversion(14,30/70) | LONG | $97,790 | -2.2% | -2.69 | 1 |
-| ZScore_Reversion(20,z=2.0) | LONG | $97,783 | -2.2% | -2.51 | 2 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $93,498 | -6.5% | -3.89 | 3 |
-| MACD_Momentum(12/26/9) | SHORT | $93,417 | -6.6% | -3.96 | 3 |
-| Engulfing_Reversal(0.3) | LONG | $91,761 | -8.2% | -4.34 | 3 |
+| Bollinger_Reversion(20,2sd) | LONG | $98,311 | -1.7% | -1.10 | 2 |
+| RSI_Reversion(14,30/70) | LONG | $96,775 | -3.2% | -3.50 | 1 |
+| ZScore_Reversion(20,z=2.0) | LONG | $96,768 | -3.2% | -3.31 | 2 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $94,442 | -5.6% | -3.15 | 3 |
+| MACD_Momentum(12/26/9) | SHORT | $94,361 | -5.6% | -3.21 | 3 |
+| Engulfing_Reversal(0.3) | SHORT | $90,208 | -9.8% | -5.02 | 4 |
