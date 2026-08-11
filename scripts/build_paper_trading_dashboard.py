@@ -125,10 +125,13 @@ BARS_FILE_OVERRIDES = {"_perp": "", "_perp_15m": "_15m", "_eth_perp": "_eth", "_
 
 
 def load_recent_bars(suffix, limit=CHART_CANDLE_LIMIT):
-    """Tail of the raw OHLC bars for the price chart - deliberately not the
+    """Tail of the raw OHLC(V) bars for the price chart - deliberately not the
     full multi-thousand-bar history (unreadable as candlesticks), just
     enough recent context to see actual price action alongside the
-    strategy equity curves."""
+    strategy equity curves. Volume rides along as a 6th element so the
+    futures tracks can show real recent-volume context on the dashboard -
+    existing chart code destructures only the first 5 fields, so this is a
+    backward-compatible addition, not a format change."""
     bars_suffix = BARS_FILE_OVERRIDES.get(suffix, suffix)
     path = f"paper_trading/bars{bars_suffix}.csv"
     if not os.path.exists(path):
@@ -138,7 +141,10 @@ def load_recent_bars(suffix, limit=CHART_CANDLE_LIMIT):
     out = []
     for r in rows[-limit:]:
         try:
-            out.append([r["timestamp"], float(r["open"]), float(r["high"]), float(r["low"]), float(r["close"])])
+            row = [r["timestamp"], float(r["open"]), float(r["high"]), float(r["low"]), float(r["close"])]
+            if "volume" in r and r["volume"] not in (None, ""):
+                row.append(float(r["volume"]))
+            out.append(row)
         except (KeyError, ValueError, TypeError):
             continue
     return out

@@ -206,6 +206,7 @@
 
   .compare-wrap { height: 230px; position: relative; }
   .compare-wrap canvas { width: 100%; height: 100%; display: block; }
+  .volume-wrap { height: 90px; margin-top: 10px; }
 
   .foot { padding: 6px 4px 0; }
   .foot p { margin: 0 0 4px; font-size: var(--fs-xs); color: var(--ink-muted); }
@@ -544,6 +545,17 @@
       <p class="panel-note">All twelve futures tracks trade <strong>real prices</strong> - CME Nasdaq-100 (NQ=F), S&amp;P 500 (ES=F), Dow (YM=F), and Russell 2000 (RTY=F) E-mini futures, plus Gold (GC=F) and WTI Crude Oil (CL=F) futures, all continuous front contracts, fetched from Yahoo Finance's public chart endpoint (unauthenticated and keyless, the same way Crypto.com's REST API supplies crypto candles here without needing an account). Each real futures price is paired with its Micro contract's point-value economics - <strong>MNQ</strong> ($2/index-point), <strong>MES</strong> ($5/index-point), <strong>MYM</strong> ($0.50/index-point), <strong>MGC</strong> ($10/oz), <strong>M2K</strong> ($5/index-point), and <strong>MCL</strong> ($100/barrel-point), each $0.75/side commission - since the Micro contracts track the identical price as their full-size counterparts, just at a smaller contract size. Real futures P&amp;L math, not an ETF-proxy approximation.</p>
       <p class="panel-note">Real overnight margin differs by contract, and that's reported as-is rather than flattened to one number: MNQ requires roughly $1,700-1,900 in CME initial margin (~25-30x implied leverage); MES roughly $2,400-2,500 maintenance margin (~10-15x); MYM roughly $1,400-1,600 maintenance margin (~15-20x at typical notional); MGC roughly $1,700 maintenance margin (~15-20x at typical notional); M2K roughly $500-600 maintenance margin against ~$11,000 typical notional (~18-22x); MCL roughly $500-600 maintenance margin against ~$7,000 typical notional (~12-15x) - the smaller Micro contracts carry the highest implied leverage since their absolute margin requirement doesn't scale down as fast as their notional does. All twelve tracks here run <strong>unleveraged</strong> instead of simulating any of these figures (position size is simply however many whole micro contracts $100,000 of paper capital can cover): the backtest engine only checks for a liquidation-triggering loss at each bar's close, and modeling 10-30x real margin risk against bar-close-only checks would produce either constant false liquidations or a threshold so loose it stops meaning anything. The margin/leverage figures above are sourced context, not something simulated.</p>
       <p class="panel-note">The 5-Minute tracks' data has one retention limit worth knowing: Yahoo's intraday endpoint only serves the trailing ~60 days per request. Every hourly run merges freshly-fetched bars into the existing history, so each 5-minute track's own record keeps accumulating past that 60-day window going forward - same pattern already used for the memecoin scanner's precise-history coins.</p>
+    </div>
+
+    <div class="panel" id="futuresContextPanel" style="display:none;">
+      <div class="panel-head">
+        <h2>🗓️ Contract &amp; volume context</h2>
+        <span class="panel-hint" id="futuresContextHint">—</span>
+      </div>
+      <p class="panel-note">Front-month contract and days-to-expiration are <strong>calculated</strong> right here in your browser from each exchange's standard published contract cycle - the quarterly CME cycle for the equity index futures, COMEX's cycle for gold, NYMEX's rule for WTI crude - not fetched from a live source, and the business-day counting doesn't account for exchange holidays. Treat it as a reference estimate; confirm exact dates with the exchange before making real decisions around rollover. Open interest is reported honestly as <strong>not available</strong> rather than estimated - Yahoo's free, keyless chart endpoint (the only data source this project uses) doesn't provide it for continuous-contract futures symbols.</p>
+      <div class="stat-tiles" id="futuresContextTiles"></div>
+      <div class="compare-wrap volume-wrap" id="volumeChartWrap"><canvas id="volumeChartCanvas"></canvas></div>
+      <span class="panel-hint" id="volumeChartHint">—</span>
     </div>
 
     <div class="panel" id="lockedStrategyPanel">
@@ -1242,6 +1254,160 @@
     }).sort((a, b) => b.totalReturn - a.totalReturn);
   }
 
+  // ---------- futures contract calendar + volume context ----------
+  // Everything here is computed client-side from today's date and from the
+  // bars already loaded into the page - nothing is fetched. Front-month and
+  // expiration follow each exchange's own standard, publicly documented
+  // contract cycle (see the panel-note text rendered alongside these tiles
+  // for the honesty caveats: no exchange-holiday awareness, and open
+  // interest is flatly unavailable from this project's data source rather
+  // than estimated).
+  const MONTH_CODES = ['F', 'G', 'H', 'J', 'K', 'M', 'N', 'Q', 'U', 'V', 'X', 'Z']; // Jan..Dec
+  const FUTURES_CONTRACTS = {
+    nq: { code: 'NQ', name: 'E-mini Nasdaq-100', months: [3, 6, 9, 12], rule: 'thirdFriday' },
+    es: { code: 'ES', name: 'E-mini S&P 500', months: [3, 6, 9, 12], rule: 'thirdFriday' },
+    ym: { code: 'YM', name: 'E-mini Dow', months: [3, 6, 9, 12], rule: 'thirdFriday' },
+    rty: { code: 'RTY', name: 'E-mini Russell 2000', months: [3, 6, 9, 12], rule: 'thirdFriday' },
+    gc: { code: 'GC', name: 'Gold', months: [2, 4, 6, 8, 10, 12], rule: 'thirdLastBizDay' },
+    cl: { code: 'CL', name: 'WTI Crude Oil', months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], rule: 'crude25th' },
+  };
+  // The 5-minute futures tracks trade the same underlying contract as their
+  // daily counterpart - route both to the same calendar entry.
+  const FUTURES_BASE_KEY = { nq5m: 'nq', es5m: 'es', ym5m: 'ym', rty5m: 'rty', gc5m: 'gc', cl5m: 'cl' };
+
+  function isBizDayUTC(d) { const day = d.getUTCDay(); return day !== 0 && day !== 6; }
+  function addDaysUTC(d, n) { const r = new Date(d.getTime()); r.setUTCDate(r.getUTCDate() + n); return r; }
+  function nthWeekdayOfMonthUTC(year, monthIndex0, weekday, n) {
+    let d = new Date(Date.UTC(year, monthIndex0, 1)), count = 0;
+    while (true) {
+      if (d.getUTCDay() === weekday) { count++; if (count === n) return d; }
+      d = addDaysUTC(d, 1);
+    }
+  }
+  function lastDayOfMonthUTC(year, monthIndex0) { return new Date(Date.UTC(year, monthIndex0 + 1, 0)); }
+  function subtractBizDaysUTC(d, n) {
+    let r = new Date(d.getTime()), left = n;
+    while (left > 0) { r = addDaysUTC(r, -1); if (isBizDayUTC(r)) left--; }
+    return r;
+  }
+  // Expiration ("last trading day") rules, deliberately only the ones with
+  // a well-documented, unambiguous public rule:
+  //  - thirdFriday: CME equity index futures (NQ/ES/YM/RTY) - 3rd Friday of
+  //    the contract month.
+  //  - thirdLastBizDay: COMEX gold (GC) - third-to-last business day of the
+  //    contract month.
+  //  - crude25th: NYMEX WTI crude (CL) - 3 business days before the 25th
+  //    calendar day of the month BEFORE the delivery month (rolled back to
+  //    the nearest earlier business day first if the 25th itself isn't one).
+  function expirationDateUTC(rule, year, monthIndex0) {
+    if (rule === 'thirdFriday') return nthWeekdayOfMonthUTC(year, monthIndex0, 5, 3);
+    if (rule === 'thirdLastBizDay') {
+      let d = lastDayOfMonthUTC(year, monthIndex0), count = 0;
+      while (true) {
+        if (isBizDayUTC(d)) { count++; if (count === 3) return d; }
+        d = addDaysUTC(d, -1);
+      }
+    }
+    if (rule === 'crude25th') {
+      let priorMonthIndex0 = monthIndex0 - 1, y = year;
+      if (priorMonthIndex0 < 0) { priorMonthIndex0 = 11; y -= 1; }
+      let base = new Date(Date.UTC(y, priorMonthIndex0, 25));
+      while (!isBizDayUTC(base)) base = addDaysUTC(base, -1);
+      return subtractBizDaysUTC(base, 3);
+    }
+    return null;
+  }
+  function frontMonthContract(trackKey, asOf) {
+    const spec = FUTURES_CONTRACTS[FUTURES_BASE_KEY[trackKey] || trackKey];
+    if (!spec) return null;
+    const now = asOf || new Date();
+    const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    for (let i = 0; i < 15; i++) {
+      const totalMonth = now.getUTCMonth() + i;
+      const y = now.getUTCFullYear() + Math.floor(totalMonth / 12);
+      const m0 = ((totalMonth % 12) + 12) % 12;
+      if (!spec.months.includes(m0 + 1)) continue;
+      const exp = expirationDateUTC(spec.rule, y, m0);
+      if (exp && exp.getTime() >= todayUTC) {
+        const daysLeft = Math.round((exp.getTime() - todayUTC) / 86400000);
+        return {
+          code: spec.code + MONTH_CODES[m0] + String(y).slice(-2),
+          name: spec.name,
+          monthLabel: exp.toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' }),
+          expirationLabel: exp.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }),
+          daysLeft,
+        };
+      }
+    }
+    return null;
+  }
+
+  function computeVolumeContext(track, lookback) {
+    const bars = (track && track.bars) || [];
+    const vols = bars.map((b) => (b.length > 5 ? b[5] : null)).filter((v) => v != null && !isNaN(v));
+    if (vols.length < 2) return null;
+    const n = Math.min(lookback || 20, vols.length - 1);
+    const baseline = vols.slice(-n - 1, -1); // trailing window, excluding the latest (possibly in-progress) bar
+    const avg = baseline.length ? baseline.reduce((a, b) => a + b, 0) / baseline.length : null;
+    const latest = vols[vols.length - 1];
+    return { latest, avg, pctVsAvg: avg ? (latest / avg - 1) : null, series: vols.slice(-30) };
+  }
+
+  function drawVolumeBars(canvasId, values, avgValue) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const { ctx, w, h } = setupCanvas(canvas);
+    ctx.clearRect(0, 0, w, h);
+    if (!values.length) {
+      ctx.font = '12px ' + FONT_MONO; ctx.fillStyle = THEME.inkMuted;
+      ctx.fillText('No volume data yet.', 8, h / 2);
+      return;
+    }
+    const max = Math.max(...values, avgValue || 0) || 1;
+    const padB = 3, padT = 3, plotH = h - padT - padB;
+    const slot = w / values.length;
+    const barW = Math.max(1, slot * 0.7);
+    values.forEach((v, i) => {
+      const barH = (v / max) * plotH;
+      ctx.fillStyle = THEME.accent;
+      ctx.globalAlpha = i === values.length - 1 ? 1 : 0.5;
+      ctx.fillRect(i * slot + (slot - barW) / 2, h - padB - barH, barW, barH);
+    });
+    ctx.globalAlpha = 1;
+    if (avgValue) {
+      const y = h - padB - (avgValue / max) * plotH;
+      ctx.strokeStyle = THEME.inkMuted; ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(0, y + 0.5); ctx.lineTo(w, y + 0.5); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  function renderFuturesContext(trackKey, track) {
+    const panel = document.getElementById('futuresContextPanel');
+    const isFutures = !!FUTURES_CONTRACTS[FUTURES_BASE_KEY[trackKey] || trackKey];
+    panel.style.display = isFutures ? '' : 'none';
+    if (!isFutures) return;
+
+    const contract = frontMonthContract(trackKey);
+    const vol = computeVolumeContext(track, 20);
+
+    const contractTile = contract
+      ? `<div class="tile"><span class="tile-label">Front-month (calculated)</span><span class="tile-value">${contract.code}</span><span class="tile-sub">expires ${contract.expirationLabel} · ${contract.daysLeft}d left</span></div>`
+      : '';
+    const rollTile = `<div class="tile"><span class="tile-label">Typical roll window</span><span class="tile-value">~5–8 days</span><span class="tile-sub">before expiration, by convention — not a fixed rule</span></div>`;
+    const volTile = vol
+      ? `<div class="tile"><span class="tile-label">Latest bar volume</span><span class="tile-value">${Math.round(vol.latest).toLocaleString()}</span><span class="tile-sub">${vol.avg ? (vol.pctVsAvg >= 0 ? '+' : '') + (vol.pctVsAvg * 100).toFixed(0) + '% vs 20-bar avg' : 'not enough history yet'}</span></div>`
+      : `<div class="tile"><span class="tile-label">Latest bar volume</span><span class="tile-value">—</span><span class="tile-sub">not enough history yet</span></div>`;
+    const oiTile = `<div class="tile"><span class="tile-label">Open interest</span><span class="tile-value">Not available</span><span class="tile-sub">not provided by this project's data source</span></div>`;
+
+    document.getElementById('futuresContextTiles').innerHTML = contractTile + rollTile + volTile + oiTile;
+    document.getElementById('futuresContextHint').textContent = contract ? `${contract.name} · ${contract.code}` : '—';
+    drawVolumeBars('volumeChartCanvas', vol ? vol.series : [], vol ? vol.avg : null);
+    document.getElementById('volumeChartHint').textContent = vol
+      ? `Last ${vol.series.length} bars · dashed line = trailing 20-bar average volume`
+      : '—';
+  }
+
   let activeKey = 'daily';
 
   function render(trackKey) {
@@ -1271,6 +1437,7 @@
 
     document.getElementById('costFilterNote').classList.toggle('visible', ['fifteenMin', 'perp15m', 'nq5m', 'es5m', 'ym5m', 'gc5m', 'rty5m', 'cl5m'].includes(trackKey));
     document.getElementById('nqNote').style.display = ['nq', 'nq5m', 'es', 'es5m', 'ym', 'ym5m', 'gc', 'gc5m', 'rty', 'rty5m', 'cl', 'cl5m'].includes(trackKey) ? '' : 'none';
+    renderFuturesContext(trackKey, track);
 
     const unprofitableNote = document.getElementById('unprofitableNote');
     if (rows.length && rows.every((r) => r.totalReturn <= 0)) {

@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 
 sys.path.insert(0, ".")
@@ -7,8 +8,40 @@ import scripts.rug_watch as rug_watch
 from scripts.build_paper_trading_dashboard import (
     compute_rug_watch_summary,
     diversify_news,
+    load_recent_bars,
     load_rug_watch_streaks,
 )
+
+
+def _write_bars_csv(path, header, rows):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        f.write(",".join(header) + "\n")
+        for row in rows:
+            f.write(",".join(str(v) for v in row) + "\n")
+
+
+def test_load_recent_bars_appends_volume_as_a_sixth_element(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _write_bars_csv(
+        "paper_trading/bars_zz.csv",
+        ["timestamp", "open", "high", "low", "close", "volume"],
+        [["2026-01-01", 100, 110, 90, 105, 12345]],
+    )
+    assert load_recent_bars("_zz") == [["2026-01-01", 100.0, 110.0, 90.0, 105.0, 12345.0]]
+
+
+def test_load_recent_bars_stays_five_wide_without_a_volume_column(tmp_path, monkeypatch):
+    # Backward compatibility: existing chart code destructures the first 5
+    # fields positionally - a CSV that predates the volume column (or any
+    # other bars file missing it) must not shift or break that.
+    monkeypatch.chdir(tmp_path)
+    _write_bars_csv(
+        "paper_trading/bars_zz.csv",
+        ["timestamp", "open", "high", "low", "close"],
+        [["2026-01-01", 100, 110, 90, 105]],
+    )
+    assert load_recent_bars("_zz") == [["2026-01-01", 100.0, 110.0, 90.0, 105.0]]
 
 
 def _item(source, i):
