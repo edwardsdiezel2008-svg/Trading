@@ -85,6 +85,24 @@ jobs:
             fi
           done
 
+      - name: Update Nasdaq Futures extra timeframes (1-min, 15-min, 1-hour - NQ only)
+        run: |
+          if [ -f "paper_trading/bars_nq1m.csv" ]; then
+            python scripts/paper_trade_update.py --suffix "_nq1m" --symbol MNQ --freq 1min --tracking-start "2026-08-11" --cost-aware-min-multiple 1.0 --bars-file "paper_trading/bars_nq1m.csv"
+          else
+            echo "Skipping nq1m update - no bars_nq1m.csv yet (first fetch hasn't succeeded)"
+          fi
+          if [ -f "paper_trading/bars_nq15m.csv" ]; then
+            python scripts/paper_trade_update.py --suffix "_nq15m" --symbol MNQ --freq 15min --tracking-start "2026-08-11" --cost-aware-min-multiple 1.0 --bars-file "paper_trading/bars_nq15m.csv"
+          else
+            echo "Skipping nq15m update - no bars_nq15m.csv yet (first fetch hasn't succeeded)"
+          fi
+          if [ -f "paper_trading/bars_nq1h.csv" ]; then
+            python scripts/paper_trade_update.py --suffix "_nq1h" --symbol MNQ --freq 1h --tracking-start "2026-08-11" --bars-file "paper_trading/bars_nq1h.csv"
+          else
+            echo "Skipping nq1h update - no bars_nq1h.csv yet (first fetch hasn't succeeded)"
+          fi
+
       - name: Update memecoin scanners (precise + wide)
         run: |
           python scripts/memecoin_scan_update.py

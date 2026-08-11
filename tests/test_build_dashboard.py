@@ -6,11 +6,32 @@ sys.path.insert(0, ".")
 
 import scripts.rug_watch as rug_watch
 from scripts.build_paper_trading_dashboard import (
+    SUFFIX_SYMBOL_FALLBACK,
+    TRACK_META,
+    TRACK_SUFFIXES,
     compute_rug_watch_summary,
     diversify_news,
     load_recent_bars,
     load_rug_watch_streaks,
 )
+
+
+def test_every_track_meta_suffix_has_a_symbol_fallback():
+    # build_index_page() indexes SUFFIX_SYMBOL_FALLBACK by every TRACK_META
+    # suffix whenever a track hasn't been seeded yet - a suffix missing here
+    # is a KeyError at build time, not a graceful fallback. Caught for real
+    # once when the NQ 1m/15m/1h tracks were added to TRACK_SUFFIXES/
+    # TRACK_META without updating this map.
+    missing = set(TRACK_META.keys()) - set(SUFFIX_SYMBOL_FALLBACK.keys())
+    assert not missing, f"suffixes missing a symbol fallback: {missing}"
+
+
+def test_every_track_suffix_has_meta():
+    # TRACK_SUFFIXES drives placeholder generation; TRACK_META drives the
+    # dashboard tab wiring and landing-page nav cards. A suffix present in
+    # one but not the other silently drops that track from half the site.
+    missing = set(TRACK_SUFFIXES) - set(TRACK_META.keys())
+    assert not missing, f"suffixes missing from TRACK_META: {missing}"
 
 
 def _write_bars_csv(path, header, rows):

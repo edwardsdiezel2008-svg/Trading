@@ -434,6 +434,9 @@
     <button class="tab-btn" data-track="solPerp">⚡ SOL Perpetual</button>
     <button class="tab-btn" data-track="nq">📈 Nasdaq Futures (Daily)</button>
     <button class="tab-btn" data-track="nq5m">📈 Nasdaq Futures (5-Min)</button>
+    <button class="tab-btn" data-track="nq1m">📈 Nasdaq Futures (1-Min)</button>
+    <button class="tab-btn" data-track="nq15m">📈 Nasdaq Futures (15-Min)</button>
+    <button class="tab-btn" data-track="nq1h">📈 Nasdaq Futures (1-Hour)</button>
     <button class="tab-btn" data-track="es">📊 S&amp;P 500 Futures (Daily)</button>
     <button class="tab-btn" data-track="es5m">📊 S&amp;P 500 Futures (5-Min)</button>
     <button class="tab-btn" data-track="ym">📉 Dow Futures (Daily)</button>
@@ -810,6 +813,18 @@
       label: 'Nasdaq Futures (5-Min)', symbol: 'MNQ', dateUnit: 'Update', intraday: true,
       positions: __POSITIONS_NQ5M_JSON__, trades: __TRADES_NQ5M_JSON__, trackRecord: __TRACK_RECORD_NQ5M_JSON__, bars: __BARS_NQ5M_JSON__, walkforward: __WALKFORWARD_NQ5M_JSON__, sensitivity: __SENSITIVITY_NQ5M_JSON__, metaStrategy: __META_STRATEGY_NQ5M_JSON__,
     },
+    nq1m: {
+      label: 'Nasdaq Futures (1-Min)', symbol: 'MNQ', dateUnit: 'Update', intraday: true,
+      positions: __POSITIONS_NQ1M_JSON__, trades: __TRADES_NQ1M_JSON__, trackRecord: __TRACK_RECORD_NQ1M_JSON__, bars: __BARS_NQ1M_JSON__, walkforward: __WALKFORWARD_NQ1M_JSON__, sensitivity: __SENSITIVITY_NQ1M_JSON__, metaStrategy: __META_STRATEGY_NQ1M_JSON__,
+    },
+    nq15m: {
+      label: 'Nasdaq Futures (15-Min)', symbol: 'MNQ', dateUnit: 'Update', intraday: true,
+      positions: __POSITIONS_NQ15M_JSON__, trades: __TRADES_NQ15M_JSON__, trackRecord: __TRACK_RECORD_NQ15M_JSON__, bars: __BARS_NQ15M_JSON__, walkforward: __WALKFORWARD_NQ15M_JSON__, sensitivity: __SENSITIVITY_NQ15M_JSON__, metaStrategy: __META_STRATEGY_NQ15M_JSON__,
+    },
+    nq1h: {
+      label: 'Nasdaq Futures (1-Hour)', symbol: 'MNQ', dateUnit: 'Update', intraday: true,
+      positions: __POSITIONS_NQ1H_JSON__, trades: __TRADES_NQ1H_JSON__, trackRecord: __TRACK_RECORD_NQ1H_JSON__, bars: __BARS_NQ1H_JSON__, walkforward: __WALKFORWARD_NQ1H_JSON__, sensitivity: __SENSITIVITY_NQ1H_JSON__, metaStrategy: __META_STRATEGY_NQ1H_JSON__,
+    },
     es: {
       label: 'S&P 500 Futures (Daily)', symbol: 'MES', dateUnit: 'Day', intraday: false,
       positions: __POSITIONS_ES_JSON__, trades: __TRADES_ES_JSON__, trackRecord: __TRACK_RECORD_ES_JSON__, bars: __BARS_ES_JSON__, walkforward: __WALKFORWARD_ES_JSON__, sensitivity: __SENSITIVITY_ES_JSON__, metaStrategy: __META_STRATEGY_ES_JSON__,
@@ -1089,16 +1104,22 @@
     const canvas = document.getElementById('priceChartCanvas');
     const { ctx, w, h } = setupCanvas(canvas);
     ctx.clearRect(0, 0, w, h);
-    const bars = track.bars || [];
+    const allBars = track.bars || [];
     const hint = document.getElementById('priceChartHint');
-    if (!bars.length) {
+    if (!allBars.length) {
       hint.textContent = '—';
       ctx.font = '13px ' + FONT_MONO;
       ctx.fillStyle = THEME.ink2;
       ctx.fillText('No price data yet - check back after the next update.', 10, h / 2);
       return;
     }
-    hint.textContent = `${bars.length} candles · ${fmtDate(bars[0][0], track.intraday)} → ${fmtDate(bars[bars.length - 1][0], track.intraday)}`;
+    if (!chartView) chartView = { start: 0, end: allBars.length };
+    chartView.start = Math.round(Math.max(0, Math.min(chartView.start, allBars.length - 2)));
+    chartView.end = Math.round(Math.max(chartView.start + 2, Math.min(chartView.end, allBars.length)));
+    const bars = allBars.slice(chartView.start, chartView.end);
+    const zoomed = chartView.start > 0 || chartView.end < allBars.length;
+    hint.textContent = `${bars.length}${zoomed ? ` of ${allBars.length}` : ''} candles · ${fmtDate(bars[0][0], track.intraday)} → ${fmtDate(bars[bars.length - 1][0], track.intraday)}`
+      + (zoomed ? ' · double-click to reset zoom' : ' · scroll to zoom, drag to pan');
 
     const padL = 66, padR = 12, padT = 12, padB = 22;
     const plotW = w - padL - padR, plotH = h - padT - padB;
@@ -1273,7 +1294,10 @@
   };
   // The 5-minute futures tracks trade the same underlying contract as their
   // daily counterpart - route both to the same calendar entry.
-  const FUTURES_BASE_KEY = { nq5m: 'nq', es5m: 'es', ym5m: 'ym', rty5m: 'rty', gc5m: 'gc', cl5m: 'cl' };
+  const FUTURES_BASE_KEY = {
+    nq5m: 'nq', nq1m: 'nq', nq15m: 'nq', nq1h: 'nq',
+    es5m: 'es', ym5m: 'ym', rty5m: 'rty', gc5m: 'gc', cl5m: 'cl',
+  };
 
   function isBizDayUTC(d) { const day = d.getUTCDay(); return day !== 0 && day !== 6; }
   function addDaysUTC(d, n) { const r = new Date(d.getTime()); r.setUTCDate(r.getUTCDate() + n); return r; }
@@ -1409,9 +1433,15 @@
   }
 
   let activeKey = 'daily';
+  // Zoom/pan window (bar-index range) for the price chart - null means "full
+  // range". Belongs to whichever track key it was last set for; switching
+  // tabs resets it rather than carrying a zoom level over to unrelated data.
+  let chartView = null;
+  let chartViewKey = null;
 
   function render(trackKey) {
     activeKey = trackKey;
+    if (chartViewKey !== trackKey) { chartView = null; chartViewKey = trackKey; }
     const track = TRACKS[trackKey];
     const POSITIONS = track.positions, TRADES = track.trades;
     const order = Object.keys(POSITIONS.strategies);
@@ -1435,8 +1465,8 @@
       thinNote.classList.remove('visible');
     }
 
-    document.getElementById('costFilterNote').classList.toggle('visible', ['fifteenMin', 'perp15m', 'nq5m', 'es5m', 'ym5m', 'gc5m', 'rty5m', 'cl5m'].includes(trackKey));
-    document.getElementById('nqNote').style.display = ['nq', 'nq5m', 'es', 'es5m', 'ym', 'ym5m', 'gc', 'gc5m', 'rty', 'rty5m', 'cl', 'cl5m'].includes(trackKey) ? '' : 'none';
+    document.getElementById('costFilterNote').classList.toggle('visible', ['fifteenMin', 'perp15m', 'nq5m', 'nq1m', 'nq15m', 'es5m', 'ym5m', 'gc5m', 'rty5m', 'cl5m'].includes(trackKey));
+    document.getElementById('nqNote').style.display = ['nq', 'nq5m', 'nq1m', 'nq15m', 'nq1h', 'es', 'es5m', 'ym', 'ym5m', 'gc', 'gc5m', 'rty', 'rty5m', 'cl', 'cl5m'].includes(trackKey) ? '' : 'none';
     renderFuturesContext(trackKey, track);
 
     const unprofitableNote = document.getElementById('unprofitableNote');
@@ -2236,9 +2266,74 @@
     renderNews();
   }
 
+  // ---------- price chart zoom & pan ----------
+  // Wheel to zoom (anchored on the cursor's bar, not just the chart center),
+  // drag to pan, double-click to reset. Pointer Events cover touch drag on
+  // mobile too, without a separate touch handler.
+  function initPriceChartInteraction() {
+    const canvas = document.getElementById('priceChartCanvas');
+    if (!canvas) return;
+    const padL = 66, padR = 12;
+    let dragging = false, lastX = 0;
+
+    function currentTrack() { return TRACKS[activeKey]; }
+
+    canvas.addEventListener('wheel', (e) => {
+      const track = currentTrack();
+      const allBars = (track && track.bars) || [];
+      if (allBars.length < 12) return;
+      e.preventDefault();
+      if (!chartView) chartView = { start: 0, end: allBars.length };
+      const rect = canvas.getBoundingClientRect();
+      const plotW = Math.max(1, rect.width - padL - padR);
+      const mouseFrac = Math.min(1, Math.max(0, (e.clientX - rect.left - padL) / plotW));
+      const rangeLen = chartView.end - chartView.start;
+      const anchorIdx = chartView.start + mouseFrac * rangeLen;
+      const factor = e.deltaY > 0 ? 1.15 : 1 / 1.15;
+      const newLen = Math.min(allBars.length, Math.max(10, rangeLen * factor));
+      let newStart = anchorIdx - mouseFrac * newLen;
+      let newEnd = newStart + newLen;
+      if (newStart < 0) { newEnd -= newStart; newStart = 0; }
+      if (newEnd > allBars.length) { newStart -= (newEnd - allBars.length); newEnd = allBars.length; }
+      chartView = { start: Math.max(0, newStart), end: newEnd };
+      drawCandlestickChart(track);
+    }, { passive: false });
+
+    canvas.addEventListener('pointerdown', (e) => {
+      dragging = true; lastX = e.clientX;
+      canvas.setPointerCapture(e.pointerId);
+      canvas.style.cursor = 'grabbing';
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const track = currentTrack();
+      const allBars = (track && track.bars) || [];
+      if (!chartView || allBars.length < 12) return;
+      const rect = canvas.getBoundingClientRect();
+      const plotW = Math.max(1, rect.width - padL - padR);
+      const rangeLen = chartView.end - chartView.start;
+      const dxBars = ((e.clientX - lastX) / plotW) * rangeLen;
+      lastX = e.clientX;
+      let newStart = chartView.start - dxBars;
+      let newEnd = chartView.end - dxBars;
+      if (newStart < 0) { newEnd -= newStart; newStart = 0; }
+      if (newEnd > allBars.length) { newStart -= (newEnd - allBars.length); newEnd = allBars.length; }
+      chartView = { start: Math.max(0, newStart), end: newEnd };
+      drawCandlestickChart(track);
+    });
+    window.addEventListener('pointerup', () => { dragging = false; canvas.style.cursor = 'grab'; });
+    canvas.addEventListener('dblclick', () => {
+      chartView = null;
+      drawCandlestickChart(currentTrack());
+    });
+    canvas.style.cursor = 'grab';
+    canvas.style.touchAction = 'none';
+  }
+
   if (!hasDeepLink) render('daily');
   renderPersistent();
   checkStaleness();
+  initPriceChartInteraction();
   window.addEventListener('resize', () => { renderActive(); renderPersistent(); });
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); renderActive(); renderPersistent(); });
   new MutationObserver(() => { THEME = readTheme(); renderActive(); renderPersistent(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });

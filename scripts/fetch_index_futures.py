@@ -48,6 +48,19 @@ INDEX_FUTURES = [
     ("CL=F", "paper_trading/bars_cl.csv", "paper_trading/bars_cl5m.csv", "WTI Crude Oil (CL=F)"),
 ]
 
+# Nasdaq-specific extra granularities (interval, Yahoo's max retention period
+# for that interval, output path). Scoped to NQ only, not all six
+# instruments - added on request for closer intraday tracking of Nasdaq
+# Micro futures specifically, not a general timeframe expansion. Yahoo's
+# per-interval retention ceiling (not this project's choice): 1m only goes
+# back ~7 days, 15m/1h go back much further (60d/730d respectively) since
+# they're a coarser, lighter-weight series to serve.
+NQ_EXTRA_INTERVALS = [
+    ("1m", "7d", "paper_trading/bars_nq1m.csv"),
+    ("15m", "60d", "paper_trading/bars_nq15m.csv"),
+    ("1h", "730d", "paper_trading/bars_nq1h.csv"),
+]
+
 
 def _fetch_history(symbol: str, period: str, interval: str, retries: int = 3):
     import yfinance as yf
@@ -102,6 +115,15 @@ def main():
             wrote_any = True
         except Exception as exc:
             print(f"WARN 5-minute {label} fetch failed this run - {exc}")
+
+    for interval, period, path in NQ_EXTRA_INTERVALS:
+        try:
+            df = _fetch_history("NQ=F", period=period, interval=interval)
+            n = merge_bars_csv(path, _df_to_candles(df), date_only=False)
+            print(f"{path}: {n} rows ({len(df)} fetched this run)")
+            wrote_any = True
+        except Exception as exc:
+            print(f"WARN Nasdaq-100 ({interval}) fetch failed this run - {exc}")
 
     if not wrote_any:
         raise SystemExit("All index futures fetches failed this run - no data written")

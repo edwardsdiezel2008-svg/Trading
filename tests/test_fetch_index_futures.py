@@ -4,7 +4,7 @@ sys.path.insert(0, ".")
 
 import pandas as pd
 
-from scripts.fetch_index_futures import INDEX_FUTURES, _df_to_candles
+from scripts.fetch_index_futures import INDEX_FUTURES, NQ_EXTRA_INTERVALS, _df_to_candles
 
 
 def _make_df(rows, tz=None):
@@ -73,3 +73,17 @@ def test_index_futures_config_has_distinct_paths_per_symbol():
     assert len(five_min_paths) == len(set(five_min_paths)), "5-minute bars path collision"
     assert "NQ=F" in symbols and "ES=F" in symbols and "YM=F" in symbols and "GC=F" in symbols
     assert "RTY=F" in symbols and "CL=F" in symbols
+
+
+def test_nq_extra_intervals_has_distinct_intervals_and_paths():
+    intervals = [row[0] for row in NQ_EXTRA_INTERVALS]
+    paths = [row[2] for row in NQ_EXTRA_INTERVALS]
+    assert len(intervals) == len(set(intervals)), "duplicate interval"
+    assert len(paths) == len(set(paths)), "output path collision"
+    assert set(intervals) == {"1m", "15m", "1h"}
+    assert all(p.startswith("paper_trading/bars_nq") for p in paths)
+    # None of these paths may collide with the existing daily/5-min NQ files.
+    existing_nq_paths = {row[1] for row in INDEX_FUTURES if row[0] == "NQ=F"} | {
+        row[2] for row in INDEX_FUTURES if row[0] == "NQ=F"
+    }
+    assert not (set(paths) & existing_nq_paths)

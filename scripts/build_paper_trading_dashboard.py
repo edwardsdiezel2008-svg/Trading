@@ -40,7 +40,7 @@ CAPITAL = 100_000.0
 TRACK_SUFFIXES = [
     "", "_15m", "_eth", "_sol",
     "_perp", "_perp_15m", "_eth_perp", "_sol_perp",
-    "_nq", "_nq5m", "_es", "_es5m", "_ym", "_ym5m", "_gc", "_gc5m",
+    "_nq", "_nq5m", "_nq1m", "_nq15m", "_nq1h", "_es", "_es5m", "_ym", "_ym5m", "_gc", "_gc5m",
     "_rty", "_rty5m", "_cl", "_cl5m",
 ]
 
@@ -68,6 +68,9 @@ TRACK_META = {
     "_sol_perp": ("solPerp", "SOL Perpetual"),
     "_nq": ("nq", "Nasdaq Futures (Daily)"),
     "_nq5m": ("nq5m", "Nasdaq Futures (5-Min)"),
+    "_nq1m": ("nq1m", "Nasdaq Futures (1-Min)"),
+    "_nq15m": ("nq15m", "Nasdaq Futures (15-Min)"),
+    "_nq1h": ("nq1h", "Nasdaq Futures (1-Hour)"),
     "_es": ("es", "S&P 500 Futures (Daily)"),
     "_es5m": ("es5m", "S&P 500 Futures (5-Min)"),
     "_ym": ("ym", "Dow Futures (Daily)"),
@@ -78,6 +81,22 @@ TRACK_META = {
     "_rty5m": ("rty5m", "Russell 2000 Futures (5-Min)"),
     "_cl": ("cl", "Crude Oil Futures (Daily)"),
     "_cl5m": ("cl5m", "Crude Oil Futures (5-Min)"),
+}
+
+# Fallback instrument symbol per suffix, used on the landing page nav cards
+# only when a track hasn't been seeded yet (so positions.json has no
+# "symbol" field to read from). Every TRACK_META suffix must have an entry
+# here - a KeyError here is exactly what happens when a new track is wired
+# into TRACK_SUFFIXES/TRACK_META but this fallback map is forgotten (caught
+# for real once, adding the NQ 1m/15m/1h tracks - see the test that pins
+# this invariant in tests/test_build_dashboard.py).
+SUFFIX_SYMBOL_FALLBACK = {
+    "": "BTC/USDT", "_15m": "BTC/USDT", "_eth": "ETH/USDT", "_sol": "SOL/USDT",
+    "_perp": "BTC/USDT", "_perp_15m": "BTC/USDT", "_eth_perp": "ETH/USDT", "_sol_perp": "SOL/USDT",
+    "_nq": "MNQ", "_nq5m": "MNQ", "_nq1m": "MNQ", "_nq15m": "MNQ", "_nq1h": "MNQ",
+    "_es": "MES", "_es5m": "MES",
+    "_ym": "MYM", "_ym5m": "MYM", "_gc": "MGC", "_gc5m": "MGC",
+    "_rty": "M2K", "_rty5m": "M2K", "_cl": "MCL", "_cl5m": "MCL",
 }
 
 EMPTY_WALKFORWARD = {"symbol": None, "freq": None, "n_folds": 0, "generated_at_utc": None, "results": []}
@@ -479,13 +498,7 @@ def build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_gre
 
     summaries = {}
     for suffix, (key, label) in TRACK_META.items():
-        symbol = loaded[suffix]["positions"].get("symbol") or {
-            "": "BTC/USDT", "_15m": "BTC/USDT", "_eth": "ETH/USDT", "_sol": "SOL/USDT",
-            "_perp": "BTC/USDT", "_perp_15m": "BTC/USDT", "_eth_perp": "ETH/USDT", "_sol_perp": "SOL/USDT",
-            "_nq": "MNQ", "_nq5m": "MNQ", "_es": "MES", "_es5m": "MES",
-            "_ym": "MYM", "_ym5m": "MYM", "_gc": "MGC", "_gc5m": "MGC",
-            "_rty": "M2K", "_rty5m": "M2K", "_cl": "MCL", "_cl5m": "MCL",
-        }[suffix]
+        symbol = loaded[suffix]["positions"].get("symbol") or SUFFIX_SYMBOL_FALLBACK[suffix]
         summaries[key] = summarize_track(loaded[suffix]["positions"], label, symbol)
     out = out.replace("__TRACK_SUMMARIES_JSON__", json.dumps(summaries))
 
