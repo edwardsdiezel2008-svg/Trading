@@ -54,18 +54,51 @@
   html, body {
     margin: 0;
     height: 100%;
-    background: var(--void-1);
     overflow: hidden;
   }
   body {
     color: var(--starlight);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
+    background: radial-gradient(ellipse at 50% 42%, var(--void-2) 0%, var(--void-1) 75%);
+  }
+
+  /* Nebula glow lives in CSS, not canvas: a blurred gradient composited by
+     the GPU costs essentially nothing per frame, where redrawing the same
+     shape into canvas 60 times a second was the single biggest cost in the
+     scene under any real CPU load. It drifts independently of the camera -
+     an approximate, ambient wash rather than a precisely tracked light. */
+  .nebula {
+    position: fixed;
+    top: 50%; left: 50%;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    mix-blend-mode: screen;
+    will-change: transform;
+  }
+  .nebula-research {
+    width: min(56vw, 760px); height: min(56vw, 760px);
+    margin: -380px 0 0 -560px;
+    background: radial-gradient(circle, rgba(215,154,76,0.28) 0%, rgba(215,154,76,0.16) 30%, rgba(215,154,76,0.07) 55%, rgba(215,154,76,0.02) 78%, rgba(215,154,76,0) 100%);
+    animation: driftResearch 42s ease-in-out infinite alternate;
+  }
+  .nebula-apex {
+    width: min(48vw, 660px); height: min(48vw, 660px);
+    margin: -280px 0 0 40px;
+    background: radial-gradient(circle, rgba(95,194,209,0.24) 0%, rgba(95,194,209,0.13) 30%, rgba(95,194,209,0.06) 55%, rgba(95,194,209,0.02) 78%, rgba(95,194,209,0) 100%);
+    animation: driftApex 48s ease-in-out infinite alternate;
+  }
+  @keyframes driftResearch { from { transform: translate(-3%, -2%); } to { transform: translate(4%, 5%); } }
+  @keyframes driftApex { from { transform: translate(3%, -4%); } to { transform: translate(-4%, 3%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .nebula { animation: none !important; }
   }
 
   #scene {
     position: fixed;
     inset: 0;
+    z-index: 1;
     display: block;
     touch-action: none;
     cursor: grab;
@@ -311,6 +344,8 @@
   }
 </style>
 
+<div class="nebula nebula-research" aria-hidden="true"></div>
+<div class="nebula nebula-apex" aria-hidden="true"></div>
 <canvas id="scene" role="img" aria-label="A 3D scene of two orbital systems representing project notes: Paper-Trading Research and Apex $25K Evaluation, each a sun with planets orbiting it. A text list of every note follows for non-visual access."></canvas>
 
 <div class="hud">
@@ -414,7 +449,7 @@
   var W, H, DPR;
 
   function resize() {
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    DPR = Math.min(window.devicePixelRatio || 1, 1.5);
     W = window.innerWidth;
     H = window.innerHeight;
     canvas.width = W * DPR;
@@ -430,7 +465,7 @@
   // catches the twinkle, and a far dust field that stays soft and mostly
   // static - together they read as one continuous galaxy rather than a flat
   // sprinkle of dots. ----
-  var STAR_COUNT = 260;
+  var STAR_COUNT = 200;
   var stars = [];
   for (var i = 0; i < STAR_COUNT; i++) {
     stars.push({
@@ -442,7 +477,7 @@
     });
   }
 
-  var DUST_COUNT = 420;
+  var DUST_COUNT = 260;
   var dust = [];
   for (var di = 0; di < DUST_COUNT; di++) {
     var dTheta = Math.random() * Math.PI * 2;
@@ -456,13 +491,52 @@
     });
   }
 
-  // Two soft nebula washes, one per system, drifting gently around their
-  // system's sun so the color of each cluster bleeds into the space behind
-  // it instead of the two systems reading as identical dark voids.
-  var NEBULAE = [
-    { anchor: 'research', dx: 120, dy: -60, dz: -260, radius: 640, rgb: '215,154,76', alpha: 0.10 },
-    { anchor: 'apex', dx: -140, dy: 50, dz: 240, radius: 560, rgb: '95,194,209', alpha: 0.09 }
-  ];
+  // Sun and planet glows are the same radial-gradient shape just recolored
+  // and rescaled - rendering that shape into an offscreen canvas once and
+  // blitting it with drawImage each frame is much cheaper than building a
+  // fresh CanvasGradient and re-filling it 60 times a second. (The much
+  // bigger nebula wash behind each system used to use this same trick, but
+  // even sprite-blitted, filling that much of the screen every frame was
+  // still the single biggest cost in the scene - it's now a CSS-composited
+  // glow instead, see .nebula in the stylesheet.)
+  function makeGlowSprite(color, glow) {
+    var r0 = 60, size = Math.ceil(r0 * 5.2);
+    var off = document.createElement('canvas');
+    off.width = size; off.height = size;
+    var o = off.getContext('2d');
+    var cx = size / 2, cy = size / 2;
+    var g = o.createRadialGradient(cx, cy, 0, cx, cy, r0 * 2.6);
+    g.addColorStop(0, glow);
+    g.addColorStop(0.35, color);
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    o.fillStyle = g;
+    o.beginPath(); o.arc(cx, cy, r0 * 2.6, 0, Math.PI * 2); o.fill();
+    o.fillStyle = glow;
+    o.beginPath(); o.arc(cx, cy, Math.max(r0 * 0.42, 1.4), 0, Math.PI * 2); o.fill();
+    return { canvas: off, r0: r0 };
+  }
+  function blitSprite(sprite, cx, cy, desiredRadius) {
+    var factor = desiredRadius / sprite.r0;
+    var d = sprite.canvas.width * factor;
+    if (d < 0.5) return;
+    ctx.drawImage(sprite.canvas, cx - d / 2, cy - d / 2, d, d);
+  }
+  SYSTEMS.forEach(function (sys) { sys.glowSprite = makeGlowSprite(sys.color, sys.glow); });
+
+  // Orbit-ring shape is fixed (only the tilt, never time or camera) - sample
+  // it once per planet instead of re-deriving 20 tilted points from scratch
+  // on every single frame.
+  var RING_SEGMENTS = 20;
+  SYSTEMS.forEach(function (sys) {
+    sys.planets.forEach(function (p) {
+      p.ringLocal = [];
+      for (var a = 0; a <= RING_SEGMENTS; a++) {
+        var ang = (a / RING_SEGMENTS) * Math.PI * 2;
+        var lp = { x: Math.cos(ang) * p.r, y: 0, z: Math.sin(ang) * p.r };
+        p.ringLocal.push(rotateZ(lp, sys.tilt));
+      }
+    });
+  });
 
   // Shooting stars: brief screen-space streaks, spawned on a random
   // interval, never during reduced motion.
@@ -495,26 +569,24 @@
   var idleT = 0;
   var FOCAL = 780;
 
-  function rotateY(p, a) {
-    var c = Math.cos(a), s = Math.sin(a);
-    return { x: p.x * c + p.z * s, y: p.y, z: -p.x * s + p.z * c };
-  }
-  function rotateX(p, a) {
-    var c = Math.cos(a), s = Math.sin(a);
-    return { x: p.x, y: p.y * c - p.z * s, z: p.y * s + p.z * c };
-  }
   function rotateZ(p, a) {
     var c = Math.cos(a), s = Math.sin(a);
     return { x: p.x * c - p.y * s, y: p.x * s + p.y * c, z: p.z };
   }
 
+  // Camera trig recomputed once per frame (see frame()) rather than once
+  // per point - with ~700 points projected every frame, that's the
+  // difference between ~4 Math.cos/sin calls and several thousand.
+  var cosYaw = 1, sinYaw = 0, cosPitch = 1, sinPitch = 0;
   function project(p) {
-    var v = rotateY(p, -yaw);
-    v = rotateX(v, -pitch);
-    var viewZ = v.z + dist;
+    var x1 = p.x * cosYaw - p.z * sinYaw;
+    var z1 = p.x * sinYaw + p.z * cosYaw;
+    var y2 = p.y * cosPitch + z1 * sinPitch;
+    var z2 = -p.y * sinPitch + z1 * cosPitch;
+    var viewZ = z2 + dist;
     if (viewZ < 30) viewZ = 30;
     var scale = FOCAL / viewZ;
-    return { x: W / 2 + v.x * scale, y: H / 2 + v.y * scale, scale: scale, z: viewZ };
+    return { x: W / 2 + x1 * scale, y: H / 2 + y2 * scale, scale: scale, z: viewZ };
   }
 
   // ---- interaction ----
@@ -640,21 +712,6 @@
   var t0 = performance.now();
   var last = t0;
 
-  function drawGlowDot(sx, sy, radius, color, glow) {
-    var g = ctx.createRadialGradient(sx, sy, 0, sx, sy, radius * 2.6);
-    g.addColorStop(0, glow);
-    g.addColorStop(0.35, color);
-    g.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.arc(sx, sy, radius * 2.6, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(sx, sy, Math.max(radius * 0.42, 1.4), 0, Math.PI * 2);
-    ctx.fill();
-  }
-
   function frame(now) {
     var dt = Math.min((now - last) / 1000, 0.05);
     last = now;
@@ -668,13 +725,12 @@
     yaw += (targetYaw - yaw) * 0.09;
     pitch += (targetPitch - pitch) * 0.09;
     dist += (targetDist - dist) * 0.12;
+    cosYaw = Math.cos(yaw); sinYaw = Math.sin(yaw);
+    cosPitch = Math.cos(pitch); sinPitch = Math.sin(pitch);
 
+    // Transparent clear - the void gradient and nebula glow are both CSS
+    // now, painted once by the browser rather than every animation frame.
     ctx.clearRect(0, 0, W, H);
-    var bg = ctx.createRadialGradient(W * 0.5, H * 0.42, 0, W * 0.5, H * 0.5, Math.max(W, H) * 0.75);
-    bg.addColorStop(0, '#0d111c');
-    bg.addColorStop(1, '#05060a');
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
 
     // far dust field - static, soft, gives the void depth without competing
     // with the near starfield's twinkle
@@ -689,27 +745,6 @@
       ctx.fill();
     }
     ctx.globalAlpha = 1;
-
-    // nebula washes, drifting slowly around their system
-    NEBULAE.forEach(function (neb) {
-      var anchorSys = SYSTEMS.filter(function (s) { return s.id === neb.anchor; })[0];
-      if (!anchorSys) return;
-      var drift = reducedMotion ? 0 : 1;
-      var wx = anchorSys.center.x + neb.dx + Math.sin(elapsed * 0.06 + neb.dx) * 40 * drift;
-      var wy = anchorSys.center.y + neb.dy + Math.cos(elapsed * 0.05 + neb.dy) * 26 * drift;
-      var wz = anchorSys.center.z + neb.dz;
-      var np = project({ x: wx, y: wy, z: wz });
-      if (np.z < 30) return;
-      var rad = neb.radius * np.scale;
-      var ng = ctx.createRadialGradient(np.x, np.y, 0, np.x, np.y, rad);
-      ng.addColorStop(0, 'rgba(' + neb.rgb + ',' + neb.alpha + ')');
-      ng.addColorStop(0.55, 'rgba(' + neb.rgb + ',' + (neb.alpha * 0.35) + ')');
-      ng.addColorStop(1, 'rgba(' + neb.rgb + ',0)');
-      ctx.fillStyle = ng;
-      ctx.beginPath();
-      ctx.arc(np.x, np.y, rad, 0, Math.PI * 2);
-      ctx.fill();
-    });
 
     // near stars
     for (var s = 0; s < stars.length; s++) {
@@ -741,7 +776,7 @@
         ctx.arc(sunProj.x, sunProj.y, pulse * sunProj.scale * 1.8, 0, Math.PI * 2);
         ctx.stroke();
         ctx.globalAlpha = 1;
-        drawGlowDot(sunProj.x, sunProj.y, pulse * sunProj.scale, sys.color, sys.glow);
+        blitSprite(sys.glowSprite, sunProj.x, sunProj.y, pulse * sunProj.scale);
         hits.push({ id: sys.id, x: sunProj.x, y: sunProj.y, r: pulse * sunProj.scale });
       }});
 
@@ -753,14 +788,12 @@
         var world = { x: sunWorld.x + local.x, y: sunWorld.y + local.y, z: sunWorld.z + local.z };
         var proj = project(world);
 
-        // orbit ring (sampled)
-        var ringPts = [];
-        for (var a = 0; a <= 32; a++) {
-          var ang = (a / 32) * Math.PI * 2;
-          var lp = { x: Math.cos(ang) * p.r, y: 0, z: Math.sin(ang) * p.r };
-          lp = rotateZ(lp, sys.tilt);
-          var wp = { x: sunWorld.x + lp.x, y: sunWorld.y + lp.y, z: sunWorld.z + lp.z };
-          ringPts.push(project(wp));
+        // orbit ring - local shape precomputed once; only the sun offset
+        // and this frame's camera projection happen here
+        var ringPts = new Array(p.ringLocal.length);
+        for (var a = 0; a < p.ringLocal.length; a++) {
+          var lp = p.ringLocal[a];
+          ringPts[a] = project({ x: sunWorld.x + lp.x, y: sunWorld.y + lp.y, z: sunWorld.z + lp.z });
         }
 
         var rad = Math.max(p.size * proj.scale, 2);
@@ -778,7 +811,7 @@
           ctx.globalAlpha = 1;
 
           ctx.globalAlpha = dim ? 0.35 : 1;
-          drawGlowDot(proj.x, proj.y, rad, sys.color, sys.glow);
+          blitSprite(sys.glowSprite, proj.x, proj.y, rad);
           ctx.globalAlpha = 1;
 
           if (!dim && proj.scale > 0.55 && labelVisible[p.id]) {
