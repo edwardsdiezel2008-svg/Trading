@@ -2027,7 +2027,12 @@
   // that already scrolls horizontally (a wide table, the tab strip itself)
   // so it never fights with that element's own swipe-to-scroll.
   (function initTabSwipe() {
-    const TRACK_ORDER = ['daily', 'fifteenMin', 'eth', 'sol', 'perp', 'perp15m', 'ethPerp', 'solPerp', 'nq', 'nq5m', 'es', 'es5m', 'ym', 'ym5m', 'gc', 'gc5m', 'rty', 'rty5m', 'cl', 'cl5m', 'memecoin'];
+    // Object.keys(TRACKS) preserves insertion order, which already matches
+    // tab order - deriving from it instead of a second hand-written list
+    // means a newly added track can't be skipped by swipe navigation while
+    // still working fine as a direct tab click, the way nq1m/nq15m/nq1h
+    // briefly were here.
+    const TRACK_ORDER = [...Object.keys(TRACKS), 'memecoin'];
     let startX = null, startY = null, skip = false;
     const THRESHOLD = 60;
     document.addEventListener('touchstart', (e) => {
