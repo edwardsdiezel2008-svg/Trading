@@ -1,19 +1,19 @@
-# MNQ Paper Trading (1min) — updated 2026-08-11T20:04:20.628810+00:00
+# MNQ Paper Trading (1min) — updated 2026-08-12T03:22:36.927975+00:00
 
-Latest bar: 2026-08-11 19:53:00 · 7,769 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-12 03:12:00 · 8,148 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $102,162 | +2.2% | — | 1 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $101,563 | +1.6% | 3.56 | 155 |
-| Opening_Range_Breakout(6) | SHORT | $100,560 | +0.6% | 1.37 | 23 |
-| Bollinger_Reversion(20,2sd) | FLAT | $100,244 | +0.2% | 0.80 | 264 |
+| *Buy & Hold (benchmark)* | — | $102,451 | +2.5% | — | 1 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $101,466 | +1.5% | 3.24 | 167 |
+| Opening_Range_Breakout(6) | SHORT | $100,392 | +0.4% | 0.94 | 23 |
+| Bollinger_Reversion(20,2sd) | FLAT | $100,272 | +0.3% | 0.86 | 277 |
+| Inside_Bar_Breakout(0.6) | LONG | $100,082 | +0.1% | 0.21 | 95 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| Engulfing_Reversal(0.3) | SHORT | $99,934 | -0.1% | -0.12 | 498 |
-| Inside_Bar_Breakout(0.6) | LONG | $99,932 | -0.1% | -0.13 | 93 |
-| RSI_Reversion(14,30/70) | FLAT | $99,927 | -0.1% | -0.50 | 203 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $99,660 | -0.3% | -1.17 | 285 |
-| MACD_Momentum(12/26/9) | SHORT | $98,554 | -1.4% | -3.23 | 617 |
-| Supertrend(10,m=3.0) | SHORT | $98,362 | -1.6% | -3.68 | 229 |
-| Donchian_Breakout(20) | SHORT | $97,872 | -2.1% | -4.78 | 198 |
-| MA_Crossover(10/50) | LONG | $97,484 | -2.5% | -5.70 | 236 |
+| RSI_Reversion(14,30/70) | FLAT | $99,919 | -0.1% | -0.54 | 209 |
+| Engulfing_Reversal(0.3) | SHORT | $99,728 | -0.3% | -0.56 | 516 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $99,673 | -0.3% | -1.09 | 301 |
+| MACD_Momentum(12/26/9) | SHORT | $98,421 | -1.6% | -3.43 | 645 |
+| Supertrend(10,m=3.0) | LONG | $98,046 | -2.0% | -4.27 | 240 |
+| Donchian_Breakout(20) | LONG | $97,502 | -2.5% | -5.45 | 211 |
+| MA_Crossover(10/50) | LONG | $97,236 | -2.8% | -6.08 | 258 |
