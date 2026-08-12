@@ -9,6 +9,9 @@ from scripts.build_paper_trading_dashboard import (
     SUFFIX_SYMBOL_FALLBACK,
     TRACK_META,
     TRACK_SUFFIXES,
+    _cross_track_robustness,
+    compute_cross_asset_robustness,
+    compute_cross_futures_robustness,
     compute_rug_watch_summary,
     diversify_news,
     load_recent_bars,
@@ -32,6 +35,81 @@ def test_every_track_suffix_has_meta():
     # one but not the other silently drops that track from half the site.
     missing = set(TRACK_SUFFIXES) - set(TRACK_META.keys())
     assert not missing, f"suffixes missing from TRACK_META: {missing}"
+
+
+def _wf_result(strategy, oos_return, oos_sharpe, error=None):
+    r = {"strategy": strategy, "oos_total_return": oos_return, "oos_sharpe": oos_sharpe}
+    if error:
+        r["error"] = error
+    return r
+
+
+def test_cross_track_robustness_marks_an_asset_robust_only_when_return_and_sharpe_are_both_positive():
+    loaded = {
+        "_a": {"walkforward": {"results": [_wf_result("Trend", 10, 1.2)]}},
+        "_b": {"walkforward": {"results": [_wf_result("Trend", 10, -0.5)]}},
+    }
+    out = _cross_track_robustness(loaded, [("A", "_a"), ("B", "_b")])
+    assert len(out) == 1
+    row = out[0]
+    assert row["assets"] == {"A": True, "B": False}
+    assert row["robust_count"] == 1
+    assert row["assets_tested"] == 2
+
+
+def test_cross_track_robustness_skips_errored_results():
+    loaded = {
+        "_a": {"walkforward": {"results": [_wf_result("Broken", 50, 2.0, error="insufficient data")]}},
+        "_b": {"walkforward": {"results": [_wf_result("Broken", 10, 1.0)]}},
+    }
+    out = _cross_track_robustness(loaded, [("A", "_a"), ("B", "_b")])
+    assert out[0]["assets"] == {"B": True}
+    assert out[0]["assets_tested"] == 1
+
+
+def test_cross_track_robustness_sorts_by_robust_count_then_strategy_name():
+    loaded = {
+        "_a": {"walkforward": {"results": [
+            _wf_result("Zeta", 10, 1.0), _wf_result("Alpha", 10, 1.0), _wf_result("Beta", 10, 1.0),
+        ]}},
+        "_b": {"walkforward": {"results": [
+            _wf_result("Zeta", -5, 1.0), _wf_result("Alpha", 10, 1.0), _wf_result("Beta", -5, 1.0),
+        ]}},
+    }
+    out = _cross_track_robustness(loaded, [("A", "_a"), ("B", "_b")])
+    # Alpha is robust on both (count 2, sorts first); Beta and Zeta are each
+    # robust on only one - tied at count 1, so alphabetical breaks the tie.
+    assert [r["strategy"] for r in out] == ["Alpha", "Beta", "Zeta"]
+
+
+def test_cross_track_robustness_handles_a_track_with_no_walkforward_results():
+    loaded = {
+        "_a": {"walkforward": {"results": [_wf_result("Solo", 10, 1.0)]}},
+        "_b": {"walkforward": {"results": []}},
+    }
+    out = _cross_track_robustness(loaded, [("A", "_a"), ("B", "_b")])
+    assert out[0]["assets"] == {"A": True}
+    assert out[0]["assets_tested"] == 1
+
+
+def test_compute_cross_asset_robustness_uses_btc_eth_sol_daily_suffixes():
+    loaded = {
+        "": {"walkforward": {"results": [_wf_result("Trend", 10, 1.0)]}},
+        "_eth": {"walkforward": {"results": [_wf_result("Trend", 10, 1.0)]}},
+        "_sol": {"walkforward": {"results": [_wf_result("Trend", -5, 1.0)]}},
+    }
+    out = compute_cross_asset_robustness(loaded)
+    assert out[0]["assets"] == {"BTC": True, "ETH": True, "SOL": False}
+
+
+def test_compute_cross_futures_robustness_uses_all_six_daily_futures_suffixes():
+    loaded = {
+        suffix: {"walkforward": {"results": [_wf_result("Trend", 10, 1.0)]}}
+        for suffix in ("_nq", "_es", "_ym", "_rty", "_gc", "_cl")
+    }
+    out = compute_cross_futures_robustness(loaded)
+    assert out[0]["assets"] == {"NQ": True, "ES": True, "YM": True, "RTY": True, "GC": True, "CL": True}
+    assert out[0]["robust_count"] == 6
 
 
 def _write_bars_csv(path, header, rows):
