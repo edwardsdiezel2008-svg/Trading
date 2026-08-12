@@ -2,7 +2,7 @@
   "symbol": "MYM",
   "freq": "1D",
   "leverage": 1.0,
-  "updated_at_utc": "2026-08-12T13:28:43.404209+00:00",
+  "updated_at_utc": "2026-08-12T14:34:41.748635+00:00",
   "latest_bar": "2026-08-12 00:00:00",
   "bar_count": 2516,
   "buy_and_hold_equity_curve": [
@@ -1004,14 +1004,14 @@
     ],
     [
       "2026-08-12 00:00:00",
-      292933.02
+      292456.1
     ]
   ],
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 103277.0,
+      "equity": 103233.0,
       "open_trade": {
         "direction": 1,
         "entry_price": 48758.0,
@@ -2018,14 +2018,14 @@
         ],
         [
           "2026-08-12 00:00:00",
-          103277.0
+          103233.0
         ]
       ]
     },
     "Donchian_Breakout(20)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 94985.5,
+      "equity": 94941.5,
       "open_trade": {
         "direction": 1,
         "entry_price": 54369.0,
@@ -3032,14 +3032,14 @@
         ],
         [
           "2026-08-12 00:00:00",
-          94985.5
+          94941.5
         ]
       ]
     },
     "MACD_Momentum(12/26/9)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 95436.0,
+      "equity": 95392.0,
       "open_trade": {
         "direction": 1,
         "entry_price": 54369.0,
@@ -4046,7 +4046,7 @@
         ],
         [
           "2026-08-12 00:00:00",
-          95436.0
+          95392.0
         ]
       ]
     },
@@ -5062,7 +5062,7 @@
     "Bollinger_Reversion(20,2sd)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 102822.0,
+      "equity": 102866.0,
       "open_trade": {
         "direction": -1,
         "entry_price": 54369.0,
@@ -6069,14 +6069,14 @@
         ],
         [
           "2026-08-12 00:00:00",
-          102822.0
+          102866.0
         ]
       ]
     },
     "ZScore_Reversion(20,z=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 101153.5,
+      "equity": 101197.5,
       "open_trade": {
         "direction": -1,
         "entry_price": 54369.0,
@@ -7083,14 +7083,14 @@
         ],
         [
           "2026-08-12 00:00:00",
-          101153.5
+          101197.5
         ]
       ]
     },
     "ATR_Vol_Breakout(14,k=1.5)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 89951.0,
+      "equity": 89995.0,
       "open_trade": {
         "direction": -1,
         "entry_price": 51759.0,
@@ -8097,14 +8097,14 @@
         ],
         [
           "2026-08-12 00:00:00",
-          89951.0
+          89995.0
         ]
       ]
     },
     "Supertrend(10,m=3.0)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 91320.5,
+      "equity": 91276.5,
       "open_trade": {
         "direction": 1,
         "entry_price": 48380.0,
@@ -9111,14 +9111,14 @@
         ],
         [
           "2026-08-12 00:00:00",
-          91320.5
+          91276.5
         ]
       ]
     },
     "VWAP_Reversion(20,2%)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 98953.5,
+      "equity": 98997.5,
       "open_trade": {
         "direction": -1,
         "entry_price": 54369.0,
@@ -10125,14 +10125,14 @@
         ],
         [
           "2026-08-12 00:00:00",
-          98953.5
+          98997.5
         ]
       ]
     },
     "Engulfing_Reversal(0.3)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 100178.5,
+      "equity": 100222.5,
       "open_trade": {
         "direction": -1,
         "entry_price": 53166.0,
@@ -11139,14 +11139,14 @@
         ],
         [
           "2026-08-12 00:00:00",
-          100178.5
+          100222.5
         ]
       ]
     },
     "Inside_Bar_Breakout(0.6)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 111744.5,
+      "equity": 111700.5,
       "open_trade": {
         "direction": 1,
         "entry_price": 42525.0,
@@ -12153,7 +12153,7 @@
         ],
         [
           "2026-08-12 00:00:00",
-          111744.5
+          111700.5
         ]
       ]
     },
