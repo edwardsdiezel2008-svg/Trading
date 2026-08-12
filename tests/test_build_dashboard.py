@@ -2,6 +2,8 @@ import json
 import os
 import sys
 
+import pytest
+
 sys.path.insert(0, ".")
 
 import scripts.rug_watch as rug_watch
@@ -10,6 +12,8 @@ from scripts.build_paper_trading_dashboard import (
     TRACK_META,
     TRACK_SUFFIXES,
     _cross_track_robustness,
+    _daily_returns,
+    _pearson,
     compute_cross_asset_robustness,
     compute_cross_futures_robustness,
     compute_rug_watch_summary,
@@ -110,6 +114,73 @@ def test_compute_cross_futures_robustness_uses_all_six_daily_futures_suffixes():
     out = compute_cross_futures_robustness(loaded)
     assert out[0]["assets"] == {"NQ": True, "ES": True, "YM": True, "RTY": True, "GC": True, "CL": True}
     assert out[0]["robust_count"] == 6
+
+
+def test_pearson_returns_none_below_two_points():
+    assert _pearson({"d1": 1.0}, {"d1": 2.0}, ["d1"]) is None
+    assert _pearson({}, {}, []) is None
+
+
+def test_pearson_returns_none_when_either_series_has_zero_variance():
+    # A flat series has zero variance - the correlation coefficient is
+    # undefined (0/0), not 0. Must not raise ZeroDivisionError either.
+    dates = ["d1", "d2", "d3"]
+    flat = {"d1": 1.0, "d2": 1.0, "d3": 1.0}
+    varying = {"d1": 1.0, "d2": 2.0, "d3": 3.0}
+    assert _pearson(flat, varying, dates) is None
+    assert _pearson(varying, flat, dates) is None
+
+
+def test_pearson_perfect_positive_and_negative_correlation():
+    dates = ["d1", "d2", "d3", "d4"]
+    a = {"d1": 1.0, "d2": 2.0, "d3": 3.0, "d4": 4.0}
+    same = {"d1": 10.0, "d2": 20.0, "d3": 30.0, "d4": 40.0}
+    inverse = {"d1": -1.0, "d2": -2.0, "d3": -3.0, "d4": -4.0}
+    assert _pearson(a, same, dates) == pytest.approx(1.0)
+    assert _pearson(a, inverse, dates) == pytest.approx(-1.0)
+
+
+def test_daily_returns_missing_file_is_empty():
+    assert _daily_returns("paper_trading/does_not_exist.csv") == {}
+
+
+def test_daily_returns_computes_pct_change_keyed_by_date(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    path = "paper_trading/bars_zz.csv"
+    _write_bars_csv(
+        path,
+        ["timestamp", "open", "high", "low", "close", "volume"],
+        [
+            ["2026-01-01T00:00:00", 0, 0, 0, 100, 0],
+            ["2026-01-02T00:00:00", 0, 0, 0, 110, 0],
+            ["2026-01-03T00:00:00", 0, 0, 0, 99, 0],
+        ],
+    )
+    returns = _daily_returns(path)
+    assert returns == {
+        "2026-01-02": pytest.approx(0.10),
+        "2026-01-03": pytest.approx(-0.1),
+    }
+
+
+def test_daily_returns_skips_rows_with_zero_or_unparseable_close(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    path = "paper_trading/bars_zz.csv"
+    _write_bars_csv(
+        path,
+        ["timestamp", "open", "high", "low", "close", "volume"],
+        [
+            ["2026-01-01T00:00:00", 0, 0, 0, 0, 0],  # zero close - can't divide by it
+            ["2026-01-02T00:00:00", 0, 0, 0, 100, 0],
+            ["2026-01-03T00:00:00", 0, 0, 0, "not-a-number", 0],  # dropped entirely
+            ["2026-01-04T00:00:00", 0, 0, 0, 105, 0],
+        ],
+    )
+    returns = _daily_returns(path)
+    # 01-02 has no valid prior close (01-01's close is 0) so it's absent;
+    # 01-03 never made it into `closes` at all; 01-04's prior valid close
+    # is 01-02's 100.
+    assert returns == {"2026-01-04": pytest.approx(0.05)}
 
 
 def _write_bars_csv(path, header, rows):
