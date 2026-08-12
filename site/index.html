@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jordan Vale — Creative / 3D Web Developer</title>
+<meta name="description" content="Portfolio of Jordan Vale, a creative developer building immersive 3D web experiences." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%2305070d'/%3E%3Ccircle cx='50' cy='50' r='28' fill='%235eead4'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="cursor-glow" aria-hidden="true"></div>
+
+<canvas id="bg-canvas"></canvas>
+
+<header class="site-header">
+  <a href="#top" class="logo">JV<span class="logo-dot">.</span></a>
+  <button id="nav-toggle" class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+  <nav id="primary-nav" class="primary-nav">
+    <a href="#about" data-nav>About</a>
+    <a href="#work" data-nav>Work</a>
+    <a href="#skills" data-nav>Skills</a>
+    <a href="#contact" data-nav>Contact</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <section class="hero" id="hero">
+    <p class="eyebrow reveal">Creative Developer · 3D Web</p>
+    <h1 class="reveal">
+      Building interfaces that feel <span class="accent">alive</span>.
+    </h1>
+    <p class="hero-sub reveal">
+      I'm Jordan Vale — I design and build immersive, real-time 3D experiences
+      for the web. WebGL, shaders, motion, and interaction, all tuned to run
+      smooth on real hardware.
+    </p>
+    <div class="hero-actions reveal">
+      <a href="#work" class="btn btn-primary">View Work</a>
+      <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+    </div>
+    <a href="#about" class="scroll-cue" aria-label="Scroll to About">
+      <span></span>
+    </a>
+  </section>
+
+  <section class="about" id="about">
+    <div class="section-head reveal">
+      <span class="section-kicker">01 · About</span>
+      <h2>Ten years of turning ideas into things you can move a camera through.</h2>
+    </div>
+    <div class="about-grid">
+      <p class="about-copy reveal">
+        I work at the intersection of design and graphics programming —
+        raymarching, particle systems, post-processing, and just enough
+        engineering discipline to ship it all at 60fps. Most projects start
+        as a shader sketch before they ever touch a design tool.
+      </p>
+      <div class="stats reveal">
+        <div class="stat">
+          <span class="stat-num" data-count="10">0</span>
+          <span class="stat-label">Years building for the web</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" data-count="47">0</span>
+          <span class="stat-label">Shipped 3D experiences</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" data-count="60">0</span>
+          <span class="stat-label">Target fps, always</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="work" id="work">
+    <div class="section-head reveal">
+      <span class="section-kicker">02 · Selected Work</span>
+      <h2>A few things I've built.</h2>
+    </div>
+    <div class="project-grid">
+
+      <article class="project-card reveal" data-tilt>
+        <div class="project-card-inner">
+          <div class="project-visual visual-1"></div>
+          <div class="project-body">
+            <h3>Nebula Configurator</h3>
+            <p>Real-time raymarched product configurator with physically-based lighting and soft shadows, running entirely in a fragment shader.</p>
+            <ul class="tag-list">
+              <li>WebGL2</li><li>GLSL</li><li>Raymarching</li>
+            </ul>
+          </div>
+        </div>
+        <a href="#" class="card-link" aria-label="View Nebula Configurator case study"></a>
+      </article>
+
+      <article class="project-card reveal" data-tilt>
+        <div class="project-card-inner">
+          <div class="project-visual visual-2"></div>
+          <div class="project-body">
+            <h3>Signal Field</h3>
+            <p>Scroll-driven particle system visualizing live data as a flowing 3D field, with camera paths choreographed to page content.</p>
+            <ul class="tag-list">
+              <li>Three.js</li><li>GSAP</li><li>WebAudio</li>
+            </ul>
+          </div>
+        </div>
+        <a href="#" class="card-link" aria-label="View Signal Field case study"></a>
+      </article>
+
+      <article class="project-card reveal" data-tilt>
+        <div class="project-card-inner">
+          <div class="project-visual visual-3"></div>
+          <div class="project-body">
+            <h3>Aperture</h3>
+            <p>A depth-of-field driven portfolio template with a custom post-processing stack: bloom, chromatic aberration, film grain.</p>
+            <ul class="tag-list">
+              <li>WebGL</li><li>Post-FX</li><li>TypeScript</li>
+            </ul>
+          </div>
+        </div>
+        <a href="#" class="card-link" aria-label="View Aperture case study"></a>
+      </article>
+
+      <article class="project-card reveal" data-tilt>
+        <div class="project-card-inner">
+          <div class="project-visual visual-4"></div>
+          <div class="project-body">
+            <h3>Foundry</h3>
+            <p>Procedural terrain and lighting sandbox used to prototype environment art directions before they hit a game engine.</p>
+            <ul class="tag-list">
+              <li>SDF</li><li>Procgen</li><li>Compute</li>
+            </ul>
+          </div>
+        </div>
+        <a href="#" class="card-link" aria-label="View Foundry case study"></a>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="skills" id="skills">
+    <div class="section-head reveal">
+      <span class="section-kicker">03 · Skills</span>
+      <h2>The toolkit.</h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-group reveal">
+        <h3>3D &amp; Graphics</h3>
+        <ul class="tag-list">
+          <li>WebGL / WebGL2</li><li>GLSL Shaders</li><li>Three.js</li>
+          <li>Raymarching / SDFs</li><li>Post-processing</li>
+        </ul>
+      </div>
+      <div class="skill-group reveal">
+        <h3>Frontend</h3>
+        <ul class="tag-list">
+          <li>TypeScript</li><li>React</li><li>GSAP</li>
+          <li>CSS 3D / Motion</li><li>Accessibility</li>
+        </ul>
+      </div>
+      <div class="skill-group reveal">
+        <h3>Tooling</h3>
+        <ul class="tag-list">
+          <li>Vite</li><li>Blender</li><li>Figma</li>
+          <li>Git</li><li>Performance profiling</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="contact-inner reveal">
+      <span class="section-kicker">04 · Contact</span>
+      <h2>Have a project that needs a little more depth?</h2>
+      <p>I take on a small number of freelance builds each quarter — reach out and let's talk about it.</p>
+      <a href="mailto:hello@example.com" class="btn btn-primary btn-large">hello@example.com</a>
+      <div class="social-links">
+        <a href="#">GitHub</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">Twitter / X</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; <span id="year"></span> Jordan Vale. Built with raw WebGL, no framework required.</p>
+</footer>
+
+<script src="js/shader-bg.js" defer></script>
+<script src="js/main.js" defer></script>
+</body>
+</html>
