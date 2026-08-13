@@ -1,19 +1,19 @@
-# MNQ Paper Trading (1D) — updated 2026-08-13T18:28:10.954088+00:00
+# MNQ Paper Trading (1D) — updated 2026-08-13T21:31:36.495005+00:00
 
 Latest bar: 2026-08-13 00:00:00 · 2,517 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $631,622 | +531.6% | — | 1 |
-| Inside_Bar_Breakout(0.6) | SHORT | $120,836 | +20.8% | 0.35 | 22 |
-| Donchian_Breakout(20) | SHORT | $117,492 | +17.5% | 0.30 | 51 |
-| Supertrend(10,m=3.0) | LONG | $114,487 | +14.5% | 0.26 | 68 |
-| MA_Crossover(10/50) | LONG | $113,996 | +14.0% | 0.25 | 64 |
+| *Buy & Hold (benchmark)* | — | $631,899 | +531.9% | — | 1 |
+| Inside_Bar_Breakout(0.6) | SHORT | $120,809 | +20.8% | 0.35 | 22 |
+| Donchian_Breakout(20) | SHORT | $117,466 | +17.5% | 0.30 | 51 |
+| Supertrend(10,m=3.0) | LONG | $114,514 | +14.5% | 0.26 | 68 |
+| MA_Crossover(10/50) | LONG | $114,023 | +14.0% | 0.25 | 64 |
 | RSI_Reversion(14,30/70) | FLAT | $106,918 | +6.9% | 0.30 | 83 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $104,022 | +4.0% | 0.11 | 91 |
-| Engulfing_Reversal(0.3) | LONG | $101,516 | +1.5% | 0.06 | 142 |
+| Engulfing_Reversal(0.3) | LONG | $101,542 | +1.5% | 0.06 | 142 |
 | Bollinger_Reversion(20,2sd) | FLAT | $101,136 | +1.1% | 0.05 | 78 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
-| VWAP_Reversion(20,2%) | SHORT | $95,914 | -4.1% | -0.04 | 140 |
-| MACD_Momentum(12/26/9) | LONG | $94,228 | -5.8% | -0.06 | 199 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $83,729 | -16.3% | -0.22 | 45 |
+| VWAP_Reversion(20,2%) | SHORT | $95,888 | -4.1% | -0.04 | 140 |
+| MACD_Momentum(12/26/9) | LONG | $94,255 | -5.7% | -0.06 | 199 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $83,702 | -16.3% | -0.22 | 45 |

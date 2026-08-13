@@ -1,19 +1,19 @@
-# MYM Paper Trading (5min) — updated 2026-08-13T18:28:15.948624+00:00
+# MYM Paper Trading (5min) — updated 2026-08-13T21:31:43.444019+00:00
 
-Latest bar: 2026-08-13 18:15:00 · 14,441 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-13 20:55:00 · 14,473 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $105,522 | +5.5% | — | 1 |
-| Opening_Range_Breakout(6) | SHORT | $100,838 | +0.8% | 0.72 | 96 |
+| *Buy & Hold (benchmark)* | — | $105,696 | +5.7% | — | 1 |
+| Opening_Range_Breakout(6) | SHORT | $100,792 | +0.8% | 0.68 | 96 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| Inside_Bar_Breakout(0.6) | SHORT | $99,750 | -0.2% | -0.18 | 161 |
-| RSI_Reversion(14,30/70) | FLAT | $99,010 | -1.0% | -2.02 | 413 |
-| ZScore_Reversion(20,z=2.0) | SHORT | $98,874 | -1.1% | -1.20 | 559 |
-| Donchian_Breakout(20) | LONG | $98,452 | -1.5% | -1.14 | 341 |
-| Bollinger_Reversion(20,2sd) | SHORT | $98,001 | -2.0% | -2.01 | 477 |
-| MA_Crossover(10/50) | SHORT | $97,766 | -2.2% | -1.63 | 389 |
-| Supertrend(10,m=3.0) | SHORT | $96,944 | -3.1% | -2.25 | 400 |
-| ATR_Vol_Breakout(14,k=1.5) | LONG | $96,568 | -3.4% | -2.52 | 321 |
-| MACD_Momentum(12/26/9) | LONG | $95,994 | -4.0% | -2.94 | 1141 |
-| Engulfing_Reversal(0.3) | LONG | $95,246 | -4.8% | -3.52 | 910 |
+| Inside_Bar_Breakout(0.6) | LONG | $99,764 | -0.2% | -0.17 | 162 |
+| RSI_Reversion(14,30/70) | FLAT | $99,102 | -0.9% | -1.84 | 415 |
+| ZScore_Reversion(20,z=2.0) | SHORT | $98,886 | -1.1% | -1.18 | 562 |
+| Donchian_Breakout(20) | LONG | $98,534 | -1.5% | -1.08 | 341 |
+| Bollinger_Reversion(20,2sd) | SHORT | $97,951 | -2.0% | -2.06 | 477 |
+| MA_Crossover(10/50) | LONG | $97,752 | -2.2% | -1.64 | 390 |
+| Supertrend(10,m=3.0) | LONG | $96,996 | -3.0% | -2.20 | 401 |
+| MACD_Momentum(12/26/9) | LONG | $96,036 | -4.0% | -2.90 | 1145 |
+| ATR_Vol_Breakout(14,k=1.5) | LONG | $95,974 | -4.0% | -2.97 | 319 |
+| Engulfing_Reversal(0.3) | LONG | $95,703 | -4.3% | -3.18 | 908 |

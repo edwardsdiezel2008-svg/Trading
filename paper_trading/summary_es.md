@@ -1,19 +1,19 @@
-# MES Paper Trading (1D) — updated 2026-08-13T18:28:13.093497+00:00
+# MES Paper Trading (1D) — updated 2026-08-13T21:31:39.518995+00:00
 
 Latest bar: 2026-08-13 00:00:00 · 2,517 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $359,659 | +259.7% | — | 1 |
-| Bollinger_Reversion(20,2sd) | SHORT | $107,665 | +7.7% | 0.29 | 83 |
-| MA_Crossover(10/50) | LONG | $107,564 | +7.6% | 0.23 | 58 |
-| ZScore_Reversion(20,z=2.0) | SHORT | $107,134 | +7.1% | 0.29 | 92 |
+| *Buy & Hold (benchmark)* | — | $360,154 | +260.2% | — | 1 |
+| MA_Crossover(10/50) | LONG | $107,618 | +7.6% | 0.23 | 58 |
+| Bollinger_Reversion(20,2sd) | SHORT | $107,612 | +7.6% | 0.28 | 83 |
+| ZScore_Reversion(20,z=2.0) | SHORT | $107,080 | +7.1% | 0.29 | 92 |
 | RSI_Reversion(14,30/70) | FLAT | $106,991 | +7.0% | 0.53 | 84 |
-| Donchian_Breakout(20) | LONG | $104,476 | +4.5% | 0.14 | 54 |
-| MACD_Momentum(12/26/9) | LONG | $103,885 | +3.9% | 0.13 | 208 |
-| Engulfing_Reversal(0.3) | LONG | $102,609 | +2.6% | 0.09 | 135 |
-| VWAP_Reversion(20,2%) | SHORT | $100,068 | +0.1% | 0.02 | 109 |
+| Donchian_Breakout(20) | LONG | $104,530 | +4.5% | 0.15 | 54 |
+| MACD_Momentum(12/26/9) | LONG | $103,939 | +3.9% | 0.13 | 208 |
+| Engulfing_Reversal(0.3) | LONG | $102,662 | +2.7% | 0.09 | 135 |
+| VWAP_Reversion(20,2%) | SHORT | $100,014 | +0.0% | 0.02 | 109 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
-| Inside_Bar_Breakout(0.6) | SHORT | $99,389 | -0.6% | 0.00 | 28 |
-| Supertrend(10,m=3.0) | LONG | $97,085 | -2.9% | -0.06 | 68 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $87,356 | -12.6% | -0.33 | 35 |
+| Inside_Bar_Breakout(0.6) | SHORT | $99,335 | -0.7% | -0.00 | 28 |
+| Supertrend(10,m=3.0) | LONG | $97,139 | -2.9% | -0.06 | 68 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $87,302 | -12.7% | -0.33 | 35 |
