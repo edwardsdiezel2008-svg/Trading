@@ -2,7 +2,7 @@
   "symbol": "MES",
   "freq": "1D",
   "leverage": 1.0,
-  "updated_at_utc": "2026-08-13T10:33:19.024705+00:00",
+  "updated_at_utc": "2026-08-13T14:35:18.823597+00:00",
   "latest_bar": "2026-08-13 00:00:00",
   "bar_count": 2517,
   "buy_and_hold_equity_curve": [
@@ -1004,14 +1004,14 @@
     ],
     [
       "2026-08-13 00:00:00",
-      358290.19
+      360602.92
     ]
   ],
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 107415.25,
+      "equity": 107666.5,
       "open_trade": {
         "direction": 1,
         "entry_price": 7004.0,
@@ -2018,14 +2018,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          107415.25
+          107666.5
         ]
       ]
     },
     "Donchian_Breakout(20)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 104327.0,
+      "equity": 104578.25,
       "open_trade": {
         "direction": 1,
         "entry_price": 7772.0,
@@ -3032,14 +3032,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          104327.0
+          104578.25
         ]
       ]
     },
     "MACD_Momentum(12/26/9)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 103736.5,
+      "equity": 103987.75,
       "open_trade": {
         "direction": 1,
         "entry_price": 7631.0,
@@ -4046,7 +4046,7 @@
         ],
         [
           "2026-08-13 00:00:00",
-          103736.5
+          103987.75
         ]
       ]
     },
@@ -5062,7 +5062,7 @@
     "Bollinger_Reversion(20,2sd)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 107814.0,
+      "equity": 107562.75,
       "open_trade": {
         "direction": -1,
         "entry_price": 7772.0,
@@ -6069,14 +6069,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          107814.0
+          107562.75
         ]
       ]
     },
     "ZScore_Reversion(20,z=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 107282.25,
+      "equity": 107031.0,
       "open_trade": {
         "direction": -1,
         "entry_price": 7772.0,
@@ -7083,14 +7083,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          107282.25
+          107031.0
         ]
       ]
     },
     "ATR_Vol_Breakout(14,k=1.5)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 87505.0,
+      "equity": 87253.75,
       "open_trade": {
         "direction": -1,
         "entry_price": 6839.0,
@@ -8097,14 +8097,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          87505.0
+          87253.75
         ]
       ]
     },
     "Supertrend(10,m=3.0)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 96936.5,
+      "equity": 97187.75,
       "open_trade": {
         "direction": 1,
         "entry_price": 7772.0,
@@ -9111,14 +9111,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          96936.5
+          97187.75
         ]
       ]
     },
     "VWAP_Reversion(20,2%)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 100217.0,
+      "equity": 99965.75,
       "open_trade": {
         "direction": -1,
         "entry_price": 7772.0,
@@ -10125,14 +10125,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          100217.0
+          99965.75
         ]
       ]
     },
     "Engulfing_Reversal(0.3)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 102460.0,
+      "equity": 102711.25,
       "open_trade": {
         "direction": 1,
         "entry_price": 7545.0,
@@ -11139,14 +11139,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          102460.0
+          102711.25
         ]
       ]
     },
     "Inside_Bar_Breakout(0.6)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 99537.75,
+      "equity": 99286.5,
       "open_trade": {
         "direction": -1,
         "entry_price": 6902.0,
@@ -12153,7 +12153,7 @@
         ],
         [
           "2026-08-13 00:00:00",
-          99537.75
+          99286.5
         ]
       ]
     },

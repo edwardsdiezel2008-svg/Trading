@@ -2,7 +2,7 @@
   "symbol": "M2K",
   "freq": "1D",
   "leverage": 1.0,
-  "updated_at_utc": "2026-08-13T10:33:27.507709+00:00",
+  "updated_at_utc": "2026-08-13T14:35:23.334763+00:00",
   "latest_bar": "2026-08-13 00:00:00",
   "bar_count": 2290,
   "buy_and_hold_equity_curve": [
@@ -1004,14 +1004,14 @@
     ],
     [
       "2026-08-13 00:00:00",
-      217107.97
+      218229.58
     ]
   ],
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99833.2,
+      "equity": 99912.2,
       "open_trade": {
         "direction": 1,
         "entry_price": 2607.800048828125,
@@ -2018,14 +2018,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          99833.2
+          99912.2
         ]
       ]
     },
     "Donchian_Breakout(20)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99376.19,
+      "equity": 99455.19,
       "open_trade": {
         "direction": 1,
         "entry_price": 3049.10009765625,
@@ -3032,14 +3032,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          99376.19
+          99455.19
         ]
       ]
     },
     "MACD_Momentum(12/26/9)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 100702.41,
+      "equity": 100781.41,
       "open_trade": {
         "direction": 1,
         "entry_price": 3049.10009765625,
@@ -4046,7 +4046,7 @@
         ],
         [
           "2026-08-13 00:00:00",
-          100702.41
+          100781.41
         ]
       ]
     },
@@ -5062,7 +5062,7 @@
     "Bollinger_Reversion(20,2sd)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 104526.4,
+      "equity": 104447.4,
       "open_trade": {
         "direction": -1,
         "entry_price": 3049.10009765625,
@@ -6069,14 +6069,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          104526.4
+          104447.4
         ]
       ]
     },
     "ZScore_Reversion(20,z=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 102534.7,
+      "equity": 102455.7,
       "open_trade": {
         "direction": -1,
         "entry_price": 3049.10009765625,
@@ -7083,14 +7083,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          102534.7
+          102455.7
         ]
       ]
     },
     "ATR_Vol_Breakout(14,k=1.5)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 99180.1,
+      "equity": 99101.1,
       "open_trade": {
         "direction": -1,
         "entry_price": 2816.300048828125,
@@ -8097,14 +8097,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          99180.1
+          99101.1
         ]
       ]
     },
     "Supertrend(10,m=3.0)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 98520.9,
+      "equity": 98599.9,
       "open_trade": {
         "direction": 1,
         "entry_price": 2688.199951171875,
@@ -9111,14 +9111,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          98520.9
+          98599.9
         ]
       ]
     },
     "VWAP_Reversion(20,2%)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 106135.8,
+      "equity": 106056.8,
       "open_trade": {
         "direction": -1,
         "entry_price": 3049.10009765625,
@@ -10125,14 +10125,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          106135.8
+          106056.8
         ]
       ]
     },
     "Engulfing_Reversal(0.3)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 100099.99,
+      "equity": 100178.99,
       "open_trade": {
         "direction": 1,
         "entry_price": 3038.89990234375,
@@ -11139,14 +11139,14 @@
         ],
         [
           "2026-08-13 00:00:00",
-          100099.99
+          100178.99
         ]
       ]
     },
     "Inside_Bar_Breakout(0.6)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 98686.7,
+      "equity": 98765.7,
       "open_trade": {
         "direction": 1,
         "entry_price": 2084.39990234375,
@@ -12153,7 +12153,7 @@
         ],
         [
           "2026-08-13 00:00:00",
-          98686.7
+          98765.7
         ]
       ]
     },
