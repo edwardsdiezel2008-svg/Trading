@@ -1,19 +1,19 @@
-# MNQ Paper Trading (1h) — updated 2026-08-13T14:43:28.057967+00:00
+# MNQ Paper Trading (1h) — updated 2026-08-13T18:28:23.791154+00:00
 
-Latest bar: 2026-08-13 14:00:00 · 13,781 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-13 18:00:00 · 13,785 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $166,326 | +66.3% | — | 1 |
-| MACD_Momentum(12/26/9) | LONG | $108,742 | +8.7% | 0.25 | 1041 |
-| Supertrend(10,m=3.0) | LONG | $106,576 | +6.6% | 0.19 | 376 |
-| Inside_Bar_Breakout(0.6) | LONG | $106,424 | +6.4% | 0.18 | 147 |
-| ATR_Vol_Breakout(14,k=1.5) | LONG | $105,262 | +5.3% | 0.15 | 373 |
-| Engulfing_Reversal(0.3) | SHORT | $105,212 | +5.2% | 0.15 | 909 |
-| Bollinger_Reversion(20,2sd) | SHORT | $104,648 | +4.6% | 0.17 | 514 |
-| VWAP_Reversion(20,2%) | FLAT | $99,052 | -0.9% | -0.06 | 35 |
-| Opening_Range_Breakout(6) | LONG | $96,232 | -3.8% | -0.13 | 493 |
-| MA_Crossover(10/50) | LONG | $91,802 | -8.2% | -0.16 | 344 |
-| ZScore_Reversion(20,z=2.0) | SHORT | $89,728 | -10.3% | -0.32 | 598 |
-| RSI_Reversion(14,30/70) | SHORT | $87,774 | -12.2% | -0.72 | 468 |
-| Donchian_Breakout(20) | LONG | $86,454 | -13.5% | -0.29 | 325 |
+| *Buy & Hold (benchmark)* | — | $166,032 | +66.0% | — | 1 |
+| MACD_Momentum(12/26/9) | LONG | $108,632 | +8.6% | 0.25 | 1041 |
+| Supertrend(10,m=3.0) | LONG | $106,477 | +6.5% | 0.18 | 376 |
+| Inside_Bar_Breakout(0.6) | LONG | $106,304 | +6.3% | 0.17 | 147 |
+| Engulfing_Reversal(0.3) | SHORT | $106,293 | +6.3% | 0.18 | 903 |
+| ATR_Vol_Breakout(14,k=1.5) | LONG | $105,144 | +5.1% | 0.15 | 373 |
+| Bollinger_Reversion(20,2sd) | SHORT | $104,733 | +4.7% | 0.17 | 514 |
+| VWAP_Reversion(20,2%) | FLAT | $99,000 | -1.0% | -0.07 | 35 |
+| Opening_Range_Breakout(6) | FLAT | $96,142 | -3.9% | -0.14 | 493 |
+| MA_Crossover(10/50) | LONG | $91,696 | -8.3% | -0.16 | 344 |
+| ZScore_Reversion(20,z=2.0) | SHORT | $89,819 | -10.2% | -0.32 | 598 |
+| RSI_Reversion(14,30/70) | SHORT | $88,035 | -12.0% | -0.70 | 469 |
+| Donchian_Breakout(20) | LONG | $86,365 | -13.6% | -0.29 | 325 |
