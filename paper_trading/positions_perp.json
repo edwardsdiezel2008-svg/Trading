@@ -2,7 +2,7 @@
   "symbol": "BTC_USDT",
   "freq": "1D",
   "leverage": 3.0,
-  "updated_at_utc": "2026-08-14T22:57:48.815036+00:00",
+  "updated_at_utc": "2026-08-14T23:59:21.865483+00:00",
   "latest_bar": "2026-08-14 00:00:00",
   "bar_count": 2153,
   "buy_and_hold_equity_curve": [
@@ -1004,14 +1004,14 @@
     ],
     [
       "2026-08-14 00:00:00",
-      596588.85
+      598029.89
     ]
   ],
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 247018.9,
+      "equity": 245948.79,
       "open_trade": {
         "direction": -1,
         "entry_price": 73623.7,
@@ -2018,12 +2018,12 @@
         ],
         [
           "2026-08-14 00:00:00",
-          247018.9
+          245948.79
         ]
       ],
       "liquidation_price": 97796.81483333334,
-      "funding_accrued_usd": 96.6796,
-      "funding_last_accrued_utc": "2026-08-14T22:57:47.940325+00:00"
+      "funding_accrued_usd": 98.8512,
+      "funding_last_accrued_utc": "2026-08-14T23:59:20.900757+00:00"
     },
     "Donchian_Breakout(20)": {
       "position": 0,
@@ -3035,12 +3035,12 @@
       ],
       "liquidation_price": null,
       "funding_accrued_usd": 0.0,
-      "funding_last_accrued_utc": "2026-08-14T22:57:47.940325+00:00"
+      "funding_last_accrued_utc": "2026-08-14T23:59:20.900757+00:00"
     },
     "MACD_Momentum(12/26/9)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 1341.39,
+      "equity": 1332.01,
       "open_trade": {
         "direction": -1,
         "entry_price": 63592.62,
@@ -4047,12 +4047,12 @@
         ],
         [
           "2026-08-14 00:00:00",
-          1341.39
+          1332.01
         ]
       ],
       "liquidation_price": 84472.19690000001,
-      "funding_accrued_usd": 0.3499,
-      "funding_last_accrued_utc": "2026-08-14T22:57:47.940325+00:00"
+      "funding_accrued_usd": 0.3689,
+      "funding_last_accrued_utc": "2026-08-14T23:59:20.900757+00:00"
     },
     "RSI_Reversion(14,30/70)": {
       "position": 0,
@@ -5064,7 +5064,7 @@
       ],
       "liquidation_price": null,
       "funding_accrued_usd": 0.0,
-      "funding_last_accrued_utc": "2026-08-14T22:57:47.940325+00:00"
+      "funding_last_accrued_utc": "2026-08-14T23:59:20.900757+00:00"
     },
     "Bollinger_Reversion(20,2sd)": {
       "position": 0,
@@ -6076,7 +6076,7 @@
       ],
       "liquidation_price": null,
       "funding_accrued_usd": 0.0,
-      "funding_last_accrued_utc": "2026-08-14T22:57:47.940325+00:00"
+      "funding_last_accrued_utc": "2026-08-14T23:59:20.900757+00:00"
     },
     "ZScore_Reversion(20,z=2.0)": {
       "position": 0,
@@ -7088,12 +7088,12 @@
       ],
       "liquidation_price": null,
       "funding_accrued_usd": 0.0,
-      "funding_last_accrued_utc": "2026-08-14T22:57:47.940325+00:00"
+      "funding_last_accrued_utc": "2026-08-14T23:59:20.900757+00:00"
     },
     "ATR_Vol_Breakout(14,k=1.5)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 178003.35,
+      "equity": 176960.25,
       "open_trade": {
         "direction": -1,
         "entry_price": 66751.94,
@@ -8100,12 +8100,12 @@
         ],
         [
           "2026-08-14 00:00:00",
-          178003.35
+          176960.25
         ]
       ],
       "liquidation_price": 88668.82696666667,
-      "funding_accrued_usd": 94.2396,
-      "funding_last_accrued_utc": "2026-08-14T22:57:47.940325+00:00"
+      "funding_accrued_usd": 96.3564,
+      "funding_last_accrued_utc": "2026-08-14T23:59:20.900757+00:00"
     },
     "Supertrend(10,m=3.0)": {
       "position": 0,
@@ -9117,7 +9117,7 @@
       ],
       "liquidation_price": null,
       "funding_accrued_usd": 0.0,
-      "funding_last_accrued_utc": "2026-08-14T22:57:47.940325+00:00"
+      "funding_last_accrued_utc": "2026-08-14T23:59:20.900757+00:00"
     },
     "VWAP_Reversion(20,2%)": {
       "position": 0,
@@ -10129,12 +10129,12 @@
       ],
       "liquidation_price": null,
       "funding_accrued_usd": 0.0,
-      "funding_last_accrued_utc": "2026-08-14T22:57:47.940325+00:00"
+      "funding_last_accrued_utc": "2026-08-14T23:59:20.900757+00:00"
     },
     "Engulfing_Reversal(0.3)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 17.81,
+      "equity": 17.63,
       "open_trade": {
         "direction": -1,
         "entry_price": 58627.85,
@@ -11141,12 +11141,12 @@
         ],
         [
           "2026-08-14 00:00:00",
-          17.81
+          17.63
         ]
       ],
       "liquidation_price": 77877.32741666667,
-      "funding_accrued_usd": 0.0165,
-      "funding_last_accrued_utc": "2026-08-14T22:57:47.940325+00:00"
+      "funding_accrued_usd": 0.0169,
+      "funding_last_accrued_utc": "2026-08-14T23:59:20.900757+00:00"
     },
     "Inside_Bar_Breakout(0.6)": {
       "position": 0,
@@ -12158,7 +12158,7 @@
       ],
       "liquidation_price": null,
       "funding_accrued_usd": 0.0,
-      "funding_last_accrued_utc": "2026-08-14T22:57:47.940325+00:00"
+      "funding_last_accrued_utc": "2026-08-14T23:59:20.900757+00:00"
     },
     "Opening_Range_Breakout(6)": {
       "position": 0,
@@ -13170,7 +13170,7 @@
       ],
       "liquidation_price": null,
       "funding_accrued_usd": 0.0,
-      "funding_last_accrued_utc": "2026-08-14T22:57:47.940325+00:00"
+      "funding_last_accrued_utc": "2026-08-14T23:59:20.900757+00:00"
     }
   }
 }
