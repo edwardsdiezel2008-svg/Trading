@@ -1,16 +1,16 @@
-# ETH/USDT Paper Trading (1D) — updated 2026-08-15T09:56:26.677634+00:00
+# ETH/USDT Paper Trading (1D) — updated 2026-08-15T10:55:56.158621+00:00
 
 Latest bar: 2026-08-15 00:00:00 · 2,154 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $545,889 | +445.9% | — | 1 |
-| MA_Crossover(10/50) | LONG | $622,117 | +522.1% | 0.66 | 50 |
-| Donchian_Breakout(20) | LONG | $286,505 | +186.5% | 0.51 | 41 |
-| Supertrend(10,m=3.0) | LONG | $286,077 | +186.1% | 0.50 | 48 |
+| *Buy & Hold (benchmark)* | — | $545,860 | +445.9% | — | 1 |
+| MA_Crossover(10/50) | LONG | $622,084 | +522.1% | 0.66 | 50 |
+| Donchian_Breakout(20) | LONG | $286,489 | +186.5% | 0.51 | 41 |
+| Supertrend(10,m=3.0) | LONG | $286,062 | +186.1% | 0.50 | 48 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
-| Engulfing_Reversal(0.3) | LONG | $40,090 | -59.9% | 0.16 | 148 |
-| MACD_Momentum(12/26/9) | SHORT | $32,972 | -67.0% | 0.09 | 162 |
+| Engulfing_Reversal(0.3) | LONG | $40,088 | -59.9% | 0.16 | 148 |
+| MACD_Momentum(12/26/9) | SHORT | $32,973 | -67.0% | 0.09 | 162 |
 | RSI_Reversion(14,30/70) | FLAT | $13,914 | -86.1% | -0.51 | 63 |
 | ATR_Vol_Breakout(14,k=1.5) | LONG | $11,424 | -88.6% | -0.08 | 51 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $8,815 | -91.2% | -0.27 | 84 |
