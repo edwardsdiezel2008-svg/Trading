@@ -1,14 +1,14 @@
-# BTC/USDT Paper Trading (1D) — updated 2026-08-16T23:20:27.657263+00:00
+# BTC/USDT Paper Trading (1D) — updated 2026-08-16T23:51:18.462872+00:00
 
 Latest bar: 2026-08-16 00:00:00 · 2,155 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $596,509 | +496.5% | — | 1 |
-| MA_Crossover(10/50) | SHORT | $247,079 | +147.1% | 0.64 | 45 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $178,062 | +78.1% | 0.63 | 48 |
+| *Buy & Hold (benchmark)* | — | $597,020 | +497.0% | — | 1 |
+| MA_Crossover(10/50) | SHORT | $246,699 | +146.7% | 0.64 | 45 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $177,692 | +77.7% | 0.63 | 48 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
-| MACD_Momentum(12/26/9) | SHORT | $1,342 | -98.7% | 0.28 | 160 |
+| MACD_Momentum(12/26/9) | SHORT | $1,339 | -98.7% | 0.28 | 160 |
 | Engulfing_Reversal(0.3) | SHORT | $18 | -100.0% | 0.27 | 150 |
 | RSI_Reversion(14,30/70) | FLAT | $-666 | -100.7% | -0.57 | 11 |
 | Bollinger_Reversion(20,2sd) | FLAT | $-12,211 | -112.2% | -0.55 | 1 |
