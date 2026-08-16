@@ -24,7 +24,6 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, ".")
 
-import numpy as np
 import pandas as pd
 
 from src.backtest.data_loader import load_bars
