@@ -1,19 +1,19 @@
-# MNQ Paper Trading (5min) — updated 2026-08-16T21:51:21.007092+00:00
+# MNQ Paper Trading (5min) — updated 2026-08-16T22:25:52.580673+00:00
 
-Latest bar: 2026-08-14 20:55:00 · 14,707 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-16 22:15:00 · 14,709 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $99,084 | -0.9% | — | 1 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $108,314 | +8.3% | 1.48 | 250 |
-| Inside_Bar_Breakout(0.6) | LONG | $102,468 | +2.5% | 0.47 | 105 |
-| Engulfing_Reversal(0.3) | SHORT | $102,417 | +2.4% | 0.46 | 976 |
-| Bollinger_Reversion(20,2sd) | SHORT | $100,400 | +0.4% | 0.13 | 498 |
+| *Buy & Hold (benchmark)* | — | $99,275 | -0.7% | — | 1 |
+| ATR_Vol_Breakout(14,k=1.5) | LONG | $108,431 | +8.4% | 1.50 | 253 |
+| Inside_Bar_Breakout(0.6) | LONG | $101,728 | +1.7% | 0.34 | 107 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| Donchian_Breakout(20) | LONG | $99,656 | -0.3% | -0.02 | 327 |
-| ZScore_Reversion(20,z=2.0) | SHORT | $98,950 | -1.0% | -0.25 | 553 |
-| MA_Crossover(10/50) | LONG | $98,760 | -1.2% | -0.19 | 384 |
-| Supertrend(10,m=3.0) | LONG | $98,476 | -1.5% | -0.23 | 386 |
-| Opening_Range_Breakout(6) | SHORT | $98,048 | -2.0% | -0.36 | 107 |
-| RSI_Reversion(14,30/70) | FLAT | $97,130 | -2.9% | -1.31 | 404 |
-| MACD_Momentum(12/26/9) | LONG | $92,124 | -7.9% | -1.37 | 1201 |
+| Donchian_Breakout(20) | LONG | $99,706 | -0.3% | -0.01 | 327 |
+| Engulfing_Reversal(0.3) | SHORT | $99,663 | -0.3% | -0.02 | 990 |
+| Bollinger_Reversion(20,2sd) | SHORT | $99,620 | -0.4% | -0.07 | 499 |
+| MA_Crossover(10/50) | LONG | $98,853 | -1.1% | -0.17 | 384 |
+| Supertrend(10,m=3.0) | LONG | $98,574 | -1.4% | -0.21 | 386 |
+| ZScore_Reversion(20,z=2.0) | SHORT | $98,300 | -1.7% | -0.42 | 556 |
+| Opening_Range_Breakout(6) | FLAT | $97,944 | -2.1% | -0.38 | 107 |
+| RSI_Reversion(14,30/70) | SHORT | $97,192 | -2.8% | -1.29 | 405 |
+| MACD_Momentum(12/26/9) | LONG | $92,185 | -7.8% | -1.36 | 1199 |
