@@ -1,19 +1,19 @@
-# MCL Paper Trading (5min) — updated 2026-08-16T23:51:43.868589+00:00
+# MCL Paper Trading (5min) — updated 2026-08-17T00:22:39.925184+00:00
 
-Latest bar: 2026-08-16 23:40:00 · 14,772 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-17 00:10:00 · 14,778 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $91,965 | -8.0% | — | 1 |
-| Supertrend(10,m=3.0) | LONG | $102,103 | +2.1% | 1.15 | 349 |
+| *Buy & Hold (benchmark)* | — | $91,642 | -8.4% | — | 1 |
+| Supertrend(10,m=3.0) | SHORT | $102,096 | +2.1% | 1.15 | 350 |
 | RSI_Reversion(14,30/70) | FLAT | $100,634 | +0.6% | 0.75 | 422 |
-| Donchian_Breakout(20) | LONG | $100,539 | +0.5% | 0.30 | 337 |
-| Bollinger_Reversion(20,2sd) | FLAT | $100,493 | +0.5% | 0.36 | 533 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $100,315 | +0.3% | 0.24 | 600 |
+| Donchian_Breakout(20) | SHORT | $100,532 | +0.5% | 0.30 | 338 |
+| Bollinger_Reversion(20,2sd) | LONG | $100,479 | +0.5% | 0.35 | 534 |
+| ZScore_Reversion(20,z=2.0) | LONG | $100,301 | +0.3% | 0.23 | 601 |
 | VWAP_Reversion(20,2%) | FLAT | $99,926 | -0.1% | -0.24 | 15 |
-| ATR_Vol_Breakout(14,k=1.5) | LONG | $99,833 | -0.2% | -0.08 | 290 |
-| MA_Crossover(10/50) | LONG | $98,616 | -1.4% | -0.74 | 404 |
-| Inside_Bar_Breakout(0.6) | SHORT | $98,153 | -1.8% | -0.99 | 145 |
-| Opening_Range_Breakout(6) | SHORT | $97,852 | -2.1% | -1.19 | 149 |
-| Engulfing_Reversal(0.3) | LONG | $95,817 | -4.2% | -2.22 | 1136 |
-| MACD_Momentum(12/26/9) | SHORT | $95,083 | -4.9% | -2.64 | 1144 |
+| ATR_Vol_Breakout(14,k=1.5) | LONG | $99,804 | -0.2% | -0.10 | 290 |
+| MA_Crossover(10/50) | SHORT | $98,593 | -1.4% | -0.75 | 405 |
+| Inside_Bar_Breakout(0.6) | SHORT | $98,182 | -1.8% | -0.97 | 145 |
+| Opening_Range_Breakout(6) | SHORT | $97,881 | -2.1% | -1.18 | 149 |
+| Engulfing_Reversal(0.3) | SHORT | $95,811 | -4.2% | -2.22 | 1137 |
+| MACD_Momentum(12/26/9) | SHORT | $95,112 | -4.9% | -2.63 | 1144 |
