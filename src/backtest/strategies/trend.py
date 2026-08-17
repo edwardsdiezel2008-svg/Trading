@@ -83,3 +83,70 @@ class MACDMomentum(Strategy):
         signal = pd.Series(np.where(hist > 0, 1, -1), index=bars.index)
         signal.iloc[:warmup] = 0
         return signal
+
+
+class ParabolicSAR(Strategy):
+    """Wilder's Parabolic SAR: a trailing stop-and-reverse level that
+    accelerates toward price the longer the current trend runs, flipping
+    the position the instant price trades through it. The ratchet here is
+    driven by an acceleration factor that increments every time a new trend
+    extreme prints and resets on every flip - a fundamentally different
+    mechanism from Supertrend's ATR-width bands (which ratchet on
+    volatility, not on how long the trend has already run), so the two
+    don't just converge to relabeled versions of the same signal.
+    Params: af_start=0.02 (initial/reset acceleration), af_step=af_start
+    (increment per new extreme), af_max=0.2 (acceleration ceiling).
+    """
+
+    PARAM_SPACE = {"af_start": [0.01, 0.02, 0.03], "af_max": [0.1, 0.2, 0.3, 0.4]}
+
+    @property
+    def name(self) -> str:
+        return f"Parabolic_SAR(af={self.params.get('af_start', 0.02)},max={self.params.get('af_max', 0.2)})"
+
+    def generate_signals(self, bars: pd.DataFrame) -> pd.Series:
+        af_start = self.params.get("af_start", 0.02)
+        af_step = self.params.get("af_step", af_start)
+        af_max = self.params.get("af_max", 0.2)
+        high, low, close = bars["high"].to_numpy(), bars["low"].to_numpy(), bars["close"].to_numpy()
+        n = len(bars)
+        trend = np.zeros(n)
+        if n < 2:
+            return pd.Series(trend, index=bars.index)
+
+        sar = np.zeros(n)
+        uptrend = close[1] >= close[0]
+        sar[1] = low[0] if uptrend else high[0]
+        ep = high[1] if uptrend else low[1]
+        af = af_start
+        trend[1] = 1 if uptrend else -1
+
+        for i in range(2, n):
+            candidate = sar[i - 1] + af * (ep - sar[i - 1])
+            if uptrend:
+                candidate = min(candidate, low[i - 1], low[i - 2])
+                if low[i] < candidate:
+                    uptrend = False
+                    sar[i] = ep
+                    ep = low[i]
+                    af = af_start
+                else:
+                    sar[i] = candidate
+                    if high[i] > ep:
+                        ep = high[i]
+                        af = min(af + af_step, af_max)
+            else:
+                candidate = max(candidate, high[i - 1], high[i - 2])
+                if high[i] > candidate:
+                    uptrend = True
+                    sar[i] = ep
+                    ep = high[i]
+                    af = af_start
+                else:
+                    sar[i] = candidate
+                    if low[i] < ep:
+                        ep = low[i]
+                        af = min(af + af_step, af_max)
+            trend[i] = 1 if uptrend else -1
+
+        return pd.Series(trend, index=bars.index)

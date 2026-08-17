@@ -5,13 +5,17 @@ import pytest
 from src.backtest.strategies import (
     ATRVolatilityBreakout,
     BollingerReversion,
+    CCIReversion,
     DonchianBreakout,
     EngulfingReversal,
     InsideBarBreakout,
+    KeltnerChannelBreakout,
     MACDMomentum,
     MovingAverageCrossover,
     OpeningRangeBreakout,
+    ParabolicSAR,
     RSIReversion,
+    StochasticReversion,
     Supertrend,
     VWAPReversion,
     ZScoreReversion,
@@ -22,11 +26,15 @@ ALL = [
     MovingAverageCrossover(),
     DonchianBreakout(),
     MACDMomentum(),
+    ParabolicSAR(),
     RSIReversion(),
     BollingerReversion(),
     ZScoreReversion(),
+    StochasticReversion(),
+    CCIReversion(),
     ATRVolatilityBreakout(),
     Supertrend(),
+    KeltnerChannelBreakout(),
     VWAPReversion(),
     EngulfingReversal(),
     InsideBarBreakout(),
@@ -56,8 +64,8 @@ def test_signals_are_valid_positions(strategy):
 
 def test_build_default_strategies_returns_one_of_each():
     strategies = build_default_strategies()
-    assert len(strategies) == 12
-    assert len({s.name for s in strategies}) == 12
+    assert len(strategies) == 16
+    assert len({s.name for s in strategies}) == 16
 
 
 def test_ma_crossover_flips_on_clean_trend_reversal():
@@ -233,3 +241,90 @@ def test_opening_range_breakout_never_fires_on_daily_bars():
     strategy = OpeningRangeBreakout(params={"range_bars": 6})
     signals = strategy.generate_signals(bars)
     assert (signals == 0).all()
+
+
+def test_parabolic_sar_flips_on_clean_trend_reversal():
+    up = np.linspace(100, 200, 60)
+    down = np.linspace(200, 100, 60)
+    price = np.concatenate([up, down])
+    idx = pd.date_range("2026-01-05", periods=len(price), freq="1min")
+    bars = pd.DataFrame({
+        "open": price, "high": price + 1, "low": price - 1, "close": price, "volume": 100,
+    }, index=idx)
+
+    strategy = ParabolicSAR(params={"af_start": 0.02, "af_max": 0.2})
+    signals = strategy.generate_signals(bars)
+    assert signals.iloc[40] == 1
+    assert signals.iloc[-1] == -1
+
+
+def test_parabolic_sar_short_history_stays_flat_without_erroring():
+    bars = pd.DataFrame(
+        {"open": [100.0], "high": [101.0], "low": [99.0], "close": [100.0], "volume": [100]},
+        index=pd.date_range("2026-01-05", periods=1, freq="1min"),
+    )
+    strategy = ParabolicSAR()
+    signals = strategy.generate_signals(bars)
+    assert (signals == 0).all()
+
+
+def test_stochastic_reversion_flat_when_price_never_moves():
+    price = [100.0] * 30
+    idx = pd.date_range("2026-01-05", periods=len(price), freq="1min")
+    bars = pd.DataFrame({"open": price, "high": price, "low": price, "close": price, "volume": 100}, index=idx)
+    strategy = StochasticReversion(params={"period": 14, "d_period": 3, "lower": 20, "upper": 80})
+    signals = strategy.generate_signals(bars)
+    assert (signals.iloc[14:] == 0).all()
+
+
+def test_stochastic_reversion_goes_long_after_a_sharp_oversold_rebound():
+    flat = [100.0] * 20
+    decline = list(np.linspace(100, 70, 10))
+    rebound = list(np.linspace(70, 110, 15))
+    price = flat + decline + rebound
+    idx = pd.date_range("2026-01-05", periods=len(price), freq="1min")
+    bars = pd.DataFrame({
+        "open": price, "high": [p + 0.5 for p in price], "low": [p - 0.5 for p in price], "close": price, "volume": 100,
+    }, index=idx)
+    strategy = StochasticReversion(params={"period": 14, "d_period": 3, "lower": 20, "upper": 80})
+    signals = strategy.generate_signals(bars)
+    assert (signals.iloc[30:] == 1).any()
+
+
+def test_cci_reversion_goes_long_on_a_sharp_dip_below_the_mean():
+    price = [100.0] * 25 + [80.0] * 5
+    idx = pd.date_range("2026-01-05", periods=len(price), freq="1min")
+    bars = pd.DataFrame({"open": price, "high": price, "low": price, "close": price, "volume": 100}, index=idx)
+    strategy = CCIReversion(params={"period": 20, "entry": 100})
+    signals = strategy.generate_signals(bars)
+    assert signals.iloc[-1] == 1
+
+
+def test_cci_reversion_flat_when_price_never_moves():
+    price = [100.0] * 30
+    idx = pd.date_range("2026-01-05", periods=len(price), freq="1min")
+    bars = pd.DataFrame({"open": price, "high": price, "low": price, "close": price, "volume": 100}, index=idx)
+    strategy = CCIReversion(params={"period": 20, "entry": 100})
+    signals = strategy.generate_signals(bars)
+    assert (signals.iloc[20:] == 0).all()
+
+
+def test_keltner_breakout_goes_long_on_a_sharp_expansion_beyond_the_band():
+    flat = [100.0] * 30
+    price = flat + [110.0]
+    idx = pd.date_range("2026-01-05", periods=len(price), freq="1min")
+    high = [p + 0.1 for p in flat] + [110.5]
+    low = [p - 0.1 for p in flat] + [100.0]
+    bars = pd.DataFrame({"open": price, "high": high, "low": low, "close": price, "volume": 100}, index=idx)
+    strategy = KeltnerChannelBreakout(params={"period": 20, "multiplier": 2.0})
+    signals = strategy.generate_signals(bars)
+    assert signals.iloc[-1] == 1
+
+
+def test_keltner_breakout_flat_during_quiet_consolidation():
+    price = [100.0 + (i % 3) * 0.01 for i in range(40)]
+    idx = pd.date_range("2026-01-05", periods=len(price), freq="1min")
+    bars = pd.DataFrame({"open": price, "high": price, "low": price, "close": price, "volume": 100}, index=idx)
+    strategy = KeltnerChannelBreakout(params={"period": 20, "multiplier": 2.0})
+    signals = strategy.generate_signals(bars)
+    assert (signals.iloc[20:] == 0).all()

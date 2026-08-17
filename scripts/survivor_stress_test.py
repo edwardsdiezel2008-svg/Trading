@@ -1,7 +1,8 @@
 """Stress-test the strategy-track combinations that survived the bootstrap
 significance check (see "Statistical significance" in paper_trading/README.md)
-- out of 240 strategy-track results, only 5 have a 90% confidence interval
-that excludes zero. That's necessary but not sufficient for real confidence:
+- out of 320 strategy-track results (16 strategies x 20 tracks), only 10 have
+a 90% confidence interval that excludes zero. That's necessary but not
+sufficient for real confidence:
 a single positive-and-significant walk-forward result could still be one
 lucky fold, or an edge that evaporates under slightly worse execution
 assumptions, or one that only exists in a narrow slice of history. This runs
@@ -19,19 +20,21 @@ snapshot alone answers:
    a narrower, more fragile edge than one spread across conditions.
 
 Plus one cross-survivor question none of the per-track checks above can
-answer alone: does combining all 5 into an equal-weighted portfolio
+answer alone: does combining the survivors into an equal-weighted portfolio
 actually diversify anything, or are they all just riding the same
-underlying risk factor (plausible here - 3 of the 5 are equity-index
-futures that plainly correlate with each other)? Answered by aligning the
-5 OOS equity curves on their common date intersection, computing their
-pairwise return correlation, and bootstrapping a confidence interval on
-the combined portfolio the same way each individual survivor was checked -
-directly comparable to the average of the five individually.
+underlying risk factor? Answered by aligning their OOS equity curves on a
+common date intersection, computing pairwise return correlation, and
+bootstrapping a confidence interval on the combined portfolio the same way
+each individual survivor was checked - directly comparable to the average
+of the individual survivors. Only survivors sharing the same bar frequency
+go into this step (a daily OOS curve and a 5-minute one share no common
+timestamps to align on), so a mixed-frequency survivor list restricts the
+portfolio combination to whichever frequency has the most survivors.
 
 Deliberately a one-off analysis script, not part of the hourly pipeline or
 even the regular walk-forward/sensitivity snapshot cadence - re-run manually
-whenever the "5 survivors" list changes (e.g. after adding more instruments
-or after fresh data shifts which strategies clear the bar).
+whenever the survivors list changes (e.g. after adding more instruments,
+more strategies, or after fresh data shifts which strategies clear the bar).
 
 Usage:
   python scripts/survivor_stress_test.py --output paper_trading/survivor_stress_test.json
@@ -53,19 +56,28 @@ from src.backtest.engine import run_backtest
 from src.backtest.instruments import get_spec
 from src.backtest.regime import attribute_performance, classify_regimes
 from src.backtest.significance import bootstrap_return_ci
-from src.backtest.strategies.mean_reversion import RSIReversion
+from src.backtest.strategies.mean_reversion import CCIReversion, RSIReversion, StochasticReversion, VWAPReversion
 from src.backtest.strategies.trend import DonchianBreakout, MovingAverageCrossover
 from src.backtest.walkforward import run_walk_forward
 
-# (label, bars path, symbol, freq, strategy class) - all five use their
+# (label, bars path, symbol, freq, strategy class) - all use their
 # strategy's default parameters, which is what the walk-forward baseline
 # and the dashboard's Locked-in Strategy full-backtest figure both use too.
+# Kept in sync with the 90%-CI-excludes-zero results across every
+# walkforward_*.json - re-run scripts/walkforward_snapshot.py across all
+# tracks and check for new/dropped entries before trusting this list is
+# still current (see the module docstring).
 SURVIVORS = [
     ("Nasdaq Futures (Daily)", "paper_trading/bars_nq.csv", "MNQ", "1D", RSIReversion),
     ("S&P 500 Futures (Daily)", "paper_trading/bars_es.csv", "MES", "1D", RSIReversion),
     ("Dow Futures (Daily)", "paper_trading/bars_ym.csv", "MYM", "1D", RSIReversion),
     ("Gold Futures (Daily)", "paper_trading/bars_gc.csv", "MGC", "1D", MovingAverageCrossover),
     ("Gold Futures (Daily)", "paper_trading/bars_gc.csv", "MGC", "1D", DonchianBreakout),
+    ("Nasdaq Futures (5-Min)", "paper_trading/bars_nq5m.csv", "MNQ", "5min", StochasticReversion),
+    ("Russell 2000 Futures (5-Min)", "paper_trading/bars_rty5m.csv", "M2K", "5min", StochasticReversion),
+    ("Crude Oil Futures (Daily)", "paper_trading/bars_cl.csv", "MCL", "1D", CCIReversion),
+    ("Dow Futures (Daily)", "paper_trading/bars_ym.csv", "MYM", "1D", CCIReversion),
+    ("Gold Futures (5-Min)", "paper_trading/bars_gc5m.csv", "MGC", "5min", VWAPReversion),
 ]
 
 
@@ -205,8 +217,24 @@ def main(argv=None):
         print(f"  3x-slippage: {r['stressed_oos_return']*100:.1f}% OOS, significant={r['stressed_significant']}")
         print(f"  top regime share of P&L: {r['top_regime_pct_of_pnl']}")
 
-    print("\nCombining survivors into an equal-weighted portfolio...")
-    portfolio = portfolio_analysis(curves)
+    # Portfolio combination only makes sense within one bar frequency: a
+    # daily OOS equity curve and a 5-minute one never share a timestamp, so
+    # an inner join across mixed frequencies degenerates to an empty (or
+    # near-empty, calendar-boundary-only) intersection - not a meaningful
+    # "does combining diversify anything" answer. Restrict to whichever
+    # frequency has the most survivors (currently daily), rather than
+    # silently combining series that can't actually be aligned.
+    from collections import Counter
+    freq_counts = Counter(freq for _, _, _, freq, _ in SURVIVORS)
+    portfolio_freq = freq_counts.most_common(1)[0][0]
+    portfolio_curves = {
+        f"{strategy_cls().name} / {label}": curves[f"{strategy_cls().name} / {label}"]
+        for label, _, _, freq, strategy_cls in SURVIVORS
+        if freq == portfolio_freq
+    }
+    print(f"\nCombining the {len(portfolio_curves)} {portfolio_freq} survivors into an equal-weighted portfolio "
+          f"({len(SURVIVORS) - len(portfolio_curves)} other-frequency survivor(s) excluded - can't align to a shared calendar)...")
+    portfolio = portfolio_analysis(portfolio_curves)
     if "note" in portfolio:
         print(f"  {portfolio['note']}")
     else:

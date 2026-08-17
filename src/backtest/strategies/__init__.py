@@ -1,19 +1,30 @@
 from .base import Strategy
-from .mean_reversion import BollingerReversion, RSIReversion, VWAPReversion, ZScoreReversion
+from .mean_reversion import (
+    BollingerReversion,
+    CCIReversion,
+    RSIReversion,
+    StochasticReversion,
+    VWAPReversion,
+    ZScoreReversion,
+)
 from .patterns import EngulfingReversal, InsideBarBreakout, OpeningRangeBreakout
 from .regime_filter import RegimeFilteredStrategy
-from .trend import DonchianBreakout, MACDMomentum, MovingAverageCrossover
-from .volatility import ATRVolatilityBreakout, Supertrend
+from .trend import DonchianBreakout, MACDMomentum, MovingAverageCrossover, ParabolicSAR
+from .volatility import ATRVolatilityBreakout, KeltnerChannelBreakout, Supertrend
 
 ALL_STRATEGY_CLASSES = [
     MovingAverageCrossover,
     DonchianBreakout,
     MACDMomentum,
+    ParabolicSAR,
     RSIReversion,
     BollingerReversion,
     ZScoreReversion,
+    StochasticReversion,
+    CCIReversion,
     ATRVolatilityBreakout,
     Supertrend,
+    KeltnerChannelBreakout,
     VWAPReversion,
     EngulfingReversal,
     InsideBarBreakout,
@@ -31,11 +42,15 @@ __all__ = [
     "MovingAverageCrossover",
     "DonchianBreakout",
     "MACDMomentum",
+    "ParabolicSAR",
     "RSIReversion",
     "BollingerReversion",
     "ZScoreReversion",
+    "StochasticReversion",
+    "CCIReversion",
     "ATRVolatilityBreakout",
     "Supertrend",
+    "KeltnerChannelBreakout",
     "VWAPReversion",
     "EngulfingReversal",
     "InsideBarBreakout",

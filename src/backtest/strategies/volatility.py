@@ -101,3 +101,40 @@ class Supertrend(Strategy):
                 trend[i] = trend[i - 1]
 
         return pd.Series(trend, index=bars.index)
+
+
+class KeltnerChannelBreakout(Strategy):
+    """Breakout of an EMA-centered, ATR-width channel - a genuinely
+    different band construction from both DonchianBreakout (raw N-bar
+    high/low, no smoothing) and BollingerReversion (SMA centerline, std-dev
+    width): the centerline here reacts faster to recent price than a plain
+    SMA, and the band width tracks true range rather than the variance of
+    closes, so it doesn't compress as hard in a slow choppy grind. Bands are
+    computed from the *prior* bar only (shifted before comparison) so a
+    bar's own high/low can't inflate the very channel it's breaking out of -
+    the same lookahead guard DonchianBreakout uses.
+    Params: period=20 (EMA span), multiplier=2.0 (ATR width), atr_period=14.
+    """
+
+    PARAM_SPACE = {"period": [10, 20, 30, 50], "multiplier": [1.5, 2.0, 2.5, 3.0]}
+
+    @property
+    def name(self) -> str:
+        return f"Keltner_Breakout({self.params.get('period', 20)},m={self.params.get('multiplier', 2.0)})"
+
+    def generate_signals(self, bars: pd.DataFrame) -> pd.Series:
+        period = self.params.get("period", 20)
+        multiplier = self.params.get("multiplier", 2.0)
+        atr_period = self.params.get("atr_period", 14)
+        close = bars["close"]
+        ema = close.ewm(span=period, adjust=False).mean()
+        atr = _atr(bars, atr_period)
+        upper = (ema + multiplier * atr).shift(1)
+        lower = (ema - multiplier * atr).shift(1)
+
+        raw = pd.Series(np.nan, index=bars.index)
+        raw[close > upper] = 1
+        raw[close < lower] = -1
+        signal = raw.ffill().fillna(0)
+        signal[upper.isna()] = 0
+        return signal
