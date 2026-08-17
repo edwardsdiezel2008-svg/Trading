@@ -4,6 +4,7 @@ import pytest
 
 from src.backtest.strategies import (
     ATRVolatilityBreakout,
+    AuctionMarketProfileStrategy,
     BollingerReversion,
     DonchianBreakout,
     MACDMomentum,
@@ -21,6 +22,7 @@ ALL = [
     BollingerReversion(),
     ZScoreReversion(),
     ATRVolatilityBreakout(),
+    AuctionMarketProfileStrategy(),
 ]
 
 
@@ -46,8 +48,48 @@ def test_signals_are_valid_positions(strategy):
 
 def test_build_default_strategies_returns_one_of_each():
     strategies = build_default_strategies()
-    assert len(strategies) == 7
-    assert len({s.name for s in strategies}) == 7
+    assert len(strategies) == 8
+    assert len({s.name for s in strategies}) == 8
+
+
+def _synthetic_multiday_bars(n_sessions=30, bars_per_session=100, seed=3):
+    rng = np.random.default_rng(seed)
+    sessions = []
+    price = 20000.0
+    for date in pd.bdate_range("2026-01-05", periods=n_sessions):
+        opens = np.empty(bars_per_session)
+        closes = np.empty(bars_per_session)
+        for i in range(bars_per_session):
+            opens[i] = price
+            price += rng.normal(0, 2.0)
+            price = max(price, 1.0)
+            closes[i] = price
+        highs = np.maximum(opens, closes) + rng.uniform(0, 2.0, bars_per_session)
+        lows = np.minimum(opens, closes) - rng.uniform(0, 2.0, bars_per_session)
+        volume = rng.integers(50, 300, bars_per_session)
+        idx = pd.date_range(date + pd.Timedelta(hours=9, minutes=30), periods=bars_per_session, freq="1min")
+        sessions.append(pd.DataFrame({"open": opens, "high": highs, "low": lows, "close": closes, "volume": volume}, index=idx))
+    return pd.concat(sessions)
+
+
+def test_auction_market_profile_uses_prior_sessions_only():
+    # With only one session of history, there's no completed prior session to
+    # reference yet, so the strategy must stay flat - it should never open a
+    # position off same-session (lookahead) levels.
+    bars = _synthetic_multiday_bars(n_sessions=1, bars_per_session=200)
+    strategy = AuctionMarketProfileStrategy()
+    signals = strategy.generate_signals(bars)
+    assert (signals == 0).all()
+
+
+def test_auction_market_profile_trades_once_prior_sessions_exist():
+    bars = _synthetic_multiday_bars(n_sessions=30, bars_per_session=100)
+    strategy = AuctionMarketProfileStrategy()
+    signals = strategy.generate_signals(bars)
+    assert len(signals) == len(bars)
+    assert set(signals.unique()).issubset({-1, 0, 1})
+    # Sessions 2+ have at least a prior-session profile to reference.
+    assert (signals.iloc[100:] != 0).any()
 
 
 def test_ma_crossover_flips_on_clean_trend_reversal():

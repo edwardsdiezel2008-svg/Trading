@@ -1,3 +1,4 @@
+from .auction_market import AuctionMarketProfileStrategy
 from .base import Strategy
 from .mean_reversion import BollingerReversion, RSIReversion, ZScoreReversion
 from .trend import DonchianBreakout, MACDMomentum, MovingAverageCrossover
@@ -11,6 +12,7 @@ ALL_STRATEGY_CLASSES = [
     BollingerReversion,
     ZScoreReversion,
     ATRVolatilityBreakout,
+    AuctionMarketProfileStrategy,
 ]
 
 
@@ -28,6 +30,7 @@ __all__ = [
     "BollingerReversion",
     "ZScoreReversion",
     "ATRVolatilityBreakout",
+    "AuctionMarketProfileStrategy",
     "ALL_STRATEGY_CLASSES",
     "build_default_strategies",
 ]
