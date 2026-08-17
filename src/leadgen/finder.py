@@ -7,7 +7,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from src.leadgen.places_client import search_text
+from src.leadgen.places_client import bounding_rectangle, geocode_address, search_text
+
+DEFAULT_RADIUS_KM = 100.0
 
 
 @dataclass
@@ -55,12 +57,27 @@ def _to_lead(place: dict[str, Any]) -> Lead:
     )
 
 
-def find_leads(query: str, max_results: int = 20) -> dict[str, Any]:
+def find_leads(
+    query: str,
+    max_results: int = 20,
+    near: str | None = None,
+    radius_km: float = DEFAULT_RADIUS_KM,
+) -> dict[str, Any]:
     """Searches Google Maps for `query` and returns places with no listed
     website, sorted by review count (most-established businesses first -
     they're easier to verify and more likely to be a real, reachable lead).
+
+    If `near` is set, it's geocoded and results are restricted to within
+    `radius_km` of that point, regardless of what's in `query`.
     """
-    places = search_text(query, max_results=max_results)
+    location_restrict = None
+    origin = None
+    if near:
+        lat, lng = geocode_address(near)
+        origin = {"address": near, "lat": lat, "lng": lng, "radius_km": radius_km}
+        location_restrict = bounding_rectangle(lat, lng, radius_km)
+
+    places = search_text(query, max_results=max_results, location_restrict=location_restrict)
     no_website = [p for p in places if not p.get("websiteUri")]
     leads = [_to_lead(p) for p in no_website]
     leads.sort(key=lambda lead: lead.review_count, reverse=True)
@@ -71,4 +88,5 @@ def find_leads(query: str, max_results: int = 20) -> dict[str, Any]:
             "total_found": len(places),
             "without_website": len(leads),
         },
+        "origin": origin,
     }

@@ -8,6 +8,7 @@
   :root {
     --bg: #0f1115;
     --panel: #171a21;
+    --bubble: #1c202a;
     --border: #2a2e38;
     --text: #e6e8ec;
     --muted: #9aa1ac;
@@ -22,7 +23,7 @@
     background: var(--bg);
     color: var(--text);
   }
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 80px; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
   h1 { font-size: 22px; margin: 0 0 4px; }
   .subtitle { color: var(--muted); margin: 0 0 28px; font-size: 14px; }
   .panel {
@@ -30,7 +31,7 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 20px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
   .form-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
   .field { display: flex; flex-direction: column; gap: 6px; }
@@ -43,8 +44,10 @@
     color: var(--text);
     font-size: 14px;
   }
-  #query { flex: 1; min-width: 260px; }
-  #max_results { width: 100px; }
+  #query { flex: 1.4; min-width: 220px; }
+  #near { flex: 1; min-width: 200px; }
+  #radius_km { width: 90px; }
+  #max_results { width: 90px; }
   button {
     font-size: 14px;
     font-weight: 600;
@@ -56,25 +59,46 @@
   #search-btn { background: var(--accent); color: white; }
   #search-btn:hover { background: var(--accent-hover); }
   #search-btn:disabled { background: #384054; cursor: not-allowed; }
-  #export-btn { background: #232733; color: var(--text); border: 1px solid var(--border); }
+  #export-btn { background: #232733; color: var(--text); border: 1px solid var(--border); font-size: 12px; padding: 7px 12px; }
   #export-btn:hover { background: #2b303e; }
+  #export-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .status { margin-top: 14px; font-size: 13px; color: var(--muted); min-height: 18px; }
   .status.error { color: #ff6b6b; }
-  .status.ok { color: var(--good); }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
-  th { color: var(--muted); font-weight: 600; position: sticky; top: 0; background: var(--panel); }
-  tr:hover td { background: #1c202a; }
-  .name { font-weight: 600; }
-  .muted { color: var(--muted); }
+
+  .chat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .chat-header h2 { font-size: 14px; margin: 0; color: var(--muted); font-weight: 600; }
+  .chat-box {
+    height: 520px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 4px;
+  }
+  .chat-box:empty::before {
+    content: "Results will show up here after you click \"Find leads.\"";
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .chat-msg {
+    background: var(--bubble);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .chat-msg.system { color: var(--muted); background: transparent; border: none; padding: 4px 2px; font-size: 12px; }
+  .chat-msg.error { border-color: #5a2a2a; color: #ff8f8f; }
+  .lead-name { font-weight: 700; font-size: 14px; margin: 0 0 4px; color: var(--text); }
+  .lead-meta { color: var(--muted); margin-bottom: 6px; }
+  .lead-row { margin: 2px 0; }
+  .lead-row .label { color: var(--muted); display: inline-block; width: 16px; }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   .hours-toggle { cursor: pointer; color: var(--accent); font-size: 12px; }
-  .hours-list { display: none; margin: 6px 0 0; padding-left: 16px; color: var(--muted); font-size: 12px; }
+  .hours-list { margin: 4px 0 0 16px; padding: 0; color: var(--muted); font-size: 12px; display: none; }
   .hours-list.open { display: block; }
-  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
-  .table-wrap table { min-width: 900px; }
-  .top-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .spinner {
     display: inline-block; width: 14px; height: 14px; border: 2px solid #ffffff55;
     border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 8px;
@@ -89,9 +113,17 @@
 
   <div class="panel">
     <div class="form-row">
-      <div class="field" style="flex:1">
+      <div class="field">
         <label for="query">Search</label>
-        <input id="query" type="text" placeholder="e.g. roofers in Tampa, FL" />
+        <input id="query" type="text" placeholder="e.g. roofers, coffee shops, dentists" />
+      </div>
+      <div class="field">
+        <label for="near">Starting address</label>
+        <input id="near" type="text" placeholder="e.g. 123 Main St, Austin, TX" />
+      </div>
+      <div class="field">
+        <label for="radius_km">Radius (km)</label>
+        <input id="radius_km" type="number" min="1" max="300" value="100" />
       </div>
       <div class="field">
         <label for="max_results">Max results</label>
@@ -102,29 +134,12 @@
     <div id="status" class="status"></div>
   </div>
 
-  <div id="results-panel" class="panel" style="display:none">
-    <div class="top-actions">
-      <div id="results-summary" class="muted"></div>
-      <button id="export-btn">Export CSV</button>
+  <div class="panel">
+    <div class="chat-header">
+      <h2>Results</h2>
+      <button id="export-btn" disabled>Export CSV</button>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Phone</th>
-            <th>Address</th>
-            <th>Rating</th>
-            <th>Reviews</th>
-            <th>Status</th>
-            <th>Hours</th>
-            <th>Maps</th>
-          </tr>
-        </thead>
-        <tbody id="results-body"></tbody>
-      </table>
-    </div>
+    <div id="chat-box" class="chat-box"></div>
   </div>
 </div>
 
@@ -133,9 +148,7 @@ let currentLeads = [];
 
 const searchBtn = document.getElementById('search-btn');
 const statusEl = document.getElementById('status');
-const resultsPanel = document.getElementById('results-panel');
-const resultsBody = document.getElementById('results-body');
-const resultsSummary = document.getElementById('results-summary');
+const chatBox = document.getElementById('chat-box');
 const exportBtn = document.getElementById('export-btn');
 
 function setStatus(text, cls) {
@@ -149,29 +162,35 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-function renderLeads(leads) {
-  resultsBody.innerHTML = '';
-  leads.forEach((lead, i) => {
-    const tr = document.createElement('tr');
-    const hoursId = 'hours-' + i;
-    const hoursCell = lead.hours && lead.hours.length
-      ? `<span class="hours-toggle" onclick="document.getElementById('${hoursId}').classList.toggle('open')">view hours</span>
-         <ul id="${hoursId}" class="hours-list">${lead.hours.map(h => `<li>${escapeHtml(h)}</li>`).join('')}</ul>`
-      : '<span class="muted">-</span>';
+function appendMessage(html, cls) {
+  const div = document.createElement('div');
+  div.className = 'chat-msg' + (cls ? ' ' + cls : '');
+  div.innerHTML = html;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+  return div;
+}
 
-    tr.innerHTML = `
-      <td class="name">${escapeHtml(lead.name)}</td>
-      <td>${escapeHtml(lead.category) || '<span class="muted">-</span>'}</td>
-      <td>${lead.phone ? `<a href="tel:${escapeHtml(lead.phone)}">${escapeHtml(lead.phone)}</a>` : '<span class="muted">no phone listed</span>'}</td>
-      <td>${escapeHtml(lead.address)}</td>
-      <td>${lead.rating != null ? lead.rating : '<span class="muted">-</span>'}</td>
-      <td>${lead.review_count}</td>
-      <td>${escapeHtml(lead.business_status) || '<span class="muted">-</span>'}</td>
-      <td>${hoursCell}</td>
-      <td>${lead.maps_url ? `<a href="${escapeHtml(lead.maps_url)}" target="_blank" rel="noopener">open</a>` : ''}</td>
-    `;
-    resultsBody.appendChild(tr);
-  });
+function leadMessageHtml(lead, i) {
+  const hoursId = 'hours-' + Date.now() + '-' + i;
+  const metaParts = [];
+  if (lead.category) metaParts.push(escapeHtml(lead.category));
+  if (lead.rating != null) metaParts.push(`★ ${lead.rating} (${lead.review_count} reviews)`);
+  if (lead.business_status) metaParts.push(escapeHtml(lead.business_status));
+
+  const hoursHtml = (lead.hours && lead.hours.length)
+    ? `<span class="hours-toggle" onclick="document.getElementById('${hoursId}').classList.toggle('open')">view hours</span>
+       <ul id="${hoursId}" class="hours-list">${lead.hours.map(h => `<li>${escapeHtml(h)}</li>`).join('')}</ul>`
+    : '<span class="lead-meta">not listed</span>';
+
+  return `
+    <p class="lead-name">${escapeHtml(lead.name)}</p>
+    ${metaParts.length ? `<p class="lead-meta">${metaParts.join(' · ')}</p>` : ''}
+    <p class="lead-row"><span class="label">📍</span>${escapeHtml(lead.address) || '<span class="lead-meta">no address listed</span>'}</p>
+    <p class="lead-row"><span class="label">📞</span>${lead.phone ? `<a href="tel:${escapeHtml(lead.phone)}">${escapeHtml(lead.phone)}</a>` : '<span class="lead-meta">no phone listed</span>'}</p>
+    <p class="lead-row"><span class="label">🕒</span>${hoursHtml}</p>
+    <p class="lead-row"><span class="label">🔗</span>${lead.maps_url ? `<a href="${escapeHtml(lead.maps_url)}" target="_blank" rel="noopener">open in Google Maps</a>` : '<span class="lead-meta">no link</span>'}</p>
+  `;
 }
 
 function toCsv(leads) {
@@ -202,43 +221,50 @@ exportBtn.addEventListener('click', () => {
 
 async function runSearch() {
   const query = document.getElementById('query').value.trim();
+  const near = document.getElementById('near').value.trim();
+  const radiusKm = parseFloat(document.getElementById('radius_km').value) || 100;
   const maxResults = parseInt(document.getElementById('max_results').value, 10) || 20;
 
   if (!query) {
-    setStatus('Enter what to search for, e.g. "plumbers in Austin, TX".', 'error');
+    setStatus('Enter what to search for, e.g. "plumbers".', 'error');
     return;
   }
 
   searchBtn.disabled = true;
   searchBtn.innerHTML = '<span class="spinner"></span>Searching...';
-  resultsPanel.style.display = 'none';
-  setStatus('Searching Google Maps...');
+  setStatus(near ? `Searching within ${radiusKm}km of "${near}"...` : 'Searching Google Maps...');
+
+  const searchLabel = near
+    ? `"${query}" within ${radiusKm}km of "${near}"`
+    : `"${query}"`;
+  appendMessage(`Searching for ${escapeHtml(searchLabel)}...`, 'system');
 
   try {
     const resp = await fetch('/api/search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, max_results: maxResults }),
+      body: JSON.stringify({ query, near, radius_km: radiusKm, max_results: maxResults }),
     });
     const data = await resp.json();
 
     if (!resp.ok) {
+      appendMessage(escapeHtml(data.error || 'Search failed.'), 'error');
       setStatus(data.error || 'Search failed.', 'error');
       return;
     }
 
     currentLeads = data.leads;
-    renderLeads(currentLeads);
-    resultsSummary.textContent =
-      `${data.stats.without_website} of ${data.stats.total_found} places found have no listed website.`;
-    resultsPanel.style.display = currentLeads.length ? 'block' : 'none';
+    exportBtn.disabled = currentLeads.length === 0;
 
-    if (!currentLeads.length) {
-      setStatus('No leads without a website found for that search.', 'ok');
-    } else {
-      setStatus(`Found ${currentLeads.length} leads.`, 'ok');
-    }
+    appendMessage(
+      `Found ${data.stats.without_website} of ${data.stats.total_found} places with no listed website.`,
+      'system'
+    );
+    currentLeads.forEach((lead, i) => appendMessage(leadMessageHtml(lead, i)));
+
+    setStatus(currentLeads.length ? `Found ${currentLeads.length} leads.` : 'No leads without a website found for that search.');
   } catch (err) {
+    appendMessage('Request failed: ' + escapeHtml(err.message), 'error');
     setStatus('Request failed: ' + err.message, 'error');
   } finally {
     searchBtn.disabled = false;
@@ -247,8 +273,10 @@ async function runSearch() {
 }
 
 searchBtn.addEventListener('click', runSearch);
-document.getElementById('query').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') runSearch();
+['query', 'near', 'radius_km', 'max_results'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') runSearch();
+  });
 });
 </script>
 </body>

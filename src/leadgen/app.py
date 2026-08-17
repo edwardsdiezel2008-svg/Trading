@@ -7,12 +7,13 @@ from __future__ import annotations
 
 from flask import Flask, jsonify, render_template, request
 
-from src.leadgen.finder import find_leads
-from src.leadgen.places_client import PlacesApiError
+from src.leadgen.finder import DEFAULT_RADIUS_KM, find_leads
+from src.leadgen.places_client import GeocodingError, PlacesApiError
 
 app = Flask(__name__)
 
 MAX_ALLOWED_RESULTS = 100
+MAX_RADIUS_KM = 300.0
 
 
 @app.route("/")
@@ -33,8 +34,18 @@ def api_search():
         max_results = 20
     max_results = max(1, min(max_results, MAX_ALLOWED_RESULTS))
 
+    near = (data.get("near") or "").strip() or None
+
     try:
-        result = find_leads(query, max_results=max_results)
+        radius_km = float(data.get("radius_km", DEFAULT_RADIUS_KM))
+    except (TypeError, ValueError):
+        radius_km = DEFAULT_RADIUS_KM
+    radius_km = max(1.0, min(radius_km, MAX_RADIUS_KM))
+
+    try:
+        result = find_leads(query, max_results=max_results, near=near, radius_km=radius_km)
+    except GeocodingError as exc:
+        return jsonify({"error": str(exc)}), 400
     except PlacesApiError as exc:
         return jsonify({"error": str(exc)}), 502
     except RuntimeError as exc:

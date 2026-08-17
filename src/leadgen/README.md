@@ -7,7 +7,9 @@ hours, and a link to the listing.
 
 ## Setup
 
-1. Get a Google Maps Platform API key with **Places API (New)** enabled:
+1. Get a Google Maps Platform API key with **Places API (New)** and
+   **Geocoding API** enabled (Geocoding is only needed if you use the
+   starting-address/radius search):
    https://console.cloud.google.com/google/maps-apis/credentials
 2. Set it as an environment variable, or put it in a `.env` file at the repo
    root (gitignored, never commit it):
@@ -26,10 +28,14 @@ python scripts/find_leads_dashboard.py
 ```
 
 This opens a browser tab at `http://127.0.0.1:5050`. Type what you're
-looking for the way you would on Google Maps itself (e.g. `roofers in
-Tampa, FL`), set how many results to pull, and click **Find leads**. Results
-are sorted by review count (most-established businesses first) and can be
-exported to CSV with one click.
+looking for (e.g. `roofers`, `coffee shops`, `dentists`), optionally set a
+**starting address** and **radius** to restrict the search geographically,
+set how many results to pull, and click **Find leads**. Results stream into
+the results feed below the button as readable cards (name, category,
+address, phone, hours, Maps link) and can be exported to CSV with one click.
+
+If no starting address is given, put the location in the search box itself
+(e.g. `roofers in Tampa, FL`), same as searching on Google Maps directly.
 
 ## How it works
 
@@ -39,6 +45,11 @@ exported to CSV with one click.
 - A place is treated as a lead when the API response has no `websiteUri`.
 - Pagination pulls additional pages (20 results each) up to the requested
   max (capped at 100 per search to bound API cost).
+- The starting address is resolved to coordinates via the Geocoding API
+  (also needs to be enabled on the same project), then results are
+  restricted to a bounding box approximating that radius around it (a
+  rectangle, not a precise circle - Places' circle restriction caps out at
+  50km, too small for a 100km ask).
 
 ## Cost note
 
