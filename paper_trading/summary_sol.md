@@ -1,20 +1,20 @@
-# SOL/USDT Paper Trading (1D) — updated 2026-08-17T21:04:42.053857+00:00
+# SOL/USDT Paper Trading (1D) — updated 2026-08-17T21:20:25.992800+00:00
 
 Latest bar: 2026-08-17 00:00:00 · 1,946 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $234,827 | +134.8% | — | 1 |
-| Engulfing_Reversal(0.3) | SHORT | $2,591,469 | +2491.5% | 0.93 | 135 |
-| Supertrend(10,m=3.0) | LONG | $1,856,863 | +1756.9% | 0.86 | 42 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $856,002 | +756.0% | 0.74 | 21 |
-| Donchian_Breakout(20) | SHORT | $537,647 | +437.6% | 0.66 | 40 |
-| Parabolic_SAR(af=0.02,max=0.2) | SHORT | $376,108 | +276.1% | 0.61 | 150 |
-| MA_Crossover(10/50) | SHORT | $191,299 | +91.3% | 0.50 | 50 |
-| MACD_Momentum(12/26/9) | LONG | $150,624 | +50.6% | 0.46 | 138 |
+| *Buy & Hold (benchmark)* | — | $234,611 | +134.6% | — | 1 |
+| Engulfing_Reversal(0.3) | SHORT | $2,593,982 | +2494.0% | 0.93 | 135 |
+| Supertrend(10,m=3.0) | LONG | $1,855,149 | +1755.1% | 0.86 | 42 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $856,832 | +756.8% | 0.74 | 21 |
+| Donchian_Breakout(20) | SHORT | $538,203 | +438.2% | 0.66 | 40 |
+| Parabolic_SAR(af=0.02,max=0.2) | SHORT | $376,469 | +276.5% | 0.61 | 150 |
+| MA_Crossover(10/50) | SHORT | $191,486 | +91.5% | 0.50 | 50 |
+| MACD_Momentum(12/26/9) | LONG | $150,485 | +50.5% | 0.46 | 138 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
-| Keltner_Breakout(20,m=2.0) | LONG | $38,024 | -62.0% | 0.22 | 34 |
-| Inside_Bar_Breakout(0.6) | SHORT | $4,612 | -95.4% | -0.02 | 33 |
+| Keltner_Breakout(20,m=2.0) | LONG | $37,989 | -62.0% | 0.22 | 34 |
+| Inside_Bar_Breakout(0.6) | SHORT | $4,616 | -95.4% | -0.02 | 33 |
 | RSI_Reversion(14,30/70) | FLAT | $3,593 | -96.4% | -0.52 | 57 |
 | TPO_Reversion(60,p=5) | FLAT | $301 | -99.7% | -0.78 | 134 |
 | VolProfile_Reversion(30) | FLAT | $97 | -99.9% | -1.08 | 184 |
