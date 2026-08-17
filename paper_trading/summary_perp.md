@@ -1,15 +1,15 @@
-# BTC/USDT Paper Trading (1D) — updated 2026-08-17T15:57:59.884720+00:00
+# BTC/USDT Paper Trading (1D) — updated 2026-08-17T16:19:09.239650+00:00
 
 Latest bar: 2026-08-17 00:00:00 · 2,156 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $609,018 | +509.0% | — | 1 |
-| Keltner_Breakout(20,m=2.0) | SHORT | $669,937 | +569.9% | 0.74 | 28 |
-| MA_Crossover(10/50) | SHORT | $237,789 | +137.8% | 0.63 | 45 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $169,006 | +69.0% | 0.63 | 48 |
+| *Buy & Hold (benchmark)* | — | $608,019 | +508.0% | — | 1 |
+| Keltner_Breakout(20,m=2.0) | SHORT | $672,227 | +572.2% | 0.74 | 28 |
+| MA_Crossover(10/50) | SHORT | $238,531 | +138.5% | 0.63 | 45 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $169,729 | +69.7% | 0.63 | 48 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
-| MACD_Momentum(12/26/9) | SHORT | $1,260 | -98.7% | 0.27 | 160 |
+| MACD_Momentum(12/26/9) | SHORT | $1,267 | -98.7% | 0.27 | 160 |
 | Parabolic_SAR(af=0.02,max=0.2) | SHORT | $24 | -100.0% | -0.09 | 179 |
 | Engulfing_Reversal(0.3) | SHORT | $16 | -100.0% | 0.26 | 150 |
 | CCI_Reversion(20,100) | FLAT | $-273 | -100.3% | -0.70 | 9 |
