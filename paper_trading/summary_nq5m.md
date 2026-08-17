@@ -1,23 +1,23 @@
-# MNQ Paper Trading (5min) — updated 2026-08-17T14:22:23.088873+00:00
+# MNQ Paper Trading (5min) — updated 2026-08-17T14:25:58.714917+00:00
 
-Latest bar: 2026-08-17 14:10:00 · 14,900 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-17 14:15:00 · 14,901 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $99,288 | -0.7% | — | 1 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $107,895 | +7.9% | 1.40 | 258 |
-| Keltner_Breakout(20,m=2.0) | SHORT | $104,926 | +4.9% | 0.91 | 210 |
-| Inside_Bar_Breakout(0.6) | SHORT | $102,632 | +2.6% | 0.50 | 108 |
-| Engulfing_Reversal(0.3) | LONG | $102,344 | +2.3% | 0.45 | 985 |
+| *Buy & Hold (benchmark)* | — | $99,334 | -0.7% | — | 1 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $107,867 | +7.9% | 1.40 | 258 |
+| Keltner_Breakout(20,m=2.0) | SHORT | $104,898 | +4.9% | 0.90 | 210 |
+| Inside_Bar_Breakout(0.6) | SHORT | $102,604 | +2.6% | 0.49 | 108 |
+| Engulfing_Reversal(0.3) | LONG | $102,372 | +2.4% | 0.45 | 985 |
 | Stochastic_Reversion(14,20/80) | FLAT | $101,812 | +1.8% | 0.51 | 574 |
-| Parabolic_SAR(af=0.02,max=0.2) | SHORT | $100,837 | +0.8% | 0.18 | 1419 |
+| Parabolic_SAR(af=0.02,max=0.2) | SHORT | $100,809 | +0.8% | 0.18 | 1419 |
 | Bollinger_Reversion(20,2sd) | FLAT | $100,229 | +0.2% | 0.08 | 501 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| Donchian_Breakout(20) | SHORT | $99,738 | -0.3% | -0.01 | 330 |
-| MA_Crossover(10/50) | SHORT | $98,966 | -1.0% | -0.15 | 387 |
+| Donchian_Breakout(20) | SHORT | $99,710 | -0.3% | -0.01 | 330 |
+| MA_Crossover(10/50) | SHORT | $98,938 | -1.1% | -0.15 | 387 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $98,818 | -1.2% | -0.28 | 558 |
-| CCI_Reversion(20,100) | LONG | $98,032 | -2.0% | -0.47 | 1440 |
+| CCI_Reversion(20,100) | FLAT | $98,074 | -1.9% | -0.45 | 1440 |
 | Opening_Range_Breakout(6) | FLAT | $97,757 | -2.2% | -0.42 | 110 |
-| Supertrend(10,m=3.0) | SHORT | $97,262 | -2.7% | -0.45 | 397 |
+| Supertrend(10,m=3.0) | SHORT | $97,234 | -2.8% | -0.45 | 397 |
 | RSI_Reversion(14,30/70) | FLAT | $97,122 | -2.9% | -1.31 | 413 |
-| MACD_Momentum(12/26/9) | LONG | $91,889 | -8.1% | -1.41 | 1217 |
+| MACD_Momentum(12/26/9) | LONG | $91,917 | -8.1% | -1.40 | 1217 |
