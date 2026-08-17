@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hollow Creek Timber Co. — Hardwood Lumber &amp; Custom Milling</title>
+<meta name="description" content="Kiln-dried hardwood lumber, live-edge slabs, and custom milling from a family-run sawmill in the Cumberland foothills, sawing our own woodlot since 1987." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%231b140d'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%23d99a44' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='16' fill='none' stroke='%23d99a44' stroke-width='4'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header class="site-header">
+  <a href="#top" class="logo">
+    <span class="logo-mark" aria-hidden="true"></span>
+    Hollow Creek Timber Co.
+  </a>
+  <button id="nav-toggle" class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+  <nav id="primary-nav" class="primary-nav">
+    <a href="#species" data-nav>Species</a>
+    <a href="#services" data-nav>Services</a>
+    <a href="#calculator" data-nav>Calculator</a>
+    <a href="#about" data-nav>About</a>
+    <a href="#visit" data-nav>Visit</a>
+    <a href="#quote" class="btn btn-primary btn-small" data-nav>Request a Quote</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <section class="hero" id="hero">
+    <canvas id="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-content">
+      <p class="eyebrow reveal">Sawmill &amp; Lumber Yard · Est. 1987</p>
+      <h1 class="reveal">Milled from our own woodlot, since 1987.</h1>
+      <p class="hero-sub reveal">
+        Three generations of the Whitfield family, sawing kiln-dried hardwood
+        lumber and live-edge slabs from 380 acres of managed forest in the
+        Cumberland foothills. What we cut, we replant.
+      </p>
+      <div class="hero-actions reveal">
+        <a href="#species" class="btn btn-primary">Browse Species</a>
+        <a href="#quote" class="btn btn-ghost">Request a Quote</a>
+      </div>
+      <div class="hero-stats reveal">
+        <div><span class="stat-num" data-count="39">0</span><span class="stat-label">Years sawing</span></div>
+        <div><span class="stat-num" data-count="380">0</span><span class="stat-label">Acres managed</span></div>
+        <div><span class="stat-num" data-count="6">0</span><span class="stat-label">Native species</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="species" id="species">
+    <div class="section-head reveal">
+      <span class="section-kicker">In the Yard</span>
+      <h2>Kiln-dried, moisture-metered, cut to spec.</h2>
+      <p>Every board is dried on-site and metered to 6–8% before it leaves the kiln. Prices are per board foot, rough-sawn.</p>
+    </div>
+    <div class="species-grid">
+
+      <article class="species-card reveal" data-species="oak">
+        <canvas class="grain-swatch" data-grain="oak" width="480" height="200"></canvas>
+        <div class="species-body">
+          <h3>White Oak</h3>
+          <p>Light tan with a bold ray fleck when quarter-sawn.</p>
+          <div class="species-meta">
+            <span class="price">$6.25<small>/bd ft</small></span>
+            <button type="button" class="btn btn-ghost btn-small" data-open-species="oak">Details</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="species-card reveal" data-species="walnut">
+        <canvas class="grain-swatch" data-grain="walnut" width="480" height="200"></canvas>
+        <div class="species-body">
+          <h3>Black Walnut</h3>
+          <p>Deep chocolate heartwood, cream sapwood edges.</p>
+          <div class="species-meta">
+            <span class="price">$11.50<small>/bd ft</small></span>
+            <button type="button" class="btn btn-ghost btn-small" data-open-species="walnut">Details</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="species-card reveal" data-species="cherry">
+        <canvas class="grain-swatch" data-grain="cherry" width="480" height="200"></canvas>
+        <div class="species-body">
+          <h3>Cherry</h3>
+          <p>Warm reddish-brown that deepens with age and light.</p>
+          <div class="species-meta">
+            <span class="price">$8.75<small>/bd ft</small></span>
+            <button type="button" class="btn btn-ghost btn-small" data-open-species="cherry">Details</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="species-card reveal" data-species="maple">
+        <canvas class="grain-swatch" data-grain="maple" width="480" height="200"></canvas>
+        <div class="species-body">
+          <h3>Hard Maple</h3>
+          <p>Pale and even, with birdseye and curly figure available.</p>
+          <div class="species-meta">
+            <span class="price">$7.00<small>/bd ft</small></span>
+            <button type="button" class="btn btn-ghost btn-small" data-open-species="maple">Details</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="species-card reveal" data-species="hickory">
+        <canvas class="grain-swatch" data-grain="hickory" width="480" height="200"></canvas>
+        <div class="species-body">
+          <h3>Shagbark Hickory</h3>
+          <p>Tan and brown streaked heartwood, exceptionally tough.</p>
+          <div class="species-meta">
+            <span class="price">$6.50<small>/bd ft</small></span>
+            <button type="button" class="btn btn-ghost btn-small" data-open-species="hickory">Details</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="species-card reveal" data-species="ash">
+        <canvas class="grain-swatch" data-grain="ash" width="480" height="200"></canvas>
+        <div class="species-body">
+          <h3>White Ash</h3>
+          <p>Pale and straight-grained, with real shock resistance.</p>
+          <div class="species-meta">
+            <span class="price">$5.75<small>/bd ft</small></span>
+            <button type="button" class="btn btn-ghost btn-small" data-open-species="ash">Details</button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="services" id="services">
+    <div class="section-head reveal">
+      <span class="section-kicker">What We Do</span>
+      <h2>Beyond the lumber rack.</h2>
+    </div>
+    <div class="services-grid">
+
+      <div class="service-card reveal">
+        <svg class="service-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <circle cx="24" cy="24" r="14" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M24 10v4M24 34v4M38 24h-4M14 24h-4M34.1 13.9l-2.8 2.8M16.7 31.3l-2.8 2.8M34.1 34.1l-2.8-2.8M16.7 16.7l-2.8-2.8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <h3>Custom Milling</h3>
+        <p>Bring your own log or choose from the yard — we'll saw to the dimensions your project needs.</p>
+      </div>
+
+      <div class="service-card reveal">
+        <svg class="service-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <rect x="19" y="6" width="10" height="26" rx="5" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="24" cy="36" r="6" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M24 14v18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <h3>Kiln Drying</h3>
+        <p>Two on-site kilns bring every board to 6–8% moisture before it's metered and racked for sale.</p>
+      </div>
+
+      <div class="service-card reveal">
+        <svg class="service-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M8 34c6-14 10-22 16-22s10 8 16 22" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6 34h36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <h3>Live-Edge Slabs</h3>
+        <p>Hand-selected walnut, oak, and maple slabs — including book-matched pairs, held in our slab shed.</p>
+      </div>
+
+      <div class="service-card reveal">
+        <svg class="service-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <rect x="6" y="16" width="22" height="16" rx="2" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M28 22h8l6 6v4h-14z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <circle cx="14" cy="34" r="3" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="34" cy="34" r="3" stroke="currentColor" stroke-width="2.5"/>
+        </svg>
+        <h3>Delivery &amp; Will-Call</h3>
+        <p>Local delivery within 60 miles, or schedule a time to load up at the yard yourself.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="calculator" id="calculator">
+    <div class="section-head reveal">
+      <span class="section-kicker">Board Foot Calculator</span>
+      <h2>Figure your order before you call.</h2>
+      <p>One board foot is 144 cubic inches — a board 1&Prime; thick, 12&Prime; wide, and 12&Prime; long. Enter your dimensions below.</p>
+    </div>
+    <div class="calc-panel reveal">
+      <div class="calc-inputs">
+        <label>
+          Thickness (in)
+          <input type="number" id="calc-thickness" min="0" step="0.25" value="1" inputmode="decimal">
+        </label>
+        <label>
+          Width (in)
+          <input type="number" id="calc-width" min="0" step="0.25" value="6" inputmode="decimal">
+        </label>
+        <label>
+          Length (ft)
+          <input type="number" id="calc-length" min="0" step="0.5" value="8" inputmode="decimal">
+        </label>
+        <label>
+          Quantity
+          <input type="number" id="calc-qty" min="1" step="1" value="1" inputmode="numeric">
+        </label>
+        <label>
+          Species
+          <select id="calc-species">
+            <option value="6.25">White Oak — $6.25/bd ft</option>
+            <option value="11.50">Black Walnut — $11.50/bd ft</option>
+            <option value="8.75">Cherry — $8.75/bd ft</option>
+            <option value="7.00">Hard Maple — $7.00/bd ft</option>
+            <option value="6.50">Shagbark Hickory — $6.50/bd ft</option>
+            <option value="5.75">White Ash — $5.75/bd ft</option>
+          </select>
+        </label>
+      </div>
+      <div class="calc-result">
+        <div class="calc-result-row">
+          <span>Board feet per piece</span>
+          <strong id="calc-bf-piece">0.00</strong>
+        </div>
+        <div class="calc-result-row">
+          <span>Total board feet</span>
+          <strong id="calc-bf-total">0.00</strong>
+        </div>
+        <div class="calc-result-row calc-result-total">
+          <span>Estimated cost</span>
+          <strong id="calc-cost">$0.00</strong>
+        </div>
+        <p class="calc-note">Estimate only — rough-sawn pricing, before delivery. Final pricing confirmed at the yard.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="about-grid">
+      <div class="reveal">
+        <span class="section-kicker">Our Story</span>
+        <h2>Three generations, one woodlot.</h2>
+        <p>
+          Earl Whitfield opened the mill in 1987 with a single circular saw and
+          forty acres of hardwood behind his house. His daughter Dana took over
+          in 2009 and built the first kiln; her son Micah now runs the yard
+          day-to-day, and still hand-picks every live-edge slab himself.
+        </p>
+        <p>
+          We select-cut our own woodlot on a rotation, and for every tree we
+          take, we plant one back. Most of what's in the yard today was
+          standing timber ten years ago.
+        </p>
+      </div>
+      <div class="about-quotes reveal">
+        <blockquote>
+          <p>"They let me pick my own slab off the rack and watched me load it myself. Try that at a box store."</p>
+          <cite>— Marcus, furniture maker</cite>
+        </blockquote>
+        <blockquote>
+          <p>"Milled a walnut log from my own property to my exact dimensions. Turnaround was under two weeks."</p>
+          <cite>— Renee, cabinetmaker</cite>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section class="visit" id="visit">
+    <div class="section-head reveal">
+      <span class="section-kicker">Visit the Yard</span>
+      <h2>Come pick your own boards.</h2>
+    </div>
+    <div class="visit-grid">
+      <div class="visit-card reveal">
+        <h3>Hours</h3>
+        <table class="hours-table">
+          <tbody>
+            <tr><th>Mon–Fri</th><td>7:00 AM – 5:00 PM</td></tr>
+            <tr><th>Saturday</th><td>8:00 AM – 1:00 PM</td></tr>
+            <tr><th>Sunday</th><td>Closed</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="visit-card reveal">
+        <h3>Find Us</h3>
+        <p>4400 Hollow Creek Road<br>Cumberland Foothills, TN</p>
+        <p><a href="tel:+15550192847">(555) 019-2847</a><br>
+        <a href="mailto:hello@hollowcreektimber.example">hello@hollowcreektimber.example</a></p>
+      </div>
+      <div class="visit-card reveal">
+        <h3>Yard Rules</h3>
+        <p>Steel-toe boots required past the loading dock. Bring a tape measure — most of what's cut is sold by what's actually on the board, not the label.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote" id="quote">
+    <div class="quote-panel reveal">
+      <span class="section-kicker">Request a Quote</span>
+      <h2>Tell us what you're building.</h2>
+      <form id="quote-form" novalidate>
+        <div class="form-row">
+          <label>
+            Name
+            <input type="text" name="name" required autocomplete="name">
+          </label>
+          <label>
+            Email
+            <input type="email" name="email" required autocomplete="email">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>
+            Species interested in
+            <select name="species">
+              <option>White Oak</option>
+              <option>Black Walnut</option>
+              <option>Cherry</option>
+              <option>Hard Maple</option>
+              <option>Shagbark Hickory</option>
+              <option>White Ash</option>
+              <option>Not sure yet</option>
+            </select>
+          </label>
+          <label>
+            Estimated board feet
+            <input type="number" name="boardfeet" min="0" step="1" placeholder="e.g. 50">
+          </label>
+        </div>
+        <label class="form-full">
+          Project details
+          <textarea name="details" rows="4" placeholder="What are you building, and when do you need it by?"></textarea>
+        </label>
+        <button type="submit" class="btn btn-primary btn-large">Send Request</button>
+        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; <span id="year"></span> Hollow Creek Timber Co. · Sawing the Cumberland foothills since 1987.</p>
+</footer>
+
+<div class="modal-overlay" id="modal-overlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button type="button" class="modal-close" id="modal-close" aria-label="Close species details">&times;</button>
+    <canvas class="modal-canvas" id="modal-canvas" width="800" height="320"></canvas>
+    <div class="modal-body">
+      <span class="section-kicker" id="modal-kicker">Species Profile</span>
+      <h2 id="modal-title"></h2>
+      <p class="modal-desc" id="modal-desc"></p>
+
+      <div class="hardness-block">
+        <div class="hardness-label">
+          <span>Janka Hardness</span>
+          <strong id="modal-hardness-value"></strong>
+        </div>
+        <div class="hardness-bar"><div class="hardness-fill" id="modal-hardness-fill"></div></div>
+      </div>
+
+      <ul class="tag-list modal-tags" id="modal-uses"></ul>
+
+      <div class="modal-price-row">
+        <span>Price</span>
+        <strong id="modal-price"></strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/grain.js" defer></script>
+<script src="js/main.js" defer></script>
+</body>
+</html>
