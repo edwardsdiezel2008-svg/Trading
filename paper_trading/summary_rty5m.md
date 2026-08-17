@@ -1,4 +1,4 @@
-# M2K Paper Trading (5min) — updated 2026-08-17T21:21:05.460411+00:00
+# M2K Paper Trading (5min) — updated 2026-08-17T21:59:27.571669+00:00
 
 Latest bar: 2026-08-17 20:55:00 · 14,978 bars of history · $100,000 starting capital per strategy
 
