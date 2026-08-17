@@ -145,4 +145,180 @@
       card.addEventListener('mouseleave', onLeave);
     });
   }
+
+  // Placeholder social links: don't let "#" jump-scroll the page.
+  document.querySelectorAll('[data-placeholder]').forEach((link) => {
+    link.addEventListener('click', (e) => e.preventDefault());
+  });
+
+  // Project case study modal
+  const PROJECTS = {
+    nebula: {
+      kicker: 'Case Study · Product Visualization',
+      title: 'Nebula Configurator',
+      tags: ['WebGL2', 'GLSL', 'Raymarching'],
+      demo: 'nebula',
+      copy: [
+        {
+          heading: 'Challenge',
+          text: "A hardware startup needed shoppers to understand a modular product's finish and lighting options without shipping physical samples to every showroom.",
+        },
+        {
+          heading: 'Approach',
+          text: 'Built the entire scene as a single raymarched fragment shader — no mesh, no texture loads. Material and lighting changes are shader uniforms, so swapping a finish or bulb color is one draw call, not a re-render.',
+        },
+        {
+          heading: 'Result',
+          text: 'Page load dropped from roughly 4 seconds on the old mesh-based viewer to under 400ms, and the configurator now runs smoothly on integrated GPUs that used to choke on it.',
+        },
+      ],
+    },
+    signal: {
+      kicker: 'Case Study · Data Visualization',
+      title: 'Signal Field',
+      tags: ['Three.js', 'GSAP', 'WebAudio'],
+      demo: 'signal',
+      copy: [
+        {
+          heading: 'Challenge',
+          text: "An analytics team wanted their dashboard's summary page to communicate \"this data is alive\" before a user reads a single number.",
+        },
+        {
+          heading: 'Approach',
+          text: "Piped live metric deltas into a GPU particle field where velocity and color respond to the underlying series. Camera moves are keyed to scroll position, so the story reads top to bottom without the user touching a control.",
+        },
+        {
+          heading: 'Result',
+          text: "Time-on-page for the summary view roughly doubled by the team's own analytics, and it became the most-screenshotted screen in the product.",
+        },
+      ],
+    },
+    aperture: {
+      kicker: 'Case Study · Portfolio Template',
+      title: 'Aperture',
+      tags: ['WebGL', 'Post-FX', 'TypeScript'],
+      demo: 'aperture',
+      copy: [
+        {
+          heading: 'Challenge',
+          text: 'Photography-led portfolios kept reading as flat image grids, with no sense of depth even though the subject matter was literally about depth of field.',
+        },
+        {
+          heading: 'Approach',
+          text: 'Wrote a small post-processing stack — bokeh blur, chromatic aberration, film grain — that runs over a DOM-rendered gallery, so it stays a reusable template instead of a one-off scene.',
+        },
+        {
+          heading: 'Result',
+          text: 'Shipped as a template a dozen photographers now run with their own image sets, with zero code changes required.',
+        },
+      ],
+    },
+    foundry: {
+      kicker: 'Case Study · Internal Tooling',
+      title: 'Foundry',
+      tags: ['SDF', 'Procgen', 'Compute'],
+      demo: 'foundry',
+      copy: [
+        {
+          heading: 'Challenge',
+          text: 'Environment artists were prototyping terrain lighting moods inside a full game engine — a ten-plus-minute round trip for every iteration.',
+        },
+        {
+          heading: 'Approach',
+          text: 'Built a browser sandbox that generates terrain from the same noise parameters and lets artists tune elevation, light angle, and fog interactively, exporting a parameter set once they land on a look.',
+        },
+        {
+          heading: 'Result',
+          text: 'Cut the mood-boarding phase from days to an afternoon on the two productions that adopted it.',
+        },
+      ],
+    },
+  };
+
+  const modalOverlay = document.getElementById('modal-overlay');
+  const modalClose = document.getElementById('modal-close');
+  const modalCanvas = document.getElementById('modal-canvas');
+  const modalKicker = document.getElementById('modal-kicker');
+  const modalTitle = document.getElementById('modal-title');
+  const modalTags = document.getElementById('modal-tags');
+  const modalCopy = document.getElementById('modal-copy');
+
+  if (modalOverlay && modalClose && modalCanvas) {
+    const ctx = modalCanvas.getContext('2d');
+    const canvasW = modalCanvas.width;
+    const canvasH = modalCanvas.height;
+    let rafId = null;
+    let demoState = {};
+    let demoMouse = { x: 0, y: 0 };
+    let lastFocused = null;
+
+    function onCanvasMove(e) {
+      const rect = modalCanvas.getBoundingClientRect();
+      demoMouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      demoMouse.y = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+    }
+
+    function startDemo(key) {
+      demoState = {};
+      demoMouse = { x: 0, y: 0 };
+      const drawFn = window.PORTFOLIO_DEMOS && window.PORTFOLIO_DEMOS[key];
+      if (!drawFn) return;
+      modalCanvas.addEventListener('mousemove', onCanvasMove);
+      const startTime = performance.now();
+
+      function frame(now) {
+        const t = prefersReducedMotion ? 4 : (now - startTime) / 1000;
+        drawFn(ctx, canvasW, canvasH, t, demoMouse, demoState);
+        if (!prefersReducedMotion) rafId = requestAnimationFrame(frame);
+      }
+      rafId = requestAnimationFrame(frame);
+    }
+
+    function stopDemo() {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = null;
+      modalCanvas.removeEventListener('mousemove', onCanvasMove);
+    }
+
+    function openModal(id, trigger) {
+      const data = PROJECTS[id];
+      if (!data) return;
+
+      lastFocused = trigger || document.activeElement;
+      modalKicker.textContent = data.kicker;
+      modalTitle.textContent = data.title;
+      modalTags.innerHTML = data.tags.map((tag) => `<li>${tag}</li>`).join('');
+      modalCopy.innerHTML = data.copy
+        .map((s) => `<h3>${s.heading}</h3><p>${s.text}</p>`)
+        .join('');
+
+      modalOverlay.hidden = false;
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(() => modalOverlay.classList.add('is-open'));
+      startDemo(data.demo);
+      modalClose.focus();
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove('is-open');
+      document.body.style.overflow = '';
+      stopDemo();
+      window.setTimeout(() => {
+        modalOverlay.hidden = true;
+      }, 250);
+      if (lastFocused) lastFocused.focus();
+    }
+
+    document.querySelectorAll('[data-project]').forEach((btn) => {
+      btn.addEventListener('click', () => openModal(btn.getAttribute('data-project'), btn));
+    });
+
+    modalClose.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modalOverlay.hidden) closeModal();
+    });
+  }
 })();

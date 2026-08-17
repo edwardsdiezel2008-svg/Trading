@@ -389,6 +389,105 @@ body.no-webgl { background: radial-gradient(ellipse at 50% 0%, #101a30 0%, #0507
   position: absolute;
   inset: 0;
   z-index: 2;
+  width: 100%;
+  height: 100%;
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.card-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+  border-radius: 20px;
+}
+
+/* ===== Case study modal ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(5, 7, 13, 0.72);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.25s var(--ease);
+}
+.modal-overlay[hidden] { display: none; }
+.modal-overlay.is-open { opacity: 1; }
+
+.modal {
+  width: min(720px, 100%);
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  position: relative;
+  transform: translateY(16px) scale(0.98);
+  transition: transform 0.3s var(--ease);
+}
+.modal-overlay.is-open .modal {
+  transform: translateY(0) scale(1);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(5, 7, 13, 0.55);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-close:hover,
+.modal-close:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  outline: none;
+}
+
+.modal-canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: #05070d;
+  border-radius: 20px 20px 0 0;
+}
+
+.modal-body { padding: 2rem; }
+.modal-body h2 { margin-bottom: 0; }
+.modal-tags { margin: 1rem 0 1.5rem; }
+
+.modal-copy h3 {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  margin: 1.5rem 0 0.4rem;
+}
+.modal-copy h3:first-child { margin-top: 0; }
+.modal-copy p { font-size: 0.98rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay, .modal { transition: none; }
 }
 
 /* ===== Skills ===== */

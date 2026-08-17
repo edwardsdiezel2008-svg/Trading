@@ -99,7 +99,7 @@
             </ul>
           </div>
         </div>
-        <a href="#" class="card-link" aria-label="View Nebula Configurator case study"></a>
+        <button type="button" class="card-link" data-project="nebula" aria-haspopup="dialog" aria-label="View Nebula Configurator case study"></button>
       </article>
 
       <article class="project-card reveal" data-tilt>
@@ -113,7 +113,7 @@
             </ul>
           </div>
         </div>
-        <a href="#" class="card-link" aria-label="View Signal Field case study"></a>
+        <button type="button" class="card-link" data-project="signal" aria-haspopup="dialog" aria-label="View Signal Field case study"></button>
       </article>
 
       <article class="project-card reveal" data-tilt>
@@ -127,7 +127,7 @@
             </ul>
           </div>
         </div>
-        <a href="#" class="card-link" aria-label="View Aperture case study"></a>
+        <button type="button" class="card-link" data-project="aperture" aria-haspopup="dialog" aria-label="View Aperture case study"></button>
       </article>
 
       <article class="project-card reveal" data-tilt>
@@ -141,7 +141,7 @@
             </ul>
           </div>
         </div>
-        <a href="#" class="card-link" aria-label="View Foundry case study"></a>
+        <button type="button" class="card-link" data-project="foundry" aria-haspopup="dialog" aria-label="View Foundry case study"></button>
       </article>
 
     </div>
@@ -184,9 +184,9 @@
       <p>I take on a small number of freelance builds each quarter — reach out and let's talk about it.</p>
       <a href="mailto:hello@example.com" class="btn btn-primary btn-large">hello@example.com</a>
       <div class="social-links">
-        <a href="#">GitHub</a>
-        <a href="#">LinkedIn</a>
-        <a href="#">Twitter / X</a>
+        <a href="#" data-placeholder title="Placeholder — add your GitHub URL">GitHub</a>
+        <a href="#" data-placeholder title="Placeholder — add your LinkedIn URL">LinkedIn</a>
+        <a href="#" data-placeholder title="Placeholder — add your X/Twitter URL">Twitter / X</a>
       </div>
     </div>
   </section>
@@ -197,7 +197,21 @@
   <p>&copy; <span id="year"></span> Jordan Vale. Built with raw WebGL, no framework required.</p>
 </footer>
 
+<div class="modal-overlay" id="modal-overlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button type="button" class="modal-close" id="modal-close" aria-label="Close case study">&times;</button>
+    <canvas class="modal-canvas" id="modal-canvas" width="800" height="440"></canvas>
+    <div class="modal-body">
+      <span class="section-kicker" id="modal-kicker"></span>
+      <h2 id="modal-title"></h2>
+      <ul class="tag-list modal-tags" id="modal-tags"></ul>
+      <div class="modal-copy" id="modal-copy"></div>
+    </div>
+  </div>
+</div>
+
 <script src="js/shader-bg.js" defer></script>
+<script src="js/demos.js" defer></script>
 <script src="js/main.js" defer></script>
 </body>
 </html>
