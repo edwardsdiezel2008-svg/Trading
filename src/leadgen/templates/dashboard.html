@@ -6,101 +6,179 @@
 <title>Lead Finder - No Website</title>
 <style>
   :root {
-    --bg: #0f1115;
-    --panel: #171a21;
-    --bubble: #1c202a;
-    --border: #2a2e38;
-    --text: #e6e8ec;
-    --muted: #9aa1ac;
-    --accent: #4f8cff;
-    --accent-hover: #6ea0ff;
+    --bg: #0b0d12;
+    --bg-glow: radial-gradient(1200px 500px at 15% -10%, #1d2c52 0%, transparent 60%),
+                radial-gradient(900px 400px at 100% 0%, #1a3a33 0%, transparent 55%);
+    --panel: #14161d;
+    --bubble: #191c25;
+    --bubble-hover: #1e222d;
+    --border: #262a35;
+    --border-soft: #1f222c;
+    --text: #edeef2;
+    --muted: #8b93a3;
+    --muted-soft: #666d7c;
+    --accent: #5b8cff;
+    --accent-2: #7c5cff;
+    --accent-hover: #7aa2ff;
     --good: #3ecf8e;
+    --bad: #ff6b6b;
   }
   * { box-sizing: border-box; }
+  html, body { height: 100%; }
   body {
     margin: 0;
+    min-height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: var(--bg);
+    background-color: var(--bg);
+    background-image: var(--bg-glow);
+    background-attachment: fixed;
     color: var(--text);
   }
-  .wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
-  h1 { font-size: 22px; margin: 0 0 4px; }
-  .subtitle { color: var(--muted); margin: 0 0 28px; font-size: 14px; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  .hero { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+  .hero-icon {
+    width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; box-shadow: 0 8px 24px -8px #5b8cff88;
+  }
+  h1 { font-size: 24px; margin: 0; letter-spacing: -0.02em; }
+  .subtitle { color: var(--muted); margin: 8px 0 28px; font-size: 14px; line-height: 1.5; max-width: 560px; }
+
   .panel {
-    background: var(--panel);
+    background: linear-gradient(180deg, #161922 0%, var(--panel) 100%);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
+    border-radius: 16px;
+    padding: 22px;
     margin-bottom: 20px;
+    box-shadow: 0 1px 0 #ffffff08 inset, 0 20px 40px -30px #000000cc;
   }
   .form-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
   .field { display: flex; flex-direction: column; gap: 6px; }
-  .field label { font-size: 12px; color: var(--muted); }
+  .field label {
+    font-size: 11px; color: var(--muted-soft); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
   .field input {
-    background: #0c0e13;
+    background: #0b0d13;
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
+    border-radius: 9px;
+    padding: 11px 12px;
     color: var(--text);
     font-size: 14px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field input::placeholder { color: #4d5361; }
+  .field input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px #5b8cff26;
   }
   #query { flex: 1.4; min-width: 220px; }
   #near { flex: 1; min-width: 200px; }
   #radius_km { width: 90px; }
   #max_results { width: 90px; }
+
   button {
     font-size: 14px;
     font-weight: 600;
     border: none;
-    border-radius: 8px;
-    padding: 11px 20px;
+    border-radius: 9px;
+    padding: 12px 22px;
     cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.15s, background 0.15s, opacity 0.15s;
   }
-  #search-btn { background: var(--accent); color: white; }
-  #search-btn:hover { background: var(--accent-hover); }
-  #search-btn:disabled { background: #384054; cursor: not-allowed; }
-  #export-btn { background: #232733; color: var(--text); border: 1px solid var(--border); font-size: 12px; padding: 7px 12px; }
-  #export-btn:hover { background: #2b303e; }
-  #export-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .status { margin-top: 14px; font-size: 13px; color: var(--muted); min-height: 18px; }
-  .status.error { color: #ff6b6b; }
+  button:active { transform: translateY(1px); }
+  #search-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white;
+    box-shadow: 0 10px 24px -10px #5b8cff70;
+    white-space: nowrap;
+  }
+  #search-btn:hover { box-shadow: 0 12px 28px -8px #5b8cff9e; }
+  #search-btn:disabled { background: #2a2e3a; box-shadow: none; cursor: not-allowed; opacity: 0.7; }
+  #export-btn {
+    background: var(--bubble); color: var(--text); border: 1px solid var(--border);
+    font-size: 12px; padding: 8px 14px; display: inline-flex; align-items: center; gap: 6px;
+  }
+  #export-btn:hover:not(:disabled) { background: var(--bubble-hover); border-color: #333844; }
+  #export-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-  .chat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .chat-header h2 { font-size: 14px; margin: 0; color: var(--muted); font-weight: 600; }
+  .status { margin-top: 14px; font-size: 13px; color: var(--muted); min-height: 18px; }
+  .status.error { color: var(--bad); }
+
+  .chat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .chat-header-left { display: flex; align-items: baseline; gap: 10px; }
+  .chat-header h2 { font-size: 13px; margin: 0; color: var(--muted-soft); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+  .stat-pill {
+    display: none; align-items: center; gap: 6px;
+    background: #12261e; color: var(--good); border: 1px solid #1f3d30;
+    font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+  }
+  .stat-pill.show { display: inline-flex; }
+
   .chat-box {
-    height: 520px;
+    height: 540px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 10px;
     padding-right: 4px;
   }
-  .chat-box:empty::before {
-    content: "Results will show up here after you click \"Find leads.\"";
-    color: var(--muted);
-    font-size: 13px;
+  .chat-box::-webkit-scrollbar { width: 8px; }
+  .chat-box::-webkit-scrollbar-thumb { background: #262a35; border-radius: 8px; }
+  .chat-box::-webkit-scrollbar-track { background: transparent; }
+
+  .empty-state {
+    height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--muted-soft); text-align: center; gap: 10px; padding: 20px;
   }
+  .empty-state .glyph {
+    width: 52px; height: 52px; border-radius: 50%; background: var(--bubble); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 4px;
+  }
+  .empty-state .title { color: var(--muted); font-size: 14px; font-weight: 600; }
+  .empty-state .desc { font-size: 12.5px; max-width: 340px; line-height: 1.5; }
+
   .chat-msg {
     background: var(--bubble);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-soft);
+    border-left: 3px solid var(--border);
     border-radius: 10px;
-    padding: 12px 14px;
+    padding: 14px 16px;
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.55;
+    animation: rise 0.25s ease-out;
+    transition: background 0.15s, border-color 0.15s;
   }
-  .chat-msg.system { color: var(--muted); background: transparent; border: none; padding: 4px 2px; font-size: 12px; }
-  .chat-msg.error { border-color: #5a2a2a; color: #ff8f8f; }
-  .lead-name { font-weight: 700; font-size: 14px; margin: 0 0 4px; color: var(--text); }
-  .lead-meta { color: var(--muted); margin-bottom: 6px; }
-  .lead-row { margin: 2px 0; }
-  .lead-row .label { color: var(--muted); display: inline-block; width: 16px; }
+  .chat-msg.lead:hover { background: var(--bubble-hover); border-left-color: var(--accent); }
+  @keyframes rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .chat-msg.system { color: var(--muted-soft); background: transparent; border: none; padding: 2px 2px; font-size: 12px; }
+  .chat-msg.error { border-left-color: var(--bad); background: #251518; color: #ffb3b3; }
+
+  .lead-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+  .lead-name { font-weight: 700; font-size: 14.5px; color: var(--text); }
+  .badge-no-site {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    color: #ffb85c; background: #2e2312; border: 1px solid #4a3818; padding: 2px 7px; border-radius: 999px;
+  }
+  .lead-meta { color: var(--muted); margin-bottom: 8px; font-size: 12.5px; }
+  .lead-meta .star { color: #ffc94d; }
+  .lead-row { margin: 3px 0; color: var(--text); }
+  .lead-row .label { display: inline-block; width: 20px; opacity: 0.85; }
+  .lead-row .none { color: var(--muted-soft); font-style: italic; }
+
   a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
   .hours-toggle { cursor: pointer; color: var(--accent); font-size: 12px; }
-  .hours-list { margin: 4px 0 0 16px; padding: 0; color: var(--muted); font-size: 12px; display: none; }
+  .hours-list { margin: 6px 0 0 20px; padding: 0; color: var(--muted); font-size: 12px; display: none; }
   .hours-list.open { display: block; }
+  .hours-list li { margin: 2px 0; }
+
   .spinner {
-    display: inline-block; width: 14px; height: 14px; border: 2px solid #ffffff55;
+    display: inline-block; width: 13px; height: 13px; border: 2px solid #ffffff55;
     border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 8px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -108,8 +186,11 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Lead Finder</h1>
-  <p class="subtitle">Finds businesses on Google Maps that have no website listed, with everything you need to contact them.</p>
+  <div class="hero">
+    <div class="hero-icon">📍</div>
+    <h1>Lead Finder</h1>
+  </div>
+  <p class="subtitle">Finds businesses on Google Maps with no listed website, and hands you everything you need to contact them - phone, address, hours, and a link to the listing.</p>
 
   <div class="panel">
     <div class="form-row">
@@ -129,17 +210,26 @@
         <label for="max_results">Max results</label>
         <input id="max_results" type="number" min="1" max="100" value="20" />
       </div>
-      <button id="search-btn">Find leads</button>
+      <button id="search-btn">🔍 Find leads</button>
     </div>
     <div id="status" class="status"></div>
   </div>
 
   <div class="panel">
     <div class="chat-header">
-      <h2>Results</h2>
-      <button id="export-btn" disabled>Export CSV</button>
+      <div class="chat-header-left">
+        <h2>Results</h2>
+        <span id="stat-pill" class="stat-pill">● 0 leads</span>
+      </div>
+      <button id="export-btn" disabled>⬇ Export CSV</button>
     </div>
-    <div id="chat-box" class="chat-box"></div>
+    <div id="chat-box" class="chat-box">
+      <div class="empty-state">
+        <div class="glyph">🗺️</div>
+        <div class="title">Nothing here yet</div>
+        <div class="desc">Enter what you're looking for above and click "Find leads" - results will stream in here as cards you can call, click through to Maps, or export.</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -150,6 +240,7 @@ const searchBtn = document.getElementById('search-btn');
 const statusEl = document.getElementById('status');
 const chatBox = document.getElementById('chat-box');
 const exportBtn = document.getElementById('export-btn');
+const statPill = document.getElementById('stat-pill');
 
 function setStatus(text, cls) {
   statusEl.textContent = text || '';
@@ -162,7 +253,13 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+function clearEmptyState() {
+  const empty = chatBox.querySelector('.empty-state');
+  if (empty) empty.remove();
+}
+
 function appendMessage(html, cls) {
+  clearEmptyState();
   const div = document.createElement('div');
   div.className = 'chat-msg' + (cls ? ' ' + cls : '');
   div.innerHTML = html;
@@ -175,21 +272,24 @@ function leadMessageHtml(lead, i) {
   const hoursId = 'hours-' + Date.now() + '-' + i;
   const metaParts = [];
   if (lead.category) metaParts.push(escapeHtml(lead.category));
-  if (lead.rating != null) metaParts.push(`★ ${lead.rating} (${lead.review_count} reviews)`);
+  if (lead.rating != null) metaParts.push(`<span class="star">★</span> ${lead.rating} (${lead.review_count} reviews)`);
   if (lead.business_status) metaParts.push(escapeHtml(lead.business_status));
 
   const hoursHtml = (lead.hours && lead.hours.length)
-    ? `<span class="hours-toggle" onclick="document.getElementById('${hoursId}').classList.toggle('open')">view hours</span>
+    ? `<span class="hours-toggle" onclick="document.getElementById('${hoursId}').classList.toggle('open')">view hours ▾</span>
        <ul id="${hoursId}" class="hours-list">${lead.hours.map(h => `<li>${escapeHtml(h)}</li>`).join('')}</ul>`
-    : '<span class="lead-meta">not listed</span>';
+    : '<span class="none">not listed</span>';
 
   return `
-    <p class="lead-name">${escapeHtml(lead.name)}</p>
-    ${metaParts.length ? `<p class="lead-meta">${metaParts.join(' · ')}</p>` : ''}
-    <p class="lead-row"><span class="label">📍</span>${escapeHtml(lead.address) || '<span class="lead-meta">no address listed</span>'}</p>
-    <p class="lead-row"><span class="label">📞</span>${lead.phone ? `<a href="tel:${escapeHtml(lead.phone)}">${escapeHtml(lead.phone)}</a>` : '<span class="lead-meta">no phone listed</span>'}</p>
-    <p class="lead-row"><span class="label">🕒</span>${hoursHtml}</p>
-    <p class="lead-row"><span class="label">🔗</span>${lead.maps_url ? `<a href="${escapeHtml(lead.maps_url)}" target="_blank" rel="noopener">open in Google Maps</a>` : '<span class="lead-meta">no link</span>'}</p>
+    <div class="lead-top">
+      <span class="lead-name">${escapeHtml(lead.name)}</span>
+      <span class="badge-no-site">No website</span>
+    </div>
+    ${metaParts.length ? `<div class="lead-meta">${metaParts.join(' &nbsp;·&nbsp; ')}</div>` : ''}
+    <div class="lead-row"><span class="label">📍</span>${escapeHtml(lead.address) || '<span class="none">no address listed</span>'}</div>
+    <div class="lead-row"><span class="label">📞</span>${lead.phone ? `<a href="tel:${escapeHtml(lead.phone)}">${escapeHtml(lead.phone)}</a>` : '<span class="none">no phone listed</span>'}</div>
+    <div class="lead-row"><span class="label">🕒</span>${hoursHtml}</div>
+    <div class="lead-row"><span class="label">🔗</span>${lead.maps_url ? `<a href="${escapeHtml(lead.maps_url)}" target="_blank" rel="noopener">open in Google Maps</a>` : '<span class="none">no link</span>'}</div>
   `;
 }
 
@@ -255,12 +355,14 @@ async function runSearch() {
 
     currentLeads = data.leads;
     exportBtn.disabled = currentLeads.length === 0;
+    statPill.textContent = `● ${currentLeads.length} lead${currentLeads.length === 1 ? '' : 's'}`;
+    statPill.classList.toggle('show', currentLeads.length > 0);
 
     appendMessage(
       `Found ${data.stats.without_website} of ${data.stats.total_found} places with no listed website.`,
       'system'
     );
-    currentLeads.forEach((lead, i) => appendMessage(leadMessageHtml(lead, i)));
+    currentLeads.forEach((lead, i) => appendMessage(leadMessageHtml(lead, i), 'lead'));
 
     setStatus(currentLeads.length ? `Found ${currentLeads.length} leads.` : 'No leads without a website found for that search.');
   } catch (err) {
@@ -268,7 +370,7 @@ async function runSearch() {
     setStatus('Request failed: ' + err.message, 'error');
   } finally {
     searchBtn.disabled = false;
-    searchBtn.textContent = 'Find leads';
+    searchBtn.innerHTML = '🔍 Find leads';
   }
 }
 
