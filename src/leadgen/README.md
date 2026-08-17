@@ -36,9 +36,10 @@ address, phone, hours, Maps link) and can be exported to CSV with one click.
 Each card also shows a 1-5 star **lead score** - not Google's customer
 rating, but how good a prospect the business looks like (established,
 reachable, reviewed) based on review volume, review score, and whether a
-phone number is on file. Leads are sorted best-score-first, and businesses
+phone number is on file. Leads are sorted best-score-first, businesses
 marked permanently closed on Google are dropped since they're not real
-leads.
+leads, and the **★ 4+** checkbox filters the list down to only leads
+scoring 4 stars or higher.
 
 If no starting address is given, put the location in the search box itself
 (e.g. `roofers in Tampa, FL`), same as searching on Google Maps directly.

@@ -43,7 +43,19 @@ def api_search():
     radius_km = max(1.0, min(radius_km, MAX_RADIUS_KM))
 
     try:
-        result = find_leads(query, max_results=max_results, near=near, radius_km=radius_km)
+        min_lead_score = float(data.get("min_lead_score", 0))
+    except (TypeError, ValueError):
+        min_lead_score = 0.0
+    min_lead_score = max(0.0, min(min_lead_score, 5.0))
+
+    try:
+        result = find_leads(
+            query,
+            max_results=max_results,
+            near=near,
+            radius_km=radius_km,
+            min_lead_score=min_lead_score,
+        )
     except GeocodingError as exc:
         return jsonify({"error": str(exc)}), 400
     except PlacesApiError as exc:

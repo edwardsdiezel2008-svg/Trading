@@ -103,12 +103,18 @@ def find_leads(
     max_results: int = 20,
     near: str | None = None,
     radius_km: float = DEFAULT_RADIUS_KM,
+    min_lead_score: float = 0.0,
 ) -> dict[str, Any]:
     """Searches Google Maps for `query` and returns places with no listed
     website, sorted by lead score (best prospects first - see `_lead_score`).
 
     If `near` is set, it's geocoded and results are restricted to within
     `radius_km` of that point, regardless of what's in `query`.
+
+    `min_lead_score` drops leads scoring below it (e.g. 4.0 for "4+ stars
+    only") - applied after scoring, so `stats.without_website` still
+    reflects every no-website place found, separate from how many passed
+    the score filter.
     """
     location_restrict = None
     origin = None
@@ -125,11 +131,14 @@ def find_leads(
     leads = [_to_lead(p) for p in no_website]
     leads.sort(key=lambda lead: (lead.lead_score, lead.review_count), reverse=True)
 
+    shown = [lead for lead in leads if lead.lead_score >= min_lead_score]
+
     return {
-        "leads": [lead.to_dict() for lead in leads],
+        "leads": [lead.to_dict() for lead in shown],
         "stats": {
             "total_found": len(places),
             "without_website": len(leads),
+            "shown": len(shown),
         },
         "origin": origin,
     }

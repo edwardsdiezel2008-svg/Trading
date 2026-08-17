@@ -54,7 +54,7 @@
     margin-bottom: 20px;
     box-shadow: 0 1px 0 #ffffff08 inset, 0 20px 40px -30px #000000cc;
   }
-  .form-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+  .form-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
   .field { display: flex; flex-direction: column; gap: 6px; }
   .field label {
     font-size: 11px; color: var(--muted-soft); font-weight: 600;
@@ -75,10 +75,19 @@
     border-color: var(--accent);
     box-shadow: 0 0 0 3px #5b8cff26;
   }
-  #query { flex: 1.4; min-width: 220px; }
-  #near { flex: 1; min-width: 200px; }
-  #radius_km { width: 90px; }
-  #max_results { width: 90px; }
+  #query { flex: 1.4; min-width: 180px; }
+  #near { flex: 1; min-width: 170px; }
+  #radius_km { width: 80px; }
+  #max_results { width: 80px; }
+  .checkbox-field {
+    display: flex; align-items: center; gap: 6px; cursor: pointer;
+    background: #0b0d13; border: 1px solid var(--border); border-radius: 9px;
+    padding: 11px 12px; font-size: 13px; color: var(--text); white-space: nowrap;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .checkbox-field:hover { border-color: #333844; }
+  .checkbox-field:has(input:checked) { border-color: #ffc94d66; background: #1a160c; }
+  .checkbox-field input { width: 14px; height: 14px; accent-color: #ffc94d; cursor: pointer; }
 
   button {
     font-size: 14px;
@@ -214,6 +223,13 @@
         <label for="max_results">Max results</label>
         <input id="max_results" type="number" min="1" max="100" value="20" />
       </div>
+      <div class="field">
+        <label for="min_score">&nbsp;</label>
+        <label class="checkbox-field" for="min_score">
+          <input id="min_score" type="checkbox" />
+          <span><span class="lead-star filled" style="font-size:12px">★</span>4+</span>
+        </label>
+      </div>
       <button id="search-btn">🔍 Find leads</button>
     </div>
     <div id="status" class="status"></div>
@@ -338,6 +354,7 @@ async function runSearch() {
   const near = document.getElementById('near').value.trim();
   const radiusKm = parseFloat(document.getElementById('radius_km').value) || 100;
   const maxResults = parseInt(document.getElementById('max_results').value, 10) || 20;
+  const minLeadScore = document.getElementById('min_score').checked ? 4.0 : 0;
 
   if (!query) {
     setStatus('Enter what to search for, e.g. "plumbers".', 'error');
@@ -357,7 +374,9 @@ async function runSearch() {
     const resp = await fetch('/api/search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, near, radius_km: radiusKm, max_results: maxResults }),
+      body: JSON.stringify({
+        query, near, radius_km: radiusKm, max_results: maxResults, min_lead_score: minLeadScore,
+      }),
     });
     const data = await resp.json();
 
@@ -372,13 +391,14 @@ async function runSearch() {
     statPill.textContent = `● ${currentLeads.length} lead${currentLeads.length === 1 ? '' : 's'}`;
     statPill.classList.toggle('show', currentLeads.length > 0);
 
-    appendMessage(
-      `Found ${data.stats.without_website} of ${data.stats.total_found} places with no listed website.`,
-      'system'
-    );
+    let summary = `Found ${data.stats.without_website} of ${data.stats.total_found} places with no listed website.`;
+    if (minLeadScore > 0) {
+      summary += ` Showing ${data.stats.shown} rated ${minLeadScore.toFixed(0)}+ stars.`;
+    }
+    appendMessage(summary, 'system');
     currentLeads.forEach((lead, i) => appendMessage(leadMessageHtml(lead, i), 'lead'));
 
-    setStatus(currentLeads.length ? `Found ${currentLeads.length} leads.` : 'No leads without a website found for that search.');
+    setStatus(currentLeads.length ? `Found ${currentLeads.length} leads.` : 'No leads matched that search' + (minLeadScore > 0 ? ' at 4+ stars.' : '.'));
   } catch (err) {
     appendMessage('Request failed: ' + escapeHtml(err.message), 'error');
     setStatus('Request failed: ' + err.message, 'error');
