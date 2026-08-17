@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-08-17T04:19:17.906715Z",
+  "generated_at_utc": "2026-08-17T20:25:51.625342Z",
   "results": [
     {
       "label": "Nasdaq Futures (Daily)",
@@ -11,47 +11,47 @@
       "fold_returns": [
         {
           "fold": 1,
-          "test_start": "2018-04-13",
-          "test_end": "2019-12-11",
+          "test_start": "2018-04-16",
+          "test_end": "2019-12-12",
           "test_return": 0.02102180568633938,
           "test_sharpe": 1.1469818674983323
         },
         {
           "fold": 2,
-          "test_start": "2019-12-12",
-          "test_end": "2021-08-12",
+          "test_start": "2019-12-13",
+          "test_end": "2021-08-13",
           "test_return": 0.04497267176017172,
-          "test_sharpe": 1.4830118903495306
+          "test_sharpe": 1.4830118903495302
         },
         {
           "fold": 3,
-          "test_start": "2021-08-13",
-          "test_end": "2023-04-14",
+          "test_start": "2021-08-16",
+          "test_end": "2023-04-17",
           "test_return": 0.0025548242048689662,
           "test_sharpe": 0.16342517883182434
         },
         {
           "fold": 4,
-          "test_start": "2023-04-17",
-          "test_end": "2024-12-12",
+          "test_start": "2023-04-18",
+          "test_end": "2024-12-13",
           "test_return": 0.03395148931069625,
           "test_sharpe": 0.9663251582483767
         },
         {
           "fold": 5,
-          "test_start": "2024-12-13",
-          "test_end": "2026-08-16",
+          "test_start": "2024-12-16",
+          "test_end": "2026-08-17",
           "test_return": 0.05834910093611945,
           "test_sharpe": 0.7602795722678015
         }
       ],
       "normal_oos_return": 0.17051555551339637,
-      "normal_ci_low": 0.07740983324842556,
-      "normal_ci_high": 0.28888814739582713,
+      "normal_ci_low": 0.07455653959389376,
+      "normal_ci_high": 0.28553511487731636,
       "normal_significant": true,
       "stressed_oos_return": 0.16987380457981516,
-      "stressed_ci_low": 0.07659882690347793,
-      "stressed_ci_high": 0.2881603945841339,
+      "stressed_ci_low": 0.07397258030750253,
+      "stressed_ci_high": 0.2850851095960473,
       "stressed_significant": true,
       "survives_cost_stress": true,
       "regime_breakdown": [
@@ -65,7 +65,7 @@
           "regime": "ranging/high_vol",
           "total_pnl": 949.0,
           "pct_of_total_pnl": 0.0765538660105675,
-          "bar_count": 722
+          "bar_count": 723
         },
         {
           "regime": "ranging/low_vol",
@@ -92,47 +92,47 @@
       "fold_returns": [
         {
           "fold": 1,
-          "test_start": "2018-04-13",
-          "test_end": "2019-12-11",
+          "test_start": "2018-04-16",
+          "test_end": "2019-12-12",
           "test_return": 0.0039597738839447505,
           "test_sharpe": 0.2887393445100967
         },
         {
           "fold": 2,
-          "test_start": "2019-12-12",
-          "test_end": "2021-08-12",
+          "test_start": "2019-12-13",
+          "test_end": "2021-08-13",
           "test_return": 0.0349475279446505,
           "test_sharpe": 1.4487486763681425
         },
         {
           "fold": 3,
-          "test_start": "2021-08-13",
-          "test_end": "2023-04-14",
+          "test_start": "2021-08-16",
+          "test_end": "2023-04-17",
           "test_return": 0.0,
           "test_sharpe": NaN
         },
         {
           "fold": 4,
-          "test_start": "2023-04-17",
-          "test_end": "2024-12-12",
+          "test_start": "2023-04-18",
+          "test_end": "2024-12-13",
           "test_return": 0.0021631496603831124,
-          "test_sharpe": 0.7936860370625822
+          "test_sharpe": 0.7936860370625823
         },
         {
           "fold": 5,
-          "test_start": "2024-12-13",
-          "test_end": "2026-08-16",
+          "test_start": "2024-12-16",
+          "test_end": "2026-08-17",
           "test_return": 0.023564800822459597,
           "test_sharpe": 0.790998565458943
         }
       ],
       "normal_oos_return": 0.0658311666125595,
-      "normal_ci_low": 0.008474605432967562,
-      "normal_ci_high": 0.14347524562838515,
+      "normal_ci_low": 0.007868061145634219,
+      "normal_ci_high": 0.13636403710480657,
       "normal_significant": true,
       "stressed_oos_return": 0.06573437270957427,
-      "stressed_ci_low": 0.008401033498081,
-      "stressed_ci_high": 0.1433057099240742,
+      "stressed_ci_low": 0.007838394012278715,
+      "stressed_ci_high": 0.13628435214950446,
       "stressed_significant": true,
       "survives_cost_stress": true,
       "regime_breakdown": [
@@ -158,7 +158,7 @@
           "regime": "ranging/low_vol",
           "total_pnl": -442.0,
           "pct_of_total_pnl": -0.05213032581453634,
-          "bar_count": 820
+          "bar_count": 821
         }
       ],
       "top_regime_pct_of_pnl": 0.8617249120042754
@@ -173,47 +173,47 @@
       "fold_returns": [
         {
           "fold": 1,
-          "test_start": "2018-04-13",
-          "test_end": "2019-12-11",
+          "test_start": "2018-04-16",
+          "test_end": "2019-12-12",
           "test_return": 0.0015659459622763272,
           "test_sharpe": 0.11552718780361715
         },
         {
           "fold": 2,
-          "test_start": "2019-12-12",
-          "test_end": "2021-08-12",
+          "test_start": "2019-12-13",
+          "test_end": "2021-08-13",
           "test_return": 0.03151853884924405,
           "test_sharpe": 1.449616903049703
         },
         {
           "fold": 3,
-          "test_start": "2021-08-13",
-          "test_end": "2023-04-14",
+          "test_start": "2021-08-16",
+          "test_end": "2023-04-17",
           "test_return": 0.0,
           "test_sharpe": NaN
         },
         {
           "fold": 4,
-          "test_start": "2023-04-17",
-          "test_end": "2024-12-12",
+          "test_start": "2023-04-18",
+          "test_end": "2024-12-13",
           "test_return": 0.0,
           "test_sharpe": NaN
         },
         {
           "fold": 5,
-          "test_start": "2024-12-13",
-          "test_end": "2026-08-16",
+          "test_start": "2024-12-16",
+          "test_end": "2026-08-17",
           "test_return": 0.011915474151693806,
           "test_sharpe": 0.6278701130182855
         }
       ],
       "normal_oos_return": 0.04544412071951398,
-      "normal_ci_low": 0.0024430875172070966,
-      "normal_ci_high": 0.10256496798235148,
+      "normal_ci_low": 0.0009729009139016739,
+      "normal_ci_high": 0.10001423974731727,
       "normal_significant": true,
       "stressed_oos_return": 0.04479652780360377,
-      "stressed_ci_low": 0.002049175419378868,
-      "stressed_ci_high": 0.10165221092985854,
+      "stressed_ci_low": 0.0005526306789839665,
+      "stressed_ci_high": 0.09928652352104318,
       "stressed_significant": true,
       "survives_cost_stress": true,
       "regime_breakdown": [
@@ -227,7 +227,7 @@
           "regime": "ranging/low_vol",
           "total_pnl": 335.5,
           "pct_of_total_pnl": 0.04138424837102043,
-          "bar_count": 893
+          "bar_count": 894
         },
         {
           "regime": "ranging/high_vol",
@@ -262,68 +262,68 @@
         {
           "fold": 2,
           "test_start": "2019-12-13",
-          "test_end": "2021-08-12",
-          "test_return": -0.02850790368249645,
-          "test_sharpe": -0.4770520377770999
+          "test_end": "2021-08-13",
+          "test_return": -0.031080911879592055,
+          "test_sharpe": -0.5221879975297096
         },
         {
           "fold": 3,
-          "test_start": "2021-08-13",
+          "test_start": "2021-08-16",
           "test_end": "2023-04-14",
-          "test_return": 0.022287971402289664,
-          "test_sharpe": 0.5578768783867991
+          "test_return": 0.024935460704936574,
+          "test_sharpe": 0.5844831855825989
         },
         {
           "fold": 4,
           "test_start": "2023-04-17",
-          "test_end": "2024-12-12",
-          "test_return": 0.04643235792668943,
-          "test_sharpe": 0.9379456772288229
+          "test_end": "2024-12-13",
+          "test_return": 0.043396208851594675,
+          "test_sharpe": 0.8762605643604503
         },
         {
           "fold": 5,
-          "test_start": "2024-12-13",
-          "test_end": "2026-08-16",
-          "test_return": 0.1722832139293744,
-          "test_sharpe": 1.1769950623008485
+          "test_start": "2024-12-16",
+          "test_end": "2026-08-17",
+          "test_return": 0.17340347030658743,
+          "test_sharpe": 1.1660946423213254
         }
       ],
-      "normal_oos_return": 0.22347318248666426,
-      "normal_ci_low": 0.013793327460451981,
-      "normal_ci_high": 0.49086530585402377,
+      "normal_oos_return": 0.22100903821512397,
+      "normal_ci_low": 0.014371400394440468,
+      "normal_ci_high": 0.5036829750109995,
       "normal_significant": true,
-      "stressed_oos_return": 0.22330276327411624,
-      "stressed_ci_low": 0.013582395596976509,
-      "stressed_ci_high": 0.4907050667516116,
+      "stressed_oos_return": 0.22083854265969838,
+      "stressed_ci_low": 0.014186637184408211,
+      "stressed_ci_high": 0.5035721127088439,
       "stressed_significant": true,
       "survives_cost_stress": true,
       "regime_breakdown": [
         {
           "regime": "trending/low_vol",
-          "total_pnl": 21186.894628906215,
-          "pct_of_total_pnl": 0.6073468083083973,
-          "bar_count": 558
+          "total_pnl": 21434.04267578121,
+          "pct_of_total_pnl": 0.610123863043866,
+          "bar_count": 559
         },
         {
           "regime": "ranging/low_vol",
           "total_pnl": 4801.005615234026,
-          "pct_of_total_pnl": 0.137626371781017,
+          "pct_of_total_pnl": 0.13666148457246716,
           "bar_count": 674
         },
         {
           "regime": "ranging/high_vol",
           "total_pnl": -2185.401708984631,
-          "pct_of_total_pnl": -0.06264706442692376,
+          "pct_of_total_pnl": -0.06220785099466881,
           "bar_count": 732
         },
         {
           "regime": "trending/high_vol",
-          "total_pnl": -6711.041455078201,
-          "pct_of_total_pnl": -0.19237975548366193,
+          "total_pnl": -6710.191455078195,
+          "pct_of_total_pnl": -0.191006801388998,
           "bar_count": 454
         }
       ],
-      "top_regime_pct_of_pnl": 0.6073468083083973
+      "top_regime_pct_of_pnl": 0.610123863043866
     },
     {
       "label": "Gold Futures (Daily)",
@@ -343,68 +343,68 @@
         {
           "fold": 2,
           "test_start": "2019-12-13",
-          "test_end": "2021-08-12",
-          "test_return": -0.01882133107024686,
-          "test_sharpe": -0.3243683880147638
+          "test_end": "2021-08-13",
+          "test_return": -0.02139776762507939,
+          "test_sharpe": -0.36848835058981455
         },
         {
           "fold": 3,
-          "test_start": "2021-08-13",
+          "test_start": "2021-08-16",
           "test_end": "2023-04-14",
-          "test_return": 0.03555066195463352,
-          "test_sharpe": 0.8436086276924315
+          "test_return": 0.0382625264452805,
+          "test_sharpe": 0.8710611210875508
         },
         {
           "fold": 4,
           "test_start": "2023-04-17",
-          "test_end": "2024-12-12",
-          "test_return": 0.04756975878378711,
-          "test_sharpe": 0.9625895240605115
+          "test_end": "2024-12-13",
+          "test_return": 0.04453729255931682,
+          "test_sharpe": 0.9007421048588741
         },
         {
           "fold": 5,
-          "test_start": "2024-12-13",
-          "test_end": "2026-08-16",
-          "test_return": 0.14707812144263466,
-          "test_sharpe": 1.0232347779905877
+          "test_start": "2024-12-16",
+          "test_end": "2026-08-17",
+          "test_return": 0.15269388683312735,
+          "test_sharpe": 1.040005460716285
         }
       ],
-      "normal_oos_return": 0.22963518122626958,
-      "normal_ci_low": 0.028450865278615345,
-      "normal_ci_high": 0.46619110329385577,
+      "normal_oos_return": 0.23206098189622004,
+      "normal_ci_low": 0.027999959300655308,
+      "normal_ci_high": 0.4760835543177309,
       "normal_significant": true,
-      "stressed_oos_return": 0.22946058807388447,
-      "stressed_ci_low": 0.028287210390782424,
-      "stressed_ci_high": 0.4660186851222593,
+      "stressed_oos_return": 0.23188594637829874,
+      "stressed_ci_low": 0.027847503471275202,
+      "stressed_ci_high": 0.47592814791903615,
       "stressed_significant": true,
       "survives_cost_stress": true,
       "regime_breakdown": [
         {
           "regime": "trending/low_vol",
-          "total_pnl": 21981.79218749993,
-          "pct_of_total_pnl": 0.6437601188937424,
-          "bar_count": 558
+          "total_pnl": 22228.940234374924,
+          "pct_of_total_pnl": 0.646336025574902,
+          "bar_count": 559
         },
         {
           "regime": "ranging/low_vol",
           "total_pnl": 1410.6017089841189,
-          "pct_of_total_pnl": 0.04131096846615275,
+          "pct_of_total_pnl": 0.04101512229737647,
           "bar_count": 674
         },
         {
           "regime": "trending/high_vol",
-          "total_pnl": -4509.343896484439,
-          "pct_of_total_pnl": -0.1320609228843663,
+          "total_pnl": -4508.493896484433,
+          "pct_of_total_pnl": -0.13109046115820797,
           "bar_count": 454
         },
         {
           "regime": "ranging/high_vol",
           "total_pnl": -6244.198779297178,
-          "pct_of_total_pnl": -0.1828679897557386,
+          "pct_of_total_pnl": -0.18155839096951354,
           "bar_count": 732
         }
       ],
-      "top_regime_pct_of_pnl": 0.6437601188937424
+      "top_regime_pct_of_pnl": 0.646336025574902
     },
     {
       "label": "Nasdaq Futures (5-Min)",
@@ -418,74 +418,74 @@
           "fold": 1,
           "test_start": "2026-06-11",
           "test_end": "2026-06-25",
-          "test_return": 0.025474578055370456,
-          "test_sharpe": 5.844321801066313
+          "test_return": 0.02545849843952719,
+          "test_sharpe": 4.945361945993626
         },
         {
           "fold": 2,
           "test_start": "2026-06-25",
           "test_end": "2026-07-09",
-          "test_return": -0.0005670292068923333,
-          "test_sharpe": -0.06619970484261258
+          "test_return": -0.002750352953820423,
+          "test_sharpe": -0.4536976878414243
         },
         {
           "fold": 3,
           "test_start": "2026-07-09",
           "test_end": "2026-07-22",
-          "test_return": 0.020939005678208833,
-          "test_sharpe": 5.57764724632256
+          "test_return": 0.01868628285883478,
+          "test_sharpe": 4.80859226610042
         },
         {
           "fold": 4,
           "test_start": "2026-07-22",
           "test_end": "2026-08-04",
-          "test_return": 0.00745715010506065,
-          "test_sharpe": 1.4538608197700411
+          "test_return": 0.00217160482557488,
+          "test_sharpe": 0.4026061786581599
         },
         {
           "fold": 5,
           "test_start": "2026-08-04",
           "test_end": "2026-08-17",
-          "test_return": 0.003349407321186826,
-          "test_sharpe": 1.0955228596254458
+          "test_return": 0.010239938637071733,
+          "test_sharpe": 3.2154759105463557
         }
       ],
-      "normal_oos_return": 0.057686958873089056,
-      "normal_ci_low": 0.012078481623467804,
-      "normal_ci_high": 0.11164613840905786,
+      "normal_oos_return": 0.05470028986482567,
+      "normal_ci_low": 0.008318892256946347,
+      "normal_ci_high": 0.10617037522377515,
       "normal_significant": true,
-      "stressed_oos_return": 0.0539274478314109,
-      "stressed_ci_low": 0.008462508314036362,
-      "stressed_ci_high": 0.10765473281424719,
+      "stressed_oos_return": 0.05092720537003448,
+      "stressed_ci_low": 0.004580809377883694,
+      "stressed_ci_high": 0.10222292321026683,
       "stressed_significant": true,
       "survives_cost_stress": true,
       "regime_breakdown": [
         {
           "regime": "ranging/high_vol",
-          "total_pnl": 2514.0,
-          "pct_of_total_pnl": 0.33943158036859516,
-          "bar_count": 3861
+          "total_pnl": 2451.5,
+          "pct_of_total_pnl": 0.3202063740856844,
+          "bar_count": 3910
         },
         {
           "regime": "ranging/low_vol",
-          "total_pnl": 1997.0,
-          "pct_of_total_pnl": 0.26962802943360564,
-          "bar_count": 4938
+          "total_pnl": 2198.0,
+          "pct_of_total_pnl": 0.28709508881922674,
+          "bar_count": 4978
         },
         {
           "regime": "trending/high_vol",
-          "total_pnl": -632.0,
-          "pct_of_total_pnl": -0.0853304529804901,
-          "bar_count": 3232
+          "total_pnl": -693.0,
+          "pct_of_total_pnl": -0.09051724137931035,
+          "bar_count": 3283
         },
         {
           "regime": "trending/low_vol",
-          "total_pnl": -2263.5,
-          "pct_of_total_pnl": -0.3056099372173091,
-          "bar_count": 2639
+          "total_pnl": -2313.5,
+          "pct_of_total_pnl": -0.30218129571577845,
+          "bar_count": 2694
         }
       ],
-      "top_regime_pct_of_pnl": 0.33943158036859516
+      "top_regime_pct_of_pnl": 0.3202063740856844
     },
     {
       "label": "Russell 2000 Futures (5-Min)",
@@ -493,80 +493,80 @@
       "freq": "5min",
       "strategy": "Stochastic_Reversion(14,20/80)",
       "n_folds": 5,
-      "folds_positive": 4,
+      "folds_positive": 5,
       "fold_returns": [
         {
           "fold": 1,
           "test_start": "2026-06-11",
           "test_end": "2026-06-25",
-          "test_return": 0.005830034431173248,
-          "test_sharpe": 4.470836004794903
+          "test_return": 0.005204718938739639,
+          "test_sharpe": 3.8419879791070155
         },
         {
           "fold": 2,
           "test_start": "2026-06-25",
           "test_end": "2026-07-09",
-          "test_return": 0.0009350461182355829,
-          "test_sharpe": 0.7962038815081779
+          "test_return": 0.00021560334265680048,
+          "test_sharpe": 0.21009927446375268
         },
         {
           "fold": 3,
           "test_start": "2026-07-09",
           "test_end": "2026-07-22",
-          "test_return": 0.0005376636915934707,
-          "test_sharpe": 0.6525937688331
+          "test_return": 0.0024318236686740047,
+          "test_sharpe": 2.986446447656808
         },
         {
           "fold": 4,
           "test_start": "2026-07-22",
           "test_end": "2026-08-04",
-          "test_return": 0.0028490613029965584,
-          "test_sharpe": 3.016599910221333
+          "test_return": 0.0001972237765863749,
+          "test_sharpe": 0.20708406995121278
         },
         {
           "fold": 5,
           "test_start": "2026-08-04",
           "test_end": "2026-08-17",
-          "test_return": -0.0006872108090824058,
-          "test_sharpe": -0.9907541858018217
+          "test_return": 0.0011981928844935208,
+          "test_sharpe": 1.9555985002651795
         }
       ],
-      "normal_oos_return": 0.009487521229515794,
-      "normal_ci_low": 0.0001559005687178481,
-      "normal_ci_high": 0.019124620769886632,
+      "normal_oos_return": 0.009273083912239466,
+      "normal_ci_low": 0.0008397401947047737,
+      "normal_ci_high": 0.01795885560016759,
       "normal_significant": true,
-      "stressed_oos_return": 0.008087291010701936,
-      "stressed_ci_low": -0.0012053645367259007,
-      "stressed_ci_high": 0.017672419019019562,
+      "stressed_oos_return": 0.007869240169291247,
+      "stressed_ci_low": -0.0005548517391871405,
+      "stressed_ci_high": 0.01653996892874172,
       "stressed_significant": false,
       "survives_cost_stress": false,
       "regime_breakdown": [
         {
           "regime": "ranging/high_vol",
-          "total_pnl": 704.5860839826637,
-          "pct_of_total_pnl": 0.3935408823921849,
-          "bar_count": 4089
+          "total_pnl": 690.5370605451462,
+          "pct_of_total_pnl": 0.39495850466499405,
+          "bar_count": 4150
         },
         {
           "regime": "trending/high_vol",
-          "total_pnl": 359.69707031111466,
-          "pct_of_total_pnl": 0.20090590158122226,
-          "bar_count": 2965
+          "total_pnl": 329.996582029853,
+          "pct_of_total_pnl": 0.18874433253470352,
+          "bar_count": 3007
         },
         {
           "regime": "ranging/low_vol",
-          "total_pnl": -41.88925781467697,
-          "pct_of_total_pnl": -0.02339690757154851,
-          "bar_count": 4892
+          "total_pnl": -29.29072265845025,
+          "pct_of_total_pnl": -0.016753076239826567,
+          "bar_count": 4973
         },
         {
           "regime": "trending/low_vol",
-          "total_pnl": -684.2034179698676,
-          "pct_of_total_pnl": -0.38215630845504434,
-          "bar_count": 2721
+          "total_pnl": -698.5543945323734,
+          "pct_of_total_pnl": -0.39954408656047585,
+          "bar_count": 2732
         }
       ],
-      "top_regime_pct_of_pnl": 0.3935408823921849
+      "top_regime_pct_of_pnl": 0.39495850466499405
     },
     {
       "label": "Crude Oil Futures (Daily)",
@@ -593,32 +593,32 @@
         {
           "fold": 3,
           "test_start": "2021-08-13",
-          "test_end": "2023-04-13",
+          "test_end": "2023-04-14",
           "test_return": 0.0028299372663924682,
-          "test_sharpe": 0.4387731758824783
+          "test_sharpe": 0.43825012105448186
         },
         {
           "fold": 4,
-          "test_start": "2023-04-14",
-          "test_end": "2024-12-12",
+          "test_start": "2023-04-17",
+          "test_end": "2024-12-13",
           "test_return": 0.006430792438754995,
           "test_sharpe": 1.0401498365659818
         },
         {
           "fold": 5,
-          "test_start": "2024-12-13",
-          "test_end": "2026-08-16",
+          "test_start": "2024-12-16",
+          "test_end": "2026-08-17",
           "test_return": 0.007856624825226532,
           "test_sharpe": 0.8783509640207756
         }
       ],
       "normal_oos_return": 0.05230343009689187,
-      "normal_ci_low": 0.00808636077757919,
-      "normal_ci_high": 0.10930444578640698,
+      "normal_ci_low": 0.008994263589872785,
+      "normal_ci_high": 0.11011440087100052,
       "normal_significant": true,
       "stressed_oos_return": 0.052274982408573756,
-      "stressed_ci_low": 0.008060864168240131,
-      "stressed_ci_high": 0.10927171902436617,
+      "stressed_ci_low": 0.008965407171694627,
+      "stressed_ci_high": 0.1100855257522508,
       "stressed_significant": true,
       "survives_cost_stress": true,
       "regime_breakdown": [
@@ -626,7 +626,7 @@
           "regime": "ranging/high_vol",
           "total_pnl": 1853.7609613044915,
           "pct_of_total_pnl": 0.3722947912861749,
-          "bar_count": 679
+          "bar_count": 680
         },
         {
           "regime": "ranging/low_vol",
@@ -659,49 +659,49 @@
       "fold_returns": [
         {
           "fold": 1,
-          "test_start": "2018-04-13",
-          "test_end": "2019-12-11",
+          "test_start": "2018-04-16",
+          "test_end": "2019-12-12",
           "test_return": 0.0009102620858432164,
           "test_sharpe": 0.08431468600059626
         },
         {
           "fold": 2,
-          "test_start": "2019-12-12",
-          "test_end": "2021-08-12",
+          "test_start": "2019-12-13",
+          "test_end": "2021-08-13",
           "test_return": 0.004550771706243184,
-          "test_sharpe": 0.23907797704532543
+          "test_sharpe": 0.2390779770453255
         },
         {
           "fold": 3,
-          "test_start": "2021-08-13",
-          "test_end": "2023-04-14",
+          "test_start": "2021-08-16",
+          "test_end": "2023-04-17",
           "test_return": 0.00711951848667236,
           "test_sharpe": 0.7267694220648264
         },
         {
           "fold": 4,
-          "test_start": "2023-04-17",
-          "test_end": "2024-12-12",
+          "test_start": "2023-04-18",
+          "test_end": "2024-12-13",
           "test_return": 0.007269214632099619,
           "test_sharpe": 1.1519071126103761
         },
         {
           "fold": 5,
-          "test_start": "2024-12-13",
-          "test_end": "2026-08-16",
+          "test_start": "2024-12-16",
+          "test_end": "2026-08-17",
           "test_return": 0.016646969931804145,
           "test_sharpe": 0.7771898440891306
         }
       ],
       "normal_oos_return": 0.03696423509069757,
-      "normal_ci_low": 0.00206425898647698,
-      "normal_ci_high": 0.0757869000259728,
+      "normal_ci_low": 0.001249239376540298,
+      "normal_ci_high": 0.07835207925074053,
       "normal_significant": true,
       "stressed_oos_return": 0.03483402312642525,
-      "stressed_ci_low": 0.0003866788264674529,
-      "stressed_ci_high": 0.07341320163103082,
-      "stressed_significant": true,
-      "survives_cost_stress": true,
+      "stressed_ci_low": -0.0005407744564407718,
+      "stressed_ci_high": 0.07575704660917333,
+      "stressed_significant": false,
+      "survives_cost_stress": false,
       "regime_breakdown": [
         {
           "regime": "trending/high_vol",
@@ -713,7 +713,7 @@
           "regime": "ranging/low_vol",
           "total_pnl": 80.75,
           "pct_of_total_pnl": 0.008625340526124075,
-          "bar_count": 893
+          "bar_count": 894
         },
         {
           "regime": "trending/low_vol",
@@ -743,14 +743,14 @@
           "test_start": "2026-06-11",
           "test_end": "2026-06-25",
           "test_return": 0.002346482247463033,
-          "test_sharpe": 1.2393978603426363
+          "test_sharpe": 1.2311966107057786
         },
         {
           "fold": 2,
           "test_start": "2026-06-25",
           "test_end": "2026-07-09",
           "test_return": 0.0012873134851671963,
-          "test_sharpe": 3.8224310484228075
+          "test_sharpe": 3.7978804788164258
         },
         {
           "fold": 3,
@@ -764,7 +764,7 @@
           "test_start": "2026-07-22",
           "test_end": "2026-08-04",
           "test_return": 0.0003410110546056,
-          "test_sharpe": 1.1589884029250759
+          "test_sharpe": 1.151549471466366
         },
         {
           "fold": 5,
@@ -775,12 +775,12 @@
         }
       ],
       "normal_oos_return": 0.003979067640068612,
-      "normal_ci_low": 0.0005144828738320894,
-      "normal_ci_high": 0.008600503079253518,
+      "normal_ci_low": 0.0006817364654546298,
+      "normal_ci_high": 0.008365296662315846,
       "normal_significant": true,
       "stressed_oos_return": 0.003959119320076754,
-      "stressed_ci_low": 0.0005041397175919669,
-      "stressed_ci_high": 0.008570473488347519,
+      "stressed_ci_low": 0.0006734960984520531,
+      "stressed_ci_high": 0.008341315650390358,
       "stressed_significant": true,
       "survives_cost_stress": true,
       "regime_breakdown": [
@@ -788,25 +788,25 @@
           "regime": "ranging/high_vol",
           "total_pnl": 0.0,
           "pct_of_total_pnl": null,
-          "bar_count": 3198
+          "bar_count": 3237
         },
         {
           "regime": "ranging/low_vol",
           "total_pnl": 0.0,
           "pct_of_total_pnl": null,
-          "bar_count": 4577
+          "bar_count": 4641
         },
         {
           "regime": "trending/high_vol",
           "total_pnl": 0.0,
           "pct_of_total_pnl": null,
-          "bar_count": 3747
+          "bar_count": 3825
         },
         {
           "regime": "trending/low_vol",
           "total_pnl": 0.0,
           "pct_of_total_pnl": null,
-          "bar_count": 3193
+          "bar_count": 3207
         }
       ],
       "top_regime_pct_of_pnl": null
@@ -814,8 +814,8 @@
   ],
   "portfolio_analysis": {
     "aligned_start": "2018-04-17",
-    "aligned_end": "2026-08-16",
-    "aligned_bar_count": 2097,
+    "aligned_end": "2026-08-17",
+    "aligned_bar_count": 2098,
     "correlation_matrix": {
       "RSI_Reversion(14,30/70) / Nasdaq Futures (Daily)": {
         "RSI_Reversion(14,30/70) / Nasdaq Futures (Daily)": 1.0,
@@ -849,7 +849,7 @@
         "RSI_Reversion(14,30/70) / S&P 500 Futures (Daily)": -0.005,
         "RSI_Reversion(14,30/70) / Dow Futures (Daily)": -0.017,
         "MA_Crossover(10/50) / Gold Futures (Daily)": 1.0,
-        "Donchian_Breakout(20) / Gold Futures (Daily)": 0.899,
+        "Donchian_Breakout(20) / Gold Futures (Daily)": 0.898,
         "CCI_Reversion(20,100) / Crude Oil Futures (Daily)": -0.017,
         "CCI_Reversion(20,100) / Dow Futures (Daily)": -0.002
       },
@@ -857,7 +857,7 @@
         "RSI_Reversion(14,30/70) / Nasdaq Futures (Daily)": 0.029,
         "RSI_Reversion(14,30/70) / S&P 500 Futures (Daily)": -0.008,
         "RSI_Reversion(14,30/70) / Dow Futures (Daily)": -0.019,
-        "MA_Crossover(10/50) / Gold Futures (Daily)": 0.899,
+        "MA_Crossover(10/50) / Gold Futures (Daily)": 0.898,
         "Donchian_Breakout(20) / Gold Futures (Daily)": 1.0,
         "CCI_Reversion(20,100) / Crude Oil Futures (Daily)": -0.021,
         "CCI_Reversion(20,100) / Dow Futures (Daily)": -0.003
@@ -885,39 +885,39 @@
     "individual_aligned": {
       "RSI_Reversion(14,30/70) / Nasdaq Futures (Daily)": {
         "total_return": 0.17051555551339703,
-        "sharpe": 0.7709560041202576
+        "sharpe": 0.7707719004532337
       },
       "RSI_Reversion(14,30/70) / S&P 500 Futures (Daily)": {
         "total_return": 0.06583116661255928,
-        "sharpe": 0.7058643093429767
+        "sharpe": 0.7056958137059153
       },
       "RSI_Reversion(14,30/70) / Dow Futures (Daily)": {
         "total_return": 0.04544412071951376,
-        "sharpe": 0.6252884842868677
+        "sharpe": 0.6251392862068328
       },
       "MA_Crossover(10/50) / Gold Futures (Daily)": {
-        "total_return": 0.22314424622071694,
-        "sharpe": 0.5532134694488796
+        "total_return": 0.2206807644454445,
+        "sharpe": 0.5477090073083697
       },
       "Donchian_Breakout(20) / Gold Futures (Daily)": {
-        "total_return": 0.229304681072106,
-        "sharpe": 0.5648348117228658
+        "total_return": 0.23172982973769818,
+        "sharpe": 0.5698165599486785
       },
       "CCI_Reversion(20,100) / Crude Oil Futures (Daily)": {
         "total_return": 0.05230343009689209,
-        "sharpe": 0.6335374995405046
+        "sharpe": 0.6333863269662859
       },
       "CCI_Reversion(20,100) / Dow Futures (Daily)": {
         "total_return": 0.03696423509069802,
-        "sharpe": 0.4940394919114539
+        "sharpe": 0.4939216793891908
       }
     },
-    "average_individual_return": 0.11764391933226902,
-    "average_individual_sharpe": 0.6211048671962579,
-    "portfolio_total_return": 0.11728923190553697,
-    "portfolio_sharpe": 0.9352160404652782,
-    "portfolio_ci_low": 0.05201344340426856,
-    "portfolio_ci_high": 0.1884015836436686,
+    "average_individual_return": 0.11763844317374327,
+    "average_individual_sharpe": 0.6209200819969295,
+    "portfolio_total_return": 0.1172826543766936,
+    "portfolio_sharpe": 0.9349378838809579,
+    "portfolio_ci_low": 0.05062941486136241,
+    "portfolio_ci_high": 0.18962733763469733,
     "portfolio_significant": true
   }
 }

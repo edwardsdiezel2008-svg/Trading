@@ -1,4 +1,4 @@
-# SOL/USDT Paper Trading (1D) — updated 2026-08-17T19:42:55.068749+00:00
+# SOL/USDT Paper Trading (1D) — updated 2026-08-17T20:01:22.964795+00:00
 
 Latest bar: 2026-08-17 00:00:00 · 1,946 bars of history · $100,000 starting capital per strategy
 
@@ -12,8 +12,10 @@ Latest bar: 2026-08-17 00:00:00 · 1,946 bars of history · $100,000 starting ca
 | MA_Crossover(10/50) | FLAT | $-5,172 | -105.2% | -0.25 | 3 |
 | Donchian_Breakout(20) | FLAT | $-12,923 | -112.9% | -0.36 | 1 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $-12,923 | -112.9% | -0.36 | 1 |
+| VolProfile_Reversion(30) | FLAT | $-13,090 | -113.1% | -0.48 | 1 |
 | Inside_Bar_Breakout(0.6) | FLAT | $-14,590 | -114.6% | 0.21 | 1 |
 | RSI_Reversion(14,30/70) | FLAT | $-18,894 | -118.9% | -0.15 | 5 |
+| TPO_Reversion(60,p=5) | FLAT | $-37,171 | -137.2% | -0.17 | 6 |
 | Engulfing_Reversal(0.3) | FLAT | $-37,668 | -137.7% | -0.31 | 1 |
 | CCI_Reversion(20,100) | FLAT | $-45,286 | -145.3% | 0.19 | 4 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $-58,077 | -158.1% | -0.05 | 1 |

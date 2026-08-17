@@ -584,6 +584,13 @@ def main():
     if os.path.exists(SURVIVOR_STRESS_TEST_PATH):
         with open(SURVIVOR_STRESS_TEST_PATH) as f:
             survivor_stress_test = json.load(f)
+    # Total strategy-track walk-forward results scanned for statistical
+    # significance - computed here so the dashboard's explanatory text
+    # never goes stale when strategies or tracks are added/removed, the
+    # way a hand-maintained count previously did.
+    survivor_stress_test["total_checked"] = sum(
+        len(loaded[s]["walkforward"].get("results") or []) for s in loaded
+    )
 
     correlations = compute_correlations()
     regimes = compute_current_regimes()

@@ -320,7 +320,7 @@
   <div id="survivorStressSection" style="display:none; flex-direction:column; gap:22px;">
     <div class="section-label">Survivor stress test</div>
     <div class="panel">
-      <p style="margin:0 0 10px; font-size:var(--fs-xs); color:var(--ink-muted);">Of 240 strategy-track combinations checked, only 5 have a walk-forward result statistically distinguishable from noise (see "Statistical significance" in the README). Passing that bar is necessary but not sufficient for real confidence, so each of the 5 survivors gets three more checks: is the edge spread across multiple independent fold periods (not one lucky stretch), does it survive 3x the normal execution-cost assumption, and how concentrated is its P&amp;L in a single market regime.</p>
+      <p id="survivorIntroText" style="margin:0 0 10px; font-size:var(--fs-xs); color:var(--ink-muted);"></p>
       <div class="table-wrap"><table id="survivorTable">
         <thead><tr><th>Strategy</th><th>Track</th><th class="num">Folds Positive</th><th class="num">3x-Cost Stress</th><th class="num">Top Regime Share</th></tr></thead>
         <tbody id="survivorTbody"></tbody>
@@ -654,6 +654,9 @@
       return;
     }
     section.style.display = 'flex';
+    const totalChecked = SURVIVOR_STRESS_TEST.total_checked;
+    document.getElementById('survivorIntroText').textContent =
+      `Of ${totalChecked != null ? totalChecked : 'many'} strategy-track combinations checked, only ${rows.length} have a walk-forward result statistically distinguishable from noise (see "Statistical significance" in the README). Passing that bar is necessary but not sufficient for real confidence, so each of the ${rows.length} survivors gets three more checks: is the edge spread across multiple independent fold periods (not one lucky stretch), does it survive 3x the normal execution-cost assumption, and how concentrated is its P&L in a single market regime.`;
     document.getElementById('survivorTbody').innerHTML = rows.map((r) => {
       const foldsClass = r.folds_positive === r.n_folds ? 'good' : '';
       const costCell = r.survives_cost_stress

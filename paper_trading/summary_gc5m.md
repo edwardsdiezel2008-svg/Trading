@@ -1,4 +1,4 @@
-# MGC Paper Trading (5min) — updated 2026-08-17T19:43:06.343345+00:00
+# MGC Paper Trading (5min) — updated 2026-08-17T20:01:59.972418+00:00
 
 Latest bar: 2026-08-17 19:30:00 · 15,009 bars of history · $100,000 starting capital per strategy
 
@@ -16,8 +16,10 @@ Latest bar: 2026-08-17 19:30:00 · 15,009 bars of history · $100,000 starting c
 | Parabolic_SAR(af=0.02,max=0.2) | LONG | $100,327 | +0.3% | 0.11 | 1387 |
 | RSI_Reversion(14,30/70) | FLAT | $100,116 | +0.1% | 0.08 | 417 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
+| VolProfile_Reversion(30) | FLAT | $98,849 | -1.2% | -0.42 | 1574 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $97,364 | -2.6% | -0.90 | 586 |
 | Stochastic_Reversion(14,20/80) | SHORT | $96,903 | -3.1% | -1.07 | 535 |
 | Engulfing_Reversal(0.3) | LONG | $96,435 | -3.6% | -0.80 | 940 |
 | CCI_Reversion(20,100) | FLAT | $95,657 | -4.3% | -1.43 | 1455 |
+| TPO_Reversion(60,p=5) | FLAT | $95,474 | -4.5% | -1.51 | 1120 |
 | Bollinger_Reversion(20,2sd) | FLAT | $95,261 | -4.7% | -1.48 | 528 |

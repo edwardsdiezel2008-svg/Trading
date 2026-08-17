@@ -397,7 +397,7 @@
       note: 'The backtest → walk-forward → significance → survivor stress → portfolio pipeline behind the paper-trading dashboard.',
       planets: [
         { id: 'sig', label: 'Statistical Significance', r: 68, size: 8, speed: 0.10,
-          note: 'Circular block bootstrap — 1,000 resamples, 90% CI — run on every walk-forward out-of-sample result. Only 5 of 240 strategy × track combinations clear it.' },
+          note: 'Circular block bootstrap — 1,000 resamples, 90% CI — run on every walk-forward out-of-sample result. Only 10 of 360 strategy × track combinations clear it.' },
         { id: 'stress', label: 'Survivor Stress Test', r: 92, size: 9, speed: 0.075,
           note: 'The 5 significant survivors get three more checks: fold-by-fold consistency, a 3×-slippage cost stress rerun, and P&L attribution across ADX regimes.' },
         { id: 'portfolio', label: 'Portfolio Combination', r: 116, size: 8, speed: 0.06,

@@ -1,4 +1,4 @@
-# BTC/USDT Paper Trading (1D) — updated 2026-08-17T19:42:49.001598+00:00
+# BTC/USDT Paper Trading (1D) — updated 2026-08-17T20:01:12.561831+00:00
 
 Latest bar: 2026-08-17 00:00:00 · 2,156 bars of history · $100,000 starting capital per strategy
 
@@ -14,6 +14,8 @@ Latest bar: 2026-08-17 00:00:00 · 2,156 bars of history · $100,000 starting ca
 | Engulfing_Reversal(0.3) | SHORT | $16 | -100.0% | 0.26 | 150 |
 | CCI_Reversion(20,100) | FLAT | $-273 | -100.3% | -0.70 | 9 |
 | RSI_Reversion(14,30/70) | FLAT | $-666 | -100.7% | -0.57 | 11 |
+| VolProfile_Reversion(30) | FLAT | $-6,280 | -106.3% | -0.58 | 9 |
+| TPO_Reversion(60,p=5) | FLAT | $-10,231 | -110.2% | -0.53 | 4 |
 | Bollinger_Reversion(20,2sd) | FLAT | $-12,211 | -112.2% | -0.55 | 1 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $-12,211 | -112.2% | -0.55 | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $-12,211 | -112.2% | -0.55 | 1 |

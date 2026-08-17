@@ -1,6 +1,6 @@
 """Stress-test the strategy-track combinations that survived the bootstrap
 significance check (see "Statistical significance" in paper_trading/README.md)
-- out of 320 strategy-track results (16 strategies x 20 tracks), only 10 have
+- out of 360 strategy-track results (18 strategies x 20 tracks), only 10 have
 a 90% confidence interval that excludes zero. That's necessary but not
 sufficient for real confidence:
 a single positive-and-significant walk-forward result could still be one

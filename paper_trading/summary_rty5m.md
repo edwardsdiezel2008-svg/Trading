@@ -1,4 +1,4 @@
-# M2K Paper Trading (5min) — updated 2026-08-17T19:43:09.068403+00:00
+# M2K Paper Trading (5min) — updated 2026-08-17T20:02:08.950546+00:00
 
 Latest bar: 2026-08-17 19:30:00 · 14,961 bars of history · $100,000 starting capital per strategy
 
@@ -9,10 +9,12 @@ Latest bar: 2026-08-17 19:30:00 · 14,961 bars of history · $100,000 starting c
 | Stochastic_Reversion(14,20/80) | FLAT | $100,267 | +0.3% | 0.35 | 556 |
 | RSI_Reversion(14,30/70) | FLAT | $100,204 | +0.2% | 0.48 | 409 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
+| TPO_Reversion(60,p=5) | FLAT | $99,395 | -0.6% | -0.72 | 1161 |
 | MACD_Momentum(12/26/9) | LONG | $99,366 | -0.6% | -0.51 | 1203 |
 | Bollinger_Reversion(20,2sd) | SHORT | $99,343 | -0.7% | -0.70 | 521 |
 | ZScore_Reversion(20,z=2.0) | SHORT | $99,095 | -0.9% | -1.03 | 588 |
 | CCI_Reversion(20,100) | SHORT | $98,279 | -1.7% | -1.98 | 1492 |
+| VolProfile_Reversion(30) | SHORT | $97,891 | -2.1% | -2.56 | 1606 |
 | Engulfing_Reversal(0.3) | SHORT | $97,890 | -2.1% | -1.73 | 1007 |
 | Opening_Range_Breakout(6) | SHORT | $97,783 | -2.2% | -2.04 | 108 |
 | Parabolic_SAR(af=0.02,max=0.2) | LONG | $97,530 | -2.5% | -2.01 | 1329 |

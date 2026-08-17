@@ -1,7 +1,7 @@
 {
   "symbol": "SOL_USDT",
   "freq": "1D",
-  "generated_at_utc": "2026-08-17T04:10:55.891915Z",
+  "generated_at_utc": "2026-08-17T20:07:03.395283Z",
   "results": [
     {
       "strategy": "MA_Crossover(10/50)",
@@ -71,14 +71,14 @@
       "n_values_tested": 8,
       "frac_profitable": 0.125,
       "sharpe_min": -0.3599485824463564,
-      "sharpe_max": 1.1331965920446607
+      "sharpe_max": 1.1322329860526108
     },
     {
       "strategy": "Supertrend(10,m=3.0)",
       "n_values_tested": 8,
       "frac_profitable": 0.125,
       "sharpe_min": -0.43889440742217856,
-      "sharpe_max": 0.7139381047703303
+      "sharpe_max": 0.7144519109564876
     },
     {
       "strategy": "Keltner_Breakout(20,m=2.0)",
@@ -114,6 +114,20 @@
       "frac_profitable": 0.0,
       "sharpe_min": NaN,
       "sharpe_max": NaN
+    },
+    {
+      "strategy": "VolProfile_Reversion(30)",
+      "n_values_tested": 4,
+      "frac_profitable": 0.0,
+      "sharpe_min": -0.47583357016866795,
+      "sharpe_max": 0.03918727383333883
+    },
+    {
+      "strategy": "TPO_Reversion(60,p=5)",
+      "n_values_tested": 4,
+      "frac_profitable": 0.0,
+      "sharpe_min": -0.37811952273271066,
+      "sharpe_max": -0.13990162894783126
     }
   ]
 }

@@ -1,4 +1,4 @@
-# MYM Paper Trading (1D) — updated 2026-08-17T19:43:02.232979+00:00
+# MYM Paper Trading (1D) — updated 2026-08-17T20:01:44.076516+00:00
 
 Latest bar: 2026-08-17 00:00:00 · 2,520 bars of history · $100,000 starting capital per strategy
 
@@ -15,6 +15,8 @@ Latest bar: 2026-08-17 00:00:00 · 2,520 bars of history · $100,000 starting ca
 | Engulfing_Reversal(0.3) | SHORT | $100,444 | +0.4% | 0.03 | 110 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
 | VWAP_Reversion(20,2%) | SHORT | $99,219 | -0.8% | -0.02 | 111 |
+| VolProfile_Reversion(30) | FLAT | $99,190 | -0.8% | -0.04 | 268 |
+| TPO_Reversion(60,p=5) | SHORT | $98,008 | -2.0% | -0.10 | 184 |
 | CCI_Reversion(20,100) | FLAT | $96,303 | -3.7% | -0.18 | 230 |
 | MACD_Momentum(12/26/9) | SHORT | $95,436 | -4.6% | -0.16 | 215 |
 | Keltner_Breakout(20,m=2.0) | LONG | $95,324 | -4.7% | -0.17 | 38 |

@@ -1,119 +1,133 @@
 {
   "symbol": "MNQ",
   "freq": "5min",
-  "generated_at_utc": "2026-08-17T04:12:13.183627Z",
+  "generated_at_utc": "2026-08-17T20:10:00.234548Z",
   "results": [
     {
       "strategy": "MA_Crossover(10/50)",
       "n_values_tested": 10,
       "frac_profitable": 0.3,
-      "sharpe_min": -0.40014546241068455,
-      "sharpe_max": 0.29269794476965943
+      "sharpe_min": -0.3162688728539364,
+      "sharpe_max": 0.30863366731142206
     },
     {
       "strategy": "Donchian_Breakout(20)",
       "n_values_tested": 6,
       "frac_profitable": 0.3333333333333333,
-      "sharpe_min": -0.9252198534382374,
-      "sharpe_max": 0.22927892207490708
+      "sharpe_min": -0.8563334753675366,
+      "sharpe_max": 0.2188074976373597
     },
     {
       "strategy": "MACD_Momentum(12/26/9)",
       "n_values_tested": 9,
       "frac_profitable": 0.0,
-      "sharpe_min": -2.1334572683268296,
-      "sharpe_max": -0.9387105878312945
+      "sharpe_min": -2.054432756519212,
+      "sharpe_max": -0.8642339552456941
     },
     {
       "strategy": "Parabolic_SAR(af=0.02,max=0.2)",
       "n_values_tested": 7,
       "frac_profitable": 0.7142857142857143,
-      "sharpe_min": -0.47019471284645314,
-      "sharpe_max": 0.8512713987235256
+      "sharpe_min": -0.5549254060486369,
+      "sharpe_max": 0.9134897866626946
     },
     {
       "strategy": "RSI_Reversion(14,30/70)",
       "n_values_tested": 10,
       "frac_profitable": 0.0,
-      "sharpe_min": -1.3450386343734875,
-      "sharpe_max": -0.8123318582210607
+      "sharpe_min": -1.3194931982728142,
+      "sharpe_max": -0.8291550571342633
     },
     {
       "strategy": "Bollinger_Reversion(20,2sd)",
       "n_values_tested": 7,
       "frac_profitable": 0.7142857142857143,
-      "sharpe_min": -1.4401524155442773,
-      "sharpe_max": 0.32118895029427097
+      "sharpe_min": -1.4553441351645304,
+      "sharpe_max": 0.3174790344369755
     },
     {
       "strategy": "ZScore_Reversion(20,z=2.0)",
       "n_values_tested": 7,
       "frac_profitable": 0.42857142857142855,
-      "sharpe_min": -1.2246259381054827,
-      "sharpe_max": 0.3698555687585669
+      "sharpe_min": -1.2510909376971657,
+      "sharpe_max": 0.4010798568580086
     },
     {
       "strategy": "Stochastic_Reversion(14,20/80)",
       "n_values_tested": 8,
       "frac_profitable": 0.75,
-      "sharpe_min": -0.6559504302755068,
-      "sharpe_max": 1.7978780551040574
+      "sharpe_min": -0.812150458622341,
+      "sharpe_max": 1.7133188076795542
     },
     {
       "strategy": "CCI_Reversion(20,100)",
       "n_values_tested": 7,
       "frac_profitable": 0.14285714285714285,
-      "sharpe_min": -0.8284500943252915,
-      "sharpe_max": 1.0566698908170784
+      "sharpe_min": -0.797818001488736,
+      "sharpe_max": 0.9727931710597976
     },
     {
       "strategy": "ATR_Vol_Breakout(14,k=1.5)",
       "n_values_tested": 8,
       "frac_profitable": 0.875,
-      "sharpe_min": -1.2548346639280008,
-      "sharpe_max": 1.4875800195723674
+      "sharpe_min": -1.293064361951979,
+      "sharpe_max": 1.5332482178511402
     },
     {
       "strategy": "Supertrend(10,m=3.0)",
       "n_values_tested": 8,
       "frac_profitable": 0.125,
-      "sharpe_min": -0.8522894260288774,
-      "sharpe_max": 0.914181974737575
+      "sharpe_min": -0.8713405658726648,
+      "sharpe_max": 0.9230927528396871
     },
     {
       "strategy": "Keltner_Breakout(20,m=2.0)",
       "n_values_tested": 8,
       "frac_profitable": 0.875,
-      "sharpe_min": -0.1974877119945122,
-      "sharpe_max": 1.4892698374247209
+      "sharpe_min": -0.13590276233376455,
+      "sharpe_max": 1.5350401004070284
     },
     {
       "strategy": "VWAP_Reversion(20,2%)",
       "n_values_tested": 8,
       "frac_profitable": 0.0,
-      "sharpe_min": -0.8208847455524407,
-      "sharpe_max": -0.1226383215017787
+      "sharpe_min": -0.8155184367624896,
+      "sharpe_max": -0.12183663373530217
     },
     {
       "strategy": "Engulfing_Reversal(0.3)",
       "n_values_tested": 4,
       "frac_profitable": 1.0,
-      "sharpe_min": 0.4489066560496223,
-      "sharpe_max": 0.8957075214811926
+      "sharpe_min": 0.4372829602989089,
+      "sharpe_max": 0.8806350833151797
     },
     {
       "strategy": "Inside_Bar_Breakout(0.6)",
       "n_values_tested": 4,
       "frac_profitable": 0.75,
-      "sharpe_min": -1.5646489282504674,
-      "sharpe_max": 1.4389721661790127
+      "sharpe_min": -1.4840829195586078,
+      "sharpe_max": 1.384559150072315
     },
     {
       "strategy": "Opening_Range_Breakout(6)",
       "n_values_tested": 4,
+      "frac_profitable": 0.25,
+      "sharpe_min": -0.4342996000826667,
+      "sharpe_max": 0.2584030766047699
+    },
+    {
+      "strategy": "VolProfile_Reversion(30)",
+      "n_values_tested": 4,
+      "frac_profitable": 0.25,
+      "sharpe_min": -2.139577861618183,
+      "sharpe_max": 0.16578571285005328
+    },
+    {
+      "strategy": "TPO_Reversion(60,p=5)",
+      "n_values_tested": 4,
       "frac_profitable": 0.5,
-      "sharpe_min": -0.40466743783975745,
-      "sharpe_max": 0.3205134390870676
+      "sharpe_min": -0.7403733484072262,
+      "sharpe_max": 0.47295091255957045
     }
   ]
 }
