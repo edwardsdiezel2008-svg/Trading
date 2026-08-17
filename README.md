@@ -175,3 +175,16 @@ Output goes to `reports/validation/` (`walkforward_summary.csv`,
 ```bash
 python -m pytest tests/ -q
 ```
+
+## Lead Finder (Google Maps, no relation to trading)
+
+`src/leadgen/` is a separate tool bundled in this repo: a one-button
+dashboard that searches Google Maps for small businesses/workplaces with no
+listed website and returns everything needed to contact them (phone,
+address, rating, hours, Maps link), exportable to CSV. See
+`src/leadgen/README.md` for setup (needs a Google Maps Platform API key) and
+run it with:
+
+```bash
+python scripts/find_leads_dashboard.py
+```

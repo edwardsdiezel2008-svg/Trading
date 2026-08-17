@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lead Finder - No Website</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --border: #2a2e38;
+    --text: #e6e8ec;
+    --muted: #9aa1ac;
+    --accent: #4f8cff;
+    --accent-hover: #6ea0ff;
+    --good: #3ecf8e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .subtitle { color: var(--muted); margin: 0 0 28px; font-size: 14px; }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .form-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12px; color: var(--muted); }
+  .field input {
+    background: #0c0e13;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-size: 14px;
+  }
+  #query { flex: 1; min-width: 260px; }
+  #max_results { width: 100px; }
+  button {
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 20px;
+    cursor: pointer;
+  }
+  #search-btn { background: var(--accent); color: white; }
+  #search-btn:hover { background: var(--accent-hover); }
+  #search-btn:disabled { background: #384054; cursor: not-allowed; }
+  #export-btn { background: #232733; color: var(--text); border: 1px solid var(--border); }
+  #export-btn:hover { background: #2b303e; }
+  .status { margin-top: 14px; font-size: 13px; color: var(--muted); min-height: 18px; }
+  .status.error { color: #ff6b6b; }
+  .status.ok { color: var(--good); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; position: sticky; top: 0; background: var(--panel); }
+  tr:hover td { background: #1c202a; }
+  .name { font-weight: 600; }
+  .muted { color: var(--muted); }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .hours-toggle { cursor: pointer; color: var(--accent); font-size: 12px; }
+  .hours-list { display: none; margin: 6px 0 0; padding-left: 16px; color: var(--muted); font-size: 12px; }
+  .hours-list.open { display: block; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
+  .table-wrap table { min-width: 900px; }
+  .top-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .spinner {
+    display: inline-block; width: 14px; height: 14px; border: 2px solid #ffffff55;
+    border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Lead Finder</h1>
+  <p class="subtitle">Finds businesses on Google Maps that have no website listed, with everything you need to contact them.</p>
+
+  <div class="panel">
+    <div class="form-row">
+      <div class="field" style="flex:1">
+        <label for="query">Search</label>
+        <input id="query" type="text" placeholder="e.g. roofers in Tampa, FL" />
+      </div>
+      <div class="field">
+        <label for="max_results">Max results</label>
+        <input id="max_results" type="number" min="1" max="100" value="20" />
+      </div>
+      <button id="search-btn">Find leads</button>
+    </div>
+    <div id="status" class="status"></div>
+  </div>
+
+  <div id="results-panel" class="panel" style="display:none">
+    <div class="top-actions">
+      <div id="results-summary" class="muted"></div>
+      <button id="export-btn">Export CSV</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Rating</th>
+            <th>Reviews</th>
+            <th>Status</th>
+            <th>Hours</th>
+            <th>Maps</th>
+          </tr>
+        </thead>
+        <tbody id="results-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentLeads = [];
+
+const searchBtn = document.getElementById('search-btn');
+const statusEl = document.getElementById('status');
+const resultsPanel = document.getElementById('results-panel');
+const resultsBody = document.getElementById('results-body');
+const resultsSummary = document.getElementById('results-summary');
+const exportBtn = document.getElementById('export-btn');
+
+function setStatus(text, cls) {
+  statusEl.textContent = text || '';
+  statusEl.className = 'status' + (cls ? ' ' + cls : '');
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str == null ? '' : String(str);
+  return div.innerHTML;
+}
+
+function renderLeads(leads) {
+  resultsBody.innerHTML = '';
+  leads.forEach((lead, i) => {
+    const tr = document.createElement('tr');
+    const hoursId = 'hours-' + i;
+    const hoursCell = lead.hours && lead.hours.length
+      ? `<span class="hours-toggle" onclick="document.getElementById('${hoursId}').classList.toggle('open')">view hours</span>
+         <ul id="${hoursId}" class="hours-list">${lead.hours.map(h => `<li>${escapeHtml(h)}</li>`).join('')}</ul>`
+      : '<span class="muted">-</span>';
+
+    tr.innerHTML = `
+      <td class="name">${escapeHtml(lead.name)}</td>
+      <td>${escapeHtml(lead.category) || '<span class="muted">-</span>'}</td>
+      <td>${lead.phone ? `<a href="tel:${escapeHtml(lead.phone)}">${escapeHtml(lead.phone)}</a>` : '<span class="muted">no phone listed</span>'}</td>
+      <td>${escapeHtml(lead.address)}</td>
+      <td>${lead.rating != null ? lead.rating : '<span class="muted">-</span>'}</td>
+      <td>${lead.review_count}</td>
+      <td>${escapeHtml(lead.business_status) || '<span class="muted">-</span>'}</td>
+      <td>${hoursCell}</td>
+      <td>${lead.maps_url ? `<a href="${escapeHtml(lead.maps_url)}" target="_blank" rel="noopener">open</a>` : ''}</td>
+    `;
+    resultsBody.appendChild(tr);
+  });
+}
+
+function toCsv(leads) {
+  const cols = ['name', 'category', 'phone', 'address', 'rating', 'review_count', 'business_status', 'maps_url', 'place_id'];
+  const header = cols.join(',');
+  const rows = leads.map(lead => cols.map(c => {
+    let v = lead[c];
+    if (v == null) v = '';
+    v = String(v).replace(/"/g, '""');
+    return `"${v}"`;
+  }).join(','));
+  return [header, ...rows].join('\n');
+}
+
+exportBtn.addEventListener('click', () => {
+  if (!currentLeads.length) return;
+  const csv = toCsv(currentLeads);
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'leads_no_website.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+
+async function runSearch() {
+  const query = document.getElementById('query').value.trim();
+  const maxResults = parseInt(document.getElementById('max_results').value, 10) || 20;
+
+  if (!query) {
+    setStatus('Enter what to search for, e.g. "plumbers in Austin, TX".', 'error');
+    return;
+  }
+
+  searchBtn.disabled = true;
+  searchBtn.innerHTML = '<span class="spinner"></span>Searching...';
+  resultsPanel.style.display = 'none';
+  setStatus('Searching Google Maps...');
+
+  try {
+    const resp = await fetch('/api/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, max_results: maxResults }),
+    });
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      setStatus(data.error || 'Search failed.', 'error');
+      return;
+    }
+
+    currentLeads = data.leads;
+    renderLeads(currentLeads);
+    resultsSummary.textContent =
+      `${data.stats.without_website} of ${data.stats.total_found} places found have no listed website.`;
+    resultsPanel.style.display = currentLeads.length ? 'block' : 'none';
+
+    if (!currentLeads.length) {
+      setStatus('No leads without a website found for that search.', 'ok');
+    } else {
+      setStatus(`Found ${currentLeads.length} leads.`, 'ok');
+    }
+  } catch (err) {
+    setStatus('Request failed: ' + err.message, 'error');
+  } finally {
+    searchBtn.disabled = false;
+    searchBtn.textContent = 'Find leads';
+  }
+}
+
+searchBtn.addEventListener('click', runSearch);
+document.getElementById('query').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') runSearch();
+});
+</script>
+</body>
+</html>
