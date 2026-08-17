@@ -21,6 +21,7 @@ src/backtest/
   cli.py                Command-line entry point
 scripts/generate_sample_data.py   Synthetic tick data for testing the pipeline (NOT real market data)
 scripts/run_validation.py         Runs walk-forward + sensitivity across the whole strategy library
+scripts/time_calculator.py        Centralized session-time calculator (see below)
 tests/                 pytest suite
 ```
 
@@ -169,6 +170,30 @@ Output goes to `reports/validation/` (`walkforward_summary.csv`,
 - Strategy parameters default to textbook values; `PARAM_SPACE` on each
   strategy class defines a small grid for walk-forward/sensitivity, but it's
   a starting point, not an exhaustive search.
+
+## Time calculator (all sessions in Alberta time)
+
+`scripts/time_calculator.py` is a centralized time calculator for trading
+session hours: every major equity exchange (Sydney, Tokyo, Hong Kong,
+Shanghai, Singapore, Frankfurt, London, New York), the classic 4-city forex
+sessions, and CME Globex futures (ES, NQ, CL, GC, ...) - all converted into
+Alberta time (`America/Edmonton`). DST is handled automatically and
+independently for each market via `zoneinfo`, including Alberta's own
+MST/MDT transitions.
+
+```bash
+# Board of every session's open/closed status, next event in Alberta time
+python scripts/time_calculator.py
+
+# Convert a one-off time from any timezone into Alberta time
+python scripts/time_calculator.py --convert 14:30 --tz America/New_York
+python scripts/time_calculator.py --convert "2025-03-10 09:30" --tz Europe/London
+```
+
+CME Globex trades nearly 24 hours (Sunday 17:00 CT through Friday 16:00 CT)
+with a daily 16:00-17:00 CT maintenance halt - `src/backtest/sessions.py`
+models that schedule explicitly rather than treating it as a simple daily
+open/close window.
 
 ## Tests
 
