@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lead Finder - No Website</title>
+<style>
+  :root {
+    --bg: #0b0d12;
+    --bg-glow: radial-gradient(1200px 500px at 15% -10%, #1d2c52 0%, transparent 60%),
+                radial-gradient(900px 400px at 100% 0%, #1a3a33 0%, transparent 55%);
+    --panel: #14161d;
+    --bubble: #191c25;
+    --bubble-hover: #1e222d;
+    --border: #262a35;
+    --border-soft: #1f222c;
+    --text: #edeef2;
+    --muted: #8b93a3;
+    --muted-soft: #666d7c;
+    --accent: #5b8cff;
+    --accent-2: #7c5cff;
+    --accent-hover: #7aa2ff;
+    --good: #3ecf8e;
+    --bad: #ff6b6b;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg);
+    background-image: var(--bg-glow);
+    background-attachment: fixed;
+    color: var(--text);
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  .hero { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+  .hero-icon {
+    width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; box-shadow: 0 8px 24px -8px #5b8cff88;
+  }
+  h1 { font-size: 24px; margin: 0; letter-spacing: -0.02em; }
+  .subtitle { color: var(--muted); margin: 8px 0 28px; font-size: 14px; line-height: 1.5; max-width: 560px; }
+
+  .panel {
+    background: linear-gradient(180deg, #161922 0%, var(--panel) 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 0 #ffffff08 inset, 0 20px 40px -30px #000000cc;
+  }
+  .form-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label {
+    font-size: 11px; color: var(--muted-soft); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .field input {
+    background: #0b0d13;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 11px 12px;
+    color: var(--text);
+    font-size: 14px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field input::placeholder { color: #4d5361; }
+  .field input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px #5b8cff26;
+  }
+  #query { flex: 1.4; min-width: 180px; }
+  #near { flex: 1; min-width: 170px; }
+  #radius_km { width: 80px; }
+  #max_results { width: 80px; }
+  .checkbox-field {
+    display: flex; align-items: center; gap: 6px; cursor: pointer;
+    background: #0b0d13; border: 1px solid var(--border); border-radius: 9px;
+    padding: 11px 12px; font-size: 13px; color: var(--text); white-space: nowrap;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .checkbox-field:hover { border-color: #333844; }
+  .checkbox-field:has(input:checked) { border-color: #ffc94d66; background: #1a160c; }
+  .checkbox-field input { width: 14px; height: 14px; accent-color: #ffc94d; cursor: pointer; }
+
+  button {
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 9px;
+    padding: 12px 22px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.15s, background 0.15s, opacity 0.15s;
+  }
+  button:active { transform: translateY(1px); }
+  #search-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white;
+    box-shadow: 0 10px 24px -10px #5b8cff70;
+    white-space: nowrap;
+  }
+  #search-btn:hover { box-shadow: 0 12px 28px -8px #5b8cff9e; }
+  #search-btn:disabled { background: #2a2e3a; box-shadow: none; cursor: not-allowed; opacity: 0.7; }
+  #export-btn {
+    background: var(--bubble); color: var(--text); border: 1px solid var(--border);
+    font-size: 12px; padding: 8px 14px; display: inline-flex; align-items: center; gap: 6px;
+  }
+  #export-btn:hover:not(:disabled) { background: var(--bubble-hover); border-color: #333844; }
+  #export-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .status { margin-top: 14px; font-size: 13px; color: var(--muted); min-height: 18px; }
+  .status.error { color: var(--bad); }
+
+  .chat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .chat-header-left { display: flex; align-items: baseline; gap: 10px; }
+  .chat-header h2 { font-size: 13px; margin: 0; color: var(--muted-soft); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+  .stat-pill {
+    display: none; align-items: center; gap: 6px;
+    background: #12261e; color: var(--good); border: 1px solid #1f3d30;
+    font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+  }
+  .stat-pill.show { display: inline-flex; }
+
+  .chat-box {
+    height: 540px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 4px;
+  }
+  .chat-box::-webkit-scrollbar { width: 8px; }
+  .chat-box::-webkit-scrollbar-thumb { background: #262a35; border-radius: 8px; }
+  .chat-box::-webkit-scrollbar-track { background: transparent; }
+
+  .empty-state {
+    height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--muted-soft); text-align: center; gap: 10px; padding: 20px;
+  }
+  .empty-state .glyph {
+    width: 52px; height: 52px; border-radius: 50%; background: var(--bubble); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 4px;
+  }
+  .empty-state .title { color: var(--muted); font-size: 14px; font-weight: 600; }
+  .empty-state .desc { font-size: 12.5px; max-width: 340px; line-height: 1.5; }
+
+  .chat-msg {
+    background: var(--bubble);
+    border: 1px solid var(--border-soft);
+    border-left: 3px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.55;
+    animation: rise 0.25s ease-out;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .chat-msg.lead:hover { background: var(--bubble-hover); border-left-color: var(--accent); }
+  @keyframes rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .chat-msg.system { color: var(--muted-soft); background: transparent; border: none; padding: 2px 2px; font-size: 12px; }
+  .chat-msg.error { border-left-color: var(--bad); background: #251518; color: #ffb3b3; }
+
+  .lead-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+  .lead-name { font-weight: 700; font-size: 14.5px; color: var(--text); }
+  .badge-no-site {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    color: #ffb85c; background: #2e2312; border: 1px solid #4a3818; padding: 2px 7px; border-radius: 999px;
+  }
+  .lead-score { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; }
+  .lead-star { color: #333844; font-size: 13px; letter-spacing: 1px; }
+  .lead-star.filled { color: #ffc94d; }
+  .lead-score-num { font-size: 11px; color: var(--muted-soft); }
+  .lead-meta { color: var(--muted); margin-bottom: 8px; font-size: 12.5px; }
+  .lead-meta .star { color: #ffc94d; }
+  .lead-row { margin: 3px 0; color: var(--text); }
+  .lead-row .label { display: inline-block; width: 20px; opacity: 0.85; }
+  .lead-row .none { color: var(--muted-soft); font-style: italic; }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+  .hours-toggle { cursor: pointer; color: var(--accent); font-size: 12px; }
+  .hours-list { margin: 6px 0 0 20px; padding: 0; color: var(--muted); font-size: 12px; display: none; }
+  .hours-list.open { display: block; }
+  .hours-list li { margin: 2px 0; }
+
+  .spinner {
+    display: inline-block; width: 13px; height: 13px; border: 2px solid #ffffff55;
+    border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-icon">📍</div>
+    <h1>Lead Finder</h1>
+  </div>
+  <p class="subtitle">Finds businesses on Google Maps with no listed website, and hands you everything you need to contact them - phone, address, hours, and a link to the listing.</p>
+
+  <div class="panel">
+    <div class="form-row">
+      <div class="field">
+        <label for="query">Search</label>
+        <input id="query" type="text" placeholder="e.g. roofers, coffee shops, dentists" />
+      </div>
+      <div class="field">
+        <label for="near">Starting address</label>
+        <input id="near" type="text" placeholder="e.g. 123 Main St, Austin, TX" />
+      </div>
+      <div class="field">
+        <label for="radius_km">Radius (km)</label>
+        <input id="radius_km" type="number" min="1" max="300" value="100" />
+      </div>
+      <div class="field">
+        <label for="max_results">Max results</label>
+        <input id="max_results" type="number" min="1" max="100" value="20" />
+      </div>
+      <div class="field">
+        <label for="min_score">&nbsp;</label>
+        <label class="checkbox-field" for="min_score">
+          <input id="min_score" type="checkbox" />
+          <span><span class="lead-star filled" style="font-size:12px">★</span>4+</span>
+        </label>
+      </div>
+      <button id="search-btn">🔍 Find leads</button>
+    </div>
+    <div id="status" class="status"></div>
+  </div>
+
+  <div class="panel">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <h2>Results</h2>
+        <span id="stat-pill" class="stat-pill">● 0 leads</span>
+      </div>
+      <button id="export-btn" disabled>⬇ Export CSV</button>
+    </div>
+    <div id="chat-box" class="chat-box">
+      <div class="empty-state">
+        <div class="glyph">🗺️</div>
+        <div class="title">Nothing here yet</div>
+        <div class="desc">Enter what you're looking for above and click "Find leads" - results will stream in here as cards you can call, click through to Maps, or export.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentLeads = [];
+
+const searchBtn = document.getElementById('search-btn');
+const statusEl = document.getElementById('status');
+const chatBox = document.getElementById('chat-box');
+const exportBtn = document.getElementById('export-btn');
+const statPill = document.getElementById('stat-pill');
+
+function setStatus(text, cls) {
+  statusEl.textContent = text || '';
+  statusEl.className = 'status' + (cls ? ' ' + cls : '');
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str == null ? '' : String(str);
+  return div.innerHTML;
+}
+
+function clearEmptyState() {
+  const empty = chatBox.querySelector('.empty-state');
+  if (empty) empty.remove();
+}
+
+function appendMessage(html, cls) {
+  clearEmptyState();
+  const div = document.createElement('div');
+  div.className = 'chat-msg' + (cls ? ' ' + cls : '');
+  div.innerHTML = html;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+  return div;
+}
+
+function leadScoreStars(score) {
+  const rounded = Math.round(score);
+  let stars = '';
+  for (let s = 1; s <= 5; s++) {
+    stars += `<span class="lead-star ${s <= rounded ? 'filled' : ''}">★</span>`;
+  }
+  return `<span class="lead-score" title="Lead score: how good a business prospect this is (established, reachable, no website)">${stars}<span class="lead-score-num">${score.toFixed(1)}/5 lead score</span></span>`;
+}
+
+function leadMessageHtml(lead, i) {
+  const hoursId = 'hours-' + Date.now() + '-' + i;
+  const metaParts = [];
+  if (lead.category) metaParts.push(escapeHtml(lead.category));
+  if (lead.rating != null) metaParts.push(`<span class="star">★</span> ${lead.rating} (${lead.review_count} reviews)`);
+  if (lead.business_status) metaParts.push(escapeHtml(lead.business_status));
+
+  const hoursHtml = (lead.hours && lead.hours.length)
+    ? `<span class="hours-toggle" onclick="document.getElementById('${hoursId}').classList.toggle('open')">view hours ▾</span>
+       <ul id="${hoursId}" class="hours-list">${lead.hours.map(h => `<li>${escapeHtml(h)}</li>`).join('')}</ul>`
+    : '<span class="none">not listed</span>';
+
+  return `
+    <div class="lead-top">
+      <span class="lead-name">${escapeHtml(lead.name)}</span>
+      <span class="badge-no-site">No website</span>
+      ${leadScoreStars(lead.lead_score)}
+    </div>
+    ${metaParts.length ? `<div class="lead-meta">${metaParts.join(' &nbsp;·&nbsp; ')}</div>` : ''}
+    <div class="lead-row"><span class="label">📍</span>${escapeHtml(lead.address) || '<span class="none">no address listed</span>'}</div>
+    <div class="lead-row"><span class="label">📞</span>${lead.phone ? `<a href="tel:${escapeHtml(lead.phone)}">${escapeHtml(lead.phone)}</a>` : '<span class="none">no phone listed</span>'}</div>
+    <div class="lead-row"><span class="label">🕒</span>${hoursHtml}</div>
+    <div class="lead-row"><span class="label">🔗</span>${lead.maps_url ? `<a href="${escapeHtml(lead.maps_url)}" target="_blank" rel="noopener">open in Google Maps</a>` : '<span class="none">no link</span>'}</div>
+  `;
+}
+
+function toCsv(leads) {
+  const cols = ['name', 'lead_score', 'category', 'phone', 'address', 'rating', 'review_count', 'business_status', 'maps_url', 'place_id'];
+  const header = cols.join(',');
+  const rows = leads.map(lead => cols.map(c => {
+    let v = lead[c];
+    if (v == null) v = '';
+    v = String(v).replace(/"/g, '""');
+    return `"${v}"`;
+  }).join(','));
+  return [header, ...rows].join('\n');
+}
+
+exportBtn.addEventListener('click', () => {
+  if (!currentLeads.length) return;
+  const csv = toCsv(currentLeads);
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'leads_no_website.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+
+async function runSearch() {
+  const query = document.getElementById('query').value.trim();
+  const near = document.getElementById('near').value.trim();
+  const radiusKm = parseFloat(document.getElementById('radius_km').value) || 100;
+  const maxResults = parseInt(document.getElementById('max_results').value, 10) || 20;
+  const minLeadScore = document.getElementById('min_score').checked ? 4.0 : 0;
+
+  if (!query) {
+    setStatus('Enter what to search for, e.g. "plumbers".', 'error');
+    return;
+  }
+
+  searchBtn.disabled = true;
+  searchBtn.innerHTML = '<span class="spinner"></span>Searching...';
+  setStatus(near ? `Searching within ${radiusKm}km of "${near}"...` : 'Searching Google Maps...');
+
+  const searchLabel = near
+    ? `"${query}" within ${radiusKm}km of "${near}"`
+    : `"${query}"`;
+  appendMessage(`Searching for ${escapeHtml(searchLabel)}...`, 'system');
+
+  try {
+    const resp = await fetch('/api/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query, near, radius_km: radiusKm, max_results: maxResults, min_lead_score: minLeadScore,
+      }),
+    });
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      appendMessage(escapeHtml(data.error || 'Search failed.'), 'error');
+      setStatus(data.error || 'Search failed.', 'error');
+      return;
+    }
+
+    currentLeads = data.leads;
+    exportBtn.disabled = currentLeads.length === 0;
+    statPill.textContent = `● ${currentLeads.length} lead${currentLeads.length === 1 ? '' : 's'}`;
+    statPill.classList.toggle('show', currentLeads.length > 0);
+
+    let summary = `Found ${data.stats.without_website} of ${data.stats.total_found} places with no listed website.`;
+    if (minLeadScore > 0) {
+      summary += ` Showing ${data.stats.shown} rated ${minLeadScore.toFixed(0)}+ stars.`;
+    }
+    appendMessage(summary, 'system');
+    currentLeads.forEach((lead, i) => appendMessage(leadMessageHtml(lead, i), 'lead'));
+
+    setStatus(currentLeads.length ? `Found ${currentLeads.length} leads.` : 'No leads matched that search' + (minLeadScore > 0 ? ' at 4+ stars.' : '.'));
+  } catch (err) {
+    appendMessage('Request failed: ' + escapeHtml(err.message), 'error');
+    setStatus('Request failed: ' + err.message, 'error');
+  } finally {
+    searchBtn.disabled = false;
+    searchBtn.innerHTML = '🔍 Find leads';
+  }
+}
+
+searchBtn.addEventListener('click', runSearch);
+['query', 'near', 'radius_km', 'max_results'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') runSearch();
+  });
+});
+</script>
+</body>
+</html>
