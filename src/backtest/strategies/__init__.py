@@ -8,6 +8,7 @@ from .mean_reversion import (
     ZScoreReversion,
 )
 from .patterns import EngulfingReversal, InsideBarBreakout, OpeningRangeBreakout
+from .profile import TPOReversion, VolumeProfileReversion
 from .regime_filter import RegimeFilteredStrategy
 from .trend import DonchianBreakout, MACDMomentum, MovingAverageCrossover, ParabolicSAR
 from .volatility import ATRVolatilityBreakout, KeltnerChannelBreakout, Supertrend
@@ -29,6 +30,8 @@ ALL_STRATEGY_CLASSES = [
     EngulfingReversal,
     InsideBarBreakout,
     OpeningRangeBreakout,
+    VolumeProfileReversion,
+    TPOReversion,
 ]
 
 
@@ -55,6 +58,8 @@ __all__ = [
     "EngulfingReversal",
     "InsideBarBreakout",
     "OpeningRangeBreakout",
+    "VolumeProfileReversion",
+    "TPOReversion",
     "RegimeFilteredStrategy",
     "ALL_STRATEGY_CLASSES",
     "build_default_strategies",

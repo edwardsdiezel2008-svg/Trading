@@ -201,11 +201,11 @@
 
   <div class="section-label">What this actually is</div>
   <div class="panel">
-    <p>A fully autonomous paper-trading research system. A GitHub Actions pipeline checks in on real BTC/ETH/SOL, Nasdaq, S&amp;P 500, Dow, Russell 2000, Gold, and Crude Oil futures, and memecoin market data roughly once an hour, runs 12 backtested strategies against it per asset, and rebuilds this site - all independent of anyone having a chat session open. No real money is ever at risk: every position, fill, and P&amp;L figure here is simulated against real prices, not placed on a real exchange.</p>
-    <p>The point isn't to promise a strategy that works. It's to be honest about which of 12 reasonable, well-known trading ideas actually hold up against real data, and to show the evidence - including the ones that don't hold up - rather than curate a highlight reel.</p>
+    <p>A fully autonomous paper-trading research system. A GitHub Actions pipeline checks in on real BTC/ETH/SOL, Nasdaq, S&amp;P 500, Dow, Russell 2000, Gold, and Crude Oil futures, and memecoin market data roughly once an hour, runs 18 backtested strategies against it per asset, and rebuilds this site - all independent of anyone having a chat session open. No real money is ever at risk: every position, fill, and P&amp;L figure here is simulated against real prices, not placed on a real exchange.</p>
+    <p>The point isn't to promise a strategy that works. It's to be honest about which of 18 reasonable, well-known trading ideas actually hold up against real data, and to show the evidence - including the ones that don't hold up - rather than curate a highlight reel.</p>
   </div>
 
-  <div class="section-label">The 12 strategies</div>
+  <div class="section-label">The 18 strategies</div>
   <div class="strategy-grid">
     <div class="strategy-card">
       <div class="strategy-top"><span class="strategy-name">MA_Crossover</span><span class="pill pill-trend">Trend</span></div>
@@ -246,6 +246,36 @@
       <div class="strategy-top"><span class="strategy-name">Supertrend</span><span class="pill pill-trend">Trend</span></div>
       <p class="strategy-desc">A trailing ATR band (10-period, 3.0x multiplier) that only ever ratchets in the trend's favor - price closing through it flips the position.</p>
       <p class="strategy-needs">Needs: a trend, with a built-in trailing stop baked into the signal itself.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">Parabolic_SAR</span><span class="pill pill-trend">Trend</span></div>
+      <p class="strategy-desc">A trailing stop-and-reverse level that accelerates toward price the longer a trend runs, driven by an acceleration factor rather than volatility - always long or short, never flat.</p>
+      <p class="strategy-needs">Needs: a trend; whipsaws hard in choppy, range-bound conditions since it never sits out.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">Keltner_Breakout</span><span class="pill pill-breakout">Breakout</span></div>
+      <p class="strategy-desc">Breaks out of an EMA-centered, ATR-width channel - smoother than Donchian's raw high/low band, wider than Bollinger's std-dev band in a slow grind.</p>
+      <p class="strategy-needs">Needs: breakouts that follow through, in a market whose recent range (ATR) is a fair guide to what "a real move" looks like.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">Stochastic_Reversion</span><span class="pill pill-revert">Mean-Reversion</span></div>
+      <p class="strategy-desc">Trades a %K/%D line crossover in the oversold/overbought zone of the 14-period stochastic oscillator - entry requires the fast and slow lines to actually cross, not just touch a threshold.</p>
+      <p class="strategy-needs">Needs: a range-bound market with real momentum behind the turn, not a bare threshold tag.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">CCI_Reversion</span><span class="pill pill-revert">Mean-Reversion</span></div>
+      <p class="strategy-desc">Fades the Commodity Channel Index past +/-100 - typical price's distance from its own moving average, scaled by mean absolute deviation rather than standard deviation.</p>
+      <p class="strategy-needs">Needs: a range-bound market; more sensitive to sharp, choppy swings than a std-dev-based band.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">VolProfile_Reversion</span><span class="pill pill-revert">Volume Profile</span></div>
+      <p class="strategy-desc">Builds a rolling histogram of where volume actually traded by price over the last 30 bars, finds the Point of Control (busiest price) and Value Area (band holding 70% of that volume), and fades price back in whenever it trades outside that band.</p>
+      <p class="strategy-needs">Needs: a market where "fair value" (volume-weighted) actually holds - hurt when price genuinely re-prices to a new level instead of reverting.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">TPO_Reversion</span><span class="pill pill-revert">Market Profile</span></div>
+      <p class="strategy-desc">The Market Profile (TPO) version of Volume Profile: instead of weighting by volume, it counts how many separate time periods touched each price level - one vote per period, so a level many periods agreed on outranks one hit hard by a single volume burst.</p>
+      <p class="strategy-needs">Needs: the same range-bound "fair value holds" condition as Volume Profile, but reacts differently when one period's move is unusually large or small relative to its own volume.</p>
     </div>
     <div class="strategy-card">
       <div class="strategy-top"><span class="strategy-name">VWAP_Reversion</span><span class="pill pill-revert">Mean-Reversion</span></div>

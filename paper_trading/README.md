@@ -1,6 +1,6 @@
 # Crypto + index futures paper trading cockpit
 
-Simulated (no real money) live trading of 12 backtested strategies across 20
+Simulated (no real money) live trading of 18 backtested strategies across 20
 tracks - BTC (daily, 15-minute, 3x leveraged perpetual daily, 3x leveraged
 perpetual 15-minute), ETH (daily, 3x leveraged perpetual), SOL (daily, 3x
 leveraged perpetual), and real CME/COMEX/NYMEX futures across six markets -
@@ -125,7 +125,7 @@ Genuinely useful finding from running all four alongside their spot
 equivalents: leverage doesn't just scale returns by a fixed multiple. The
 ETH and SOL perpetual tracks have consistently shown far fewer profitable
 strategies than their unleveraged spot equivalents (see the live dashboard
-for current counts, now across 16 strategies rather than the original 9) -
+for current counts, now across 18 strategies rather than the original 9) -
 the same drawdowns that a spot position recovers from can instead trigger a
 permanent liquidation at leverage, which compounds very differently over
 dozens of trades. That's a real result of the simulation, not a bug in it.
@@ -133,7 +133,7 @@ dozens of trades. That's a real result of the simulation, not a bug in it.
 ## Index Futures
 
 Twelve tracks (`_nq`/`_nq5m`, `_es`/`_es5m`, `_ym`/`_ym5m`, `_gc`/`_gc5m`,
-`_rty`/`_rty5m`, `_cl`/`_cl5m`, each daily/5-min) run all 16 strategies
+`_rty`/`_rty5m`, `_cl`/`_cl5m`, each daily/5-min) run all 18 strategies
 against **real futures prices** - CME's Nasdaq-100 E-mini (NQ=F), S&P 500
 E-mini (ES=F), Dow E-mini (YM=F), and Russell 2000 E-mini (RTY=F), plus
 COMEX Gold (GC=F) and NYMEX WTI Crude Oil (CL=F), all continuous front
@@ -280,7 +280,7 @@ these snapshots were run in the same round these instruments were added.
 
 ## Pattern-recognition strategies
 
-Three of the 16 strategies read the raw shape of the candles rather than an
+Three of the 18 strategies read the raw shape of the candles rather than an
 indicator series - added specifically because intraday timeframes (the
 5-minute Nasdaq Futures track most of all) show far more of these setups
 per session than a daily chart does. All three live in
@@ -404,7 +404,7 @@ each strategy's walk-forward OOS equity curve, producing a 90% confidence
 interval on total return. If that interval still includes zero, the result
 can't be told apart from a strategy with no real edge at this sample size -
 even when the point estimate itself is positive. Not a rigorous hypothesis
-test (multiple testing across 16 strategies per track isn't corrected for),
+test (multiple testing across 18 strategies per track isn't corrected for),
 just an honest uncertainty band a bare point estimate doesn't carry.
 
 Wired into `walkforward_snapshot.py` - every `walkforward*.json` now carries

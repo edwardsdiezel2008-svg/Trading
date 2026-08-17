@@ -17,6 +17,8 @@ from src.backtest.strategies import (
     RSIReversion,
     StochasticReversion,
     Supertrend,
+    TPOReversion,
+    VolumeProfileReversion,
     VWAPReversion,
     ZScoreReversion,
     build_default_strategies,
@@ -39,6 +41,8 @@ ALL = [
     EngulfingReversal(),
     InsideBarBreakout(),
     OpeningRangeBreakout(),
+    VolumeProfileReversion(),
+    TPOReversion(),
 ]
 
 
@@ -64,8 +68,8 @@ def test_signals_are_valid_positions(strategy):
 
 def test_build_default_strategies_returns_one_of_each():
     strategies = build_default_strategies()
-    assert len(strategies) == 16
-    assert len({s.name for s in strategies}) == 16
+    assert len(strategies) == 18
+    assert len({s.name for s in strategies}) == 18
 
 
 def test_ma_crossover_flips_on_clean_trend_reversal():
@@ -328,3 +332,45 @@ def test_keltner_breakout_flat_during_quiet_consolidation():
     strategy = KeltnerChannelBreakout(params={"period": 20, "multiplier": 2.0})
     signals = strategy.generate_signals(bars)
     assert (signals.iloc[20:] == 0).all()
+
+
+def test_volume_profile_reversion_goes_long_below_a_heavy_volume_value_area():
+    # Heavy, high-volume trading concentrated at 100, then a low-volume dip
+    # to 90 - almost all the profile's weight sits near 100, so 90 should
+    # fall outside the value area and trigger a long.
+    rows = [_bar(100.0, 100.0, 100.0, 100.0, v=1000)] * 35 + [_bar(90.0, 90.0, 90.0, 90.0, v=10)] * 10
+    idx = pd.date_range("2026-01-05", periods=len(rows), freq="1min")
+    bars = pd.DataFrame(rows, index=idx)
+    strategy = VolumeProfileReversion(params={"lookback": 30})
+    signals = strategy.generate_signals(bars)
+    assert signals.iloc[-1] == 1
+
+
+def test_volume_profile_reversion_flat_when_price_never_moves():
+    rows = [_bar(100.0, 100.0, 100.0, 100.0, v=100)] * 40
+    idx = pd.date_range("2026-01-05", periods=len(rows), freq="1min")
+    bars = pd.DataFrame(rows, index=idx)
+    strategy = VolumeProfileReversion(params={"lookback": 30})
+    signals = strategy.generate_signals(bars)
+    assert (signals.iloc[30:] == 0).all()
+
+
+def test_tpo_reversion_goes_long_below_a_heavily_visited_value_area():
+    # 11 TPO periods (55 bars) all print at 100, then 1 period (5 bars) at
+    # 90 - by period *count* (not volume) 100 dominates the profile, so a
+    # close at 90 falls outside the value area and triggers a long.
+    rows = [_bar(100.0, 100.0, 100.0, 100.0)] * 55 + [_bar(90.0, 90.0, 90.0, 90.0)] * 6
+    idx = pd.date_range("2026-01-05", periods=len(rows), freq="1min")
+    bars = pd.DataFrame(rows, index=idx)
+    strategy = TPOReversion(params={"lookback": 60, "period_bars": 5})
+    signals = strategy.generate_signals(bars)
+    assert signals.iloc[-1] == 1
+
+
+def test_tpo_reversion_flat_when_price_never_moves():
+    rows = [_bar(100.0, 100.0, 100.0, 100.0)] * 70
+    idx = pd.date_range("2026-01-05", periods=len(rows), freq="1min")
+    bars = pd.DataFrame(rows, index=idx)
+    strategy = TPOReversion(params={"lookback": 60, "period_bars": 5})
+    signals = strategy.generate_signals(bars)
+    assert (signals.iloc[60:] == 0).all()
