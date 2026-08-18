@@ -1,0 +1,39 @@
+- [x] Add hourly market data workflow (GitHub Actions)
+- [x] Deploy dashboard to GitHub Pages on every hourly update
+- [x] Sync list-tickers.yml to main for workflow_dispatch discovery
+- [x] Sync workflow: deploy both index.html (landing) and dashboard.html (details)
+- [x] Add market news fetch step to hourly pipeline
+- [x] Apply cost-aware trade filter to the 15-minute track in the hourly pipeline
+- [x] Paper trading update / manual catch-up
+- [x] Fix instrument-name format and ticker parsing for raw REST API
+- [x] Add BTC order book depth and perpetual funding rate to dashboard
+- [x] Add ETH/SOL paper-trading tracks and deep-history backfill pagination
+- [x] Backfill deep price history (BTC/ETH/SOL daily)
+- [x] Add Fear & Greed Index, freshness banner, and fix backfilled data quality
+- [x] Add full-backtest equity curve chart per strategy
+- [x] Add candlestick price chart panel
+- [x] Add BTC/ETH/SOL correlation heatmap
+- [x] Add CoinMarketCap-style heatmap grid to memecoin wide scan
+- [x] Add market overview sparkline strip (BTC/ETH/SOL)
+- [x] Add realistic crypto trading costs (biggest lever toward a genuine profitability signal)
+- [x] Add unprofitable-track warning banner
+- [x] Add buy-and-hold benchmark to equity curve + "beat it?" stat tile
+- [x] Surface walk-forward robustness on the dashboard + fix mobile tab overflow
+- [x] Give the Memecoin Scanner tab a futuristic HUD treatment
+- [x] Expand memecoin wide-scan universe from 51 to ~100 candidate tickers
+- [x] Extend futuristic HUD styling site-wide + hash-based tab deep-linking
+- [x] Split into minimal landing page (index.html) + detailed dashboard
+- [x] Add market news feed + ambient background animations site-wide
+- [x] Fix 15-min over-trading and unbounded-loss risk gap
+- [x] Add 15-min walk-forward + cross-asset robustness panel
+- [x] Add parameter sensitivity as a second robustness check
+- [x] Add live trend/volatility regime indicator to landing page
+- [x] Add test coverage for max_loss_fraction and CostAwareFilter
+- [x] Rewrite paper_trading/README.md to match the current GitHub Actions pipeline
+- [x] Surface walk-forward confirmation count in the top stat strip
+- [x] Polish: diversify landing-page news sources, unify robustness table styling
+- [x] Show sensitivity snapshot's own generated-at timestamp
+- [x] Add Supertrend and VWAP Reversion strategies (7 -> 9)
+- [x] Make strategy count dynamic on landing page hero text; fix README count
+- [x] Add 2 more chart series colors for the 9-strategy roster
+- [x] Fix money formatting rounding small values to $0

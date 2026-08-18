@@ -1,0 +1,1 @@
+- [x] Remove unused numpy import from memecoin_scan_update.py

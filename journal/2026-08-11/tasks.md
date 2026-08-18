@@ -1,0 +1,8 @@
+- [x] Stress-test the 5 statistically significant survivors + fix a real charset bug
+- [x] Add portfolio combination analysis for the 5 survivors
+- [x] Add volume confirmation filter, test on NQ 5-min Inside Bar Breakout
+- [x] Add Notes page: project notes charted as an interactive 3D orbit scene
+- [x] Stage notes.html for GitHub Pages deploy
+- [x] Fix jank on the Notes orbit page
+- [x] Add live market context to the futures tracks
+- [x] Add Nasdaq 1-min/15-min/1-hour tracks and chart zoom/pan

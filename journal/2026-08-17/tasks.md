@@ -1,0 +1,9 @@
+- [x] Add 4 new strategies: Stochastic and CCI reversion, Keltner Channel breakout, Parabolic SAR
+- [x] Regenerate all backtest data for the 16-strategy library
+- [x] Add Volume Profile and TPO (Market Profile) reversion strategies
+- [x] Regenerate all backtest data for the 18-strategy library; fix stale survivor-count text
+- [x] Add multi-timeframe Auction Market Theory strategy for MNQ
+- [x] Add centralized trading session time calculator (Alberta time)
+- [x] Make project cards actually viewable: real case study modals
+- [x] Add Hollow Creek Timber Co. lumber business site
+- [x] Add RHK RV Campground Park site (real business)

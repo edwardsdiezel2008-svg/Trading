@@ -1,0 +1,34 @@
+- [x] Sync workflow: stage+deploy learn.html to GitHub Pages
+- [x] Sync workflow: add BTC Perpetual (3x leveraged) pipeline step
+- [x] Sync workflow: add BTC Perp 15-Min + ETH/SOL Perpetual pipeline steps
+- [x] Sync Nasdaq-100 Futures workflow steps to main
+- [x] Sync Nasdaq Futures (real NQ=F, 5-min track) workflow steps to main
+- [x] Sync S&P 500 Futures (ES=F/MES) workflow steps to main
+- [x] Sync Dow/Gold futures workflow steps to main
+- [x] Sync Russell 2000/Crude Oil futures workflow steps to main
+- [x] Add Rug Pull Watch section to the memecoin scanner
+- [x] Surface Rug Pull Watch on the landing page
+- [x] Add Rug Pull Watch persistence tracking + shared severity module
+- [x] Extend Rug Pull Watch with a multi-day drawdown check
+- [x] Add Max Drawdown / Win Rate / Profit Factor to the strategy positions table
+- [x] Add trade Duration to the Recent Closed Trades panel
+- [x] Add a Learn page: strategy glossary, validation methodology, metric definitions
+- [x] More breathing room between sections + swipe navigation
+- [x] Give swipe navigation a cleaner, directional transition
+- [x] Add a 3x leveraged BTC Perpetual paper-trading track
+- [x] Expand perpetual futures to every asset and timeframe, backed by real research
+- [x] Add Nasdaq-100 Futures paper-trading track (QQQ proxy, daily)
+- [x] Switch Nasdaq Futures to real NQ=F data, add 5-min track and pattern strategies
+- [x] Add regime-conditional meta-strategy selector
+- [x] Focus pass on futures trading: fill validation gap, fix ORB session bug
+- [x] Add S&P 500 E-mini futures (ES=F/MES), daily + 5-minute
+- [x] Run validation snapshots for S&P 500 Futures tracks
+- [x] Add --leverage to validation scripts; close perp/crypto validation gaps
+- [x] Add Dow (YM=F/MYM) and Gold (GC=F/MGC) futures tracks
+- [x] Run walk-forward/sensitivity/meta-strategy snapshots for Dow + Gold futures
+- [x] Add Russell 2000 (RTY=F/M2K) and WTI Crude Oil (CL=F/MCL) futures tracks
+- [x] Run validation snapshots for Russell 2000/Crude Oil + full 6-instrument data-quality audit
+- [x] Add Cross-futures validated panel: strategy robustness across all 6 futures markets
+- [x] Add a persistent "NEW" badge on unseen headlines
+- [x] Add bootstrap confidence intervals to walk-forward results
+- [x] Finish walk-forward CI regeneration + document real significance findings

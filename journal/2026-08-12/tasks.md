@@ -1,0 +1,10 @@
+- [x] Fix stale-data banner to actually cover the futures tracks
+- [x] Fix swipe navigation skipping the new Nasdaq tracks
+- [x] Add test coverage for cross-asset/cross-futures robustness scoring
+- [x] Add test coverage for the correlation-heatmap math (_pearson, _daily_returns)
+- [x] Add test coverage for equity-curve/track-record helpers in paper_trade_update.py
+- [x] Add test coverage for the news fetcher's parsing/tagging logic
+- [x] Add test coverage for the survivor-portfolio combination analysis
+- [x] Add test coverage for the memecoin breakout scanner (scan_coin, _atr)
+- [x] Add test coverage for the core BTC market-data fetch/merge pipeline
+- [x] Add standalone 3D portfolio site (raw WebGL, no build step)

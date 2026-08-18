@@ -175,3 +175,16 @@ Output goes to `reports/validation/` (`walkforward_summary.csv`,
 ```bash
 python -m pytest tests/ -q
 ```
+
+## Daily journal + live calendar planner
+
+`journal/` keeps a dated folder per day of work on this project (tasks +
+notes), browsable as a live monthly calendar:
+
+```bash
+python scripts/journal.py new                  # scaffold today's folder
+python scripts/journal.py task "did the thing" --done
+python scripts/journal.py serve                 # live calendar at journal/calendar.html
+```
+
+See `journal/README.md` for the full workflow.

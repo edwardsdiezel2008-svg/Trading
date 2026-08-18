@@ -1,0 +1,578 @@
+{
+  "generated_at": "2026-08-18T01:41:57Z",
+  "days": {
+    "2026-08-08": {
+      "tasks": [
+        {
+          "text": "Initial commit",
+          "done": true
+        },
+        {
+          "text": "Add backtesting engine for evaluating common trading techniques",
+          "done": true
+        },
+        {
+          "text": "Add script to export replay data for the engine visualization",
+          "done": true
+        },
+        {
+          "text": "Add walk-forward validation and parameter sensitivity analysis",
+          "done": true
+        },
+        {
+          "text": "Add Alpaca data-fetch script for real historical bars",
+          "done": true
+        },
+        {
+          "text": "Add crypto support to the Alpaca fetch script",
+          "done": true
+        },
+        {
+          "text": "Add Crypto.com data-fetch script as a second no-auth crypto source",
+          "done": true
+        },
+        {
+          "text": "Add yfinance fetch script as a no-account NASDAQ data source",
+          "done": true
+        },
+        {
+          "text": "Support per-instrument freq in the replay data exporter",
+          "done": true
+        },
+        {
+          "text": "Add regime-filtered strategy wrapper",
+          "done": true
+        },
+        {
+          "text": "Add BTC paper trading infrastructure for all 7 strategies",
+          "done": true
+        },
+        {
+          "text": "Add BTC paper trading dashboard",
+          "done": true
+        },
+        {
+          "text": "Fix position sizing to support fractional units for crypto",
+          "done": true
+        },
+        {
+          "text": "Add track record tracking, separate from the historical backtest",
+          "done": true
+        },
+        {
+          "text": "Add 15-minute paper trading track alongside daily",
+          "done": true
+        },
+        {
+          "text": "Add meme coin breakout scanner as a third dashboard tab",
+          "done": true
+        },
+        {
+          "text": "Add wide 51-coin meme scan alongside the precise 11-coin scanner",
+          "done": true
+        }
+      ],
+      "task_count": 17,
+      "done_count": 17,
+      "title": "Saturday, 2026-08-08 \u2014 Kickoff: backtesting engine + first BTC paper trading dashboard",
+      "notes": "# Saturday, 2026-08-08 \u2014 Kickoff: backtesting engine + first BTC paper trading dashboard\n\nSession: **Trading** (branch `claude/hello-rs2zvp`).\n\nStarted the repo from scratch: the core backtesting engine (7 strategies,\nnext-bar execution, walk-forward validation, parameter sensitivity), three\nfree market-data sources (Alpaca, Crypto.com, yfinance), then pivoted into\nlive BTC paper trading with a dashboard and a memecoin breakout scanner.\n\nArtifacts: [Engine Replay](https://claude.ai/code/artifact/79ec4f42-1ccb-4ced-8ca0-100d3b9b7bcb), [MCP Connector Diagnostic](https://claude.ai/code/artifact/f7f2aa5b-a738-4bda-806a-a77886f721e9)."
+    },
+    "2026-08-09": {
+      "tasks": [
+        {
+          "text": "Add hourly market data workflow (GitHub Actions)",
+          "done": true
+        },
+        {
+          "text": "Deploy dashboard to GitHub Pages on every hourly update",
+          "done": true
+        },
+        {
+          "text": "Sync list-tickers.yml to main for workflow_dispatch discovery",
+          "done": true
+        },
+        {
+          "text": "Sync workflow: deploy both index.html (landing) and dashboard.html (details)",
+          "done": true
+        },
+        {
+          "text": "Add market news fetch step to hourly pipeline",
+          "done": true
+        },
+        {
+          "text": "Apply cost-aware trade filter to the 15-minute track in the hourly pipeline",
+          "done": true
+        },
+        {
+          "text": "Paper trading update / manual catch-up",
+          "done": true
+        },
+        {
+          "text": "Fix instrument-name format and ticker parsing for raw REST API",
+          "done": true
+        },
+        {
+          "text": "Add BTC order book depth and perpetual funding rate to dashboard",
+          "done": true
+        },
+        {
+          "text": "Add ETH/SOL paper-trading tracks and deep-history backfill pagination",
+          "done": true
+        },
+        {
+          "text": "Backfill deep price history (BTC/ETH/SOL daily)",
+          "done": true
+        },
+        {
+          "text": "Add Fear & Greed Index, freshness banner, and fix backfilled data quality",
+          "done": true
+        },
+        {
+          "text": "Add full-backtest equity curve chart per strategy",
+          "done": true
+        },
+        {
+          "text": "Add candlestick price chart panel",
+          "done": true
+        },
+        {
+          "text": "Add BTC/ETH/SOL correlation heatmap",
+          "done": true
+        },
+        {
+          "text": "Add CoinMarketCap-style heatmap grid to memecoin wide scan",
+          "done": true
+        },
+        {
+          "text": "Add market overview sparkline strip (BTC/ETH/SOL)",
+          "done": true
+        },
+        {
+          "text": "Add realistic crypto trading costs (biggest lever toward a genuine profitability signal)",
+          "done": true
+        },
+        {
+          "text": "Add unprofitable-track warning banner",
+          "done": true
+        },
+        {
+          "text": "Add buy-and-hold benchmark to equity curve + \"beat it?\" stat tile",
+          "done": true
+        },
+        {
+          "text": "Surface walk-forward robustness on the dashboard + fix mobile tab overflow",
+          "done": true
+        },
+        {
+          "text": "Give the Memecoin Scanner tab a futuristic HUD treatment",
+          "done": true
+        },
+        {
+          "text": "Expand memecoin wide-scan universe from 51 to ~100 candidate tickers",
+          "done": true
+        },
+        {
+          "text": "Extend futuristic HUD styling site-wide + hash-based tab deep-linking",
+          "done": true
+        },
+        {
+          "text": "Split into minimal landing page (index.html) + detailed dashboard",
+          "done": true
+        },
+        {
+          "text": "Add market news feed + ambient background animations site-wide",
+          "done": true
+        },
+        {
+          "text": "Fix 15-min over-trading and unbounded-loss risk gap",
+          "done": true
+        },
+        {
+          "text": "Add 15-min walk-forward + cross-asset robustness panel",
+          "done": true
+        },
+        {
+          "text": "Add parameter sensitivity as a second robustness check",
+          "done": true
+        },
+        {
+          "text": "Add live trend/volatility regime indicator to landing page",
+          "done": true
+        },
+        {
+          "text": "Add test coverage for max_loss_fraction and CostAwareFilter",
+          "done": true
+        },
+        {
+          "text": "Rewrite paper_trading/README.md to match the current GitHub Actions pipeline",
+          "done": true
+        },
+        {
+          "text": "Surface walk-forward confirmation count in the top stat strip",
+          "done": true
+        },
+        {
+          "text": "Polish: diversify landing-page news sources, unify robustness table styling",
+          "done": true
+        },
+        {
+          "text": "Show sensitivity snapshot's own generated-at timestamp",
+          "done": true
+        },
+        {
+          "text": "Add Supertrend and VWAP Reversion strategies (7 -> 9)",
+          "done": true
+        },
+        {
+          "text": "Make strategy count dynamic on landing page hero text; fix README count",
+          "done": true
+        },
+        {
+          "text": "Add 2 more chart series colors for the 9-strategy roster",
+          "done": true
+        },
+        {
+          "text": "Fix money formatting rounding small values to $0",
+          "done": true
+        }
+      ],
+      "task_count": 39,
+      "done_count": 39,
+      "title": "Sunday, 2026-08-09 \u2014 The big build day: multi-asset live site + GitHub Actions pipeline",
+      "notes": "# Sunday, 2026-08-09 \u2014 The big build day: multi-asset live site + GitHub Actions pipeline\n\nSession: **Trading** (branch `claude/hello-rs2zvp`).\n\nWent from a single BTC paper-trading dashboard to a full live site in one\nday: multi-asset paper trading (BTC/ETH/SOL), an hourly GitHub Actions\npipeline auto-deploying to GitHub Pages, realistic trading costs, walk-forward\n+ sensitivity robustness panels, a 9-strategy roster (added Supertrend +\nVWAP Reversion), and a \"futuristic HUD\" redesign of the Memecoin Scanner\nthat later spread site-wide.\n\nArtifact: [BTC Paper Trading](https://claude.ai/code/artifact/e15e6509-cdee-4c54-a988-5ef65ab960d6).\n\nPlus 27 automated hourly market-data refresh commits from the new pipeline."
+    },
+    "2026-08-10": {
+      "tasks": [
+        {
+          "text": "Sync workflow: stage+deploy learn.html to GitHub Pages",
+          "done": true
+        },
+        {
+          "text": "Sync workflow: add BTC Perpetual (3x leveraged) pipeline step",
+          "done": true
+        },
+        {
+          "text": "Sync workflow: add BTC Perp 15-Min + ETH/SOL Perpetual pipeline steps",
+          "done": true
+        },
+        {
+          "text": "Sync Nasdaq-100 Futures workflow steps to main",
+          "done": true
+        },
+        {
+          "text": "Sync Nasdaq Futures (real NQ=F, 5-min track) workflow steps to main",
+          "done": true
+        },
+        {
+          "text": "Sync S&P 500 Futures (ES=F/MES) workflow steps to main",
+          "done": true
+        },
+        {
+          "text": "Sync Dow/Gold futures workflow steps to main",
+          "done": true
+        },
+        {
+          "text": "Sync Russell 2000/Crude Oil futures workflow steps to main",
+          "done": true
+        },
+        {
+          "text": "Add Rug Pull Watch section to the memecoin scanner",
+          "done": true
+        },
+        {
+          "text": "Surface Rug Pull Watch on the landing page",
+          "done": true
+        },
+        {
+          "text": "Add Rug Pull Watch persistence tracking + shared severity module",
+          "done": true
+        },
+        {
+          "text": "Extend Rug Pull Watch with a multi-day drawdown check",
+          "done": true
+        },
+        {
+          "text": "Add Max Drawdown / Win Rate / Profit Factor to the strategy positions table",
+          "done": true
+        },
+        {
+          "text": "Add trade Duration to the Recent Closed Trades panel",
+          "done": true
+        },
+        {
+          "text": "Add a Learn page: strategy glossary, validation methodology, metric definitions",
+          "done": true
+        },
+        {
+          "text": "More breathing room between sections + swipe navigation",
+          "done": true
+        },
+        {
+          "text": "Give swipe navigation a cleaner, directional transition",
+          "done": true
+        },
+        {
+          "text": "Add a 3x leveraged BTC Perpetual paper-trading track",
+          "done": true
+        },
+        {
+          "text": "Expand perpetual futures to every asset and timeframe, backed by real research",
+          "done": true
+        },
+        {
+          "text": "Add Nasdaq-100 Futures paper-trading track (QQQ proxy, daily)",
+          "done": true
+        },
+        {
+          "text": "Switch Nasdaq Futures to real NQ=F data, add 5-min track and pattern strategies",
+          "done": true
+        },
+        {
+          "text": "Add regime-conditional meta-strategy selector",
+          "done": true
+        },
+        {
+          "text": "Focus pass on futures trading: fill validation gap, fix ORB session bug",
+          "done": true
+        },
+        {
+          "text": "Add S&P 500 E-mini futures (ES=F/MES), daily + 5-minute",
+          "done": true
+        },
+        {
+          "text": "Run validation snapshots for S&P 500 Futures tracks",
+          "done": true
+        },
+        {
+          "text": "Add --leverage to validation scripts; close perp/crypto validation gaps",
+          "done": true
+        },
+        {
+          "text": "Add Dow (YM=F/MYM) and Gold (GC=F/MGC) futures tracks",
+          "done": true
+        },
+        {
+          "text": "Run walk-forward/sensitivity/meta-strategy snapshots for Dow + Gold futures",
+          "done": true
+        },
+        {
+          "text": "Add Russell 2000 (RTY=F/M2K) and WTI Crude Oil (CL=F/MCL) futures tracks",
+          "done": true
+        },
+        {
+          "text": "Run validation snapshots for Russell 2000/Crude Oil + full 6-instrument data-quality audit",
+          "done": true
+        },
+        {
+          "text": "Add Cross-futures validated panel: strategy robustness across all 6 futures markets",
+          "done": true
+        },
+        {
+          "text": "Add a persistent \"NEW\" badge on unseen headlines",
+          "done": true
+        },
+        {
+          "text": "Add bootstrap confidence intervals to walk-forward results",
+          "done": true
+        },
+        {
+          "text": "Finish walk-forward CI regeneration + document real significance findings",
+          "done": true
+        }
+      ],
+      "task_count": 34,
+      "done_count": 34,
+      "title": "Monday, 2026-08-10 \u2014 Expansion into futures (6 markets) + Rug Pull Watch",
+      "notes": "# Monday, 2026-08-10 \u2014 Expansion into futures (6 markets) + Rug Pull Watch\n\nSession: **Trading** (branch `claude/hello-rs2zvp`).\n\nExpanded from crypto-only into futures: Nasdaq (NQ/MNQ), S&P 500 (ES/MES),\nDow (YM/MYM), Gold (GC/MGC), Russell 2000 (RTY/M2K), and Crude Oil (CL/MCL)\nwere all wired through the pipeline with their own paper-trading tracks,\nvalidation snapshots, and a cross-futures robustness panel. Also shipped a\nRug Pull Watch for the memecoin scanner (persistence tracking + a multi-day\ndrawdown check), a Learn page (strategy glossary + methodology), and\nbootstrap confidence intervals on the walk-forward results.\n\nPlus 27 automated hourly market-data refresh commits."
+    },
+    "2026-08-11": {
+      "tasks": [
+        {
+          "text": "Stress-test the 5 statistically significant survivors + fix a real charset bug",
+          "done": true
+        },
+        {
+          "text": "Add portfolio combination analysis for the 5 survivors",
+          "done": true
+        },
+        {
+          "text": "Add volume confirmation filter, test on NQ 5-min Inside Bar Breakout",
+          "done": true
+        },
+        {
+          "text": "Add Notes page: project notes charted as an interactive 3D orbit scene",
+          "done": true
+        },
+        {
+          "text": "Stage notes.html for GitHub Pages deploy",
+          "done": true
+        },
+        {
+          "text": "Fix jank on the Notes orbit page",
+          "done": true
+        },
+        {
+          "text": "Add live market context to the futures tracks",
+          "done": true
+        },
+        {
+          "text": "Add Nasdaq 1-min/15-min/1-hour tracks and chart zoom/pan",
+          "done": true
+        }
+      ],
+      "task_count": 8,
+      "done_count": 8,
+      "title": "Tuesday, 2026-08-11 \u2014 Stress-testing survivors + a 3D Notes page",
+      "notes": "# Tuesday, 2026-08-11 \u2014 Stress-testing survivors + a 3D Notes page\n\nSession: **Trading** (branch `claude/hello-rs2zvp`).\n\nTook the strategies that survived walk-forward + bootstrap CI the day before\nand stress-tested them further, then looked at combining them into one\nportfolio. Also added a genuinely fun touch: a Notes page that renders\nproject notes as an interactive 3D orbit scene.\n\nArtifacts: [Inside Bar Breakout \u2014 5-Minute Setup](https://claude.ai/code/artifact/cf952ff3-a380-467e-8f6f-565724bb87b2), [Four Mechanisms](https://claude.ai/code/artifact/dbd17b44-0784-491b-a644-ab5adad5e4d8), [Two Systems, So Far](https://claude.ai/code/artifact/23777a12-296c-412f-9f89-26071a6e0a38).\n\nPlus 10 automated hourly market-data refresh commits."
+    },
+    "2026-08-12": {
+      "tasks": [
+        {
+          "text": "Fix stale-data banner to actually cover the futures tracks",
+          "done": true
+        },
+        {
+          "text": "Fix swipe navigation skipping the new Nasdaq tracks",
+          "done": true
+        },
+        {
+          "text": "Add test coverage for cross-asset/cross-futures robustness scoring",
+          "done": true
+        },
+        {
+          "text": "Add test coverage for the correlation-heatmap math (_pearson, _daily_returns)",
+          "done": true
+        },
+        {
+          "text": "Add test coverage for equity-curve/track-record helpers in paper_trade_update.py",
+          "done": true
+        },
+        {
+          "text": "Add test coverage for the news fetcher's parsing/tagging logic",
+          "done": true
+        },
+        {
+          "text": "Add test coverage for the survivor-portfolio combination analysis",
+          "done": true
+        },
+        {
+          "text": "Add test coverage for the memecoin breakout scanner (scan_coin, _atr)",
+          "done": true
+        },
+        {
+          "text": "Add test coverage for the core BTC market-data fetch/merge pipeline",
+          "done": true
+        },
+        {
+          "text": "Add standalone 3D portfolio site (raw WebGL, no build step)",
+          "done": true
+        }
+      ],
+      "task_count": 10,
+      "done_count": 10,
+      "title": "Wednesday, 2026-08-12 \u2014 Test-hardening + a new side project",
+      "notes": "# Wednesday, 2026-08-12 \u2014 Test-hardening + a new side project\n\nTwo sessions running: **Trading** (`claude/hello-rs2zvp`) backfilled test\ncoverage across the robustness scoring, correlation math, equity-curve\nhelpers, news fetcher, portfolio combination, and BTC data pipeline, and\nfixed a couple of UI bugs (stale-data banner, swipe nav skipping the new\nNasdaq tracks). **Polidori dev mimicry** (`claude/polidori-dev-mimicry-g78mi4`)\nstarted a separate portfolio-site branch (standalone 3D WebGL site, no\nbuild step) \u2014 this branch grows a lot more on 2026-08-17.\n\nArtifact: [Jordan Vale](https://claude.ai/code/artifact/26e55d7d-198c-474a-9c56-e22defb767a3)."
+    },
+    "2026-08-13": {
+      "tasks": [],
+      "task_count": 0,
+      "done_count": 0,
+      "title": "Thursday, 2026-08-13 \u2014 Quiet day",
+      "notes": "# Thursday, 2026-08-13 \u2014 Quiet day\n\nNo development. The hourly automated market-data pipeline (GitHub Actions)\nkept running unattended (11 automated refresh commits)."
+    },
+    "2026-08-14": {
+      "tasks": [],
+      "task_count": 0,
+      "done_count": 0,
+      "title": "Friday, 2026-08-14 \u2014 Quiet day",
+      "notes": "# Friday, 2026-08-14 \u2014 Quiet day\n\nNo development. The hourly automated market-data pipeline kept running\nunattended (9 automated refresh commits)."
+    },
+    "2026-08-15": {
+      "tasks": [],
+      "task_count": 0,
+      "done_count": 0,
+      "title": "Saturday, 2026-08-15 \u2014 Quiet day",
+      "notes": "# Saturday, 2026-08-15 \u2014 Quiet day\n\nNo development. The hourly automated market-data pipeline kept running\nunattended (28 automated refresh commits)."
+    },
+    "2026-08-16": {
+      "tasks": [
+        {
+          "text": "Remove unused numpy import from memecoin_scan_update.py",
+          "done": true
+        }
+      ],
+      "task_count": 1,
+      "done_count": 1,
+      "title": "Sunday, 2026-08-16 \u2014 Small lint cleanup",
+      "notes": "# Sunday, 2026-08-16 \u2014 Small lint cleanup\n\nSession: **Trading** (branch `claude/hello-rs2zvp`).\n\nQuiet day, one small cleanup; otherwise the automated hourly pipeline kept\nthe dashboards fresh (34 automated refresh commits)."
+    },
+    "2026-08-17": {
+      "tasks": [
+        {
+          "text": "Add 4 new strategies: Stochastic and CCI reversion, Keltner Channel breakout, Parabolic SAR",
+          "done": true
+        },
+        {
+          "text": "Regenerate all backtest data for the 16-strategy library",
+          "done": true
+        },
+        {
+          "text": "Add Volume Profile and TPO (Market Profile) reversion strategies",
+          "done": true
+        },
+        {
+          "text": "Regenerate all backtest data for the 18-strategy library; fix stale survivor-count text",
+          "done": true
+        },
+        {
+          "text": "Add multi-timeframe Auction Market Theory strategy for MNQ",
+          "done": true
+        },
+        {
+          "text": "Add centralized trading session time calculator (Alberta time)",
+          "done": true
+        },
+        {
+          "text": "Make project cards actually viewable: real case study modals",
+          "done": true
+        },
+        {
+          "text": "Add Hollow Creek Timber Co. lumber business site",
+          "done": true
+        },
+        {
+          "text": "Add RHK RV Campground Park site (real business)",
+          "done": true
+        }
+      ],
+      "task_count": 9,
+      "done_count": 9,
+      "title": "Monday, 2026-08-17 \u2014 Four sessions in parallel: strategy library, AMT, time calculator, side-project sites",
+      "notes": "# Monday, 2026-08-17 \u2014 Four sessions in parallel: strategy library, AMT, time calculator, side-project sites\n\nFour sessions running:\n\n- **Trading** (`claude/hello-rs2zvp`): grew the strategy library from 9 to\n  18 \u2014 added Stochastic reversion, CCI reversion, Keltner Channel breakout,\n  and Parabolic SAR (9 -> 16), then Volume Profile and TPO/Market Profile\n  reversion strategies (16 -> 18), regenerating all backtest data each time.\n- **Orochi framework** (`claude/orochi-framework-dgfkv7`): added a\n  multi-timeframe Auction Market Theory strategy for MNQ \u2014 backtested on\n  synthetic data at +4.5% RTR, 2.74 profit factor, 522 trades.\n- **Centralized time calculator** (`claude/centralized-time-calculator-1s3p2j`):\n  added a centralized trading-session time calculator in Alberta local time.\n- **Polidori dev mimicry** (`claude/polidori-dev-mimicry-g78mi4`): made the\n  portfolio's project cards actually viewable (real case-study modals), and\n  built two real small-business sites \u2014 Hollow Creek Timber Co. and the RHK\n  RV Campground Park.\n\nArtifacts: [RHK RV Campground Park](https://claude.ai/code/artifact/694d4c46-aa4b-4e90-8995-138a5fe18b1d), [Alberta Futures Orbit](https://claude.ai/code/artifact/f202ee73-3f87-4490-b776-b518cafea528).\n\nPlus 33 automated hourly market-data refresh commits."
+    },
+    "2026-08-18": {
+      "tasks": [
+        {
+          "text": "Set up journal/ - one folder per day for tasks + notes",
+          "done": true
+        },
+        {
+          "text": "Add scripts/journal.py (new/task/note/index/serve CLI)",
+          "done": true
+        },
+        {
+          "text": "Build journal/calendar.html - live monthly calendar planner",
+          "done": true
+        },
+        {
+          "text": "Backfill journal entries for 2026-08-08 through 2026-08-17 from git history + session list",
+          "done": true
+        }
+      ],
+      "task_count": 4,
+      "done_count": 4,
+      "title": "Tuesday, 2026-08-18 \u2014 Daily conversation and task organizer",
+      "notes": "# Tuesday, 2026-08-18 \u2014 Daily conversation and task organizer\n\nSession: **Daily conversation and task organizer** (branch `claude/daily-task-organizer-qoybv1`).\n\nBuilt what was asked: a dated journal folder (one folder per day, `tasks.md`\n+ `notes.md`), a CLI (`scripts/journal.py`) to log new tasks/notes going\nforward without hand-editing files, and a live calendar planner\n(`journal/calendar.html`) that polls a generated index so it updates as\nentries are added \u2014 no page refresh needed while `scripts/journal.py serve`\nis running. Then backfilled 2026-08-08 through 2026-08-17 from git history\nacross all four active branches and the Claude Code Remote session list, so\nthe calendar isn't empty on day one."
+    }
+  }
+}

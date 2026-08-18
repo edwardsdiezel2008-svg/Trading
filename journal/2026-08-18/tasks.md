@@ -1,0 +1,4 @@
+- [x] Set up journal/ - one folder per day for tasks + notes
+- [x] Add scripts/journal.py (new/task/note/index/serve CLI)
+- [x] Build journal/calendar.html - live monthly calendar planner
+- [x] Backfill journal entries for 2026-08-08 through 2026-08-17 from git history + session list

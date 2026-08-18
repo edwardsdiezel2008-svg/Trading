@@ -1,0 +1,17 @@
+- [x] Initial commit
+- [x] Add backtesting engine for evaluating common trading techniques
+- [x] Add script to export replay data for the engine visualization
+- [x] Add walk-forward validation and parameter sensitivity analysis
+- [x] Add Alpaca data-fetch script for real historical bars
+- [x] Add crypto support to the Alpaca fetch script
+- [x] Add Crypto.com data-fetch script as a second no-auth crypto source
+- [x] Add yfinance fetch script as a no-account NASDAQ data source
+- [x] Support per-instrument freq in the replay data exporter
+- [x] Add regime-filtered strategy wrapper
+- [x] Add BTC paper trading infrastructure for all 7 strategies
+- [x] Add BTC paper trading dashboard
+- [x] Fix position sizing to support fractional units for crypto
+- [x] Add track record tracking, separate from the historical backtest
+- [x] Add 15-minute paper trading track alongside daily
+- [x] Add meme coin breakout scanner as a third dashboard tab
+- [x] Add wide 51-coin meme scan alongside the precise 11-coin scanner
