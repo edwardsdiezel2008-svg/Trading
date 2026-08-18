@@ -2,7 +2,7 @@
   "symbol": "MNQ",
   "freq": "1D",
   "leverage": 1.0,
-  "updated_at_utc": "2026-08-18T11:04:03.369780+00:00",
+  "updated_at_utc": "2026-08-18T11:20:51.378142+00:00",
   "latest_bar": "2026-08-18 00:00:00",
   "bar_count": 2521,
   "buy_and_hold_equity_curve": [
@@ -1004,14 +1004,14 @@
     ],
     [
       "2026-08-18 00:00:00",
-      622142.63
+      622587.05
     ]
   ],
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 113090.0,
+      "equity": 113132.5,
       "open_trade": {
         "direction": 1,
         "entry_price": 29514.25,
@@ -2018,14 +2018,14 @@
         ],
         [
           "2026-08-18 00:00:00",
-          113090.0
+          113132.5
         ]
       ]
     },
     "Donchian_Breakout(20)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 116544.5,
+      "equity": 116587.0,
       "open_trade": {
         "direction": 1,
         "entry_price": 30210.75,
@@ -3032,14 +3032,14 @@
         ],
         [
           "2026-08-18 00:00:00",
-          116544.5
+          116587.0
         ]
       ]
     },
     "MACD_Momentum(12/26/9)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 93322.0,
+      "equity": 93364.5,
       "open_trade": {
         "direction": 1,
         "entry_price": 29777.25,
@@ -4046,14 +4046,14 @@
         ],
         [
           "2026-08-18 00:00:00",
-          93322.0
+          93364.5
         ]
       ]
     },
     "Parabolic_SAR(af=0.02,max=0.2)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99084.5,
+      "equity": 99127.0,
       "open_trade": {
         "direction": 1,
         "entry_price": 28565.0,
@@ -5060,7 +5060,7 @@
         ],
         [
           "2026-08-18 00:00:00",
-          99084.5
+          99127.0
         ]
       ]
     },
@@ -8094,7 +8094,7 @@
     "Stochastic_Reversion(14,20/80)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 89344.0,
+      "equity": 89301.5,
       "open_trade": {
         "direction": -1,
         "entry_price": 29657.75,
@@ -9101,7 +9101,7 @@
         ],
         [
           "2026-08-18 00:00:00",
-          89344.0
+          89301.5
         ]
       ]
     },
@@ -10117,7 +10117,7 @@
     "ATR_Vol_Breakout(14,k=1.5)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 84635.5,
+      "equity": 84593.0,
       "open_trade": {
         "direction": -1,
         "entry_price": 25149.5,
@@ -11124,14 +11124,14 @@
         ],
         [
           "2026-08-18 00:00:00",
-          84635.5
+          84593.0
         ]
       ]
     },
     "Supertrend(10,m=3.0)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 113580.5,
+      "equity": 113623.0,
       "open_trade": {
         "direction": 1,
         "entry_price": 29777.25,
@@ -12138,14 +12138,14 @@
         ],
         [
           "2026-08-18 00:00:00",
-          113580.5
+          113623.0
         ]
       ]
     },
     "Keltner_Breakout(20,m=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 91746.5,
+      "equity": 91704.0,
       "open_trade": {
         "direction": -1,
         "entry_price": 27202.0,
@@ -13152,14 +13152,14 @@
         ],
         [
           "2026-08-18 00:00:00",
-          91746.5
+          91704.0
         ]
       ]
     },
     "VWAP_Reversion(20,2%)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 96820.5,
+      "equity": 96778.0,
       "open_trade": {
         "direction": -1,
         "entry_price": 29777.25,
@@ -14166,14 +14166,14 @@
         ],
         [
           "2026-08-18 00:00:00",
-          96820.5
+          96778.0
         ]
       ]
     },
     "Engulfing_Reversal(0.3)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 100609.0,
+      "equity": 100651.5,
       "open_trade": {
         "direction": 1,
         "entry_price": 28317.0,
@@ -15180,14 +15180,14 @@
         ],
         [
           "2026-08-18 00:00:00",
-          100609.0
+          100651.5
         ]
       ]
     },
     "Inside_Bar_Breakout(0.6)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 121742.0,
+      "equity": 121699.5,
       "open_trade": {
         "direction": -1,
         "entry_price": 28700.25,
@@ -16194,7 +16194,7 @@
         ],
         [
           "2026-08-18 00:00:00",
-          121742.0
+          121699.5
         ]
       ]
     },
@@ -17210,7 +17210,7 @@
     "VolProfile_Reversion(30)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 96488.0,
+      "equity": 96445.5,
       "open_trade": {
         "direction": -1,
         "entry_price": 30210.75,
@@ -18217,7 +18217,7 @@
         ],
         [
           "2026-08-18 00:00:00",
-          96488.0
+          96445.5
         ]
       ]
     },
