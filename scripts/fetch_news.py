@@ -1,6 +1,8 @@
 """Fetch crypto market news from public RSS feeds (no authentication
-required) and write a tagged, recency-sorted digest to
-paper_trading/news.json.
+required) and write a tagged digest to paper_trading/news.json, sorted
+newest-first within importance tiers (see IMPORTANCE_TAGS) rather than
+pure recency - a headline tagged Regulation/ETF/Macro/BTC/ETH/SOL sorts
+ahead of a same-age one that isn't.
 
 Same philosophy as fetch_market_data.py: plain HTTP, no API keys, meant to
 run unattended from GitHub Actions so the dashboard's news feed stays fresh
@@ -54,6 +56,24 @@ TAG_KEYWORDS = [
     ("NFT", ("nft", "non-fungible")),
 ]
 
+# Tags whose presence makes a headline more likely to move the assets this
+# site actually tracks - its core coins, plus categories (regulation, ETF
+# flows, macro) that tend to move price broadly rather than affect one
+# narrow niche. Used to sort important headlines ahead of same-recency ones
+# that aren't tagged this way - a real, inspectable proxy built from the
+# same tags already shown on every card, not a claim of objective
+# "importance" from some external signal this project doesn't have.
+IMPORTANCE_TAGS = {"Regulation": 3, "ETF": 3, "Macro": 3, "BTC": 2, "ETH": 2, "SOL": 2}
+
+# RSS Media namespace (media:thumbnail / media:content) - several feeds
+# (CryptoSlate, NewsBTC) carry article images this way instead of an
+# <enclosure> or an inline <img> in <description>.
+_MEDIA_NS = "{http://search.yahoo.com/mrss/}"
+
+
+def _importance_score(tags):
+    return max((IMPORTANCE_TAGS.get(t, 0) for t in (tags or [])), default=0)
+
 
 def _fetch_rss(url, retries=3, timeout=20):
     last_err = None
@@ -103,6 +123,33 @@ def _tags_for(*texts):
     return tags
 
 
+def _extract_image(item, description_raw):
+    """Best-effort article image, checked in the order feeds are most
+    likely to actually provide one: a proper <enclosure type="image/...">,
+    then RSS Media's <media:thumbnail>/<media:content>, then finally an
+    <img src> sniffed out of the raw (unstripped) description HTML - the
+    same blob _clean_text strips tags from for the plain-text title match.
+    Returns None rather than guessing when nothing looks like an image."""
+    enclosure = item.find("enclosure")
+    if enclosure is not None:
+        url = enclosure.get("url")
+        if url and (enclosure.get("type") or "").startswith("image"):
+            return url
+    thumb = item.find(f"{_MEDIA_NS}thumbnail")
+    if thumb is not None and thumb.get("url"):
+        return thumb.get("url")
+    content = item.find(f"{_MEDIA_NS}content")
+    if content is not None and content.get("url"):
+        medium = content.get("medium")
+        typ = content.get("type") or ""
+        if medium == "image" or typ.startswith("image"):
+            return content.get("url")
+    m = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', description_raw or "", re.IGNORECASE)
+    if m:
+        return m.group(1)
+    return None
+
+
 def parse_feed(source, xml_root):
     items = []
     for item in xml_root.findall(".//item")[:MAX_PER_FEED]:
@@ -110,14 +157,18 @@ def parse_feed(source, xml_root):
         link = (item.findtext("link") or "").strip()
         if not title or not link:
             continue
-        description = _clean_text(item.findtext("description"))
+        description_raw = item.findtext("description") or ""
+        description = _clean_text(description_raw)
         published = _parse_pubdate(item.findtext("pubDate"))
+        tags = _tags_for(title, description)
         items.append({
             "title": title,
             "link": link,
             "source": source,
             "published_utc": published.isoformat().replace("+00:00", "Z") if published else "",
-            "tags": _tags_for(title, description),
+            "tags": tags,
+            "image": _extract_image(item, description_raw),
+            "important": _importance_score(tags) > 0,
         })
     return items
 
@@ -145,6 +196,11 @@ def fetch_all_news():
     # newest first; items with unparseable dates sort last rather than
     # crashing the sort or floating to the top.
     deduped.sort(key=lambda it: it["published_utc"] or "0000", reverse=True)
+    # Then a stable secondary sort by importance - Python's sort is stable,
+    # so this reorders only across importance tiers and leaves the recency
+    # order from above untouched within each tier, rather than needing to
+    # re-specify the date as a tiebreaker.
+    deduped.sort(key=lambda it: _importance_score(it["tags"]), reverse=True)
     return deduped[:MAX_TOTAL]
 
 

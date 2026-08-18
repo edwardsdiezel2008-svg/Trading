@@ -3,7 +3,15 @@ import xml.etree.ElementTree as ET
 
 sys.path.insert(0, ".")
 
-from scripts.fetch_news import _clean_text, _parse_pubdate, _tags_for, fetch_all_news, parse_feed
+from scripts.fetch_news import (
+    _clean_text,
+    _extract_image,
+    _importance_score,
+    _parse_pubdate,
+    _tags_for,
+    fetch_all_news,
+    parse_feed,
+)
 
 
 def test_clean_text_strips_html_tags_and_collapses_whitespace():
@@ -44,6 +52,21 @@ def test_tags_for_matches_the_newer_defi_mining_exchange_and_nft_tags():
     assert set(tags) == {"DeFi", "Exchange", "NFT"}
     assert _tags_for("Bitcoin miner hashrate hits new high") == ["BTC", "Mining"]
     assert _tags_for("Circle expands USDC stablecoin reserves") == ["Stablecoin"]
+
+
+def test_importance_score_weights_regulation_etf_macro_above_core_coins_above_niche_tags():
+    assert _importance_score(["Regulation"]) == 3
+    assert _importance_score(["ETF"]) == 3
+    assert _importance_score(["Macro"]) == 3
+    assert _importance_score(["BTC"]) == 2
+    assert _importance_score(["NFT"]) == 0
+    assert _importance_score([]) == 0
+    assert _importance_score(None) == 0
+
+
+def test_importance_score_takes_the_max_across_multiple_tags():
+    assert _importance_score(["NFT", "BTC", "Mining"]) == 2
+    assert _importance_score(["BTC", "Regulation"]) == 3
 
 
 _RSS_TEMPLATE = """<?xml version="1.0"?>
@@ -136,3 +159,105 @@ def test_fetch_all_news_skips_a_feed_that_fails_without_crashing(monkeypatch):
 
     items = fetch_all_news()
     assert [it["title"] for it in items] == ["OK"]
+
+
+def test_fetch_all_news_sorts_important_tags_ahead_of_more_recent_unimportant_ones(monkeypatch):
+    # "SEC ruling" (Regulation, importance 3) is older than "New NFT drop"
+    # (no importance tags) but must still sort first - and within the same
+    # importance tier, recency still decides order (Newer BTC ahead of
+    # Older BTC).
+    import scripts.fetch_news as fetch_news
+
+    def fake_fetch_rss(url, retries=3, timeout=20):
+        return _rss([
+            _ITEM_TEMPLATE.format(title="New NFT drop announced", link="https://example.com/nft", description="", pubdate="Thu, 13 Aug 2026 00:00:00 GMT"),
+            _ITEM_TEMPLATE.format(title="SEC ruling on crypto custody", link="https://example.com/sec", description="", pubdate="Mon, 10 Aug 2026 00:00:00 GMT"),
+            _ITEM_TEMPLATE.format(title="Bitcoin newer update", link="https://example.com/btc-new", description="", pubdate="Wed, 12 Aug 2026 00:00:00 GMT"),
+            _ITEM_TEMPLATE.format(title="Bitcoin older update", link="https://example.com/btc-old", description="", pubdate="Tue, 11 Aug 2026 00:00:00 GMT"),
+        ])
+
+    monkeypatch.setattr(fetch_news, "FEEDS", [("A", "https://feed-a")])
+    monkeypatch.setattr(fetch_news, "_fetch_rss", fake_fetch_rss)
+
+    items = fetch_all_news()
+    assert [it["title"] for it in items] == [
+        "SEC ruling on crypto custody",
+        "Bitcoin newer update",
+        "Bitcoin older update",
+        "New NFT drop announced",
+    ]
+
+
+_ENCLOSURE_ITEM = """<item>
+<title>{title}</title>
+<link>{link}</link>
+<description>{description}</description>
+<enclosure url="{image}" type="image/jpeg" length="12345"/>
+</item>"""
+
+_MEDIA_THUMB_ITEM = """<item xmlns:media="http://search.yahoo.com/mrss/">
+<title>{title}</title>
+<link>{link}</link>
+<description></description>
+<media:thumbnail url="{image}"/>
+</item>"""
+
+_MEDIA_CONTENT_ITEM = """<item xmlns:media="http://search.yahoo.com/mrss/">
+<title>{title}</title>
+<link>{link}</link>
+<description></description>
+<media:content url="{image}" medium="image"/>
+</item>"""
+
+
+def test_extract_image_prefers_an_image_type_enclosure():
+    root = _rss([_ENCLOSURE_ITEM.format(title="A", link="https://example.com/a", description="", image="https://img.example.com/a.jpg")])
+    item = root.find(".//item")
+    assert _extract_image(item, "") == "https://img.example.com/a.jpg"
+
+
+def test_extract_image_ignores_a_non_image_enclosure():
+    non_image = _ENCLOSURE_ITEM.format(title="A", link="https://example.com/a", description="", image="https://example.com/a.mp3").replace('type="image/jpeg"', 'type="audio/mpeg"')
+    root = _rss([non_image])
+    item = root.find(".//item")
+    assert _extract_image(item, "") is None
+
+
+def test_extract_image_falls_back_to_media_thumbnail():
+    root = _rss([_MEDIA_THUMB_ITEM.format(title="A", link="https://example.com/a", image="https://img.example.com/thumb.jpg")])
+    item = root.find(".//item")
+    assert _extract_image(item, "") == "https://img.example.com/thumb.jpg"
+
+
+def test_extract_image_falls_back_to_media_content_when_medium_is_image():
+    root = _rss([_MEDIA_CONTENT_ITEM.format(title="A", link="https://example.com/a", image="https://img.example.com/content.jpg")])
+    item = root.find(".//item")
+    assert _extract_image(item, "") == "https://img.example.com/content.jpg"
+
+
+def test_extract_image_falls_back_to_inline_img_in_raw_description():
+    root = _rss([_ITEM_TEMPLATE.format(title="A", link="https://example.com/a", description="", pubdate="")])
+    item = root.find(".//item")
+    raw = '<p><img src="https://img.example.com/inline.jpg" alt="x"></p>'
+    assert _extract_image(item, raw) == "https://img.example.com/inline.jpg"
+
+
+def test_extract_image_returns_none_when_nothing_is_present():
+    root = _rss([_ITEM_TEMPLATE.format(title="A", link="https://example.com/a", description="plain text, no image", pubdate="")])
+    item = root.find(".//item")
+    assert _extract_image(item, "plain text, no image") is None
+
+
+def test_parse_feed_includes_image_and_important_flag():
+    root = _rss([_ENCLOSURE_ITEM.format(
+        title="Bitcoin ETF sees record inflows", link="https://example.com/a", description="",
+        image="https://img.example.com/a.jpg",
+    )])
+    item = parse_feed("TestSource", root)[0]
+    assert item["image"] == "https://img.example.com/a.jpg"
+    assert item["important"] is True
+
+    root2 = _rss([_ITEM_TEMPLATE.format(title="Some unrelated headline", link="https://example.com/b", description="", pubdate="")])
+    item2 = parse_feed("TestSource", root2)[0]
+    assert item2["image"] is None
+    assert item2["important"] is False
