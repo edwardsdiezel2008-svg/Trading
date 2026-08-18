@@ -26,6 +26,9 @@ INDEX_TEMPLATE_PATH = "paper_trading/index_template.html"
 INDEX_OUTPUT_PATH = "paper_trading/index.html"
 NEWS_TEMPLATE_PATH = "paper_trading/news_template.html"
 NEWS_OUTPUT_PATH = "paper_trading/news.html"
+BACKTEST_LAB_TEMPLATE_PATH = "paper_trading/backtest_lab_template.html"
+BACKTEST_LAB_JSON_PATH = "paper_trading/backtest_lab.json"
+BACKTEST_LAB_OUTPUT_PATH = "paper_trading/backtest_lab.html"
 MEMECOIN_SCAN_PATH = "paper_trading/memecoin_scan.json"
 WIDE_MEMECOIN_SCAN_PATH = "paper_trading/memecoin_wide_scan.json"
 BTC_MARKET_SNAPSHOT_PATH = "paper_trading/btc_market_snapshot.json"
@@ -562,6 +565,33 @@ def build_news_page(news):
     print(f"Wrote {NEWS_OUTPUT_PATH} ({os.path.getsize(NEWS_OUTPUT_PATH) / 1024:.1f} KB)")
 
 
+def build_backtest_lab_page():
+    """Stitches the already-built paper_trading/backtest_lab.json (written
+    separately by scripts/build_backtest_lab.py, which runs 378 real
+    backtests and takes a few minutes - too slow to redo on every ordinary
+    dashboard rebuild) into its page template. A no-op until that script has
+    been run at least once."""
+    if not os.path.exists(BACKTEST_LAB_TEMPLATE_PATH):
+        print(f"Skipping {BACKTEST_LAB_OUTPUT_PATH}: {BACKTEST_LAB_TEMPLATE_PATH} not found")
+        return
+    if not os.path.exists(BACKTEST_LAB_JSON_PATH):
+        print(f"Skipping {BACKTEST_LAB_OUTPUT_PATH}: {BACKTEST_LAB_JSON_PATH} not found "
+              f"(run scripts/build_backtest_lab.py first)")
+        return
+
+    with open(BACKTEST_LAB_TEMPLATE_PATH) as f:
+        out = f.read()
+    with open(BACKTEST_LAB_JSON_PATH) as f:
+        lab_json_text = f.read()
+
+    out = out.replace("__BACKTEST_LAB_JSON__", lab_json_text)
+    assert "__BACKTEST_LAB_JSON__" not in out, "unfilled placeholder __BACKTEST_LAB_JSON__"
+
+    with open(BACKTEST_LAB_OUTPUT_PATH, "w") as f:
+        f.write(out)
+    print(f"Wrote {BACKTEST_LAB_OUTPUT_PATH} ({os.path.getsize(BACKTEST_LAB_OUTPUT_PATH) / 1024 / 1024:.1f} MB)")
+
+
 def main():
     loaded = {}
     for suffix, *_ in TRACKS:
@@ -619,6 +649,7 @@ def main():
     build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_greed, correlations, news)
     build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_greed, news, regimes, survivor_stress_test)
     build_news_page(news)
+    build_backtest_lab_page()
 
 
 if __name__ == "__main__":

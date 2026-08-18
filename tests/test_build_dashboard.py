@@ -14,6 +14,7 @@ from scripts.build_paper_trading_dashboard import (
     _cross_track_robustness,
     _daily_returns,
     _pearson,
+    build_backtest_lab_page,
     build_news_page,
     compute_cross_asset_robustness,
     compute_cross_futures_robustness,
@@ -281,6 +282,42 @@ def test_build_news_page_skips_gracefully_when_template_is_missing(tmp_path, mon
     build_news_page({"updated_at_utc": None, "sources": [], "items": []})
     assert not os.path.exists("paper_trading/news.html")
     assert "Skipping" in capsys.readouterr().out
+
+
+def test_build_backtest_lab_page_embeds_the_precomputed_json_and_leaves_no_placeholder(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    with open("paper_trading/backtest_lab_template.html", "w") as f:
+        f.write("<html>__BACKTEST_LAB_JSON__</html>")
+    with open("paper_trading/backtest_lab.json", "w") as f:
+        f.write('{"tracks":{},"strategies":{}}')
+
+    build_backtest_lab_page()
+
+    with open("paper_trading/backtest_lab.html") as f:
+        out = f.read()
+    assert "__BACKTEST_LAB_JSON__" not in out
+    assert '{"tracks":{},"strategies":{}}' in out
+
+
+def test_build_backtest_lab_page_skips_gracefully_when_template_is_missing(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    build_backtest_lab_page()
+    assert not os.path.exists("paper_trading/backtest_lab.html")
+    assert "Skipping" in capsys.readouterr().out
+
+
+def test_build_backtest_lab_page_skips_gracefully_when_json_is_missing(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    with open("paper_trading/backtest_lab_template.html", "w") as f:
+        f.write("<html>__BACKTEST_LAB_JSON__</html>")
+
+    build_backtest_lab_page()
+
+    assert not os.path.exists("paper_trading/backtest_lab.html")
+    assert "run scripts/build_backtest_lab.py first" in capsys.readouterr().out
 
 
 def _coin(symbol, change_24h_pct, pct_from_24h_high):

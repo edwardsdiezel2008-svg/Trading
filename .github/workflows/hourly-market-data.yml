@@ -111,6 +111,21 @@ jobs:
       - name: Fetch market news
         run: python scripts/fetch_news.py
 
+      # 54 strategies x 7 tracks, ~3 minutes - recomputed from scratch every
+      # run (same "just recompute everything" approach as the walk-forward/
+      # sensitivity/survivor-stress-test scripts) rather than incrementally,
+      # since correctness from a full recompute is worth more than the
+      # saved time here. Skipped only if one of the seven 1-5min bar files
+      # genuinely doesn't exist yet (first-ever run before any fetch step
+      # above has produced it).
+      - name: Update Backtest Lab (54 strategies x 7 one-to-five-minute tracks)
+        run: |
+          if [ -f "paper_trading/bars_nq1m.csv" ] && [ -f "paper_trading/bars_nq5m.csv" ]; then
+            python scripts/build_backtest_lab.py
+          else
+            echo "Skipping Backtest Lab update - 1-5min bar files not seeded yet"
+          fi
+
       - name: Rebuild dashboard HTML
         run: python scripts/build_paper_trading_dashboard.py
 

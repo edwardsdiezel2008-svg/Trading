@@ -1,0 +1,604 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backtest Lab — Paper Trading Research</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page: #EEF1F5;
+    --surface: #FBFCFE;
+    --surface-2: #F1F4F8;
+    --ink: #10141C;
+    --ink-2: #4A5568;
+    --ink-muted: #8A93A3;
+    --border: rgba(16,20,28,0.10);
+    --grid: #E2E6ED;
+    --accent: #B5792C;
+    --accent-wash: rgba(181,121,44,0.14);
+    --good: #0ca30c;
+    --good-wash: rgba(12,163,12,0.12);
+    --critical: #d03b3b;
+    --critical-wash: rgba(208,59,59,0.12);
+    --neutral-wash: rgba(74,85,104,0.09);
+    --scan: #0891b2;
+    --scan-wash: rgba(8,145,178,0.10);
+    --scan-glow: rgba(8,145,178,0.35);
+    --series-equity: #2a78d6;
+    --shadow: 0 1px 2px rgba(16,20,28,0.06), 0 10px 28px -14px rgba(16,20,28,0.22);
+    --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Liberation Mono", Menlo, Consolas, monospace;
+    --fs-xs: 0.6875rem; --fs-sm: 0.8125rem; --fs-base: 0.9375rem; --fs-lg: 1.125rem;
+    --fs-display: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page: #0B0E14; --surface: #131822; --surface-2: #171D28;
+      --ink: #E8ECF3; --ink-2: #AEB6C4; --ink-muted: #6B7385;
+      --border: rgba(255,255,255,0.10); --grid: #232A38;
+      --accent: #D69A4E; --accent-wash: rgba(214,154,78,0.16);
+      --good: #0ca30c; --good-wash: rgba(12,163,12,0.18);
+      --critical: #e0585b; --critical-wash: rgba(224,88,91,0.18);
+      --neutral-wash: rgba(174,182,196,0.10);
+      --scan: #22d3ee; --scan-wash: rgba(34,211,238,0.14); --scan-glow: rgba(34,211,238,0.55);
+      --series-equity: #5b9bf2;
+      --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 10px 28px -14px rgba(0,0,0,0.55);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0B0E14; --surface: #131822; --surface-2: #171D28;
+    --ink: #E8ECF3; --ink-2: #AEB6C4; --ink-muted: #6B7385;
+    --border: rgba(255,255,255,0.10); --grid: #232A38;
+    --accent: #D69A4E; --accent-wash: rgba(214,154,78,0.16);
+    --good: #0ca30c; --good-wash: rgba(12,163,12,0.18);
+    --critical: #e0585b; --critical-wash: rgba(224,88,91,0.18);
+    --neutral-wash: rgba(174,182,196,0.10);
+    --scan: #22d3ee; --scan-wash: rgba(34,211,238,0.14); --scan-glow: rgba(34,211,238,0.55);
+    --series-equity: #5b9bf2;
+    --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 10px 28px -14px rgba(0,0,0,0.55);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    background-image:
+      radial-gradient(circle at 12% -5%, var(--scan-wash), transparent 40%),
+      radial-gradient(circle at 88% 105%, var(--scan-wash), transparent 40%);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-size: var(--fs-base);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    animation: page-fade-in 0.28s ease;
+  }
+  @keyframes page-fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  .ambient-field { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .ambient-grid {
+    position: absolute; inset: -10% -10%; opacity: 0.35;
+    background-image:
+      repeating-linear-gradient(0deg, var(--scan-wash) 0, var(--scan-wash) 1px, transparent 1px, transparent 64px),
+      repeating-linear-gradient(90deg, var(--scan-wash) 0, var(--scan-wash) 1px, transparent 1px, transparent 64px);
+    animation: ambient-grid-drift 34s linear infinite;
+    mask-image: radial-gradient(circle at 50% 15%, black, transparent 72%);
+    -webkit-mask-image: radial-gradient(circle at 50% 15%, black, transparent 72%);
+  }
+  @keyframes ambient-grid-drift { from { background-position: 0 0, 0 0; } to { background-position: 64px 64px, -64px 64px; } }
+  .ambient-dot {
+    position: absolute; border-radius: 50%; filter: blur(1px);
+    background: radial-gradient(circle, var(--scan-glow), transparent 70%);
+    animation: ambient-drift 16s ease-in-out infinite;
+  }
+  @keyframes ambient-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+    50% { transform: translate(16px, -24px) scale(1.15); opacity: 0.65; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-grid, .ambient-dot { animation: none; }
+  }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  :focus-visible { outline: 2px solid var(--scan); outline-offset: 2px; }
+  a { color: inherit; }
+
+  .shell { max-width: 1080px; margin: 0 auto; padding: 28px 20px 48px; display: flex; flex-direction: column; gap: 22px; }
+
+  .hero { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: var(--fs-xs);
+    font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--scan);
+  }
+  .hero h1 {
+    margin: 0; font-size: var(--fs-display); font-weight: 800; letter-spacing: -0.02em; text-wrap: balance;
+    background: linear-gradient(90deg, var(--ink), var(--scan) 130%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero-sub { margin: 0; font-size: var(--fs-sm); color: var(--ink-muted); max-width: 68ch; }
+  .hero-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .details-link {
+    display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: var(--fs-xs);
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--scan); text-decoration: none;
+    background: var(--scan-wash); border: 1px solid var(--scan-wash); border-radius: 999px; padding: 5px 12px;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .details-link:hover { box-shadow: 0 0 12px var(--scan-glow); border-color: var(--scan); }
+
+  .section-label {
+    display: flex; align-items: center; gap: 8px; margin: 4px 2px 0;
+    font-family: var(--font-mono); font-size: var(--fs-sm); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--scan);
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--scan-wash), transparent); }
+
+  .panel {
+    position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: var(--shadow), 0 0 0 1px var(--scan-wash) inset; padding: 18px; overflow: hidden;
+  }
+  .panel::before, .panel::after { content: ''; position: absolute; width: 12px; height: 12px; pointer-events: none; z-index: 1; }
+  .panel::before { top: -1px; left: -1px; border-top: 2px solid var(--scan); border-left: 2px solid var(--scan); }
+  .panel::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--scan); border-right: 2px solid var(--scan); }
+  .panel p { margin: 0 0 8px; font-size: var(--fs-sm); color: var(--ink-2); }
+  .panel p:last-child { margin-bottom: 0; }
+
+  /* ---- controls ---- */
+  .controls-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .field-span2 { grid-column: span 2; }
+  .field-span3 { grid-column: span 3; }
+  @media (max-width: 860px) { .controls-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) {
+    .controls-grid { grid-template-columns: 1fr; }
+    /* Without this, a field-span2/3 item still asks for more columns than
+       the single-column grid has, so Grid creates an implicit extra
+       column to satisfy it - the exact bug that made Starting Balance and
+       Drawdown Limit render side-by-side and overflow on narrow phones. */
+    .field-span2, .field-span3 { grid-column: span 1; }
+  }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: var(--fs-xs); color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.05em; font-family: var(--font-mono); }
+  .field select, .field input {
+    font: inherit; font-size: var(--fs-sm); color: var(--ink); background: var(--surface-2);
+    border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .field select:focus, .field input:focus { border-color: var(--scan); box-shadow: 0 0 0 3px var(--scan-wash); }
+
+  /* ---- status banner ---- */
+  .status-banner {
+    display: flex; align-items: center; gap: 12px; border-radius: 10px; padding: 14px 18px;
+    font-size: var(--fs-sm); font-weight: 600;
+  }
+  .status-banner.ok { background: var(--good-wash); color: var(--good); }
+  .status-banner.breach { background: var(--critical-wash); color: var(--critical); }
+  .status-icon { font-size: 1.3rem; line-height: 1; }
+
+  /* ---- stat strip ---- */
+  .stat-strip { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  @media (max-width: 860px) { .stat-strip { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 480px) { .stat-strip { grid-template-columns: repeat(2, 1fr); } }
+  .stat-chip {
+    display: flex; flex-direction: column; gap: 1px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px; box-shadow: var(--shadow);
+  }
+  .stat-chip .num { font-family: var(--font-mono); font-size: var(--fs-lg); font-weight: 800; }
+  .stat-chip .lbl { font-size: var(--fs-xs); color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-chip .num.good { color: var(--good); }
+  .stat-chip .num.critical { color: var(--critical); }
+
+  /* ---- charts ---- */
+  .chart-wrap { position: relative; width: 100%; height: 260px; }
+  .chart-wrap canvas { width: 100%; height: 100%; display: block; }
+  .chart-hint { font-size: var(--fs-xs); color: var(--ink-muted); margin: 0 0 8px; }
+
+  .legend-row { display: flex; flex-wrap: wrap; gap: 14px; font-size: var(--fs-xs); color: var(--ink-muted); margin-top: 8px; }
+  .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+  .legend-swatch { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+
+  .foot { padding: 6px 4px 0; display: flex; flex-direction: column; gap: 4px; }
+  .foot p { margin: 0; font-size: var(--fs-xs); color: var(--ink-muted); }
+</style>
+
+<div class="ambient-field" aria-hidden="true">
+  <div class="ambient-grid"></div>
+  <div class="ambient-dot" style="top:6%; left:3%; width:120px; height:120px; animation-delay:0s;"></div>
+  <div class="ambient-dot" style="top:70%; left:95%; width:160px; height:160px; animation-delay:-4s;"></div>
+  <div class="ambient-dot" style="top:38%; left:97%; width:90px; height:90px; animation-delay:-9s;"></div>
+  <div class="ambient-dot" style="top:90%; left:6%; width:110px; height:110px; animation-delay:-6s;"></div>
+</div>
+
+<div class="shell">
+  <header class="hero">
+    <span class="hero-tag"><span></span>Interactive</span>
+    <h1>Backtest Lab</h1>
+    <p class="hero-sub">Pick a strategy, a starting balance, and a drawdown limit, and see whether a real, historical 1-to-5-minute run would have survived it - not a hypothetical, the actual trades this project's strategy library made against real market data.</p>
+    <div class="hero-row">
+      <a class="details-link" href="index.html">← Landing page</a>
+      <a class="details-link" href="dashboard.html">Full Dashboard →</a>
+      <a class="details-link" href="news.html">News →</a>
+      <a class="details-link" href="learn.html">Learn →</a>
+      <a class="details-link" href="notes.html">Notes →</a>
+    </div>
+  </header>
+
+  <div class="section-label">Setup</div>
+  <div class="panel controls-grid">
+    <div class="field">
+      <label for="trackSelect">Market / timeframe</label>
+      <select id="trackSelect"></select>
+    </div>
+    <div class="field field-span2">
+      <label for="strategySelect">Strategy</label>
+      <select id="strategySelect"></select>
+    </div>
+    <div class="field">
+      <label for="startingCapital">Starting balance ($)</label>
+      <input id="startingCapital" type="number" min="100" step="100" value="25000">
+    </div>
+    <div class="field">
+      <label for="drawdownLimit">Drawdown limit ($)</label>
+      <input id="drawdownLimit" type="number" min="1" step="50" value="1000">
+    </div>
+    <div class="field field-span2">
+      <label for="trailMode">Drawdown type</label>
+      <select id="trailMode">
+        <option value="intraday">Trailing (intraday) - floor ratchets up on every new equity high</option>
+        <option value="eod">Trailing (end-of-day) - floor only ratchets at each session's close</option>
+        <option value="static">Static - floor never moves from starting balance minus the limit</option>
+      </select>
+    </div>
+    <div class="field field-span3">
+      <label>Instrument</label>
+      <div class="mono" id="instrumentHint" style="font-size:var(--fs-sm); padding-top:6px; color:var(--ink-2);">—</div>
+    </div>
+  </div>
+
+  <div id="statusBanner" class="status-banner ok"><span class="status-icon">—</span><span id="statusText">Loading…</span></div>
+
+  <div class="stat-strip" id="statStrip"></div>
+
+  <div class="section-label">Equity curve</div>
+  <div class="panel">
+    <p class="chart-hint" id="equityHint">1 contract, mark-to-market every bar - the dashed line is the drawdown floor for the mode you picked above.</p>
+    <div class="chart-wrap"><canvas id="equityCanvas"></canvas></div>
+    <div class="legend-row">
+      <span class="legend-item"><span class="legend-swatch" style="background:var(--series-equity);"></span>Equity</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:var(--critical); opacity:0.6;"></span>Drawdown floor</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:var(--ink-muted);"></span>Starting balance</span>
+    </div>
+  </div>
+
+  <div class="section-label">Drawdown from peak</div>
+  <div class="panel">
+    <p class="chart-hint">How far below the highest equity reached so far, at every point in the run - the horizontal line is your drawdown limit.</p>
+    <div class="chart-wrap" style="height:180px;"><canvas id="drawdownCanvas"></canvas></div>
+  </div>
+
+  <div class="section-label">How this works</div>
+  <div class="panel">
+    <p><strong>Every trade shown here really happened</strong> in a backtest against real historical 1-minute or 5-minute bars (NQ, ES, YM, RTY, GC, or CL futures) - fixed at 1 contract, using this project's tested backtest engine. Nothing here re-simulates strategy logic in the browser; the equity curve is reconstructed from those real trades with plain arithmetic (starting balance + realized P&L from closed trades + mark-to-market P&L on whatever's open right now).</p>
+    <p><strong>54 strategies, drawn from the site's real 18-strategy library</strong> - each one's hardcoded defaults, plus its most conservative and most aggressive parameter combination from its own documented range (the same ranges <a class="details-link" style="padding:1px 6px;" href="dashboard.html">the parameter-sensitivity sweeps</a> already test). None of these are validated as statistically significant on intraday data - see the <a class="details-link" style="padding:1px 6px;" href="learn.html">Learn page</a> and <a class="details-link" style="padding:1px 6px;" href="dashboard.html">Robustness tables</a> before trusting any single result here.</p>
+    <p><strong>The drawdown simulation is an approximation of prop-firm-style trailing drawdown rules</strong> (like Apex Trader Funding's), not a copy of any specific firm's exact terms - "intraday" ratchets the floor up on every new bar-close equity high (including open, unrealized gains), "end-of-day" only ratchets once per session close, and "static" never moves. Verify your actual account's real rules before relying on this for anything but research.</p>
+  </div>
+
+  <footer class="foot">
+    <p>Simulated, not real money - no trades are ever actually placed. Not investment advice.</p>
+    <p>Rebuilt every hourly check-in from real market data via GitHub Actions - independent of any chat session being open.</p>
+  </footer>
+</div>
+
+<script>
+  const LAB = __BACKTEST_LAB_JSON__;
+
+  function fmtMoney(v) {
+    const s = v < 0 ? '-' : '';
+    return s + '$' + Math.abs(v).toLocaleString(undefined, { maximumFractionDigits: 0 });
+  }
+  function fmtSignedPct(v) { return isFinite(v) ? (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%' : '—'; }
+  function fmtDate(epochSec) {
+    return new Date(epochSec * 1000).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function readTheme() {
+    const cs = getComputedStyle(document.documentElement);
+    const g = (n) => cs.getPropertyValue(n).trim();
+    return { ink: g('--ink'), ink2: g('--ink-2'), inkMuted: g('--ink-muted'), grid: g('--grid'),
+      good: g('--good'), critical: g('--critical'), equity: g('--series-equity') };
+  }
+  let THEME = readTheme();
+  const FONT_MONO = "ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace";
+
+  function setupCanvas(canvas) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(1, Math.round(rect.width * dpr));
+    canvas.height = Math.max(1, Math.round(rect.height * dpr));
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx, w: rect.width, h: rect.height };
+  }
+
+  // ---------- populate controls ----------
+  const trackKeys = Object.keys(LAB.tracks);
+  const trackSelect = document.getElementById('trackSelect');
+  trackSelect.innerHTML = trackKeys.map((k) => `<option value="${k}">${LAB.tracks[k].label}</option>`).join('');
+
+  const strategySelect = document.getElementById('strategySelect');
+  function populateStrategies(trackKey) {
+    const strategies = LAB.strategies[trackKey];
+    const groups = {};
+    strategies.forEach((s, i) => { (groups[s.base] = groups[s.base] || []).push([i, s]); });
+    strategySelect.innerHTML = Object.keys(groups).sort().map((base) =>
+      `<optgroup label="${base}">${groups[base].map(([i, s]) =>
+        `<option value="${i}">${s.name} (${s.num_trades} trades, ${fmtSignedPct(s.total_return)})</option>`).join('')}</optgroup>`
+    ).join('');
+  }
+  populateStrategies(trackKeys[0]);
+
+  // ---------- core reconstruction ----------
+  function reconstructEquityCurve(bars, trades, multiplier, startingCapital) {
+    const n = bars.length;
+    const eq = new Float64Array(n);
+    let ti = 0, realized = 0;
+    for (let i = 0; i < n; i++) {
+      let unrealized = 0;
+      if (ti < trades.length) {
+        const t = trades[ti];
+        const entryIdx = t[0], exitIdx = t[1], dir = t[2], entryPx = t[3], netPnl = t[5];
+        if (i === exitIdx) {
+          unrealized = netPnl;
+        } else if (i >= entryIdx) {
+          unrealized = dir * (bars[i][1] - entryPx) * multiplier;
+        }
+      }
+      eq[i] = startingCapital + realized + unrealized;
+      if (ti < trades.length && trades[ti][1] === i) {
+        realized += trades[ti][5];
+        ti++;
+      }
+    }
+    return eq;
+  }
+
+  function simulateBreach(eq, bars, startingCapital, ddLimit, mode) {
+    let peak = startingCapital;
+    let floor = startingCapital - ddLimit;
+    let breachIdx = null;
+    const floorSeries = new Float64Array(eq.length);
+    if (mode === 'static') {
+      for (let i = 0; i < eq.length; i++) {
+        floorSeries[i] = floor;
+        if (breachIdx === null && eq[i] <= floor) breachIdx = i;
+      }
+    } else if (mode === 'eod') {
+      let lastDayKey = null;
+      const dayEnd = new Array(bars.length).fill(false);
+      for (let i = 0; i < bars.length; i++) {
+        const dayKey = new Date(bars[i][0] * 1000).toISOString().slice(0, 10);
+        if (dayKey !== lastDayKey) {
+          if (i > 0) dayEnd[i - 1] = true;
+          lastDayKey = dayKey;
+        }
+      }
+      dayEnd[bars.length - 1] = true;
+      for (let i = 0; i < eq.length; i++) {
+        if (breachIdx === null && eq[i] <= floor) breachIdx = i;
+        floorSeries[i] = floor;
+        if (dayEnd[i] && eq[i] > peak) { peak = eq[i]; floor = peak - ddLimit; }
+      }
+    } else {
+      for (let i = 0; i < eq.length; i++) {
+        if (eq[i] > peak) { peak = eq[i]; floor = peak - ddLimit; }
+        floorSeries[i] = floor;
+        if (breachIdx === null && eq[i] <= floor) breachIdx = i;
+      }
+    }
+    return { breachIdx, floorSeries };
+  }
+
+  // ---------- charts ----------
+  function drawEquityChart(bars, eq, floorSeries, startingCapital, breachIdx) {
+    const canvas = document.getElementById('equityCanvas');
+    const { ctx, w, h } = setupCanvas(canvas);
+    ctx.clearRect(0, 0, w, h);
+    const n = eq.length;
+    if (!n) return;
+
+    const padL = 66, padR = 12, padT = 12, padB = 20;
+    const plotW = w - padL - padR, plotH = h - padT - padB;
+    let minY = Math.min(startingCapital, ...eq, ...floorSeries);
+    let maxY = Math.max(startingCapital, ...eq);
+    const pad = (maxY - minY) * 0.08 || 1;
+    minY -= pad; maxY += pad;
+
+    const xFor = (i) => padL + (n > 1 ? (i / (n - 1)) * plotW : plotW / 2);
+    const yFor = (v) => padT + (1 - (v - minY) / (maxY - minY)) * plotH;
+
+    ctx.strokeStyle = THEME.grid; ctx.lineWidth = 1; ctx.font = '10px ' + FONT_MONO; ctx.fillStyle = THEME.inkMuted;
+    [minY, minY + (maxY - minY) / 2, maxY].forEach((v) => {
+      const y = yFor(v);
+      ctx.beginPath(); ctx.moveTo(padL, y + 0.5); ctx.lineTo(w - padR, y + 0.5); ctx.stroke();
+      ctx.fillText(fmtMoney(v), 2, Math.max(10, y - 2));
+    });
+
+    const startY = yFor(startingCapital);
+    ctx.strokeStyle = THEME.ink2; ctx.setLineDash([4, 4]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(padL, startY); ctx.lineTo(w - padR, startY); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // floor line
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const x = xFor(i), y = yFor(floorSeries[i]);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = THEME.critical; ctx.globalAlpha = 0.55; ctx.lineWidth = 1.4;
+    ctx.setLineDash([5, 3]); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+
+    // equity line (dim after breach)
+    const cutoff = breachIdx === null ? n : breachIdx + 1;
+    ctx.beginPath();
+    for (let i = 0; i < cutoff; i++) {
+      const x = xFor(i), y = yFor(eq[i]);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = THEME.equity; ctx.lineWidth = 1.8; ctx.lineJoin = 'round'; ctx.stroke();
+
+    if (breachIdx !== null && breachIdx < n - 1) {
+      ctx.beginPath();
+      for (let i = breachIdx; i < n; i++) {
+        const x = xFor(i), y = yFor(eq[i]);
+        if (i === breachIdx) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = THEME.equity; ctx.globalAlpha = 0.25; ctx.lineWidth = 1.4; ctx.stroke(); ctx.globalAlpha = 1;
+
+      const bx = xFor(breachIdx);
+      ctx.strokeStyle = THEME.critical; ctx.lineWidth = 1.5; ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(bx, padT); ctx.lineTo(bx, h - padB); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = THEME.critical; ctx.font = '700 10px ' + FONT_MONO;
+      ctx.fillText('BREACH', bx + 4, padT + 10);
+    }
+
+    ctx.font = '10px ' + FONT_MONO; ctx.fillStyle = THEME.inkMuted;
+    ctx.fillText(fmtDate(bars[0][0]), padL, h - 4);
+    const lastLabel = fmtDate(bars[n - 1][0]);
+    ctx.fillText(lastLabel, w - padR - ctx.measureText(lastLabel).width, h - 4);
+  }
+
+  function drawDrawdownChart(eq, ddLimit) {
+    const canvas = document.getElementById('drawdownCanvas');
+    const { ctx, w, h } = setupCanvas(canvas);
+    ctx.clearRect(0, 0, w, h);
+    const n = eq.length;
+    if (!n) return;
+
+    const dd = new Float64Array(n);
+    let peak = eq[0];
+    for (let i = 0; i < n; i++) {
+      if (eq[i] > peak) peak = eq[i];
+      dd[i] = eq[i] - peak;
+    }
+
+    const padL = 66, padR = 12, padT = 10, padB = 18;
+    const plotW = w - padL - padR, plotH = h - padT - padB;
+    const minY = Math.min(-ddLimit, ...dd) * 1.08;
+    const maxY = Math.max(0, -minY * 0.02);
+
+    const xFor = (i) => padL + (n > 1 ? (i / (n - 1)) * plotW : plotW / 2);
+    const yFor = (v) => padT + (1 - (v - minY) / (maxY - minY)) * plotH;
+
+    ctx.strokeStyle = THEME.grid; ctx.lineWidth = 1; ctx.font = '10px ' + FONT_MONO; ctx.fillStyle = THEME.inkMuted;
+    [minY, 0].forEach((v) => {
+      const y = yFor(v);
+      ctx.beginPath(); ctx.moveTo(padL, y + 0.5); ctx.lineTo(w - padR, y + 0.5); ctx.stroke();
+      ctx.fillText(fmtMoney(v), 2, Math.max(10, y - 2));
+    });
+
+    // filled area
+    ctx.beginPath();
+    ctx.moveTo(xFor(0), yFor(0));
+    for (let i = 0; i < n; i++) ctx.lineTo(xFor(i), yFor(dd[i]));
+    ctx.lineTo(xFor(n - 1), yFor(0));
+    ctx.closePath();
+    ctx.fillStyle = THEME.critical; ctx.globalAlpha = 0.15; ctx.fill(); ctx.globalAlpha = 1;
+
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const x = xFor(i), y = yFor(dd[i]);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = THEME.critical; ctx.lineWidth = 1.4; ctx.stroke();
+
+    const limY = yFor(-ddLimit);
+    ctx.strokeStyle = THEME.ink; ctx.setLineDash([5, 3]); ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(padL, limY); ctx.lineTo(w - padR, limY); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = THEME.ink; ctx.font = '700 10px ' + FONT_MONO;
+    ctx.fillText('Drawdown limit', padL + 4, limY - 3);
+  }
+
+  // ---------- run ----------
+  function run() {
+    const trackKey = trackSelect.value;
+    const track = LAB.tracks[trackKey];
+    const strat = LAB.strategies[trackKey][Number(strategySelect.value)];
+    const startingCapital = Math.max(1, Number(document.getElementById('startingCapital').value) || 25000);
+    const ddLimit = Math.max(1, Number(document.getElementById('drawdownLimit').value) || 1000);
+    const mode = document.getElementById('trailMode').value;
+
+    document.getElementById('instrumentHint').textContent =
+      `${track.symbol} · ${track.freq} bars · $${track.multiplier}/point · ${track.bars.length.toLocaleString()} bars of history · 1 contract`;
+
+    const eq = reconstructEquityCurve(track.bars, strat.trades, track.multiplier, startingCapital);
+    const { breachIdx, floorSeries } = simulateBreach(eq, track.bars, startingCapital, ddLimit, mode);
+
+    const banner = document.getElementById('statusBanner');
+    const statusText = document.getElementById('statusText');
+    if (breachIdx === null) {
+      banner.className = 'status-banner ok';
+      banner.querySelector('.status-icon').textContent = '✓';
+      statusText.textContent = `Survived the full backtest - ${track.bars.length.toLocaleString()} bars, never touched the ${fmtMoney(ddLimit)} drawdown limit.`;
+    } else {
+      banner.className = 'status-banner breach';
+      banner.querySelector('.status-icon').textContent = '✕';
+      const pct = Math.round((breachIdx / (eq.length - 1)) * 100);
+      statusText.textContent = `Account breached on ${fmtDate(track.bars[breachIdx][0])} - ${pct}% of the way through this backtest's history.`;
+    }
+
+    const finalEq = eq[eq.length - 1];
+    const totalReturn = finalEq / startingCapital - 1;
+    let peak = eq[0], maxDD = 0;
+    for (let i = 0; i < eq.length; i++) { if (eq[i] > peak) peak = eq[i]; maxDD = Math.min(maxDD, eq[i] - peak); }
+
+    document.getElementById('statStrip').innerHTML = [
+      ['Final equity', fmtMoney(Math.round(finalEq)), finalEq >= startingCapital ? 'good' : 'critical'],
+      ['Total return', fmtSignedPct(totalReturn), totalReturn >= 0 ? 'good' : 'critical'],
+      ['Worst drawdown', fmtMoney(Math.round(maxDD)), 'critical'],
+      ['Trades', strat.num_trades.toLocaleString(), ''],
+      ['Win rate', strat.win_rate == null ? '—' : (strat.win_rate * 100).toFixed(0) + '%', ''],
+      ['Profit factor', strat.profit_factor == null ? '—' : strat.profit_factor.toFixed(2), ''],
+    ].map(([lbl, num, cls]) => `<div class="stat-chip"><span class="num ${cls}">${num}</span><span class="lbl">${lbl}</span></div>`).join('');
+
+    drawEquityChart(track.bars, eq, floorSeries, startingCapital, breachIdx);
+    drawDrawdownChart(eq, ddLimit);
+  }
+
+  trackSelect.addEventListener('change', () => { populateStrategies(trackSelect.value); run(); });
+  strategySelect.addEventListener('change', run);
+  document.getElementById('startingCapital').addEventListener('input', run);
+  document.getElementById('drawdownLimit').addEventListener('input', run);
+  document.getElementById('trailMode').addEventListener('change', run);
+  window.addEventListener('resize', run);
+
+  run();
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); run(); });
+  new MutationObserver(() => { THEME = readTheme(); run(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+</script>
+
+<script>
+  (function initSwipeNav() {
+    let startX = null, startY = null;
+    const THRESHOLD = 60;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function navigateWithSlide(href, dx) {
+      document.body.style.transition = 'opacity 0.16s ease, transform 0.16s ease';
+      document.body.style.opacity = '0';
+      document.body.style.transform = 'translateX(' + (dx < 0 ? '-24px' : '24px') + ')';
+      setTimeout(() => { location.href = href; }, reduced ? 0 : 150);
+    }
+    document.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) return;
+      startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    }, { passive: true });
+    document.addEventListener('touchend', (e) => {
+      if (startX === null) return;
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      startX = null;
+      if (Math.abs(dx) < THRESHOLD || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      navigateWithSlide(dx < 0 ? 'dashboard.html' : 'index.html', dx);
+    }, { passive: true });
+  })();
+</script>
