@@ -418,25 +418,30 @@ itself doesn't change (it still clears the plain profitable/robust/stable
 bars), but the caveat makes the added uncertainty impossible to miss.
 
 **The real result, run across every one of the 20 walkforward snapshots
-(240 strategy-track combinations total), is sobering and reported in
-full rather than softened:** 76 of those 240 (31.7%) clear the plain
-"robust" bar (positive OOS return and positive OOS Sharpe). Only **5**
-(2.1%) also have a 90% confidence interval that excludes zero -
-statistically distinguishable from no real edge at all, given how much
-data actually went into each estimate. Those five:
+(360 strategy-track combinations total, 18 strategies x 20 tracks), is
+sobering and reported in full rather than softened:** 108 of those 360
+(30.0%) clear the plain "robust" bar (positive OOS return and positive
+OOS Sharpe). Only **10** (2.8%) also have a 90% confidence interval that
+excludes zero - statistically distinguishable from no real edge at all,
+given how much data actually went into each estimate. Those ten:
 
-- `RSI_Reversion(14,30/70)` on Nasdaq daily: +17.1% OOS, 90% CI [+7.6%, +28.6%]
-- `RSI_Reversion(14,30/70)` on S&P 500 daily: +6.6% OOS, 90% CI [+0.8%, +14.2%]
-- `RSI_Reversion(14,30/70)` on Dow daily: +4.5% OOS, 90% CI [+0.0%, +10.5%]
-- `MA_Crossover(10/50)` on Gold daily: +22.4% OOS, 90% CI [+2.2%, +50.5%]
-- `Donchian_Breakout(20)` on Gold daily: +22.2% OOS, 90% CI [+2.2%, +47.3%]
+- `RSI_Reversion(14,30/70)` on Nasdaq daily: +17.1% OOS, 90% CI [+7.5%, +28.6%]
+- `RSI_Reversion(14,30/70)` on S&P 500 daily: +6.6% OOS, 90% CI [+0.8%, +13.6%]
+- `RSI_Reversion(14,30/70)` on Dow daily: +4.5% OOS, 90% CI [+0.1%, +10.0%]
+- `MA_Crossover(10/50)` on Gold daily: +22.1% OOS, 90% CI [+1.4%, +50.4%]
+- `Donchian_Breakout(20)` on Gold daily: +23.2% OOS, 90% CI [+2.8%, +47.6%]
+- `CCI_Reversion(20,100)` on Crude Oil daily: +5.2% OOS, 90% CI [+0.9%, +11.0%]
+- `CCI_Reversion(20,100)` on Dow daily: +3.7% OOS, 90% CI [+0.1%, +7.8%]
+- `Stochastic_Reversion(14,20/80)` on Nasdaq 5-min: +5.5% OOS, 90% CI [+0.8%, +10.6%]
+- `Stochastic_Reversion(14,20/80)` on Russell 2000 5-min: +0.9% OOS, 90% CI [+0.1%, +1.8%]
+- `VWAP_Reversion(20,2%)` on Gold 5-min: +0.4% OOS, 90% CI [+0.1%, +0.8%]
 
-Every one of those five is a daily track; not a single 5-minute or
-crypto/perpetual result survived. `RSI_Reversion` shows up 3 of the 5
+Seven of the ten are daily tracks and three are 5-minute; still no
+crypto/perpetual result has survived. `RSI_Reversion` shows up 3 of the 10
 times, on three independent equity-index futures - the same instrument-
 family consistency the "Cross-futures validated" panel already surfaces,
 now with actual statistical backing behind it rather than just a plain
-positive-Sharpe count. This doesn't mean the other 71 "robust" results are
+positive-Sharpe count. This doesn't mean the other 98 "robust" results are
 worthless - a real edge can still exist below what this sample size can
 statistically confirm - but it does mean roughly 9 out of 10 walk-forward
 "robust" verdicts on this dashboard, taken alone, are not yet distinguishable
@@ -450,7 +455,7 @@ real confidence - a single significant walk-forward result could still be
 one lucky fold, an edge thin enough that slightly worse execution erases
 it, or a P&L concentrated in one narrow market condition that might not
 recur. `scripts/survivor_stress_test.py` runs three more checks against
-each of the 5 significant survivors, none of which the walk-forward
+each of the 10 significant survivors, none of which the walk-forward
 snapshot alone answers:
 
 1. **Fold-by-fold consistency** - re-reads the same 5-fold walk-forward
@@ -475,53 +480,68 @@ snapshot alone answers:
 |---|---|---|---|---|
 | RSI_Reversion(14,30/70) | Nasdaq daily | 5/5 | ✓ holds | 69.3% (trending/high_vol) |
 | RSI_Reversion(14,30/70) | S&P 500 daily | 4/5 | ✓ holds | 86.2% |
-| RSI_Reversion(14,30/70) | Dow daily | 3/5 | **✗ fails** | 80.0% |
-| MA_Crossover(10/50) | Gold daily | 4/5 | ✓ holds | 59.2% |
+| RSI_Reversion(14,30/70) | Dow daily | 3/5 | ✓ holds | 80.0% |
+| MA_Crossover(10/50) | Gold daily | 4/5 | ✓ holds | 61.0% |
 | Donchian_Breakout(20) | Gold daily | 4/5 | ✓ holds | 64.6% |
+| CCI_Reversion(20,100) | Crude Oil daily | 5/5 | ✓ holds | 37.2% |
+| CCI_Reversion(20,100) | Dow daily | 5/5 | **✗ fails** | 31.0% |
+| Stochastic_Reversion(14,20/80) | Nasdaq 5-min | 4/5 | ✓ holds | 32.0% |
+| Stochastic_Reversion(14,20/80) | Russell 2000 5-min | 5/5 | **✗ fails** | 39.5% |
+| VWAP_Reversion(20,2%) | Gold 5-min | 3/5 | ✓ holds | n/a (regime attribution not run at this bar frequency) |
 
-**Nasdaq's `RSI_Reversion` is the strongest of the five** - positive in
+**Nasdaq's `RSI_Reversion` is the strongest of the ten** - positive in
 every one of the 5 independent fold periods, and its edge survives tripling
 the slippage assumption with the point estimate barely moving (17.1% ->
-17.0% OOS). **Dow's `RSI_Reversion` is the weakest and the one real caution
-flag here**: only 3 of 5 folds were positive, and its already-marginal 90%
-CI (which had a lower bound of exactly +0.0% in the base snapshot) flips to
-including zero once slippage triples - meaning this particular result's
-significance is fragile enough that a small, entirely plausible change in
-execution-cost assumptions erases it. All five show meaningful regime
-concentration (59-86% of P&L from one bucket), which isn't disqualifying on
-its own - most real trading edges are regime-dependent by nature - but it
-does mean each of these should be read as "works well in [that regime],"
-not "works everywhere." Surfaced on the landing page's "Survivor stress
-test" panel, sourced from the same JSON.
+17.0% OOS). **Two results are the real caution flags here**: Dow's
+`CCI_Reversion` and Russell 2000's `Stochastic_Reversion` both flip to
+including zero once slippage triples, meaning their significance is fragile
+enough that a small, entirely plausible change in execution-cost
+assumptions erases it - despite both being positive in 5/5 folds, which by
+itself would otherwise read as a strong result. Fold consistency and cost
+robustness are answering different questions, and a survivor can pass one
+and fail the other. Most of the ten show meaningful regime concentration
+(31-86% of P&L from one bucket), which isn't disqualifying on its own -
+most real trading edges are regime-dependent by nature - but it does mean
+each of these should be read as "works well in [that regime]," not "works
+everywhere." Surfaced on the landing page's "Survivor stress test" panel,
+sourced from the same JSON.
 
 **Portfolio combination.** None of the checks above answer a different,
-natural next question: does combining all 5 survivors into a single
-equal-weighted portfolio actually diversify anything, or are they all just
-riding the same underlying factor (plausible - 3 of the 5 are equity-index
-futures)? `portfolio_analysis()` aligns the 5 OOS equity curves on their
-common date intersection (2018-04-16 to 2026-08-10, 2,093 trading days -
-almost the full window, since all five tracks share nearly identical
-10-year Yahoo histories and the same 5-fold split) and bootstraps a
-confidence interval on the equal-weighted combination exactly like each
-individual survivor was checked.
+natural next question: does combining survivors into a single equal-weighted
+portfolio actually diversify anything, or are they all just riding the same
+underlying factor? `portfolio_analysis()` only combines survivors that
+share a bar frequency - daily and 5-minute OOS equity curves have no
+common timestamps, so naively intersecting them would produce an empty,
+meaningless alignment. The seven daily survivors form the only group large
+enough to be worth combining; the three 5-minute survivors (Nasdaq and
+Russell 2000 Stochastic, Gold VWAP) are excluded from this step for that
+reason, not because they're weaker. `portfolio_analysis()` aligns the seven
+daily OOS equity curves on their common date intersection (2018-04-17 to
+2026-08-17, 2,098 trading days) and bootstraps a confidence interval on the
+equal-weighted combination exactly like each individual survivor was
+checked.
 
-**Real result: yes, genuinely.** Mean pairwise daily-return correlation
-across the 5 is just 0.285 - but that low average hides real structure,
-not five independent bets. The correlation matrix splits cleanly into two
-clusters: the two Gold strategies correlate at 0.90 with each other (same
-instrument, both trend-following), the three equity-index `RSI_Reversion`
-strategies correlate at 0.47-0.95 with each other (same macro risk
-factor), but Gold and the equity-index cluster sit at essentially zero
-correlation with each other (-0.02 to +0.03). Combining them at equal
-weight over the same aligned window produces the same average return
-(+14.5%, identical to the plain average of the five individually) but a
-meaningfully higher Sharpe ratio - 0.84 for the portfolio vs. 0.64 average
-for the five taken separately, still comfortably statistically significant
-(90% CI excludes zero). That's the textbook diversification benefit,
-earned honestly from combining one uncorrelated commodity edge with a
-correlated equity-index cluster - not from five genuinely independent
-signals, which the correlation matrix makes clear is not what's actually
-happening here.
+**Real result: yes, genuinely, though less dramatically than with the
+original five.** Mean pairwise daily-return correlation across the seven is
+just 0.227 - but that low average hides real structure, not seven
+independent bets. The correlation matrix splits into three clusters: the
+two Gold strategies correlate at 0.90 with each other (same instrument,
+both trend-following), the three equity-index `RSI_Reversion` /
+`CCI_Reversion` names correlate at 0.42-0.95 with each other (same macro
+risk factor, and Dow's `CCI_Reversion` rides that same factor even though
+it's a different indicator), while Crude Oil's `CCI_Reversion` sits at
+essentially zero correlation with everything else (0.01-0.06). Combining
+all seven at equal weight over the same aligned window produces a total
+return of +11.7% (vs. +11.8% average of the seven individually - close,
+since Gold's two strong performers are offset by the three more modest
+equity-index/Crude legs) but a meaningfully higher Sharpe ratio - 0.93 for
+the portfolio vs. 0.62 average for the seven taken separately, still
+comfortably statistically significant (90% CI [+5.1%, +19.0%], excludes
+zero). That's the textbook diversification benefit, earned honestly from
+combining one uncorrelated commodity edge (Crude Oil) with a correlated
+equity-index cluster and a correlated Gold pair - not from seven genuinely
+independent signals, which the correlation matrix makes clear is not what's
+actually happening here.
 
 ## Robustness checks (not part of the hourly pipeline - run manually)
 
