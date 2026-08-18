@@ -5,7 +5,12 @@ import pytest
 
 sys.path.insert(0, ".")
 
-from scripts.survivor_stress_test import _annualized_sharpe, pd_isna, portfolio_analysis
+from scripts.survivor_stress_test import (
+    _annualized_sharpe,
+    pd_isna,
+    portfolio_analysis,
+    select_largest_frequency_group,
+)
 
 
 def test_pd_isna_detects_nan_and_passes_through_normal_values():
@@ -63,6 +68,54 @@ def test_portfolio_analysis_computes_correlation_and_return_for_identical_surviv
     # A and B are identical, so the equal-weighted portfolio return equals
     # each individual's own return - no diversification effect to measure.
     assert result["portfolio_total_return"] == pytest.approx(expected_total_return)
+
+
+class _FakeStrategy:
+    def __init__(self, name):
+        self._name = name
+
+    def __call__(self):
+        return self
+
+    @property
+    def name(self):
+        return self._name
+
+
+def test_select_largest_frequency_group_picks_the_majority_frequency_and_excludes_others():
+    # Mirrors the real SURVIVORS shape: 7 daily + 3 five-minute survivors.
+    # Combining OOS equity curves across bar frequencies is meaningless (no
+    # shared timestamps to align on), so this must pick daily (the larger
+    # group) and drop the three 5-minute ones entirely.
+    daily = _FakeStrategy("Daily_Strategy")
+    intraday = _FakeStrategy("Intraday_Strategy")
+    survivors = (
+        [("Daily Track %d" % i, None, None, "1D", daily) for i in range(7)]
+        + [("Intraday Track %d" % i, None, None, "5min", intraday) for i in range(3)]
+    )
+    curves = {
+        f"{daily.name} / Daily Track {i}": pd.Series([1.0]) for i in range(7)
+    }
+    curves.update({
+        f"{intraday.name} / Intraday Track {i}": pd.Series([1.0]) for i in range(3)
+    })
+
+    freq, selected = select_largest_frequency_group(survivors, curves)
+
+    assert freq == "1D"
+    assert len(selected) == 7
+    assert all(key.startswith(daily.name) for key in selected)
+
+
+def test_select_largest_frequency_group_keeps_everything_when_all_same_frequency():
+    strat = _FakeStrategy("Only_Strategy")
+    survivors = [(f"Track {i}", None, None, "1D", strat) for i in range(4)]
+    curves = {f"{strat.name} / Track {i}": pd.Series([1.0]) for i in range(4)}
+
+    freq, selected = select_largest_frequency_group(survivors, curves)
+
+    assert freq == "1D"
+    assert len(selected) == 4
 
 
 def test_portfolio_analysis_aligns_on_the_intersection_of_differing_date_ranges():

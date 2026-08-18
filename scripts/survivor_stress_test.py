@@ -199,6 +199,27 @@ def portfolio_analysis(curves: dict[str, pd.Series]) -> dict:
     }
 
 
+def select_largest_frequency_group(survivors, curves: dict[str, pd.Series]) -> tuple[str, dict[str, pd.Series]]:
+    """Pick the bar-frequency shared by the most survivors and return just
+    their OOS equity curves. Portfolio combination only makes sense within
+    one bar frequency: a daily OOS equity curve and a 5-minute one never
+    share a timestamp, so an inner join across mixed frequencies degenerates
+    to an empty (or near-empty, calendar-boundary-only) intersection - not a
+    meaningful "does combining diversify anything" answer. `survivors` is an
+    iterable of (label, _, _, freq, strategy_cls) tuples, matching SURVIVORS.
+    """
+    from collections import Counter
+
+    freq_counts = Counter(freq for _, _, _, freq, _ in survivors)
+    portfolio_freq = freq_counts.most_common(1)[0][0]
+    portfolio_curves = {
+        f"{strategy_cls().name} / {label}": curves[f"{strategy_cls().name} / {label}"]
+        for label, _, _, freq, strategy_cls in survivors
+        if freq == portfolio_freq
+    }
+    return portfolio_freq, portfolio_curves
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--output", required=True)
@@ -217,21 +238,7 @@ def main(argv=None):
         print(f"  3x-slippage: {r['stressed_oos_return']*100:.1f}% OOS, significant={r['stressed_significant']}")
         print(f"  top regime share of P&L: {r['top_regime_pct_of_pnl']}")
 
-    # Portfolio combination only makes sense within one bar frequency: a
-    # daily OOS equity curve and a 5-minute one never share a timestamp, so
-    # an inner join across mixed frequencies degenerates to an empty (or
-    # near-empty, calendar-boundary-only) intersection - not a meaningful
-    # "does combining diversify anything" answer. Restrict to whichever
-    # frequency has the most survivors (currently daily), rather than
-    # silently combining series that can't actually be aligned.
-    from collections import Counter
-    freq_counts = Counter(freq for _, _, _, freq, _ in SURVIVORS)
-    portfolio_freq = freq_counts.most_common(1)[0][0]
-    portfolio_curves = {
-        f"{strategy_cls().name} / {label}": curves[f"{strategy_cls().name} / {label}"]
-        for label, _, _, freq, strategy_cls in SURVIVORS
-        if freq == portfolio_freq
-    }
+    portfolio_freq, portfolio_curves = select_largest_frequency_group(SURVIVORS, curves)
     print(f"\nCombining the {len(portfolio_curves)} {portfolio_freq} survivors into an equal-weighted portfolio "
           f"({len(SURVIVORS) - len(portfolio_curves)} other-frequency survivor(s) excluded - can't align to a shared calendar)...")
     portfolio = portfolio_analysis(portfolio_curves)
