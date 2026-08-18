@@ -39,6 +39,13 @@ def test_tags_for_ignores_falsy_texts_without_crashing():
     assert _tags_for("Bitcoin rally", None, "") == ["BTC"]
 
 
+def test_tags_for_matches_the_newer_defi_mining_exchange_and_nft_tags():
+    tags = _tags_for("Binance exchange outflow spikes as DeFi yield farm exploited, NFT mint stalls")
+    assert set(tags) == {"DeFi", "Exchange", "NFT"}
+    assert _tags_for("Bitcoin miner hashrate hits new high") == ["BTC", "Mining"]
+    assert _tags_for("Circle expands USDC stablecoin reserves") == ["Stablecoin"]
+
+
 _RSS_TEMPLATE = """<?xml version="1.0"?>
 <rss version="2.0"><channel>
 {items}

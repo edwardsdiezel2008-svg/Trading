@@ -21,15 +21,21 @@ import requests
 
 # Well-known, public RSS feeds from mainstream crypto news outlets - no
 # auth/API key needed, unlike most crypto news aggregator APIs (e.g.
-# CryptoPanic) which now require a registered token.
+# CryptoPanic) which now require a registered token. A feed that goes down
+# or starts rejecting requests just drops out silently (see the per-feed
+# try/except in fetch_all_news) rather than breaking the whole fetch, so
+# this list can grow without each new entry needing a hard uptime guarantee.
 FEEDS = [
     ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/"),
     ("CoinTelegraph", "https://cointelegraph.com/rss"),
     ("Bitcoin.com", "https://news.bitcoin.com/feed/"),
+    ("Decrypt", "https://decrypt.co/feed"),
+    ("CryptoSlate", "https://cryptoslate.com/feed/"),
+    ("NewsBTC", "https://www.newsbtc.com/feed/"),
 ]
 
-MAX_PER_FEED = 15
-MAX_TOTAL = 30
+MAX_PER_FEED = 25
+MAX_TOTAL = 100
 
 # Keyword -> tag shown on the dashboard. Checked against title (+
 # description when present), case-insensitive. Order matters only for
@@ -41,6 +47,11 @@ TAG_KEYWORDS = [
     ("Regulation", ("sec ", "regulat", "lawsuit", "congress", "senate", "law ")),
     ("ETF", ("etf",)),
     ("Macro", ("federal reserve", "fed ", "interest rate", "inflation", "cpi", "jobs report")),
+    ("DeFi", ("defi", "decentralized finance", "liquidity pool", "yield farm")),
+    ("Stablecoin", ("stablecoin", "usdt", "usdc", "tether", "circle ")),
+    ("Mining", ("mining", "miner", "hashrate", "hash rate")),
+    ("Exchange", ("binance", "coinbase", "kraken", "exchange hack", "exchange outflow")),
+    ("NFT", ("nft", "non-fungible")),
 ]
 
 

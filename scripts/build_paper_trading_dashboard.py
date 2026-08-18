@@ -24,6 +24,8 @@ TEMPLATE_PATH = "paper_trading/dashboard_template.html"
 OUTPUT_PATH = "paper_trading/dashboard.html"
 INDEX_TEMPLATE_PATH = "paper_trading/index_template.html"
 INDEX_OUTPUT_PATH = "paper_trading/index.html"
+NEWS_TEMPLATE_PATH = "paper_trading/news_template.html"
+NEWS_OUTPUT_PATH = "paper_trading/news.html"
 MEMECOIN_SCAN_PATH = "paper_trading/memecoin_scan.json"
 WIDE_MEMECOIN_SCAN_PATH = "paper_trading/memecoin_wide_scan.json"
 BTC_MARKET_SNAPSHOT_PATH = "paper_trading/btc_market_snapshot.json"
@@ -541,6 +543,25 @@ def build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_gre
     print(f"Wrote {INDEX_OUTPUT_PATH} ({os.path.getsize(INDEX_OUTPUT_PATH) / 1024:.1f} KB)")
 
 
+def build_news_page(news):
+    """Full news dashboard - every fetched headline (not just the small
+    on-page panels' diversified/capped slices), with client-side search and
+    source/tag filtering. Needs nothing but the news feed itself."""
+    if not os.path.exists(NEWS_TEMPLATE_PATH):
+        print(f"Skipping {NEWS_OUTPUT_PATH}: {NEWS_TEMPLATE_PATH} not found")
+        return
+
+    with open(NEWS_TEMPLATE_PATH) as f:
+        out = f.read()
+
+    out = out.replace("__NEWS_JSON__", json.dumps(news))
+    assert "__NEWS_JSON__" not in out, "unfilled placeholder __NEWS_JSON__"
+
+    with open(NEWS_OUTPUT_PATH, "w") as f:
+        f.write(out)
+    print(f"Wrote {NEWS_OUTPUT_PATH} ({os.path.getsize(NEWS_OUTPUT_PATH) / 1024:.1f} KB)")
+
+
 def main():
     loaded = {}
     for suffix, *_ in TRACKS:
@@ -597,6 +618,7 @@ def main():
 
     build_details_page(loaded, memecoin_scan, wide_scan, market_snapshot, fear_greed, correlations, news)
     build_index_page(loaded, wide_scan, memecoin_scan, market_snapshot, fear_greed, news, regimes, survivor_stress_test)
+    build_news_page(news)
 
 
 if __name__ == "__main__":

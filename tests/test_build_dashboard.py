@@ -14,6 +14,7 @@ from scripts.build_paper_trading_dashboard import (
     _cross_track_robustness,
     _daily_returns,
     _pearson,
+    build_news_page,
     compute_cross_asset_robustness,
     compute_cross_futures_robustness,
     compute_rug_watch_summary,
@@ -251,6 +252,35 @@ def test_diversify_news_preserves_recency_order_within_the_cap():
     items = [_item("A", i) for i in range(5)]
     top = diversify_news(items, limit=6, max_per_source=5)
     assert [it["title"] for it in top] == [it["title"] for it in items]
+
+
+def test_build_news_page_embeds_the_full_feed_and_leaves_no_placeholder(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    with open("paper_trading/news_template.html", "w") as f:
+        f.write("<html>__NEWS_JSON__</html>")
+
+    news = {
+        "updated_at_utc": "2026-08-18T12:00:00Z",
+        "sources": ["CoinDesk"],
+        "items": [{"title": "Bitcoin rallies", "link": "https://example.com/a", "source": "CoinDesk",
+                    "published_utc": "2026-08-18T11:00:00Z", "tags": ["BTC"]}],
+    }
+    build_news_page(news)
+
+    with open("paper_trading/news.html") as f:
+        out = f.read()
+    assert "__NEWS_JSON__" not in out
+    assert "Bitcoin rallies" in out
+    assert "CoinDesk" in out
+
+
+def test_build_news_page_skips_gracefully_when_template_is_missing(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    build_news_page({"updated_at_utc": None, "sources": [], "items": []})
+    assert not os.path.exists("paper_trading/news.html")
+    assert "Skipping" in capsys.readouterr().out
 
 
 def _coin(symbol, change_24h_pct, pct_from_24h_high):
