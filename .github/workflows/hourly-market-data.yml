@@ -146,10 +146,18 @@ jobs:
         id: stage
         run: |
           mkdir -p _site
-          cp paper_trading/index.html _site/index.html
-          cp paper_trading/dashboard.html _site/dashboard.html
-          cp paper_trading/learn.html _site/learn.html
-          cp paper_trading/notes.html _site/notes.html
+          # Every top-level built page, not a hand-maintained list - a new
+          # page (news.html, backtest_lab.html) previously had to be added
+          # here separately and wasn't, so it silently never deployed
+          # despite building and testing clean locally. Excludes
+          # *_template.html (the editable sources, not deploy targets).
+          for f in paper_trading/*.html; do
+            base=$(basename "$f")
+            case "$base" in
+              *_template.html) continue ;;
+            esac
+            cp "$f" "_site/$base"
+          done
           echo "site_ready=true" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-pages-artifact@v3
