@@ -567,10 +567,10 @@ def build_news_page(news):
 
 def build_backtest_lab_page():
     """Stitches the already-built paper_trading/backtest_lab.json (written
-    separately by scripts/build_backtest_lab.py, which runs 378 real
-    backtests and takes a few minutes - too slow to redo on every ordinary
-    dashboard rebuild) into its page template. A no-op until that script has
-    been run at least once."""
+    separately by scripts/build_backtest_lab.py, which runs roughly 1,700
+    real backtests and takes a few minutes - too slow to redo on every
+    ordinary dashboard rebuild) into its page template. A no-op until that
+    script has been run at least once."""
     if not os.path.exists(BACKTEST_LAB_TEMPLATE_PATH):
         print(f"Skipping {BACKTEST_LAB_OUTPUT_PATH}: {BACKTEST_LAB_TEMPLATE_PATH} not found")
         return

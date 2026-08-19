@@ -6,7 +6,14 @@ sys.path.insert(0, ".")
 
 from src.backtest.engine import Trade
 from src.backtest.strategies import ALL_STRATEGY_CLASSES
-from scripts.build_backtest_lab import _bars_json, _safe_num, _trades_json, strategy_configs
+from scripts.build_backtest_lab import (
+    MAX_CONFIGS_PER_STRATEGY,
+    _bars_json,
+    _param_extremes,
+    _safe_num,
+    _trades_json,
+    strategy_configs,
+)
 
 
 def test_strategy_configs_covers_at_least_50_real_configurations():
@@ -26,12 +33,27 @@ def test_strategy_configs_params_are_drawn_from_the_strategys_own_param_space():
             )
 
 
-def test_strategy_configs_gives_each_class_the_default_plus_up_to_two_extremes():
+def test_strategy_configs_runs_the_full_real_grid_per_class_capped_at_50():
     counts = {}
     for cls, _ in strategy_configs():
         counts[cls] = counts.get(cls, 0) + 1
     for cls in ALL_STRATEGY_CLASSES:
-        assert 1 <= counts[cls] <= 3
+        space = cls.PARAM_SPACE
+        full_grid_size = 1
+        for values in space.values():
+            full_grid_size *= len(values)
+        expected = min(full_grid_size + 1, MAX_CONFIGS_PER_STRATEGY)  # +1 for hardcoded defaults
+        assert counts[cls] == expected, f"{cls.__name__}: expected {expected} configs, got {counts[cls]}"
+        assert counts[cls] <= MAX_CONFIGS_PER_STRATEGY
+
+
+def test_strategy_configs_never_exceeds_the_cap_even_for_a_hypothetically_huge_grid():
+    class FakeBig:
+        PARAM_SPACE = {"a": list(range(10)), "b": list(range(10))}  # 100 combos
+
+    lo, hi = _param_extremes(FakeBig)
+    assert lo == {"a": 0, "b": 0}
+    assert hi == {"a": 9, "b": 9}
 
 
 def test_safe_num_converts_nan_and_inf_to_none():

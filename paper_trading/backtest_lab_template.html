@@ -199,6 +199,33 @@
 
   .foot { padding: 6px 4px 0; display: flex; flex-direction: column; gap: 4px; }
   .foot p { margin: 0; font-size: var(--fs-xs); color: var(--ink-muted); }
+
+  /* ---- leaderboard ---- */
+  .lb-hint { font-size: var(--fs-xs); color: var(--ink-muted); margin: 0 0 12px; }
+  .lb-table-wrap { overflow-x: auto; }
+  .lb-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); white-space: nowrap; }
+  .lb-table th, .lb-table td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--border); }
+  .lb-table th:first-child, .lb-table td:first-child,
+  .lb-table th:nth-child(2), .lb-table td:nth-child(2),
+  .lb-table th:nth-child(3), .lb-table td:nth-child(3) { text-align: left; }
+  .lb-table thead th {
+    font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--ink-muted); font-weight: 700; position: sticky; top: 0; background: var(--surface);
+  }
+  .lb-table tbody tr { cursor: default; transition: background 0.12s ease; }
+  .lb-table tbody tr.lb-chartable { cursor: pointer; }
+  .lb-table tbody tr.lb-chartable:hover { background: var(--scan-wash); }
+  .lb-table tbody tr.lb-rank-1 { background: var(--accent-wash); }
+  .lb-rank { font-family: var(--font-mono); font-weight: 800; color: var(--ink-muted); }
+  .lb-rank-1 .lb-rank { color: var(--accent); }
+  .lb-name { font-weight: 600; }
+  .lb-base { display: block; font-size: var(--fs-xs); color: var(--ink-muted); font-weight: 400; }
+  .lb-good { color: var(--good); }
+  .lb-critical { color: var(--critical); }
+  .lb-chart-tag {
+    display: inline-block; font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 700;
+    color: var(--scan); text-transform: uppercase; letter-spacing: 0.04em;
+  }
 </style>
 
 <div class="ambient-field" aria-hidden="true">
@@ -223,7 +250,42 @@
     </div>
   </header>
 
-  <div class="section-label">Setup</div>
+  <div class="section-label">Leaderboard</div>
+  <div class="panel">
+    <p class="lb-hint" id="lbHint">Loading…</p>
+    <div class="controls-grid" style="margin-bottom:14px;">
+      <div class="field">
+        <label for="lbTrack">Track</label>
+        <select id="lbTrack"><option value="">All tracks</option></select>
+      </div>
+      <div class="field">
+        <label for="lbStrategy">Strategy</label>
+        <select id="lbStrategy"><option value="">All strategies</option></select>
+      </div>
+      <div class="field">
+        <label for="lbSort">Rank by</label>
+        <select id="lbSort">
+          <option value="total_return">Total return</option>
+          <option value="sharpe">Sharpe</option>
+          <option value="profit_factor">Profit factor</option>
+          <option value="win_rate">Win rate</option>
+        </select>
+      </div>
+    </div>
+    <div class="lb-table-wrap">
+      <table class="lb-table">
+        <thead>
+          <tr>
+            <th>#</th><th>Strategy</th><th>Track</th><th>Return</th><th>Sharpe</th>
+            <th>Max DD</th><th>Win rate</th><th>PF</th><th>Trades</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="lbBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-label" id="setupSection">Setup</div>
   <div class="panel controls-grid">
     <div class="field">
       <label for="trackSelect">Market / timeframe</label>
@@ -279,7 +341,7 @@
   <div class="section-label">How this works</div>
   <div class="panel">
     <p><strong>Every trade shown here really happened</strong> in a backtest against real historical 1-minute or 5-minute bars (NQ, ES, YM, RTY, GC, or CL futures) - fixed at 1 contract, using this project's tested backtest engine. Nothing here re-simulates strategy logic in the browser; the equity curve is reconstructed from those real trades with plain arithmetic (starting balance + realized P&L from closed trades + mark-to-market P&L on whatever's open right now).</p>
-    <p><strong>54 strategies, drawn from the site's real 18-strategy library</strong> - each one's hardcoded defaults, plus its most conservative and most aggressive parameter combination from its own documented range (the same ranges <a class="details-link" style="padding:1px 6px;" href="dashboard.html">the parameter-sensitivity sweeps</a> already test). None of these are validated as statistically significant on intraday data - see the <a class="details-link" style="padding:1px 6px;" href="learn.html">Learn page</a> and <a class="details-link" style="padding:1px 6px;" href="dashboard.html">Robustness tables</a> before trusting any single result here.</p>
+    <p><strong>Up to 50 real parameter combinations per strategy, drawn from the site's real 18-strategy library</strong> - each one's hardcoded defaults plus its own documented PARAM_SPACE's full grid (the same ranges <a class="details-link" style="padding:1px 6px;" href="dashboard.html">the parameter-sensitivity sweeps</a> already test - nothing invented to hit a round number, so a strategy with only, say, 6 real documented combinations runs 6, not 50). The Leaderboard ranks every one of them, on every track. Only the standouts - each strategy's defaults and extremes, plus whatever lands in the top 10 by return or Sharpe on a given track - get a full interactive chart; the rest are metrics-only rows so the page doesn't have to ship tens of thousands of trades nobody will look at. None of these are validated as statistically significant on intraday data - see the <a class="details-link" style="padding:1px 6px;" href="learn.html">Learn page</a> and <a class="details-link" style="padding:1px 6px;" href="dashboard.html">Robustness tables</a> before trusting any single result here.</p>
     <p><strong>The drawdown simulation is an approximation of prop-firm-style trailing drawdown rules</strong> (like Apex Trader Funding's), not a copy of any specific firm's exact terms - "intraday" ratchets the floor up on every new bar-close equity high (including open, unrealized gains), "end-of-day" only ratchets once per session close, and "static" never moves. Verify your actual account's real rules before relying on this for anything but research.</p>
   </div>
 
@@ -334,15 +396,88 @@
 
   const strategySelect = document.getElementById('strategySelect');
   function populateStrategies(trackKey) {
+    // Only configs with a shipped trade list can be charted here - most of
+    // the full 50-per-strategy grid is metrics-only (see the Leaderboard),
+    // so this dropdown stays limited to each strategy's defaults, extremes,
+    // and whatever else made the top-10-by-return/Sharpe cut on this track.
     const strategies = LAB.strategies[trackKey];
     const groups = {};
-    strategies.forEach((s, i) => { (groups[s.base] = groups[s.base] || []).push([i, s]); });
+    strategies.forEach((s, i) => { if (!s.trades) return; (groups[s.base] = groups[s.base] || []).push([i, s]); });
     strategySelect.innerHTML = Object.keys(groups).sort().map((base) =>
       `<optgroup label="${base}">${groups[base].map(([i, s]) =>
         `<option value="${i}">${s.name} (${s.num_trades} trades, ${fmtSignedPct(s.total_return)})</option>`).join('')}</optgroup>`
     ).join('');
   }
   populateStrategies(trackKeys[0]);
+
+  // ---------- leaderboard ----------
+  // Every config the build actually ran, on every track, flattened into one
+  // rankable list - up to 50 real parameter combinations per strategy (see
+  // scripts/build_backtest_lab.py). Most rows are metrics-only; only the
+  // ones with a `trades` array (each strategy's defaults/extremes plus
+  // whatever made the top-10-by-return/Sharpe cut per track) can open a
+  // chart below.
+  const ALL_ROWS = [];
+  trackKeys.forEach((tk) => {
+    LAB.strategies[tk].forEach((s, i) => ALL_ROWS.push(Object.assign({ trackKey: tk, idx: i }, s)));
+  });
+
+  const lbTrackSelect = document.getElementById('lbTrack');
+  lbTrackSelect.insertAdjacentHTML('beforeend', trackKeys.map((k) => `<option value="${k}">${LAB.tracks[k].label}</option>`).join(''));
+
+  const lbStrategySelect = document.getElementById('lbStrategy');
+  const lbBaseNames = Array.from(new Set(ALL_ROWS.map((r) => r.base))).sort();
+  lbStrategySelect.insertAdjacentHTML('beforeend', lbBaseNames.map((b) => `<option value="${b}">${b}</option>`).join(''));
+
+  const LB_LIMIT = 100;
+  function renderLeaderboard() {
+    const trackFilter = lbTrackSelect.value;
+    const baseFilter = lbStrategySelect.value;
+    const sortKey = document.getElementById('lbSort').value;
+
+    let rows = ALL_ROWS.filter((r) =>
+      (!trackFilter || r.trackKey === trackFilter) && (!baseFilter || r.base === baseFilter) && r[sortKey] != null);
+    rows.sort((a, b) => b[sortKey] - a[sortKey]);
+    const total = rows.length;
+    rows = rows.slice(0, LB_LIMIT);
+
+    document.getElementById('lbHint').textContent = total === 0
+      ? 'No backtests match this filter.'
+      : `${total.toLocaleString()} real backtests match this filter, out of ${ALL_ROWS.length.toLocaleString()} run in total (up to 50 real parameter combinations per strategy) - showing the top ${rows.length}, ranked by ${sortKey.replace('_', ' ')}. Click a row marked Chart → to see its full equity curve below.`;
+
+    document.getElementById('lbBody').innerHTML = rows.map((r, i) => {
+      const rank = i + 1;
+      const chartable = !!r.trades;
+      return `<tr class="${chartable ? 'lb-chartable' : ''}${rank === 1 ? ' lb-rank-1' : ''}" data-track="${r.trackKey}" data-idx="${r.idx}">
+        <td class="lb-rank">${rank}</td>
+        <td><span class="lb-name">${r.base}</span><span class="lb-base">${r.name}</span></td>
+        <td>${LAB.tracks[r.trackKey].label}</td>
+        <td class="${r.total_return >= 0 ? 'lb-good' : 'lb-critical'}">${fmtSignedPct(r.total_return)}</td>
+        <td>${r.sharpe == null ? '—' : r.sharpe.toFixed(2)}</td>
+        <td class="lb-critical">${fmtSignedPct(r.max_drawdown)}</td>
+        <td>${r.win_rate == null ? '—' : (r.win_rate * 100).toFixed(0) + '%'}</td>
+        <td>${r.profit_factor == null ? '—' : r.profit_factor.toFixed(2)}</td>
+        <td>${r.num_trades.toLocaleString()}</td>
+        <td>${chartable ? '<span class="lb-chart-tag">Chart →</span>' : ''}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  document.getElementById('lbBody').addEventListener('click', (e) => {
+    const tr = e.target.closest('tr.lb-chartable');
+    if (!tr) return;
+    trackSelect.value = tr.dataset.track;
+    populateStrategies(tr.dataset.track);
+    strategySelect.value = tr.dataset.idx;
+    run();
+    document.getElementById('setupSection').scrollIntoView({
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'start',
+    });
+  });
+  lbTrackSelect.addEventListener('change', renderLeaderboard);
+  lbStrategySelect.addEventListener('change', renderLeaderboard);
+  document.getElementById('lbSort').addEventListener('change', renderLeaderboard);
 
   // ---------- core reconstruction ----------
   function reconstructEquityCurve(bars, trades, multiplier, startingCapital) {
@@ -579,6 +714,7 @@
   window.addEventListener('resize', run);
 
   run();
+  renderLeaderboard();
 
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); run(); });
   new MutationObserver(() => { THEME = readTheme(); run(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });

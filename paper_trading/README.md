@@ -596,28 +596,40 @@ any single instrument's Locked-in Strategy pick.
 A separate page (`paper_trading/backtest_lab.html`) for a question none of
 the tables above answer directly: given a real starting balance and a real
 drawdown limit, would a specific strategy's actual historical run have
-survived it? Built by `scripts/build_backtest_lab.py`, which runs 378 real
-backtests - 54 strategy configurations (each of the 18 strategies' own
-hardcoded defaults, plus its most conservative and most aggressive
-`PARAM_SPACE` combo - the same values the sensitivity sweeps already
-exercise, nothing invented to hit a round number) against all seven tracks
-this project fetches at 1-5 minute resolution (NQ 1-min; NQ/ES/YM/RTY/GC/CL
-5-min - there is no other genuine intraday bar data available).
+survived it? Built by `scripts/build_backtest_lab.py`, which backtests each
+of the 18 strategies against its own `PARAM_SPACE`'s full, real, documented
+parameter grid - not samples, not invented values - capped at 50
+combinations per strategy (an evenly-spaced thinning of the real grid only
+kicks in if a strategy's grid actually exceeds that; today the largest,
+RSIReversion, has 36), against all seven tracks this project fetches at 1-5
+minute resolution (NQ 1-min; NQ/ES/YM/RTY/GC/CL 5-min - there is no other
+genuine intraday bar data available). That's roughly 1,650-1,850 real
+backtests per run depending on how many configs each strategy resolves to
+after deduping combos that land on the same effective parameters.
 
-Only compact real data ships to the page: each track's bars as
-`[epoch_seconds, close]`, and each strategy's actual trade list as
-`[entry_idx, exit_idx, direction, entry_price, exit_price, net_pnl]`
-tuples. The page reconstructs the full bar-level equity curve and
-simulates a trailing (intraday or end-of-day) or static drawdown-limit
-breach entirely with client-side arithmetic over those real numbers - no
-strategy logic is duplicated in JavaScript, so the two can't drift apart.
-Wired into the hourly workflow (skipped gracefully if the 1-5min bar files
-aren't seeded yet) so it stays live like everything else.
+A **Leaderboard** tab ranks every one of those backtests - filterable by
+track and strategy, sortable by total return, Sharpe, profit factor, or win
+rate - so you can see which strategy and parameter combination actually
+performed best instead of picking one blind. Only compact real data ships
+to the page: each track's bars as `[epoch_seconds, close]`, every config's
+summary metrics for the leaderboard, and - because shipping a full trade
+list for every one of ~1,700 configs would balloon the page for combos
+nobody will look at - full trade lists
+(`[entry_idx, exit_idx, direction, entry_price, exit_price, net_pnl]`
+tuples) only for the chart-worthy subset: each strategy's hardcoded
+defaults and `PARAM_SPACE` extremes, plus whichever configs land in the top
+10 by total return or top 10 by Sharpe on a given track. The page
+reconstructs the full bar-level equity curve and simulates a trailing
+(intraday or end-of-day) or static drawdown-limit breach entirely with
+client-side arithmetic over those real numbers - no strategy logic is
+duplicated in JavaScript, so the two can't drift apart. Wired into the
+hourly workflow (skipped gracefully if the 1-5min bar files aren't seeded
+yet) so it stays live like everything else.
 
-None of the 54 configurations here are claimed as validated - see
-"Statistical significance" above before trusting any single result. The
-point of this page is honest position sizing against a real risk budget,
-not a new source of "this strategy works" claims.
+None of the configurations here are claimed as validated - see "Statistical
+significance" above before trusting any single result. The point of this
+page is honest position sizing against a real risk budget, not a new
+source of "this strategy works" claims.
 
 ## Other context surfaced on the dashboard
 
