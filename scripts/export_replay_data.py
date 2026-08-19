@@ -90,7 +90,7 @@ def main():
             export_instrument("ES", "data/sample/ES_ticks.csv", freq="5min"),
         ]
     }
-    out_path = "/tmp/claude-0/-home-user-Trading/381d606c-177e-5630-98bb-7e86b3d62d32/scratchpad/replay_data.json"
+    out_path = "reports/replay_data.json"
     import os
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with open(out_path, "w") as f:
