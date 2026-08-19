@@ -11,6 +11,7 @@ from scripts.build_backtest_lab import (
     _bars_json,
     _param_extremes,
     _safe_num,
+    _select_chart_ids,
     _trades_json,
     strategy_configs,
 )
@@ -92,3 +93,46 @@ def test_trades_json_maps_entry_and_exit_times_to_integer_bar_positions():
     out = _trades_json([trade], idx)
 
     assert out == [[1, 3, 1, 100.0, 105.0, 8.5]]
+
+
+def _fake_config(total_return, sharpe, is_extreme=False):
+    return {"total_return": total_return, "sharpe": sharpe, "_is_extreme": is_extreme}
+
+
+def test_select_chart_ids_includes_top_n_by_return_and_by_sharpe():
+    # Best return, worst sharpe, and vice versa - each should still get in
+    # via its own ranking even though it doesn't lead the other one.
+    best_return = _fake_config(0.50, 0.1)
+    best_sharpe = _fake_config(0.01, 5.0)
+    middling = _fake_config(0.10, 1.0)
+    computed = [best_return, best_sharpe, middling]
+
+    ids = _select_chart_ids(computed, top_n=1)
+
+    assert id(best_return) in ids
+    assert id(best_sharpe) in ids
+    assert id(middling) not in ids
+
+
+def test_select_chart_ids_always_includes_extremes_even_if_low_ranked():
+    worst_but_extreme = _fake_config(-0.90, -3.0, is_extreme=True)
+    great_but_not_extreme = _fake_config(0.80, 4.0)
+    computed = [worst_but_extreme, great_but_not_extreme]
+
+    ids = _select_chart_ids(computed, top_n=1)
+
+    assert id(worst_but_extreme) in ids  # extreme, so charted regardless of rank
+    assert id(great_but_not_extreme) in ids  # also charted, tops both rankings
+
+
+def test_select_chart_ids_excludes_none_metrics_from_ranking_not_from_extremes():
+    none_metrics_extreme = _fake_config(None, None, is_extreme=True)
+    none_metrics_ordinary = _fake_config(None, None, is_extreme=False)
+    ranked = _fake_config(0.05, 0.5)
+    computed = [none_metrics_extreme, none_metrics_ordinary, ranked]
+
+    ids = _select_chart_ids(computed, top_n=5)
+
+    assert id(none_metrics_extreme) in ids  # kept via _is_extreme despite None metrics
+    assert id(none_metrics_ordinary) not in ids  # no metrics to rank by, not extreme
+    assert id(ranked) in ids

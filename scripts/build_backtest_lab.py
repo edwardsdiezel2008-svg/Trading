@@ -140,6 +140,28 @@ def _trades_json(trades, bars_index):
     return out
 
 
+def _select_chart_ids(computed, top_n=CHART_TOP_N):
+    """Which of a track's computed configs get their trade list shipped
+    (chartable): each strategy's hardcoded defaults/PARAM_SPACE extremes
+    (`_is_extreme`), plus whichever configs land in the top `top_n` by total
+    return or top `top_n` by Sharpe. `computed` is a list of dicts each with
+    `total_return`, `sharpe`, and `_is_extreme` keys (None metrics are
+    excluded from ranking, not treated as worst). Returns a set of the
+    qualifying dicts' id()s - the caller still owns the objects, this only
+    decides which ones qualify."""
+    by_return = sorted(
+        (c for c in computed if c["total_return"] is not None),
+        key=lambda c: c["total_return"], reverse=True,
+    )[:top_n]
+    by_sharpe = sorted(
+        (c for c in computed if c["sharpe"] is not None),
+        key=lambda c: c["sharpe"], reverse=True,
+    )[:top_n]
+    return {id(c) for c in by_return} | {id(c) for c in by_sharpe} | {
+        id(c) for c in computed if c["_is_extreme"]
+    }
+
+
 def main():
     configs = strategy_configs()
     extremes = {cls: _param_extremes(cls) for cls in ALL_STRATEGY_CLASSES}
@@ -190,17 +212,7 @@ def main():
                 "_is_extreme": params in ({}, lo, hi),
             })
 
-        by_return = sorted(
-            (c for c in computed if c["total_return"] is not None),
-            key=lambda c: c["total_return"], reverse=True,
-        )[:CHART_TOP_N]
-        by_sharpe = sorted(
-            (c for c in computed if c["sharpe"] is not None),
-            key=lambda c: c["sharpe"], reverse=True,
-        )[:CHART_TOP_N]
-        chart_ids = {id(c) for c in by_return} | {id(c) for c in by_sharpe} | {
-            id(c) for c in computed if c["_is_extreme"]
-        }
+        chart_ids = _select_chart_ids(computed)
 
         strat_list = []
         for c in computed:
