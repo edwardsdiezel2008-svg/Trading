@@ -1,8 +1,6 @@
 import sys
 
-import numpy as np
 import pandas as pd
-import pytest
 
 sys.path.insert(0, ".")
 
