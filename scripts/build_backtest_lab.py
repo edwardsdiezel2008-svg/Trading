@@ -68,6 +68,23 @@ TRACKS = [
 ]
 
 
+def _thin_grid(grid, budget):
+    """Evenly sample down to at most `budget` items from a real, ordered
+    grid - never invents values, just skips some. Always keeps the first and
+    last item (i=0 and i=budget-1 map to index 0 and len(grid)-1), so a
+    strategy's most conservative and most aggressive real combos survive
+    thinning even when its grid is far bigger than the cap. A no-op (returns
+    `grid` unchanged) whenever it already fits within budget - true for
+    every strategy in this project today, so this only matters for a future
+    strategy with a large enough PARAM_SPACE, which is exactly why it has
+    its own direct test rather than relying on today's real strategies to
+    exercise it."""
+    if len(grid) <= budget:
+        return grid
+    idxs = sorted({round(i * (len(grid) - 1) / (budget - 1)) for i in range(budget)})
+    return [grid[i] for i in idxs]
+
+
 def strategy_configs():
     """Every real, distinct config worth backtesting per strategy class: its
     hardcoded defaults (empty params dict) plus every combination in its own
@@ -83,10 +100,7 @@ def strategy_configs():
             continue
         keys = list(space.keys())
         grid = list(itertools.product(*(space[k] for k in keys)))
-        budget = MAX_CONFIGS_PER_STRATEGY - 1
-        if len(grid) > budget:
-            idxs = sorted({round(i * (len(grid) - 1) / (budget - 1)) for i in range(budget)})
-            grid = [grid[i] for i in idxs]
+        grid = _thin_grid(grid, MAX_CONFIGS_PER_STRATEGY - 1)
         configs.extend((cls, dict(zip(keys, combo))) for combo in grid)
     return configs
 

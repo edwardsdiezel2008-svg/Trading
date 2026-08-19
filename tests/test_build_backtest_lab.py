@@ -12,6 +12,7 @@ from scripts.build_backtest_lab import (
     _param_extremes,
     _safe_num,
     _select_chart_ids,
+    _thin_grid,
     _trades_json,
     strategy_configs,
 )
@@ -48,13 +49,39 @@ def test_strategy_configs_runs_the_full_real_grid_per_class_capped_at_50():
         assert counts[cls] <= MAX_CONFIGS_PER_STRATEGY
 
 
-def test_strategy_configs_never_exceeds_the_cap_even_for_a_hypothetically_huge_grid():
+def test_param_extremes_of_a_hypothetically_huge_grid_are_still_just_first_and_last():
     class FakeBig:
         PARAM_SPACE = {"a": list(range(10)), "b": list(range(10))}  # 100 combos
 
     lo, hi = _param_extremes(FakeBig)
     assert lo == {"a": 0, "b": 0}
     assert hi == {"a": 9, "b": 9}
+
+
+def test_thin_grid_is_a_no_op_when_the_grid_already_fits_the_budget():
+    grid = list(range(10))
+    assert _thin_grid(grid, budget=10) is grid
+    assert _thin_grid(grid, budget=20) is grid
+
+
+def test_thin_grid_caps_a_grid_larger_than_the_budget_to_exactly_the_budget():
+    # No real strategy's PARAM_SPACE is this large today, so this branch of
+    # strategy_configs() is otherwise never exercised - test it directly
+    # against a synthetic grid rather than relying on that staying true.
+    grid = list(range(1000))
+    thinned = _thin_grid(grid, budget=49)
+    assert len(thinned) == 49
+    assert len(set(thinned)) == 49  # no duplicates
+    assert thinned == sorted(thinned)  # order preserved
+
+
+def test_thin_grid_always_keeps_the_first_and_last_real_value():
+    # The strategy's most conservative and most aggressive real combo should
+    # survive thinning even when its grid is far bigger than the cap.
+    grid = list(range(200))
+    thinned = _thin_grid(grid, budget=10)
+    assert thinned[0] == grid[0]
+    assert thinned[-1] == grid[-1]
 
 
 def test_safe_num_converts_nan_and_inf_to_none():
