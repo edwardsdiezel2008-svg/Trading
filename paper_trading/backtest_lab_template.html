@@ -448,7 +448,10 @@
     document.getElementById('lbBody').innerHTML = rows.map((r, i) => {
       const rank = i + 1;
       const chartable = !!r.trades;
-      return `<tr class="${chartable ? 'lb-chartable' : ''}${rank === 1 ? ' lb-rank-1' : ''}" data-track="${r.trackKey}" data-idx="${r.idx}">
+      const a11y = chartable
+        ? `tabindex="0" role="button" aria-label="View equity curve for ${r.name} on ${LAB.tracks[r.trackKey].label}"`
+        : '';
+      return `<tr class="${chartable ? 'lb-chartable' : ''}${rank === 1 ? ' lb-rank-1' : ''}" data-track="${r.trackKey}" data-idx="${r.idx}" ${a11y}>
         <td class="lb-rank">${rank}</td>
         <td><span class="lb-name">${r.base}</span><span class="lb-base">${r.name}</span></td>
         <td>${LAB.tracks[r.trackKey].label}</td>
@@ -463,9 +466,7 @@
     }).join('');
   }
 
-  document.getElementById('lbBody').addEventListener('click', (e) => {
-    const tr = e.target.closest('tr.lb-chartable');
-    if (!tr) return;
+  function openLeaderboardRow(tr) {
     trackSelect.value = tr.dataset.track;
     populateStrategies(tr.dataset.track);
     strategySelect.value = tr.dataset.idx;
@@ -474,6 +475,17 @@
       behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
       block: 'start',
     });
+  }
+  document.getElementById('lbBody').addEventListener('click', (e) => {
+    const tr = e.target.closest('tr.lb-chartable');
+    if (tr) openLeaderboardRow(tr);
+  });
+  document.getElementById('lbBody').addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const tr = e.target.closest('tr.lb-chartable');
+    if (!tr) return;
+    e.preventDefault(); // stop Space from also scrolling the page
+    openLeaderboardRow(tr);
   });
   lbTrackSelect.addEventListener('change', renderLeaderboard);
   lbStrategySelect.addEventListener('change', renderLeaderboard);
