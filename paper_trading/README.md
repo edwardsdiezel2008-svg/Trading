@@ -591,6 +591,34 @@ Gold) - the strongest cross-market signal in either panel right now, and a
 genuinely useful answer to "which strategy should I actually trust" beyond
 any single instrument's Locked-in Strategy pick.
 
+## Backtest Lab
+
+A separate page (`paper_trading/backtest_lab.html`) for a question none of
+the tables above answer directly: given a real starting balance and a real
+drawdown limit, would a specific strategy's actual historical run have
+survived it? Built by `scripts/build_backtest_lab.py`, which runs 378 real
+backtests - 54 strategy configurations (each of the 18 strategies' own
+hardcoded defaults, plus its most conservative and most aggressive
+`PARAM_SPACE` combo - the same values the sensitivity sweeps already
+exercise, nothing invented to hit a round number) against all seven tracks
+this project fetches at 1-5 minute resolution (NQ 1-min; NQ/ES/YM/RTY/GC/CL
+5-min - there is no other genuine intraday bar data available).
+
+Only compact real data ships to the page: each track's bars as
+`[epoch_seconds, close]`, and each strategy's actual trade list as
+`[entry_idx, exit_idx, direction, entry_price, exit_price, net_pnl]`
+tuples. The page reconstructs the full bar-level equity curve and
+simulates a trailing (intraday or end-of-day) or static drawdown-limit
+breach entirely with client-side arithmetic over those real numbers - no
+strategy logic is duplicated in JavaScript, so the two can't drift apart.
+Wired into the hourly workflow (skipped gracefully if the 1-5min bar files
+aren't seeded yet) so it stays live like everything else.
+
+None of the 54 configurations here are claimed as validated - see
+"Statistical significance" above before trusting any single result. The
+point of this page is honest position sizing against a real risk budget,
+not a new source of "this strategy works" claims.
+
 ## Other context surfaced on the dashboard
 
 - **Regime** (`src/backtest/regime.py`, `compute_current_regimes()`) - each
@@ -620,8 +648,12 @@ Per track (suffix `""` = BTC daily, `_15m`, `_eth`, `_sol`, `_perp`,
 `memecoins/*.csv` (scanner), `rug_watch_history.json` (rolling ~7-day log
 of flagged coins per hourly run, see "Rug Pull Watch" below),
 `btc_market_snapshot.json` (order book + funding), `fear_greed.json`,
-`news.json`, `index.html` + `dashboard.html` (built output - regenerate
-with `python scripts/build_paper_trading_dashboard.py`, never hand-edit).
+`news.json` (fetched by `scripts/fetch_news.py`), `backtest_lab.json`
+(built by `scripts/build_backtest_lab.py`, see "Backtest Lab" above).
+`index.html`, `dashboard.html`, `news.html`, and `backtest_lab.html` are
+all built output - regenerate with `python
+scripts/build_paper_trading_dashboard.py`, never hand-edit (their
+`*_template.html` sources are the ones to actually change).
 
 ## Rug Pull Watch
 
