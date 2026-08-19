@@ -1,23 +1,23 @@
-# ETH/USDT Paper Trading (1D) — updated 2026-08-19T08:29:12.552417+00:00
+# ETH/USDT Paper Trading (1D) — updated 2026-08-19T09:29:26.016980+00:00
 
 Latest bar: 2026-08-19 00:00:00 · 2,158 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $556,311 | +456.3% | — | 1 |
-| MA_Crossover(10/50) | LONG | $634,010 | +534.0% | 0.66 | 50 |
-| Donchian_Breakout(20) | LONG | $291,982 | +192.0% | 0.51 | 41 |
-| Supertrend(10,m=3.0) | LONG | $291,546 | +191.5% | 0.51 | 48 |
-| Keltner_Breakout(20,m=2.0) | LONG | $152,800 | +52.8% | 0.38 | 35 |
+| *Buy & Hold (benchmark)* | — | $557,574 | +457.6% | — | 1 |
+| MA_Crossover(10/50) | LONG | $635,451 | +535.5% | 0.66 | 50 |
+| Donchian_Breakout(20) | LONG | $292,645 | +192.6% | 0.51 | 41 |
+| Supertrend(10,m=3.0) | LONG | $292,208 | +192.2% | 0.51 | 48 |
+| Keltner_Breakout(20,m=2.0) | LONG | $153,147 | +53.1% | 0.38 | 35 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
-| Engulfing_Reversal(0.3) | LONG | $40,856 | -59.1% | 0.16 | 148 |
-| MACD_Momentum(12/26/9) | SHORT | $32,359 | -67.6% | 0.08 | 162 |
+| Engulfing_Reversal(0.3) | LONG | $40,949 | -59.1% | 0.16 | 148 |
+| MACD_Momentum(12/26/9) | SHORT | $32,285 | -67.7% | 0.08 | 162 |
 | RSI_Reversion(14,30/70) | FLAT | $13,914 | -86.1% | -0.51 | 63 |
-| ATR_Vol_Breakout(14,k=1.5) | LONG | $11,643 | -88.4% | -0.08 | 51 |
-| Parabolic_SAR(af=0.02,max=0.2) | LONG | $11,640 | -88.4% | -0.12 | 174 |
+| ATR_Vol_Breakout(14,k=1.5) | LONG | $11,669 | -88.3% | -0.08 | 51 |
+| Parabolic_SAR(af=0.02,max=0.2) | LONG | $11,666 | -88.3% | -0.12 | 174 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $8,815 | -91.2% | -0.27 | 84 |
 | CCI_Reversion(20,100) | FLAT | $8,522 | -91.5% | -0.30 | 207 |
-| Inside_Bar_Breakout(0.6) | LONG | $6,899 | -93.1% | -0.18 | 27 |
+| Inside_Bar_Breakout(0.6) | LONG | $6,914 | -93.1% | -0.18 | 27 |
 | VolProfile_Reversion(30) | FLAT | $3,795 | -96.2% | -0.59 | 228 |
 | Stochastic_Reversion(14,20/80) | FLAT | $3,298 | -96.7% | -0.56 | 75 |
 | Bollinger_Reversion(20,2sd) | FLAT | $3,190 | -96.8% | -0.40 | 70 |
