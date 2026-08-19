@@ -292,6 +292,13 @@
 <script>
   const LAB = __BACKTEST_LAB_JSON__;
 
+  // Plain loops, not Math.min(...arr) - spreading a large typed array into
+  // function arguments throws "Maximum call stack size exceeded" once the
+  // array outgrows the JS engine's argument limit, and these bar histories
+  // only grow as the hourly workflow keeps appending to them.
+  function arrMin(arr) { let m = Infinity; for (let i = 0; i < arr.length; i++) if (arr[i] < m) m = arr[i]; return m; }
+  function arrMax(arr) { let m = -Infinity; for (let i = 0; i < arr.length; i++) if (arr[i] > m) m = arr[i]; return m; }
+
   function fmtMoney(v) {
     const s = v < 0 ? '-' : '';
     return s + '$' + Math.abs(v).toLocaleString(undefined, { maximumFractionDigits: 0 });
@@ -408,8 +415,8 @@
 
     const padL = 66, padR = 12, padT = 12, padB = 20;
     const plotW = w - padL - padR, plotH = h - padT - padB;
-    let minY = Math.min(startingCapital, ...eq, ...floorSeries);
-    let maxY = Math.max(startingCapital, ...eq);
+    let minY = Math.min(startingCapital, arrMin(eq), arrMin(floorSeries));
+    let maxY = Math.max(startingCapital, arrMax(eq));
     const pad = (maxY - minY) * 0.08 || 1;
     minY -= pad; maxY += pad;
 
@@ -483,7 +490,7 @@
 
     const padL = 66, padR = 12, padT = 10, padB = 18;
     const plotW = w - padL - padR, plotH = h - padT - padB;
-    const minY = Math.min(-ddLimit, ...dd) * 1.08;
+    const minY = Math.min(-ddLimit, arrMin(dd)) * 1.08;
     const maxY = Math.max(0, -minY * 0.02);
 
     const xFor = (i) => padL + (n > 1 ? (i / (n - 1)) * plotW : plotW / 2);
