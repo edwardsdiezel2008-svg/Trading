@@ -1,10 +1,10 @@
-# SOL/USDT Paper Trading (1D) — updated 2026-08-18T23:56:04.604670+00:00
+# SOL/USDT Paper Trading (1D) — updated 2026-08-19T00:01:37.472821+00:00
 
-Latest bar: 2026-08-18 00:00:00 · 1,947 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-19 00:00:00 · 1,948 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $238,226 | +138.2% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $238,257 | +138.3% | — | 1 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $-209 | -100.2% | 0.51 | 38 |
 | VWAP_Reversion(20,2%) | FLAT | $-2,862 | -102.9% | 0.48 | 8 |
@@ -20,6 +20,6 @@ Latest bar: 2026-08-18 00:00:00 · 1,947 bars of history · $100,000 starting ca
 | CCI_Reversion(20,100) | FLAT | $-45,286 | -145.3% | 0.19 | 4 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $-58,077 | -158.1% | -0.05 | 1 |
 | Stochastic_Reversion(14,20/80) | FLAT | $-121,375 | -221.4% | -0.32 | 4 |
-| Supertrend(10,m=3.0) | FLAT | $-147,185 | -247.2% | 0.36 | 3 |
+| Supertrend(10,m=3.0) | FLAT | $-147,185 | -247.2% | 0.35 | 3 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $-392,077 | -492.1% | 0.24 | 6 |
 | Bollinger_Reversion(20,2sd) | FLAT | $-453,417 | -553.4% | 0.25 | 5 |
