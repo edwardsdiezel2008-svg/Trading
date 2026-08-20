@@ -100,6 +100,44 @@ def test_baseline_uses_fixed_default_params_over_same_oos_window():
         assert wf.vs_fixed_default_ratio is not None
 
 
+def test_oos_curve_flat_lines_once_a_fold_blows_the_account_negative():
+    # A naked short sized at 100% of equity, with no max_loss_fraction floor,
+    # can drive the engine's own equity_curve negative (see engine.py's own
+    # docstring on this). If a fold boundary lands on that negative point,
+    # equity_at_train_end is negative - a truthy value that the old `if
+    # equity_at_train_end else 1.0` guard let straight through into a
+    # division. That didn't crash (no inf/nan), it silently rescaled the next
+    # fold by a *negative* factor instead: a real, discontinuous jump at the
+    # fold boundary that kept drifting for the rest of the fold, rather than
+    # the flat "no more capital to compound" line the engine's own equity <=
+    # 0 convention implies. Assert the actual fixed behavior (flat, no jump)
+    # rather than just "no inf/nan", which the bug never produced anyway.
+    class AlwaysShort(Strategy):
+        PARAM_SPACE = {"k": [1, 2]}
+
+        def generate_signals(self, bars):
+            return pd.Series(-1, index=bars.index)
+
+    prices = np.concatenate([np.full(100, 100.0), np.linspace(100, 100_000.0, 100)])
+    bars = _bars(prices)
+    spec = InstrumentSpec("TEST", "equity", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0)
+
+    wf = run_walk_forward(bars, AlwaysShort, spec, n_folds=3, capital_fraction=1.0, sizing="percent_equity")
+
+    eq = wf.oos_equity_curve
+    assert np.isfinite(eq.to_numpy()).all()
+    assert len(wf.folds) == 3
+
+    # With this exact setup, fold 2's test window is where the rally drives
+    # equity negative, so fold 3 enters with a non-positive equity_at_train_end
+    # and must flat-line for its whole test window rather than rescale by a
+    # negative factor (which is what the bug did - see comment above).
+    fold3 = wf.folds[2]
+    assert eq.loc[fold3.test_start] <= 0  # confirms this setup actually exercises the bug's precondition
+    seg = eq.loc[fold3.test_start:fold3.test_end]
+    assert seg.nunique() == 1, "a fold starting from non-positive equity should flat-line, not rescale"
+
+
 def test_raises_when_too_little_data_for_first_fold():
     bars = _bars(_trending_prices(n=20, seed=1))
     with pytest.raises(ValueError):

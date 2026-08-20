@@ -118,7 +118,12 @@ def run_walk_forward(
         full_res = run_backtest(bars.iloc[:test_end], strategy_cls(params=best_combo), spec, initial_capital=100_000.0, **engine_kwargs)
         eq = full_res.equity_curve
         equity_at_train_end = eq.iloc[train_end - 1]
-        multiple = (eq.iloc[-1] / equity_at_train_end) if equity_at_train_end else 1.0
+        # Non-positive (not just exactly zero) equity means the account is already
+        # blown - the same convention _position_size() uses to stop opening new
+        # positions. Dividing by a negative base would still "succeed" numerically
+        # but flip signs into a misleading ratio, so both this and rebased below
+        # treat the fold as flat (no more compounding possible) once equity <= 0.
+        multiple = (eq.iloc[-1] / equity_at_train_end) if equity_at_train_end > 0 else 1.0
 
         test_bars = bars.iloc[train_end:test_end]
         test_equity_abs = eq.iloc[train_end:test_end]
@@ -137,7 +142,10 @@ def run_walk_forward(
         # first value already reflects the first test bar's P&L, matching `multiple`
         # below - otherwise the stitched curve would silently reset to flat at every
         # fold boundary instead of compounding continuously through it.
-        rebased = (test_equity_abs / equity_at_train_end) * running_capital
+        if equity_at_train_end > 0:
+            rebased = (test_equity_abs / equity_at_train_end) * running_capital
+        else:
+            rebased = pd.Series(running_capital, index=test_equity_abs.index)
         equity_pieces.append(rebased)
         bars_pieces.append(test_bars)
         positions_pieces.append(test_positions)
