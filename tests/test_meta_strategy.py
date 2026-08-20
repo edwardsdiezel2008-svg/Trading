@@ -1,14 +1,17 @@
+from unittest.mock import patch
+
 import numpy as np
 import pandas as pd
 import pytest
 
-from src.backtest.instruments import get_spec
+from src.backtest.instruments import InstrumentSpec, get_spec
 from src.backtest.meta_strategy import (
     _PrecomputedSignalStrategy,
     run_meta_strategy_walkforward,
     select_strategy_per_regime,
 )
 from src.backtest.strategies import MovingAverageCrossover, RSIReversion
+from src.backtest.strategies.base import Strategy
 
 SPEC = get_spec("_default_equity")
 
@@ -101,3 +104,52 @@ class TestRunMetaStrategyWalkforward:
         )
         assert result.oos_metrics["num_trades"] == 0
         assert result.oos_metrics["total_return"] == 0.0
+
+    def test_oos_curve_freezes_once_a_fold_blows_running_capital_negative(self):
+        # Each fold's own backtest always starts fresh at a fixed $100k, so its
+        # own `multiple` is always well-defined - but running_capital (the
+        # accumulator carried across folds for display) can already be
+        # non-positive from an earlier fold's blowup. The old code kept
+        # multiplying running_capital by each new fold's multiple regardless:
+        # a genuinely PROFITABLE later fold (multiple > 1) then made an
+        # already-negative running_capital MORE negative - inverting a real
+        # gain into what looks like a bigger loss. Force this deterministically
+        # by mocking which strategy each fold's regime gets assigned, so the
+        # scenario doesn't depend on the regime-selection heuristic picking a
+        # specific strategy on its own.
+        class AlwaysShort(Strategy):
+            def generate_signals(self, bars):
+                return pd.Series(-1, index=bars.index)
+
+        class AlwaysLong(Strategy):
+            def generate_signals(self, bars):
+                return pd.Series(1, index=bars.index)
+
+        n = 400
+        seg1 = np.linspace(20, 10, 100)
+        seg2 = np.linspace(10, 10_000.0, 100)  # violent rally - kills a short
+        seg3 = np.linspace(50, 500.0, 100)  # separate, affordable move - a forced long is genuinely profitable here
+        seg4 = np.linspace(500, 520, 100)
+        prices = np.concatenate([seg1, seg2, seg3, seg4])
+        idx = pd.date_range("2026-01-05", periods=n, freq="1min")
+        bars = pd.DataFrame({"open": prices, "high": prices, "low": prices, "close": prices, "volume": 100}, index=idx)
+        spec = InstrumentSpec("TEST", "equity", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0)
+
+        forced_regime_maps = [
+            {"trending/high_vol": "AlwaysShort", "trending/low_vol": "AlwaysShort"},  # fold 1: forced short into the rally
+            {"trending/high_vol": "AlwaysLong", "trending/low_vol": "AlwaysLong"},  # fold 2: forced long, genuinely profitable
+            {},  # fold 3: flat
+            {},  # the final live_regime_map call after the fold loop
+        ]
+        with patch("src.backtest.meta_strategy.select_strategy_per_regime", side_effect=forced_regime_maps):
+            result = run_meta_strategy_walkforward(
+                bars, [AlwaysShort, AlwaysLong], spec, n_folds=3, capital_fraction=1.0, sizing="percent_equity",
+            )
+
+        eq = result.oos_equity_curve
+        fold1, fold2 = result.folds[0], result.folds[1]
+        assert eq.loc[fold1.test_end] < 0  # confirms this setup actually blows the account negative
+
+        seg = eq.loc[fold2.test_start:fold2.test_end]
+        assert seg.nunique() == 1, "a fold starting from non-positive running_capital should freeze, not rescale"
+        assert seg.iloc[0] == pytest.approx(eq.loc[fold1.test_end])

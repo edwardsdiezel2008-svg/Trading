@@ -168,10 +168,23 @@ def run_meta_strategy_walkforward(
         fold_metrics = compute_metrics(fold_result, initial_capital=100_000.0, freq_hint=freq_hint)
 
         multiple = (fold_result.equity_curve.iloc[-1] / 100_000.0) if len(fold_result.equity_curve) else 1.0
-        rebased = (fold_result.equity_curve / 100_000.0) * running_capital
+        # Each fold's own backtest starts fresh at a fixed $100k, so `multiple`
+        # itself is always well-defined - but running_capital (the accumulator
+        # carried across folds for display) can already be non-positive from an
+        # earlier fold's blowup. Multiplying a genuinely profitable later fold's
+        # positive `multiple` onto an already-negative running_capital makes the
+        # displayed balance MORE negative - inverting a real gain into what looks
+        # like a bigger loss. Once non-positive, freeze it (same "no more capital
+        # to compound" convention run_walk_forward and _position_size both use)
+        # rather than letting subsequent folds keep moving it.
+        if running_capital > 0:
+            rebased = (fold_result.equity_curve / 100_000.0) * running_capital
+        else:
+            rebased = pd.Series(running_capital, index=fold_result.equity_curve.index)
         equity_pieces.append(rebased)
         combined_trades.extend(fold_result.trades)
-        running_capital = running_capital * multiple
+        if running_capital > 0:
+            running_capital = running_capital * multiple
 
         folds.append(MetaFold(
             fold_idx=k,
