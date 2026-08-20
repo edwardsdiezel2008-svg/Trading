@@ -1,25 +1,25 @@
-# MYM Paper Trading (1D) — updated 2026-08-20T03:19:46.027601+00:00
+# MYM Paper Trading (1D) — updated 2026-08-20T04:23:58.717913+00:00
 
-Latest bar: 2026-08-19 00:00:00 · 2,522 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-20 00:00:00 · 2,523 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $290,250 | +190.3% | — | 1 |
-| Inside_Bar_Breakout(0.6) | LONG | $111,497 | +11.5% | 0.44 | 15 |
+| *Buy & Hold (benchmark)* | — | $290,283 | +190.3% | — | 1 |
+| Inside_Bar_Breakout(0.6) | LONG | $111,500 | +11.5% | 0.44 | 15 |
 | RSI_Reversion(14,30/70) | FLAT | $105,251 | +5.3% | 0.50 | 73 |
-| Bollinger_Reversion(20,2sd) | SHORT | $103,070 | +3.1% | 0.16 | 83 |
-| MA_Crossover(10/50) | LONG | $103,030 | +3.0% | 0.13 | 66 |
-| Parabolic_SAR(af=0.02,max=0.2) | LONG | $102,414 | +2.4% | 0.11 | 237 |
-| Stochastic_Reversion(14,20/80) | FLAT | $101,800 | +1.8% | 0.11 | 95 |
+| Bollinger_Reversion(20,2sd) | FLAT | $103,084 | +3.1% | 0.16 | 83 |
+| MA_Crossover(10/50) | LONG | $103,032 | +3.0% | 0.13 | 66 |
+| Parabolic_SAR(af=0.02,max=0.2) | LONG | $102,416 | +2.4% | 0.11 | 237 |
+| Stochastic_Reversion(14,20/80) | FLAT | $101,860 | +1.9% | 0.11 | 95 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $101,429 | +1.4% | 0.08 | 90 |
-| Engulfing_Reversal(0.3) | SHORT | $100,426 | +0.4% | 0.03 | 110 |
+| Engulfing_Reversal(0.3) | SHORT | $100,423 | +0.4% | 0.03 | 110 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
-| VWAP_Reversion(20,2%) | SHORT | $99,201 | -0.8% | -0.03 | 111 |
+| VWAP_Reversion(20,2%) | SHORT | $99,198 | -0.8% | -0.03 | 111 |
 | VolProfile_Reversion(30) | FLAT | $99,190 | -0.8% | -0.04 | 268 |
 | TPO_Reversion(60,p=5) | FLAT | $98,018 | -2.0% | -0.10 | 184 |
 | CCI_Reversion(20,100) | FLAT | $96,303 | -3.7% | -0.18 | 230 |
-| MACD_Momentum(12/26/9) | SHORT | $95,418 | -4.6% | -0.17 | 215 |
-| Keltner_Breakout(20,m=2.0) | LONG | $95,342 | -4.7% | -0.17 | 38 |
-| Donchian_Breakout(20) | LONG | $94,738 | -5.3% | -0.19 | 58 |
-| Supertrend(10,m=3.0) | LONG | $91,073 | -8.9% | -0.32 | 76 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $90,198 | -9.8% | -0.36 | 35 |
+| MACD_Momentum(12/26/9) | SHORT | $95,415 | -4.6% | -0.17 | 215 |
+| Keltner_Breakout(20,m=2.0) | LONG | $95,345 | -4.7% | -0.17 | 38 |
+| Donchian_Breakout(20) | LONG | $94,741 | -5.3% | -0.19 | 58 |
+| Supertrend(10,m=3.0) | LONG | $91,076 | -8.9% | -0.32 | 76 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $90,196 | -9.8% | -0.36 | 35 |
