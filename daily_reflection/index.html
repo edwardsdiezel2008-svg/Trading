@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Daybreak Ledger</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap">
+
+<style>
+  :root {
+    --sky-a: #bfe9fb;
+    --sky-b: #eaf9ff;
+    --sky-c: #d7f3e6;
+    --glass: rgba(255,255,255,0.58);
+    --glass-strong: rgba(255,255,255,0.82);
+    --glass-border: rgba(255,255,255,0.92);
+    --glass-shadow: rgba(20,80,110,0.18);
+    --ink: #0a3450;
+    --ink-soft: #3e7089;
+    --ink-faint: #6f97ac;
+    --accent: #0ea5d9;
+    --accent-deep: #096e92;
+    --accent-glow: rgba(14,165,217,0.35);
+    --positive: #33c77d;
+    --positive-deep: #0e7a46;
+    --negative: #ff7a63;
+    --negative-deep: #d6402b;
+    --pending-fill: rgba(255,255,255,0.4);
+    --pending-border: rgba(10,52,80,0.16);
+    --tile-text-light: #ffffff;
+    color-scheme: light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --sky-a: #061428;
+      --sky-b: #0d2846;
+      --sky-c: #0a2036;
+      --glass: rgba(20,40,68,0.58);
+      --glass-strong: rgba(22,44,74,0.8);
+      --glass-border: rgba(255,255,255,0.16);
+      --glass-shadow: rgba(0,0,0,0.45);
+      --ink: #eaf5ff;
+      --ink-soft: #a3c6df;
+      --ink-faint: #6f92ac;
+      --accent: #6fe0ff;
+      --accent-deep: #46c3e8;
+      --accent-glow: rgba(111,224,255,0.35);
+      --positive: #3ee39a;
+      --positive-deep: #1fae72;
+      --negative: #ff8a76;
+      --negative-deep: #ea6249;
+      --pending-fill: rgba(255,255,255,0.07);
+      --pending-border: rgba(255,255,255,0.18);
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --sky-a: #061428;
+    --sky-b: #0d2846;
+    --sky-c: #0a2036;
+    --glass: rgba(20,40,68,0.58);
+    --glass-strong: rgba(22,44,74,0.8);
+    --glass-border: rgba(255,255,255,0.16);
+    --glass-shadow: rgba(0,0,0,0.45);
+    --ink: #eaf5ff;
+    --ink-soft: #a3c6df;
+    --ink-faint: #6f92ac;
+    --accent: #6fe0ff;
+    --accent-deep: #46c3e8;
+    --accent-glow: rgba(111,224,255,0.35);
+    --positive: #3ee39a;
+    --positive-deep: #1fae72;
+    --negative: #ff8a76;
+    --negative-deep: #ea6249;
+    --pending-fill: rgba(255,255,255,0.07);
+    --pending-border: rgba(255,255,255,0.18);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+
+  body {
+    font-family: "Nunito Sans", "Segoe UI", -apple-system, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(60% 45% at 15% 8%, rgba(255,255,255,0.55), transparent 60%),
+      radial-gradient(45% 35% at 88% 6%, rgba(255,255,255,0.35), transparent 60%),
+      linear-gradient(180deg, var(--sky-a) 0%, var(--sky-b) 55%, var(--sky-c) 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  .bubble {
+    position: fixed;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, rgba(255,255,255,0.9), rgba(255,255,255,0.05) 60%);
+    filter: blur(0.5px);
+    opacity: 0.55;
+    pointer-events: none;
+    animation: drift 22s ease-in-out infinite;
+  }
+  .bubble.b1 { width: 220px; height: 220px; top: -60px; left: -40px; animation-duration: 26s; }
+  .bubble.b2 { width: 140px; height: 140px; top: 30%; right: -50px; animation-duration: 19s; animation-delay: -4s; }
+  .bubble.b3 { width: 90px; height: 90px; bottom: 8%; left: 6%; animation-duration: 17s; animation-delay: -9s; }
+  .bubble.b4 { width: 60px; height: 60px; top: 12%; left: 46%; animation-duration: 14s; animation-delay: -2s; opacity: 0.35; }
+
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(18px, -22px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bubble { animation: none; }
+    * { transition: none !important; animation-duration: 0.001ms !important; }
+  }
+
+  .wrap {
+    position: relative;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 28px) 64px;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(16px, 3vw, 24px);
+  }
+
+  .glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 26px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.6) inset,
+      0 18px 40px -18px var(--glass-shadow);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 32%);
+    pointer-events: none;
+  }
+
+  header.hero {
+    padding: clamp(22px, 4vw, 34px) clamp(22px, 5vw, 38px);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 800;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+  }
+  .eyebrow .drop { font-size: 0.95rem; }
+
+  h1 {
+    font-family: "Baloo 2", "Segoe UI", sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.8rem, 4.4vw, 2.6rem);
+    margin: 0;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    text-wrap: balance;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+  }
+
+  .sub {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 1rem;
+    max-width: 56ch;
+    line-height: 1.5;
+  }
+
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.7) inset, 0 6px 14px -8px var(--glass-shadow);
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--ink);
+  }
+  .pill .dot { width: 9px; height: 9px; border-radius: 50%; box-shadow: 0 0 0 3px rgba(255,255,255,0.5); }
+  .pill.pos .dot { background: var(--positive); }
+  .pill.neg .dot { background: var(--negative); }
+  .pill.pending .dot { background: var(--ink-faint); }
+  .pill .num { font-variant-numeric: tabular-nums; font-family: "Baloo 2", sans-serif; font-size: 1rem; }
+
+  section.board {
+    padding: clamp(18px, 4vw, 30px);
+  }
+
+  .board-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .board-head h2 {
+    font-family: "Baloo 2", sans-serif;
+    font-size: 1.15rem;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  .board-head .range {
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: clamp(6px, 1.4vw, 10px);
+  }
+
+  @media (max-width: 620px) {
+    .grid { grid-template-columns: repeat(6, 1fr); }
+  }
+
+  .box {
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    border: 1px solid var(--pending-border);
+    background: var(--pending-fill);
+    color: var(--ink-soft);
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 700;
+    font-size: clamp(0.7rem, 1.6vw, 0.85rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    padding: 0;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .box::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(155deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0) 45%);
+    pointer-events: none;
+  }
+
+  .box:hover:not([data-locked="true"]) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 18px -10px var(--glass-shadow);
+  }
+
+  .box:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .box[data-status="positive"] {
+    background: linear-gradient(160deg, var(--positive) 0%, var(--positive-deep) 100%);
+    border-color: transparent;
+    color: var(--tile-text-light);
+    box-shadow: 0 6px 16px -8px rgba(14,120,70,0.55);
+  }
+
+  .box[data-status="negative"] {
+    background: linear-gradient(160deg, var(--negative) 0%, var(--negative-deep) 100%);
+    border-color: transparent;
+    color: var(--tile-text-light);
+    box-shadow: 0 6px 16px -8px rgba(180,50,30,0.55);
+  }
+
+  .box[data-locked="true"] {
+    cursor: default;
+    opacity: 0.42;
+  }
+
+  .box[data-today="true"] {
+    box-shadow: 0 0 0 3px var(--accent-glow), 0 6px 16px -8px var(--glass-shadow);
+  }
+  .box[data-today="true"]::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    border: 2px solid var(--accent);
+    opacity: 0.9;
+    pointer-events: none;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 16px;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+  .legend .i-pos { background: linear-gradient(160deg, var(--positive), var(--positive-deep)); }
+  .legend .i-neg { background: linear-gradient(160deg, var(--negative), var(--negative-deep)); }
+  .legend .i-pending { background: var(--pending-fill); border: 1px solid var(--pending-border); }
+  .legend .i-today { background: transparent; border: 2px solid var(--accent); }
+
+  footer.note {
+    padding: 16px clamp(20px, 4vw, 30px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.86rem;
+    color: var(--ink-soft);
+  }
+  footer.note .drop { font-size: 1rem; }
+
+  .readonly-flag {
+    display: none;
+    padding: 10px 16px;
+    border-radius: 14px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+  .readonly-flag.show { display: block; }
+
+  dialog.entry {
+    border: none;
+    border-radius: 24px;
+    padding: 0;
+    width: min(480px, calc(100vw - 40px));
+    background: transparent;
+    color: var(--ink);
+  }
+  dialog.entry::backdrop {
+    background: rgba(6, 30, 48, 0.45);
+    backdrop-filter: blur(2px);
+  }
+  .entry-card {
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 26px 26px 22px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .entry-card h3 {
+    font-family: "Baloo 2", sans-serif;
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  .entry-card .entry-date {
+    margin: -8px 0 0;
+    color: var(--ink-faint);
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .toggle-row {
+    display: flex;
+    gap: 10px;
+  }
+  .toggle-btn {
+    flex: 1;
+    padding: 12px 10px;
+    border-radius: 14px;
+    border: 1.5px solid var(--pending-border);
+    background: var(--pending-fill);
+    color: var(--ink);
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 800;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease, transform 0.1s ease;
+  }
+  .toggle-btn:hover { transform: translateY(-1px); }
+  .toggle-btn[aria-pressed="true"].pos {
+    background: linear-gradient(160deg, var(--positive), var(--positive-deep));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 6px 14px -8px rgba(14,120,70,0.6);
+  }
+  .toggle-btn[aria-pressed="true"].neg {
+    background: linear-gradient(160deg, var(--negative), var(--negative-deep));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 6px 14px -8px rgba(180,50,30,0.6);
+  }
+  textarea.thesis {
+    width: 100%;
+    min-height: 130px;
+    resize: vertical;
+    border-radius: 14px;
+    border: 1.5px solid var(--pending-border);
+    background: rgba(255,255,255,0.5);
+    color: var(--ink);
+    font-family: "Nunito Sans", sans-serif;
+    font-size: 0.95rem;
+    padding: 12px 14px;
+    line-height: 1.5;
+  }
+  textarea.thesis::placeholder { color: var(--ink-faint); }
+  textarea.thesis:focus, .toggle-btn:focus-visible, .action-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .entry-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .action-btn {
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 800;
+    font-size: 0.88rem;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+  }
+  .action-btn.ghost {
+    background: transparent;
+    border-color: var(--pending-border);
+    color: var(--ink-soft);
+  }
+  .action-btn.primary {
+    background: linear-gradient(160deg, var(--accent), var(--accent-deep));
+    color: #fff;
+    box-shadow: 0 8px 18px -8px var(--accent-glow);
+  }
+  .action-btn.primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .hint {
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+  }
+</style>
+</head>
+<body>
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
+<div class="wrap">
+  <header class="hero glass">
+    <div class="eyebrow"><span class="drop">🫧</span> 60-day trading journal</div>
+    <h1>Daybreak Ledger</h1>
+    <p class="sub">One box a day. Write the thesis for what you did in the markets, mark the day green if it was a net positive and red if it wasn't. The streak below is the only stat that never lies to you.</p>
+    <div class="stats">
+      <span class="pill pos"><span class="dot"></span>Positive <span class="num" id="stat-pos">0</span></span>
+      <span class="pill neg"><span class="dot"></span>Negative <span class="num" id="stat-neg">0</span></span>
+      <span class="pill pending"><span class="dot"></span>Open <span class="num" id="stat-pending">60</span></span>
+    </div>
+  </header>
+
+  <section class="board glass">
+    <div class="board-head">
+      <h2>Aug 19 &ndash; Oct 17, 2026</h2>
+      <span class="range" id="today-label"></span>
+    </div>
+    <div class="grid" id="grid" artifact-sync>
+          <button type="button" class="box" data-date="2026-08-19" data-day="1" data-status="pending" data-thesis="" aria-label="Day 1, Aug 19, Wed"><span class="box-day">1</span></button>
+          <button type="button" class="box" data-date="2026-08-20" data-day="2" data-status="pending" data-thesis="" aria-label="Day 2, Aug 20, Thu"><span class="box-day">2</span></button>
+          <button type="button" class="box" data-date="2026-08-21" data-day="3" data-status="pending" data-thesis="" aria-label="Day 3, Aug 21, Fri"><span class="box-day">3</span></button>
+          <button type="button" class="box" data-date="2026-08-22" data-day="4" data-status="pending" data-thesis="" aria-label="Day 4, Aug 22, Sat"><span class="box-day">4</span></button>
+          <button type="button" class="box" data-date="2026-08-23" data-day="5" data-status="pending" data-thesis="" aria-label="Day 5, Aug 23, Sun"><span class="box-day">5</span></button>
+          <button type="button" class="box" data-date="2026-08-24" data-day="6" data-status="pending" data-thesis="" aria-label="Day 6, Aug 24, Mon"><span class="box-day">6</span></button>
+          <button type="button" class="box" data-date="2026-08-25" data-day="7" data-status="pending" data-thesis="" aria-label="Day 7, Aug 25, Tue"><span class="box-day">7</span></button>
+          <button type="button" class="box" data-date="2026-08-26" data-day="8" data-status="pending" data-thesis="" aria-label="Day 8, Aug 26, Wed"><span class="box-day">8</span></button>
+          <button type="button" class="box" data-date="2026-08-27" data-day="9" data-status="pending" data-thesis="" aria-label="Day 9, Aug 27, Thu"><span class="box-day">9</span></button>
+          <button type="button" class="box" data-date="2026-08-28" data-day="10" data-status="pending" data-thesis="" aria-label="Day 10, Aug 28, Fri"><span class="box-day">10</span></button>
+          <button type="button" class="box" data-date="2026-08-29" data-day="11" data-status="pending" data-thesis="" aria-label="Day 11, Aug 29, Sat"><span class="box-day">11</span></button>
+          <button type="button" class="box" data-date="2026-08-30" data-day="12" data-status="pending" data-thesis="" aria-label="Day 12, Aug 30, Sun"><span class="box-day">12</span></button>
+          <button type="button" class="box" data-date="2026-08-31" data-day="13" data-status="pending" data-thesis="" aria-label="Day 13, Aug 31, Mon"><span class="box-day">13</span></button>
+          <button type="button" class="box" data-date="2026-09-01" data-day="14" data-status="pending" data-thesis="" aria-label="Day 14, Sep 1, Tue"><span class="box-day">14</span></button>
+          <button type="button" class="box" data-date="2026-09-02" data-day="15" data-status="pending" data-thesis="" aria-label="Day 15, Sep 2, Wed"><span class="box-day">15</span></button>
+          <button type="button" class="box" data-date="2026-09-03" data-day="16" data-status="pending" data-thesis="" aria-label="Day 16, Sep 3, Thu"><span class="box-day">16</span></button>
+          <button type="button" class="box" data-date="2026-09-04" data-day="17" data-status="pending" data-thesis="" aria-label="Day 17, Sep 4, Fri"><span class="box-day">17</span></button>
+          <button type="button" class="box" data-date="2026-09-05" data-day="18" data-status="pending" data-thesis="" aria-label="Day 18, Sep 5, Sat"><span class="box-day">18</span></button>
+          <button type="button" class="box" data-date="2026-09-06" data-day="19" data-status="pending" data-thesis="" aria-label="Day 19, Sep 6, Sun"><span class="box-day">19</span></button>
+          <button type="button" class="box" data-date="2026-09-07" data-day="20" data-status="pending" data-thesis="" aria-label="Day 20, Sep 7, Mon"><span class="box-day">20</span></button>
+          <button type="button" class="box" data-date="2026-09-08" data-day="21" data-status="pending" data-thesis="" aria-label="Day 21, Sep 8, Tue"><span class="box-day">21</span></button>
+          <button type="button" class="box" data-date="2026-09-09" data-day="22" data-status="pending" data-thesis="" aria-label="Day 22, Sep 9, Wed"><span class="box-day">22</span></button>
+          <button type="button" class="box" data-date="2026-09-10" data-day="23" data-status="pending" data-thesis="" aria-label="Day 23, Sep 10, Thu"><span class="box-day">23</span></button>
+          <button type="button" class="box" data-date="2026-09-11" data-day="24" data-status="pending" data-thesis="" aria-label="Day 24, Sep 11, Fri"><span class="box-day">24</span></button>
+          <button type="button" class="box" data-date="2026-09-12" data-day="25" data-status="pending" data-thesis="" aria-label="Day 25, Sep 12, Sat"><span class="box-day">25</span></button>
+          <button type="button" class="box" data-date="2026-09-13" data-day="26" data-status="pending" data-thesis="" aria-label="Day 26, Sep 13, Sun"><span class="box-day">26</span></button>
+          <button type="button" class="box" data-date="2026-09-14" data-day="27" data-status="pending" data-thesis="" aria-label="Day 27, Sep 14, Mon"><span class="box-day">27</span></button>
+          <button type="button" class="box" data-date="2026-09-15" data-day="28" data-status="pending" data-thesis="" aria-label="Day 28, Sep 15, Tue"><span class="box-day">28</span></button>
+          <button type="button" class="box" data-date="2026-09-16" data-day="29" data-status="pending" data-thesis="" aria-label="Day 29, Sep 16, Wed"><span class="box-day">29</span></button>
+          <button type="button" class="box" data-date="2026-09-17" data-day="30" data-status="pending" data-thesis="" aria-label="Day 30, Sep 17, Thu"><span class="box-day">30</span></button>
+          <button type="button" class="box" data-date="2026-09-18" data-day="31" data-status="pending" data-thesis="" aria-label="Day 31, Sep 18, Fri"><span class="box-day">31</span></button>
+          <button type="button" class="box" data-date="2026-09-19" data-day="32" data-status="pending" data-thesis="" aria-label="Day 32, Sep 19, Sat"><span class="box-day">32</span></button>
+          <button type="button" class="box" data-date="2026-09-20" data-day="33" data-status="pending" data-thesis="" aria-label="Day 33, Sep 20, Sun"><span class="box-day">33</span></button>
+          <button type="button" class="box" data-date="2026-09-21" data-day="34" data-status="pending" data-thesis="" aria-label="Day 34, Sep 21, Mon"><span class="box-day">34</span></button>
+          <button type="button" class="box" data-date="2026-09-22" data-day="35" data-status="pending" data-thesis="" aria-label="Day 35, Sep 22, Tue"><span class="box-day">35</span></button>
+          <button type="button" class="box" data-date="2026-09-23" data-day="36" data-status="pending" data-thesis="" aria-label="Day 36, Sep 23, Wed"><span class="box-day">36</span></button>
+          <button type="button" class="box" data-date="2026-09-24" data-day="37" data-status="pending" data-thesis="" aria-label="Day 37, Sep 24, Thu"><span class="box-day">37</span></button>
+          <button type="button" class="box" data-date="2026-09-25" data-day="38" data-status="pending" data-thesis="" aria-label="Day 38, Sep 25, Fri"><span class="box-day">38</span></button>
+          <button type="button" class="box" data-date="2026-09-26" data-day="39" data-status="pending" data-thesis="" aria-label="Day 39, Sep 26, Sat"><span class="box-day">39</span></button>
+          <button type="button" class="box" data-date="2026-09-27" data-day="40" data-status="pending" data-thesis="" aria-label="Day 40, Sep 27, Sun"><span class="box-day">40</span></button>
+          <button type="button" class="box" data-date="2026-09-28" data-day="41" data-status="pending" data-thesis="" aria-label="Day 41, Sep 28, Mon"><span class="box-day">41</span></button>
+          <button type="button" class="box" data-date="2026-09-29" data-day="42" data-status="pending" data-thesis="" aria-label="Day 42, Sep 29, Tue"><span class="box-day">42</span></button>
+          <button type="button" class="box" data-date="2026-09-30" data-day="43" data-status="pending" data-thesis="" aria-label="Day 43, Sep 30, Wed"><span class="box-day">43</span></button>
+          <button type="button" class="box" data-date="2026-10-01" data-day="44" data-status="pending" data-thesis="" aria-label="Day 44, Oct 1, Thu"><span class="box-day">44</span></button>
+          <button type="button" class="box" data-date="2026-10-02" data-day="45" data-status="pending" data-thesis="" aria-label="Day 45, Oct 2, Fri"><span class="box-day">45</span></button>
+          <button type="button" class="box" data-date="2026-10-03" data-day="46" data-status="pending" data-thesis="" aria-label="Day 46, Oct 3, Sat"><span class="box-day">46</span></button>
+          <button type="button" class="box" data-date="2026-10-04" data-day="47" data-status="pending" data-thesis="" aria-label="Day 47, Oct 4, Sun"><span class="box-day">47</span></button>
+          <button type="button" class="box" data-date="2026-10-05" data-day="48" data-status="pending" data-thesis="" aria-label="Day 48, Oct 5, Mon"><span class="box-day">48</span></button>
+          <button type="button" class="box" data-date="2026-10-06" data-day="49" data-status="pending" data-thesis="" aria-label="Day 49, Oct 6, Tue"><span class="box-day">49</span></button>
+          <button type="button" class="box" data-date="2026-10-07" data-day="50" data-status="pending" data-thesis="" aria-label="Day 50, Oct 7, Wed"><span class="box-day">50</span></button>
+          <button type="button" class="box" data-date="2026-10-08" data-day="51" data-status="pending" data-thesis="" aria-label="Day 51, Oct 8, Thu"><span class="box-day">51</span></button>
+          <button type="button" class="box" data-date="2026-10-09" data-day="52" data-status="pending" data-thesis="" aria-label="Day 52, Oct 9, Fri"><span class="box-day">52</span></button>
+          <button type="button" class="box" data-date="2026-10-10" data-day="53" data-status="pending" data-thesis="" aria-label="Day 53, Oct 10, Sat"><span class="box-day">53</span></button>
+          <button type="button" class="box" data-date="2026-10-11" data-day="54" data-status="pending" data-thesis="" aria-label="Day 54, Oct 11, Sun"><span class="box-day">54</span></button>
+          <button type="button" class="box" data-date="2026-10-12" data-day="55" data-status="pending" data-thesis="" aria-label="Day 55, Oct 12, Mon"><span class="box-day">55</span></button>
+          <button type="button" class="box" data-date="2026-10-13" data-day="56" data-status="pending" data-thesis="" aria-label="Day 56, Oct 13, Tue"><span class="box-day">56</span></button>
+          <button type="button" class="box" data-date="2026-10-14" data-day="57" data-status="pending" data-thesis="" aria-label="Day 57, Oct 14, Wed"><span class="box-day">57</span></button>
+          <button type="button" class="box" data-date="2026-10-15" data-day="58" data-status="pending" data-thesis="" aria-label="Day 58, Oct 15, Thu"><span class="box-day">58</span></button>
+          <button type="button" class="box" data-date="2026-10-16" data-day="59" data-status="pending" data-thesis="" aria-label="Day 59, Oct 16, Fri"><span class="box-day">59</span></button>
+          <button type="button" class="box" data-date="2026-10-17" data-day="60" data-status="pending" data-thesis="" aria-label="Day 60, Oct 17, Sat"><span class="box-day">60</span></button>
+    </div>
+    <div class="legend">
+      <span><i class="i-pos"></i>Positive day</span>
+      <span><i class="i-neg"></i>Negative day</span>
+      <span><i class="i-pending"></i>Not written yet</span>
+      <span><i class="i-today"></i>Today</span>
+    </div>
+    <p class="readonly-flag" id="readonly-flag">This view is read-only &mdash; changes here won't be saved.</p>
+  </section>
+
+  <footer class="note glass">
+    <span class="drop">🌙</span>
+    <span>Every night at 9&nbsp;PM you'll get a nudge to fill in that day's box. The reminder starts tomorrow &mdash; today's box is here whenever you're ready to write it.</span>
+  </footer>
+</div>
+
+<dialog class="entry" id="dialog">
+  <form class="entry-card" method="dialog" id="entry-form">
+    <h3 id="entry-title">Day 1</h3>
+    <p class="entry-date" id="entry-date"></p>
+    <div class="toggle-row" role="group" aria-label="Day outcome">
+      <button type="button" class="toggle-btn pos" id="btn-pos" aria-pressed="false">Positive day</button>
+      <button type="button" class="toggle-btn neg" id="btn-neg" aria-pressed="false">Negative day</button>
+    </div>
+    <textarea class="thesis" id="thesis-input" placeholder="What did you do today? Trades taken, what worked, what didn't, what you'll change tomorrow..." maxlength="4000"></textarea>
+    <div class="entry-actions">
+      <span class="hint" id="entry-hint"></span>
+      <button type="button" class="action-btn ghost" id="btn-cancel">Cancel</button>
+      <button type="button" class="action-btn primary" id="btn-save" disabled>Save</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(function () {
+  'use strict';
+
+  var grid = document.getElementById('grid');
+  var dialog = document.getElementById('dialog');
+  var entryTitle = document.getElementById('entry-title');
+  var entryDate = document.getElementById('entry-date');
+  var thesisInput = document.getElementById('thesis-input');
+  var btnPos = document.getElementById('btn-pos');
+  var btnNeg = document.getElementById('btn-neg');
+  var btnSave = document.getElementById('btn-save');
+  var btnCancel = document.getElementById('btn-cancel');
+  var entryHint = document.getElementById('entry-hint');
+  var readonlyFlag = document.getElementById('readonly-flag');
+  var todayLabel = document.getElementById('today-label');
+
+  var activeBox = null;
+  var pendingStatus = null;
+
+  function todayISO() {
+    var d = new Date();
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + day;
+  }
+
+  function formatLong(iso) {
+    var parts = iso.split('-').map(Number);
+    var d = new Date(parts[0], parts[1] - 1, parts[2]);
+    return d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  }
+
+  function refreshLocksAndToday() {
+    var today = todayISO();
+    todayLabel.textContent = 'Today: ' + formatLong(today);
+    var boxes = grid.querySelectorAll('.box');
+    boxes.forEach(function (box) {
+      var date = box.getAttribute('data-date');
+      box.setAttribute('data-today', date === today ? 'true' : 'false');
+      box.setAttribute('data-locked', date > today ? 'true' : 'false');
+    });
+  }
+
+  function refreshStats() {
+    var boxes = grid.querySelectorAll('.box');
+    var pos = 0, neg = 0, pending = 0;
+    boxes.forEach(function (box) {
+      var s = box.getAttribute('data-status');
+      if (s === 'positive') pos++;
+      else if (s === 'negative') neg++;
+      else pending++;
+    });
+    document.getElementById('stat-pos').textContent = String(pos);
+    document.getElementById('stat-neg').textContent = String(neg);
+    document.getElementById('stat-pending').textContent = String(pending);
+  }
+
+  function openDialogFor(box) {
+    if (box.getAttribute('data-locked') === 'true') return;
+    activeBox = box;
+    var day = box.getAttribute('data-day');
+    var date = box.getAttribute('data-date');
+    var status = box.getAttribute('data-status');
+    var thesis = box.getAttribute('data-thesis') || '';
+
+    entryTitle.textContent = 'Day ' + day;
+    entryDate.textContent = formatLong(date);
+    thesisInput.value = thesis;
+    pendingStatus = status === 'positive' || status === 'negative' ? status : null;
+    updateToggleUI();
+    updateSaveEnabled();
+    entryHint.textContent = '';
+
+    if (typeof dialog.showModal === 'function') {
+      dialog.showModal();
+    } else {
+      dialog.setAttribute('open', '');
+    }
+    thesisInput.focus();
+  }
+
+  function updateToggleUI() {
+    btnPos.setAttribute('aria-pressed', pendingStatus === 'positive' ? 'true' : 'false');
+    btnNeg.setAttribute('aria-pressed', pendingStatus === 'negative' ? 'true' : 'false');
+  }
+
+  function updateSaveEnabled() {
+    var ok = pendingStatus !== null && thesisInput.value.trim().length > 0;
+    btnSave.disabled = !ok;
+  }
+
+  btnPos.addEventListener('click', function () {
+    pendingStatus = 'positive';
+    updateToggleUI();
+    updateSaveEnabled();
+  });
+  btnNeg.addEventListener('click', function () {
+    pendingStatus = 'negative';
+    updateToggleUI();
+    updateSaveEnabled();
+  });
+  thesisInput.addEventListener('input', updateSaveEnabled);
+
+  btnCancel.addEventListener('click', function () {
+    dialog.close();
+  });
+
+  grid.addEventListener('click', function (e) {
+    var box = e.target.closest('.box');
+    if (!box) return;
+    openDialogFor(box);
+  });
+
+  btnSave.addEventListener('click', function () {
+    if (!activeBox || !pendingStatus) return;
+    var text = thesisInput.value.trim();
+    if (!text) return;
+
+    activeBox.setAttribute('data-status', pendingStatus);
+    activeBox.setAttribute('data-thesis', text);
+    var day = activeBox.getAttribute('data-day');
+    var date = activeBox.getAttribute('data-date');
+    activeBox.setAttribute('aria-label', 'Day ' + day + ', ' + formatLong(date) + ', ' + pendingStatus + ': ' + text);
+
+    refreshStats();
+    dialog.close();
+  });
+
+  dialog.addEventListener('close', function () {
+    activeBox = null;
+    pendingStatus = null;
+  });
+
+  document.addEventListener('claude:sync-off', function (e) {
+    if (grid.contains(e.target) || e.target === grid) {
+      readonlyFlag.classList.add('show');
+    }
+  });
+
+  document.addEventListener('claude:edit', function () {
+    refreshStats();
+    refreshLocksAndToday();
+  });
+
+  refreshLocksAndToday();
+  refreshStats();
+
+  if (window.claude && typeof window.claude.use === 'function') {
+    window.claude.use('artifact').catch(function () {});
+  }
+})();
+</script>
+</body>
+</html>
