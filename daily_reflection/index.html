@@ -220,6 +220,8 @@
   .pill.neg .dot { background: var(--negative); }
   .pill.pending .dot { background: var(--ink-faint); }
   .pill .num { font-variant-numeric: tabular-nums; font-family: "Baloo 2", sans-serif; font-size: 1rem; }
+  .pill.total.pos .num { color: var(--positive-deep); }
+  .pill.total.neg .num { color: var(--negative-deep); }
 
   section.board {
     padding: clamp(18px, 4vw, 30px);
@@ -267,14 +269,27 @@
     font-weight: 700;
     font-size: clamp(0.7rem, 1.6vw, 0.85rem);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 2px;
     cursor: pointer;
     position: relative;
-    padding: 0;
+    padding: 2px 1px;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
     font-variant-numeric: tabular-nums;
   }
+
+  .box-day { line-height: 1; }
+
+  .box-amount {
+    font-size: clamp(0.52rem, 1.15vw, 0.66rem);
+    font-weight: 800;
+    line-height: 1;
+    opacity: 0.92;
+    white-space: nowrap;
+  }
+  .box-amount:empty { display: none; }
 
   .box::after {
     content: "";
@@ -427,9 +442,74 @@
     color: #fff;
     box-shadow: 0 6px 14px -8px rgba(180,50,30,0.6);
   }
+  .amount-field label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .amount-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 14px;
+    border: 1.5px solid var(--pending-border);
+    background: rgba(255,255,255,0.7);
+    padding: 4px 6px 4px 14px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .amount-row.is-positive { border-color: var(--positive-deep); box-shadow: 0 0 0 3px rgba(51,199,125,0.18); }
+  .amount-row.is-negative { border-color: var(--negative-deep); box-shadow: 0 0 0 3px rgba(255,122,99,0.18); }
+  .amount-prefix { color: #000000; font-weight: 800; font-size: 0.95rem; }
+  .amount-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: #000000;
+    font-family: "Nunito Sans", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 10px 0;
+    min-width: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .amount-input::placeholder { color: var(--ink-faint); font-weight: 400; }
+  .amount-input:focus { outline: none; }
+  .sign-toggle { display: flex; gap: 4px; }
+  .sign-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    border: 1.5px solid var(--pending-border);
+    background: var(--pending-fill);
+    color: var(--ink);
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .sign-btn[aria-pressed="true"].sign-plus {
+    background: linear-gradient(160deg, var(--positive), var(--positive-deep));
+    border-color: transparent;
+    color: #fff;
+  }
+  .sign-btn[aria-pressed="true"].sign-minus {
+    background: linear-gradient(160deg, var(--negative), var(--negative-deep));
+    border-color: transparent;
+    color: #fff;
+  }
+  .amount-hint {
+    margin: 6px 0 0;
+    font-size: 0.76rem;
+    color: var(--ink-faint);
+  }
+
   textarea.thesis {
     width: 100%;
-    min-height: 130px;
+    min-height: 110px;
     resize: vertical;
     border-radius: 14px;
     border: 1.5px solid var(--pending-border);
@@ -441,7 +521,8 @@
     line-height: 1.5;
   }
   textarea.thesis::placeholder { color: var(--ink-faint); }
-  textarea.thesis:focus, .toggle-btn:focus-visible, .action-btn:focus-visible {
+  textarea.thesis:focus, .toggle-btn:focus-visible, .action-btn:focus-visible,
+  .amount-input:focus-visible, .sign-btn:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
@@ -498,6 +579,7 @@
       <span class="pill pos"><span class="dot"></span>Positive <span class="num" id="stat-pos">0</span></span>
       <span class="pill neg"><span class="dot"></span>Negative <span class="num" id="stat-neg">0</span></span>
       <span class="pill pending"><span class="dot"></span>Open <span class="num" id="stat-pending">60</span></span>
+      <span class="pill total" id="stat-total-pill" style="display:none;">Total <span class="num" id="stat-total">$0</span></span>
     </div>
   </header>
 
@@ -507,66 +589,66 @@
       <span class="range" id="today-label"></span>
     </div>
     <div class="grid" id="grid" artifact-sync>
-          <button type="button" class="box" data-date="2026-08-19" data-day="1" data-status="pending" data-thesis="" aria-label="Day 1, Aug 19, Wed"><span class="box-day">1</span></button>
-          <button type="button" class="box" data-date="2026-08-20" data-day="2" data-status="pending" data-thesis="" aria-label="Day 2, Aug 20, Thu"><span class="box-day">2</span></button>
-          <button type="button" class="box" data-date="2026-08-21" data-day="3" data-status="pending" data-thesis="" aria-label="Day 3, Aug 21, Fri"><span class="box-day">3</span></button>
-          <button type="button" class="box" data-date="2026-08-22" data-day="4" data-status="pending" data-thesis="" aria-label="Day 4, Aug 22, Sat"><span class="box-day">4</span></button>
-          <button type="button" class="box" data-date="2026-08-23" data-day="5" data-status="pending" data-thesis="" aria-label="Day 5, Aug 23, Sun"><span class="box-day">5</span></button>
-          <button type="button" class="box" data-date="2026-08-24" data-day="6" data-status="pending" data-thesis="" aria-label="Day 6, Aug 24, Mon"><span class="box-day">6</span></button>
-          <button type="button" class="box" data-date="2026-08-25" data-day="7" data-status="pending" data-thesis="" aria-label="Day 7, Aug 25, Tue"><span class="box-day">7</span></button>
-          <button type="button" class="box" data-date="2026-08-26" data-day="8" data-status="pending" data-thesis="" aria-label="Day 8, Aug 26, Wed"><span class="box-day">8</span></button>
-          <button type="button" class="box" data-date="2026-08-27" data-day="9" data-status="pending" data-thesis="" aria-label="Day 9, Aug 27, Thu"><span class="box-day">9</span></button>
-          <button type="button" class="box" data-date="2026-08-28" data-day="10" data-status="pending" data-thesis="" aria-label="Day 10, Aug 28, Fri"><span class="box-day">10</span></button>
-          <button type="button" class="box" data-date="2026-08-29" data-day="11" data-status="pending" data-thesis="" aria-label="Day 11, Aug 29, Sat"><span class="box-day">11</span></button>
-          <button type="button" class="box" data-date="2026-08-30" data-day="12" data-status="pending" data-thesis="" aria-label="Day 12, Aug 30, Sun"><span class="box-day">12</span></button>
-          <button type="button" class="box" data-date="2026-08-31" data-day="13" data-status="pending" data-thesis="" aria-label="Day 13, Aug 31, Mon"><span class="box-day">13</span></button>
-          <button type="button" class="box" data-date="2026-09-01" data-day="14" data-status="pending" data-thesis="" aria-label="Day 14, Sep 1, Tue"><span class="box-day">14</span></button>
-          <button type="button" class="box" data-date="2026-09-02" data-day="15" data-status="pending" data-thesis="" aria-label="Day 15, Sep 2, Wed"><span class="box-day">15</span></button>
-          <button type="button" class="box" data-date="2026-09-03" data-day="16" data-status="pending" data-thesis="" aria-label="Day 16, Sep 3, Thu"><span class="box-day">16</span></button>
-          <button type="button" class="box" data-date="2026-09-04" data-day="17" data-status="pending" data-thesis="" aria-label="Day 17, Sep 4, Fri"><span class="box-day">17</span></button>
-          <button type="button" class="box" data-date="2026-09-05" data-day="18" data-status="pending" data-thesis="" aria-label="Day 18, Sep 5, Sat"><span class="box-day">18</span></button>
-          <button type="button" class="box" data-date="2026-09-06" data-day="19" data-status="pending" data-thesis="" aria-label="Day 19, Sep 6, Sun"><span class="box-day">19</span></button>
-          <button type="button" class="box" data-date="2026-09-07" data-day="20" data-status="pending" data-thesis="" aria-label="Day 20, Sep 7, Mon"><span class="box-day">20</span></button>
-          <button type="button" class="box" data-date="2026-09-08" data-day="21" data-status="pending" data-thesis="" aria-label="Day 21, Sep 8, Tue"><span class="box-day">21</span></button>
-          <button type="button" class="box" data-date="2026-09-09" data-day="22" data-status="pending" data-thesis="" aria-label="Day 22, Sep 9, Wed"><span class="box-day">22</span></button>
-          <button type="button" class="box" data-date="2026-09-10" data-day="23" data-status="pending" data-thesis="" aria-label="Day 23, Sep 10, Thu"><span class="box-day">23</span></button>
-          <button type="button" class="box" data-date="2026-09-11" data-day="24" data-status="pending" data-thesis="" aria-label="Day 24, Sep 11, Fri"><span class="box-day">24</span></button>
-          <button type="button" class="box" data-date="2026-09-12" data-day="25" data-status="pending" data-thesis="" aria-label="Day 25, Sep 12, Sat"><span class="box-day">25</span></button>
-          <button type="button" class="box" data-date="2026-09-13" data-day="26" data-status="pending" data-thesis="" aria-label="Day 26, Sep 13, Sun"><span class="box-day">26</span></button>
-          <button type="button" class="box" data-date="2026-09-14" data-day="27" data-status="pending" data-thesis="" aria-label="Day 27, Sep 14, Mon"><span class="box-day">27</span></button>
-          <button type="button" class="box" data-date="2026-09-15" data-day="28" data-status="pending" data-thesis="" aria-label="Day 28, Sep 15, Tue"><span class="box-day">28</span></button>
-          <button type="button" class="box" data-date="2026-09-16" data-day="29" data-status="pending" data-thesis="" aria-label="Day 29, Sep 16, Wed"><span class="box-day">29</span></button>
-          <button type="button" class="box" data-date="2026-09-17" data-day="30" data-status="pending" data-thesis="" aria-label="Day 30, Sep 17, Thu"><span class="box-day">30</span></button>
-          <button type="button" class="box" data-date="2026-09-18" data-day="31" data-status="pending" data-thesis="" aria-label="Day 31, Sep 18, Fri"><span class="box-day">31</span></button>
-          <button type="button" class="box" data-date="2026-09-19" data-day="32" data-status="pending" data-thesis="" aria-label="Day 32, Sep 19, Sat"><span class="box-day">32</span></button>
-          <button type="button" class="box" data-date="2026-09-20" data-day="33" data-status="pending" data-thesis="" aria-label="Day 33, Sep 20, Sun"><span class="box-day">33</span></button>
-          <button type="button" class="box" data-date="2026-09-21" data-day="34" data-status="pending" data-thesis="" aria-label="Day 34, Sep 21, Mon"><span class="box-day">34</span></button>
-          <button type="button" class="box" data-date="2026-09-22" data-day="35" data-status="pending" data-thesis="" aria-label="Day 35, Sep 22, Tue"><span class="box-day">35</span></button>
-          <button type="button" class="box" data-date="2026-09-23" data-day="36" data-status="pending" data-thesis="" aria-label="Day 36, Sep 23, Wed"><span class="box-day">36</span></button>
-          <button type="button" class="box" data-date="2026-09-24" data-day="37" data-status="pending" data-thesis="" aria-label="Day 37, Sep 24, Thu"><span class="box-day">37</span></button>
-          <button type="button" class="box" data-date="2026-09-25" data-day="38" data-status="pending" data-thesis="" aria-label="Day 38, Sep 25, Fri"><span class="box-day">38</span></button>
-          <button type="button" class="box" data-date="2026-09-26" data-day="39" data-status="pending" data-thesis="" aria-label="Day 39, Sep 26, Sat"><span class="box-day">39</span></button>
-          <button type="button" class="box" data-date="2026-09-27" data-day="40" data-status="pending" data-thesis="" aria-label="Day 40, Sep 27, Sun"><span class="box-day">40</span></button>
-          <button type="button" class="box" data-date="2026-09-28" data-day="41" data-status="pending" data-thesis="" aria-label="Day 41, Sep 28, Mon"><span class="box-day">41</span></button>
-          <button type="button" class="box" data-date="2026-09-29" data-day="42" data-status="pending" data-thesis="" aria-label="Day 42, Sep 29, Tue"><span class="box-day">42</span></button>
-          <button type="button" class="box" data-date="2026-09-30" data-day="43" data-status="pending" data-thesis="" aria-label="Day 43, Sep 30, Wed"><span class="box-day">43</span></button>
-          <button type="button" class="box" data-date="2026-10-01" data-day="44" data-status="pending" data-thesis="" aria-label="Day 44, Oct 1, Thu"><span class="box-day">44</span></button>
-          <button type="button" class="box" data-date="2026-10-02" data-day="45" data-status="pending" data-thesis="" aria-label="Day 45, Oct 2, Fri"><span class="box-day">45</span></button>
-          <button type="button" class="box" data-date="2026-10-03" data-day="46" data-status="pending" data-thesis="" aria-label="Day 46, Oct 3, Sat"><span class="box-day">46</span></button>
-          <button type="button" class="box" data-date="2026-10-04" data-day="47" data-status="pending" data-thesis="" aria-label="Day 47, Oct 4, Sun"><span class="box-day">47</span></button>
-          <button type="button" class="box" data-date="2026-10-05" data-day="48" data-status="pending" data-thesis="" aria-label="Day 48, Oct 5, Mon"><span class="box-day">48</span></button>
-          <button type="button" class="box" data-date="2026-10-06" data-day="49" data-status="pending" data-thesis="" aria-label="Day 49, Oct 6, Tue"><span class="box-day">49</span></button>
-          <button type="button" class="box" data-date="2026-10-07" data-day="50" data-status="pending" data-thesis="" aria-label="Day 50, Oct 7, Wed"><span class="box-day">50</span></button>
-          <button type="button" class="box" data-date="2026-10-08" data-day="51" data-status="pending" data-thesis="" aria-label="Day 51, Oct 8, Thu"><span class="box-day">51</span></button>
-          <button type="button" class="box" data-date="2026-10-09" data-day="52" data-status="pending" data-thesis="" aria-label="Day 52, Oct 9, Fri"><span class="box-day">52</span></button>
-          <button type="button" class="box" data-date="2026-10-10" data-day="53" data-status="pending" data-thesis="" aria-label="Day 53, Oct 10, Sat"><span class="box-day">53</span></button>
-          <button type="button" class="box" data-date="2026-10-11" data-day="54" data-status="pending" data-thesis="" aria-label="Day 54, Oct 11, Sun"><span class="box-day">54</span></button>
-          <button type="button" class="box" data-date="2026-10-12" data-day="55" data-status="pending" data-thesis="" aria-label="Day 55, Oct 12, Mon"><span class="box-day">55</span></button>
-          <button type="button" class="box" data-date="2026-10-13" data-day="56" data-status="pending" data-thesis="" aria-label="Day 56, Oct 13, Tue"><span class="box-day">56</span></button>
-          <button type="button" class="box" data-date="2026-10-14" data-day="57" data-status="pending" data-thesis="" aria-label="Day 57, Oct 14, Wed"><span class="box-day">57</span></button>
-          <button type="button" class="box" data-date="2026-10-15" data-day="58" data-status="pending" data-thesis="" aria-label="Day 58, Oct 15, Thu"><span class="box-day">58</span></button>
-          <button type="button" class="box" data-date="2026-10-16" data-day="59" data-status="pending" data-thesis="" aria-label="Day 59, Oct 16, Fri"><span class="box-day">59</span></button>
-          <button type="button" class="box" data-date="2026-10-17" data-day="60" data-status="pending" data-thesis="" aria-label="Day 60, Oct 17, Sat"><span class="box-day">60</span></button>
+          <button type="button" class="box" data-date="2026-08-19" data-day="1" data-status="pending" data-thesis="" aria-label="Day 1, Aug 19, Wed"><span class="box-day">1</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-08-20" data-day="2" data-status="pending" data-thesis="" aria-label="Day 2, Aug 20, Thu"><span class="box-day">2</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-08-21" data-day="3" data-status="pending" data-thesis="" aria-label="Day 3, Aug 21, Fri"><span class="box-day">3</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-08-22" data-day="4" data-status="pending" data-thesis="" aria-label="Day 4, Aug 22, Sat"><span class="box-day">4</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-08-23" data-day="5" data-status="pending" data-thesis="" aria-label="Day 5, Aug 23, Sun"><span class="box-day">5</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-08-24" data-day="6" data-status="pending" data-thesis="" aria-label="Day 6, Aug 24, Mon"><span class="box-day">6</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-08-25" data-day="7" data-status="pending" data-thesis="" aria-label="Day 7, Aug 25, Tue"><span class="box-day">7</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-08-26" data-day="8" data-status="pending" data-thesis="" aria-label="Day 8, Aug 26, Wed"><span class="box-day">8</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-08-27" data-day="9" data-status="pending" data-thesis="" aria-label="Day 9, Aug 27, Thu"><span class="box-day">9</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-08-28" data-day="10" data-status="pending" data-thesis="" aria-label="Day 10, Aug 28, Fri"><span class="box-day">10</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-08-29" data-day="11" data-status="pending" data-thesis="" aria-label="Day 11, Aug 29, Sat"><span class="box-day">11</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-08-30" data-day="12" data-status="pending" data-thesis="" aria-label="Day 12, Aug 30, Sun"><span class="box-day">12</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-08-31" data-day="13" data-status="pending" data-thesis="" aria-label="Day 13, Aug 31, Mon"><span class="box-day">13</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-01" data-day="14" data-status="pending" data-thesis="" aria-label="Day 14, Sep 1, Tue"><span class="box-day">14</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-02" data-day="15" data-status="pending" data-thesis="" aria-label="Day 15, Sep 2, Wed"><span class="box-day">15</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-03" data-day="16" data-status="pending" data-thesis="" aria-label="Day 16, Sep 3, Thu"><span class="box-day">16</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-04" data-day="17" data-status="pending" data-thesis="" aria-label="Day 17, Sep 4, Fri"><span class="box-day">17</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-05" data-day="18" data-status="pending" data-thesis="" aria-label="Day 18, Sep 5, Sat"><span class="box-day">18</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-06" data-day="19" data-status="pending" data-thesis="" aria-label="Day 19, Sep 6, Sun"><span class="box-day">19</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-07" data-day="20" data-status="pending" data-thesis="" aria-label="Day 20, Sep 7, Mon"><span class="box-day">20</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-08" data-day="21" data-status="pending" data-thesis="" aria-label="Day 21, Sep 8, Tue"><span class="box-day">21</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-09" data-day="22" data-status="pending" data-thesis="" aria-label="Day 22, Sep 9, Wed"><span class="box-day">22</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-10" data-day="23" data-status="pending" data-thesis="" aria-label="Day 23, Sep 10, Thu"><span class="box-day">23</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-11" data-day="24" data-status="pending" data-thesis="" aria-label="Day 24, Sep 11, Fri"><span class="box-day">24</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-12" data-day="25" data-status="pending" data-thesis="" aria-label="Day 25, Sep 12, Sat"><span class="box-day">25</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-13" data-day="26" data-status="pending" data-thesis="" aria-label="Day 26, Sep 13, Sun"><span class="box-day">26</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-14" data-day="27" data-status="pending" data-thesis="" aria-label="Day 27, Sep 14, Mon"><span class="box-day">27</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-15" data-day="28" data-status="pending" data-thesis="" aria-label="Day 28, Sep 15, Tue"><span class="box-day">28</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-16" data-day="29" data-status="pending" data-thesis="" aria-label="Day 29, Sep 16, Wed"><span class="box-day">29</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-17" data-day="30" data-status="pending" data-thesis="" aria-label="Day 30, Sep 17, Thu"><span class="box-day">30</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-18" data-day="31" data-status="pending" data-thesis="" aria-label="Day 31, Sep 18, Fri"><span class="box-day">31</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-19" data-day="32" data-status="pending" data-thesis="" aria-label="Day 32, Sep 19, Sat"><span class="box-day">32</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-20" data-day="33" data-status="pending" data-thesis="" aria-label="Day 33, Sep 20, Sun"><span class="box-day">33</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-21" data-day="34" data-status="pending" data-thesis="" aria-label="Day 34, Sep 21, Mon"><span class="box-day">34</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-22" data-day="35" data-status="pending" data-thesis="" aria-label="Day 35, Sep 22, Tue"><span class="box-day">35</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-23" data-day="36" data-status="pending" data-thesis="" aria-label="Day 36, Sep 23, Wed"><span class="box-day">36</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-24" data-day="37" data-status="pending" data-thesis="" aria-label="Day 37, Sep 24, Thu"><span class="box-day">37</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-25" data-day="38" data-status="pending" data-thesis="" aria-label="Day 38, Sep 25, Fri"><span class="box-day">38</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-26" data-day="39" data-status="pending" data-thesis="" aria-label="Day 39, Sep 26, Sat"><span class="box-day">39</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-27" data-day="40" data-status="pending" data-thesis="" aria-label="Day 40, Sep 27, Sun"><span class="box-day">40</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-28" data-day="41" data-status="pending" data-thesis="" aria-label="Day 41, Sep 28, Mon"><span class="box-day">41</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-29" data-day="42" data-status="pending" data-thesis="" aria-label="Day 42, Sep 29, Tue"><span class="box-day">42</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-09-30" data-day="43" data-status="pending" data-thesis="" aria-label="Day 43, Sep 30, Wed"><span class="box-day">43</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-01" data-day="44" data-status="pending" data-thesis="" aria-label="Day 44, Oct 1, Thu"><span class="box-day">44</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-02" data-day="45" data-status="pending" data-thesis="" aria-label="Day 45, Oct 2, Fri"><span class="box-day">45</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-03" data-day="46" data-status="pending" data-thesis="" aria-label="Day 46, Oct 3, Sat"><span class="box-day">46</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-04" data-day="47" data-status="pending" data-thesis="" aria-label="Day 47, Oct 4, Sun"><span class="box-day">47</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-05" data-day="48" data-status="pending" data-thesis="" aria-label="Day 48, Oct 5, Mon"><span class="box-day">48</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-06" data-day="49" data-status="pending" data-thesis="" aria-label="Day 49, Oct 6, Tue"><span class="box-day">49</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-07" data-day="50" data-status="pending" data-thesis="" aria-label="Day 50, Oct 7, Wed"><span class="box-day">50</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-08" data-day="51" data-status="pending" data-thesis="" aria-label="Day 51, Oct 8, Thu"><span class="box-day">51</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-09" data-day="52" data-status="pending" data-thesis="" aria-label="Day 52, Oct 9, Fri"><span class="box-day">52</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-10" data-day="53" data-status="pending" data-thesis="" aria-label="Day 53, Oct 10, Sat"><span class="box-day">53</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-11" data-day="54" data-status="pending" data-thesis="" aria-label="Day 54, Oct 11, Sun"><span class="box-day">54</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-12" data-day="55" data-status="pending" data-thesis="" aria-label="Day 55, Oct 12, Mon"><span class="box-day">55</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-13" data-day="56" data-status="pending" data-thesis="" aria-label="Day 56, Oct 13, Tue"><span class="box-day">56</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-14" data-day="57" data-status="pending" data-thesis="" aria-label="Day 57, Oct 14, Wed"><span class="box-day">57</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-15" data-day="58" data-status="pending" data-thesis="" aria-label="Day 58, Oct 15, Thu"><span class="box-day">58</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-16" data-day="59" data-status="pending" data-thesis="" aria-label="Day 59, Oct 16, Fri"><span class="box-day">59</span><span class="box-amount"></span></button>
+          <button type="button" class="box" data-date="2026-10-17" data-day="60" data-status="pending" data-thesis="" aria-label="Day 60, Oct 17, Sat"><span class="box-day">60</span><span class="box-amount"></span></button>
     </div>
     <div class="legend">
       <span><i class="i-pos"></i>Positive day</span>
@@ -587,9 +669,17 @@
   <form class="entry-card" method="dialog" id="entry-form">
     <h3 id="entry-title">Day 1</h3>
     <p class="entry-date" id="entry-date"></p>
-    <div class="toggle-row" role="group" aria-label="Day outcome">
-      <button type="button" class="toggle-btn pos" id="btn-pos" aria-pressed="false">Positive day</button>
-      <button type="button" class="toggle-btn neg" id="btn-neg" aria-pressed="false">Negative day</button>
+    <div class="amount-field">
+      <label for="amount-input">P&amp;L for the day</label>
+      <div class="amount-row" id="amount-row">
+        <div class="sign-toggle" role="group" aria-label="Gain or loss">
+          <button type="button" class="sign-btn sign-plus" id="btn-pos" aria-pressed="false" aria-label="Gain">+</button>
+          <button type="button" class="sign-btn sign-minus" id="btn-neg" aria-pressed="false" aria-label="Loss">&minus;</button>
+        </div>
+        <span class="amount-prefix">$</span>
+        <input type="text" inputmode="decimal" class="amount-input" id="amount-input" placeholder="0.00">
+      </div>
+      <p class="amount-hint">Pick + or &minus;, then how much &mdash; that's what colors the box.</p>
     </div>
     <textarea class="thesis" id="thesis-input" placeholder="What did you do today? Trades taken, what worked, what didn't, what you'll change tomorrow..." maxlength="4000"></textarea>
     <div class="entry-actions">
@@ -611,6 +701,8 @@
   var thesisInput = document.getElementById('thesis-input');
   var btnPos = document.getElementById('btn-pos');
   var btnNeg = document.getElementById('btn-neg');
+  var amountInput = document.getElementById('amount-input');
+  var amountRow = document.getElementById('amount-row');
   var btnSave = document.getElementById('btn-save');
   var btnCancel = document.getElementById('btn-cancel');
   var entryHint = document.getElementById('entry-hint');
@@ -619,6 +711,20 @@
 
   var activeBox = null;
   var pendingStatus = null;
+
+  function formatCompactSigned(amount) {
+    var abs = Math.abs(amount);
+    var body = abs >= 1000
+      ? abs.toLocaleString(undefined, { maximumFractionDigits: 0 })
+      : abs.toLocaleString(undefined, { minimumFractionDigits: abs % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 });
+    return (amount < 0 ? '−' : '+') + '$' + body;
+  }
+
+  function parseAmountInput() {
+    var raw = (amountInput.value || '').replace(/[^0-9.]/g, '');
+    var val = parseFloat(raw);
+    return isNaN(val) ? 0 : Math.abs(val);
+  }
 
   function todayISO() {
     var d = new Date();
@@ -647,16 +753,29 @@
 
   function refreshStats() {
     var boxes = grid.querySelectorAll('.box');
-    var pos = 0, neg = 0, pending = 0;
+    var pos = 0, neg = 0, pending = 0, total = 0, hasAmount = false;
     boxes.forEach(function (box) {
       var s = box.getAttribute('data-status');
       if (s === 'positive') pos++;
       else if (s === 'negative') neg++;
       else pending++;
+      var amt = parseFloat(box.getAttribute('data-amount') || '0');
+      if (amt) { hasAmount = true; total += amt; }
     });
     document.getElementById('stat-pos').textContent = String(pos);
     document.getElementById('stat-neg').textContent = String(neg);
     document.getElementById('stat-pending').textContent = String(pending);
+
+    var totalPill = document.getElementById('stat-total-pill');
+    var totalEl = document.getElementById('stat-total');
+    if (hasAmount) {
+      totalPill.style.display = '';
+      totalEl.textContent = formatCompactSigned(total);
+      totalPill.classList.toggle('pos', total >= 0);
+      totalPill.classList.toggle('neg', total < 0);
+    } else {
+      totalPill.style.display = 'none';
+    }
   }
 
   function openDialogFor(box) {
@@ -666,10 +785,12 @@
     var date = box.getAttribute('data-date');
     var status = box.getAttribute('data-status');
     var thesis = box.getAttribute('data-thesis') || '';
+    var amount = parseFloat(box.getAttribute('data-amount') || '0') || 0;
 
     entryTitle.textContent = 'Day ' + day;
     entryDate.textContent = formatLong(date);
     thesisInput.value = thesis;
+    amountInput.value = amount !== 0 ? String(Math.abs(amount)) : '';
     pendingStatus = status === 'positive' || status === 'negative' ? status : null;
     updateToggleUI();
     updateSaveEnabled();
@@ -686,6 +807,8 @@
   function updateToggleUI() {
     btnPos.setAttribute('aria-pressed', pendingStatus === 'positive' ? 'true' : 'false');
     btnNeg.setAttribute('aria-pressed', pendingStatus === 'negative' ? 'true' : 'false');
+    amountRow.classList.toggle('is-positive', pendingStatus === 'positive');
+    amountRow.classList.toggle('is-negative', pendingStatus === 'negative');
   }
 
   function updateSaveEnabled() {
@@ -704,6 +827,9 @@
     updateSaveEnabled();
   });
   thesisInput.addEventListener('input', updateSaveEnabled);
+  amountInput.addEventListener('input', function () {
+    amountInput.value = amountInput.value.replace(/[^0-9.]/g, '');
+  });
 
   btnCancel.addEventListener('click', function () {
     dialog.close();
@@ -720,11 +846,20 @@
     var text = thesisInput.value.trim();
     if (!text) return;
 
+    var magnitude = parseAmountInput();
+    var signedAmount = pendingStatus === 'negative' ? -magnitude : magnitude;
+
     activeBox.setAttribute('data-status', pendingStatus);
     activeBox.setAttribute('data-thesis', text);
+    activeBox.setAttribute('data-amount', String(signedAmount));
+
+    var amountEl = activeBox.querySelector('.box-amount');
+    if (amountEl) amountEl.textContent = magnitude > 0 ? formatCompactSigned(signedAmount) : '';
+
     var day = activeBox.getAttribute('data-day');
     var date = activeBox.getAttribute('data-date');
-    activeBox.setAttribute('aria-label', 'Day ' + day + ', ' + formatLong(date) + ', ' + pendingStatus + ': ' + text);
+    var amountText = magnitude > 0 ? ', ' + formatCompactSigned(signedAmount) : '';
+    activeBox.setAttribute('aria-label', 'Day ' + day + ', ' + formatLong(date) + ', ' + pendingStatus + amountText + ': ' + text);
 
     refreshStats();
     dialog.close();
