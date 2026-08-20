@@ -3,88 +3,94 @@
   "freq": "1D",
   "n_folds": 5,
   "min_regime_bars": 20,
-  "generated_at_utc": "2026-08-10T17:22:49.807900Z",
+  "generated_at_utc": "2026-08-20T07:24:35.247321Z",
   "current_regime": "ranging/low_vol",
   "recommended_strategy": "Supertrend(10,m=3.0)",
   "live_regime_map": {
     "ranging/low_vol": "Supertrend(10,m=3.0)",
+    "trending/high_vol": "Parabolic_SAR(af=0.02,max=0.2)",
     "trending/low_vol": "Supertrend(10,m=3.0)"
   },
   "oos_metrics": {
     "strategy": "MetaStrategySelector",
     "instrument": "SOL_USDT",
-    "total_return": -1.0008279419701096,
+    "total_return": -1.0005934793117235,
     "cagr": NaN,
-    "sharpe": 0.02023115690310475,
-    "sortino": 0.020349222963267133,
-    "max_drawdown": -1.040900727472696,
+    "sharpe": 0.25719879101754456,
+    "sortino": 0.22713501796688526,
+    "max_drawdown": -1.0005934793117235,
     "calmar": NaN,
-    "num_trades": 52,
-    "win_rate": 0.38461538461538464,
-    "profit_factor": 0.677617531701951,
-    "avg_win": 29407.010862967338,
-    "avg_loss": -27123.53345284864,
-    "avg_trade": -5381.016408304035,
-    "avg_bars_held": 17.46153846153846,
-    "total_costs": 34655.10138898513,
+    "num_trades": 83,
+    "win_rate": 0.4457831325301205,
+    "profit_factor": 0.7696005722436889,
+    "avg_win": 35848.53568951744,
+    "avg_loss": -37467.08720109127,
+    "avg_trade": -4784.2191655187125,
+    "avg_bars_held": 14.662650602409638,
+    "total_costs": 68405.34104821202,
     "exposure": NaN,
-    "final_equity": -82.79419701096255
+    "final_equity": -59.34793117234222
   },
   "folds": [
     {
       "fold_idx": 1,
-      "test_start": "2022-03-09 00:00:00",
-      "test_end": "2023-01-25 00:00:00",
+      "test_start": "2022-03-10 00:00:00",
+      "test_end": "2023-01-28 00:00:00",
       "regime_map": {
         "ranging/low_vol": "Supertrend(10,m=3.0)",
+        "trending/high_vol": "Parabolic_SAR(af=0.02,max=0.2)",
         "trending/low_vol": "Supertrend(10,m=3.0)"
       },
-      "test_total_return": -1.0131207612373483,
-      "test_sharpe": -0.6790307337774687
+      "test_total_return": -0.9311818840329882,
+      "test_sharpe": 0.6373997042629421
     },
     {
       "fold_idx": 2,
-      "test_start": "2023-01-26 00:00:00",
-      "test_end": "2023-12-14 00:00:00",
+      "test_start": "2023-01-29 00:00:00",
+      "test_end": "2023-12-19 00:00:00",
       "regime_map": {
         "ranging/low_vol": "Supertrend(10,m=3.0)",
+        "trending/high_vol": "Parabolic_SAR(af=0.02,max=0.2)",
         "trending/low_vol": "Supertrend(10,m=3.0)"
       },
-      "test_total_return": -0.07778917816726172,
-      "test_sharpe": 0.6535528428718395
+      "test_total_return": -0.8174320323939155,
+      "test_sharpe": 0.32039257608854865
     },
     {
       "fold_idx": 3,
-      "test_start": "2023-12-15 00:00:00",
-      "test_end": "2024-11-01 00:00:00",
+      "test_start": "2023-12-20 00:00:00",
+      "test_end": "2024-11-08 00:00:00",
       "regime_map": {
         "ranging/low_vol": "Supertrend(10,m=3.0)",
+        "trending/high_vol": "Parabolic_SAR(af=0.02,max=0.2)",
         "trending/low_vol": "Supertrend(10,m=3.0)"
       },
-      "test_total_return": -0.6964936067713812,
-      "test_sharpe": 0.1548721078224402
+      "test_total_return": -1.0472365558724703,
+      "test_sharpe": -0.10526259437656126
     },
     {
       "fold_idx": 4,
-      "test_start": "2024-11-02 00:00:00",
-      "test_end": "2025-09-20 00:00:00",
+      "test_start": "2024-11-09 00:00:00",
+      "test_end": "2025-09-29 00:00:00",
       "regime_map": {
         "ranging/low_vol": "Supertrend(10,m=3.0)",
+        "trending/high_vol": "Parabolic_SAR(af=0.02,max=0.2)",
         "trending/low_vol": "Supertrend(10,m=3.0)"
       },
-      "test_total_return": -0.36672584149661114,
-      "test_sharpe": 0.46863859556070014
+      "test_total_return": -0.36798722062926625,
+      "test_sharpe": 0.7092993402547955
     },
     {
       "fold_idx": 5,
-      "test_start": "2025-09-21 00:00:00",
-      "test_end": "2026-08-10 00:00:00",
+      "test_start": "2025-09-30 00:00:00",
+      "test_end": "2026-08-20 00:00:00",
       "regime_map": {
         "ranging/low_vol": "Supertrend(10,m=3.0)",
+        "trending/high_vol": "Parabolic_SAR(af=0.02,max=0.2)",
         "trending/low_vol": "Supertrend(10,m=3.0)"
       },
-      "test_total_return": -0.6439991446454938,
-      "test_sharpe": -0.10638302215410812
+      "test_total_return": -0.8070642144518868,
+      "test_sharpe": -0.2459759821441061
     }
   ]
 }
