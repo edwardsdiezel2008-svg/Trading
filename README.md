@@ -5,19 +5,29 @@ downloaded NASDAQ and futures trading logs, scores each one, and explains
 *why* it performed the way it did (which market regime the profit/loss came
 from), not just whether it did.
 
+This repo also runs a live paper-trading dashboard - the same engine and
+strategy library backtesting BTC/ETH/SOL (spot and leveraged perpetuals) and
+six index/commodity futures around the clock via GitHub Actions, published
+to GitHub Pages. See `paper_trading/README.md` for that side of the project;
+everything below covers the underlying research toolkit it's built on.
+
 ## What's here
 
 ```
 src/backtest/
   data_loader.py     Load raw tick logs -> normalized OHLCV bars
   instruments.py      Contract specs (multiplier, tick size) for futures + equities
-  strategies/          7 strategies: trend, mean-reversion, volatility
+  strategies/          18 strategies: trend, mean-reversion, volatility,
+                        candlestick/price-action patterns, volume/market
+                        profile - plus cost-aware/regime/volume filter wrappers
   engine.py            Backtest engine (next-bar execution, commissions, slippage)
   metrics.py           CAGR, Sharpe, Sortino, max drawdown, win rate, profit factor...
   regime.py            Classifies bars as trending/ranging x high/low-vol, attributes P&L to each
   report.py            Runs everything, writes metrics.csv / equity_curves.png / explanations.txt
   walkforward.py        Walk-forward validation: grid-search params per fold, test out-of-sample
+  meta_strategy.py       Regime-conditional meta-strategy: pick the best strategy per regime, walk-forward
   sensitivity.py         Parameter sensitivity sweeps: is the edge a plateau or a lucky spike?
+  significance.py        Bootstrap confidence intervals for walk-forward returns
   cli.py                Command-line entry point
 scripts/generate_sample_data.py   Synthetic tick data for testing the pipeline (NOT real market data)
 scripts/run_validation.py         Runs walk-forward + sensitivity across the whole strategy library
@@ -139,10 +149,28 @@ symbol you use that isn't already listed, or P&L will be wrong.**
 | Trend | `MovingAverageCrossover` | Long when fast MA > slow MA |
 | Trend | `DonchianBreakout` | Long/short on new N-bar high/low (turtle-style) |
 | Trend | `MACDMomentum` | Trade the sign of the MACD histogram |
+| Trend | `ParabolicSAR` | Trailing stop-and-reverse that accelerates the longer a trend runs |
 | Mean reversion | `RSIReversion` | Long oversold (RSI<30), short overbought (RSI>70) |
 | Mean reversion | `BollingerReversion` | Fade closes outside the Bollinger Bands back to the mean |
 | Mean reversion | `ZScoreReversion` | Fade price >2 std devs from its rolling mean |
+| Mean reversion | `StochasticReversion` | %K/%D crossover in the oversold/overbought zone |
+| Mean reversion | `CCIReversion` | Commodity Channel Index reversion around its own moving average |
+| Mean reversion | `VWAPReversion` | Fade distance from a rolling volume-weighted average price |
 | Volatility | `ATRVolatilityBreakout` | Trade moves that exceed k*ATR (volatility expansion) |
+| Volatility | `Supertrend` | ATR-width bands that only ever tighten in the trend's favor |
+| Volatility | `KeltnerChannelBreakout` | Breakout of an EMA-centered, ATR-width channel |
+| Pattern | `EngulfingReversal` | Bullish/bearish engulfing candle after a move |
+| Pattern | `InsideBarBreakout` | Consolidation (inside bar) then a breakout of the mother bar |
+| Pattern | `OpeningRangeBreakout` | Breakout of the session's opening range, VWAP-confirmed |
+| Profile | `VolumeProfileReversion` | Fade price outside the rolling volume-weighted Value Area |
+| Profile | `TPOReversion` | Fade price outside the rolling Market Profile (TPO) Value Area |
+
+Plus three wrappers that adapt any of the above rather than generating their
+own signals: `CostAwareFilter` (holds the prior position when the expected
+move can't clear round-trip costs), `RegimeFilteredStrategy` (flattens
+signals during a regime the strategy attributes losses to), and
+`VolumeConfirmationFilter` (requires above-average volume to open a new
+position).
 
 Add a new one by subclassing `src/backtest/strategies/base.py:Strategy` and
 implementing `generate_signals(bars) -> Series[-1, 0, 1]`, then adding it to
