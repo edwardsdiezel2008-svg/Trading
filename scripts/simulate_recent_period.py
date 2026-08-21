@@ -53,7 +53,15 @@ def main(argv=None):
         result = run_backtest(bars, strat, spec, initial_capital=args.capital)
         eq = result.equity_curve
         equity_at_window_start = eq.iloc[window_start_idx - 1] if window_start_idx > 0 else args.capital
-        multiple = eq.iloc[-1] / equity_at_window_start if equity_at_window_start else 1.0
+        # Guarding on truthiness alone (equity_at_window_start != 0) misses a
+        # *negative* base, reachable since run_backtest here has no
+        # max_loss_fraction set - dividing by a negative number "succeeds"
+        # numerically but flips the sign, turning a real recovery after an
+        # account blew up before the window even started into a fabricated
+        # loss (or vice versa). Same >0 guard and "freeze the multiple"
+        # convention as run_walk_forward/run_meta_strategy_walkforward use
+        # once equity/capital goes non-positive.
+        multiple = (eq.iloc[-1] / equity_at_window_start) if equity_at_window_start > 0 else 1.0
         simulated_final = args.capital * multiple
         profit = simulated_final - args.capital
 
