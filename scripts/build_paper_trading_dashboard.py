@@ -566,11 +566,21 @@ def build_news_page(news):
 
 
 def build_backtest_lab_page():
-    """Stitches the already-built paper_trading/backtest_lab.json (written
-    separately by scripts/build_backtest_lab.py, which runs roughly 1,700
-    real backtests and takes a few minutes - too slow to redo on every
-    ordinary dashboard rebuild) into its page template. A no-op until that
-    script has been run at least once."""
+    """Publishes the Backtest Lab page alongside the already-built
+    paper_trading/backtest_lab.json (written separately by
+    scripts/build_backtest_lab.py, which runs roughly 1,700 real backtests
+    and takes a few minutes - too slow to redo on every ordinary dashboard
+    rebuild). A no-op until that script has been run at least once.
+
+    The template fetches backtest_lab.json itself at runtime rather than
+    having it inlined here as a JS literal - that JSON is ~13MB, and a
+    literal that size forces the browser to parse it synchronously as part
+    of parsing the page's own script, blocking first paint for several
+    seconds. fetch() lets the page shell render immediately and defers the
+    big parse to Response.json() instead. So this function no longer stitches
+    anything into the template - it just copies it through unchanged - but
+    still gates on both files existing, since a Backtest Lab page whose
+    fetch() 404s (no JSON alongside it) is worse than no page at all."""
     if not os.path.exists(BACKTEST_LAB_TEMPLATE_PATH):
         print(f"Skipping {BACKTEST_LAB_OUTPUT_PATH}: {BACKTEST_LAB_TEMPLATE_PATH} not found")
         return
@@ -581,15 +591,10 @@ def build_backtest_lab_page():
 
     with open(BACKTEST_LAB_TEMPLATE_PATH) as f:
         out = f.read()
-    with open(BACKTEST_LAB_JSON_PATH) as f:
-        lab_json_text = f.read()
-
-    out = out.replace("__BACKTEST_LAB_JSON__", lab_json_text)
-    assert "__BACKTEST_LAB_JSON__" not in out, "unfilled placeholder __BACKTEST_LAB_JSON__"
 
     with open(BACKTEST_LAB_OUTPUT_PATH, "w") as f:
         f.write(out)
-    print(f"Wrote {BACKTEST_LAB_OUTPUT_PATH} ({os.path.getsize(BACKTEST_LAB_OUTPUT_PATH) / 1024 / 1024:.1f} MB)")
+    print(f"Wrote {BACKTEST_LAB_OUTPUT_PATH} ({os.path.getsize(BACKTEST_LAB_OUTPUT_PATH) / 1024:.1f} KB)")
 
 
 def main():

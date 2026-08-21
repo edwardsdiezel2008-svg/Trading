@@ -352,7 +352,15 @@
 </div>
 
 <script>
-  const LAB = __BACKTEST_LAB_JSON__;
+(async function() {
+  // Fetched at runtime rather than inlined as a JS literal: this file is
+  // ~13MB (1,600+ real backtests' worth of trades), and a literal that size
+  // forces the browser to fully parse it as part of parsing THIS script,
+  // blocking first paint on a multi-second synchronous parse. A fetch lets
+  // the page shell render immediately and defers the big parse to
+  // Response.json(), which V8/JSC treat as data rather than source and
+  // handle far faster than an equivalent object literal.
+  const LAB = await fetch('backtest_lab.json').then((r) => r.json());
 
   // Plain loops, not Math.min(...arr) - spreading a large typed array into
   // function arguments throws "Maximum call stack size exceeded" once the
@@ -730,6 +738,7 @@
 
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { THEME = readTheme(); run(); });
   new MutationObserver(() => { THEME = readTheme(); run(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
 </script>
 
 <script>

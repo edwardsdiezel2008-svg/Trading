@@ -159,6 +159,13 @@ jobs:
             esac
             cp "$f" "_site/$base"
           done
+          # backtest_lab.html fetches this at runtime rather than having it
+          # inlined (13MB is too much to parse synchronously as part of the
+          # page's own script) - so it has to be staged alongside the HTML,
+          # not just referenced by the build step that writes the HTML.
+          if [ -f paper_trading/backtest_lab.json ]; then
+            cp paper_trading/backtest_lab.json _site/backtest_lab.json
+          fi
           echo "site_ready=true" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-pages-artifact@v3

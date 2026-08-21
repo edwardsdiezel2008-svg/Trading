@@ -284,11 +284,16 @@ def test_build_news_page_skips_gracefully_when_template_is_missing(tmp_path, mon
     assert "Skipping" in capsys.readouterr().out
 
 
-def test_build_backtest_lab_page_embeds_the_precomputed_json_and_leaves_no_placeholder(tmp_path, monkeypatch):
+def test_build_backtest_lab_page_copies_template_through_unchanged(tmp_path, monkeypatch):
+    # The template fetches backtest_lab.json itself at runtime (it's ~13MB -
+    # too large to inline as a JS literal without blocking first paint on a
+    # synchronous parse), so this build step no longer stitches anything
+    # into the template; it just publishes it as-is once the JSON its
+    # fetch() depends on actually exists.
     monkeypatch.chdir(tmp_path)
     os.makedirs("paper_trading", exist_ok=True)
     with open("paper_trading/backtest_lab_template.html", "w") as f:
-        f.write("<html>__BACKTEST_LAB_JSON__</html>")
+        f.write("<html>fetch('backtest_lab.json')</html>")
     with open("paper_trading/backtest_lab.json", "w") as f:
         f.write('{"tracks":{},"strategies":{}}')
 
@@ -296,8 +301,7 @@ def test_build_backtest_lab_page_embeds_the_precomputed_json_and_leaves_no_place
 
     with open("paper_trading/backtest_lab.html") as f:
         out = f.read()
-    assert "__BACKTEST_LAB_JSON__" not in out
-    assert '{"tracks":{},"strategies":{}}' in out
+    assert out == "<html>fetch('backtest_lab.json')</html>"
 
 
 def test_build_backtest_lab_page_skips_gracefully_when_template_is_missing(tmp_path, monkeypatch, capsys):
@@ -312,7 +316,7 @@ def test_build_backtest_lab_page_skips_gracefully_when_json_is_missing(tmp_path,
     monkeypatch.chdir(tmp_path)
     os.makedirs("paper_trading", exist_ok=True)
     with open("paper_trading/backtest_lab_template.html", "w") as f:
-        f.write("<html>__BACKTEST_LAB_JSON__</html>")
+        f.write("<html>fetch('backtest_lab.json')</html>")
 
     build_backtest_lab_page()
 
