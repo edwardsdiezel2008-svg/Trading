@@ -13,3 +13,18 @@ data/sample/*.csv
 
 reports/*
 !reports/.gitkeep
+
+# Pure build output, regenerated from other tracked state files by
+# scripts/build_paper_trading_dashboard.py and build_backtest_lab.py on
+# every hourly workflow run - Pages deployment stages whatever's on disk at
+# that point (see "Stage dashboard for Pages" in hourly-market-data.yml),
+# which always postdates the "Rebuild dashboard HTML"/"Update Backtest Lab"
+# steps, so untracking these has no effect on the live site. They were
+# committed every hourly run despite being ~90% of that run's diff size
+# (dashboard.html ~35MB, backtest_lab.json ~13MB, almost entirely rewritten
+# each time since the data scattered through them changes) - the single
+# largest driver of this repo's .git size. index.html/news.html/
+# backtest_lab.html stay tracked; they're a few tens of KB, not worth the
+# same tradeoff.
+paper_trading/dashboard.html
+paper_trading/backtest_lab.json

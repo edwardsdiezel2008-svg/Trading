@@ -666,6 +666,12 @@ of flagged coins per hourly run, see "Rug Pull Watch" below),
 all built output - regenerate with `python
 scripts/build_paper_trading_dashboard.py`, never hand-edit (their
 `*_template.html` sources are the ones to actually change).
+`dashboard.html` and `backtest_lab.json` are gitignored despite being real,
+needed files (present on disk, staged for Pages from the freshly-built
+copy every run) - at ~35MB and ~13MB, rebuilt almost entirely differently
+each hour, committing them was the single largest driver of this repo's
+`.git` size. Run the build scripts locally to get local copies; don't
+expect them in a fresh clone.
 
 ## Rug Pull Watch
 
