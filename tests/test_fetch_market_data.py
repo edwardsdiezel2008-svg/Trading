@@ -1,4 +1,5 @@
 import csv
+import os
 import sys
 
 sys.path.insert(0, ".")
@@ -361,3 +362,98 @@ def test_fetch_candlestick_returns_the_data_list_and_normalizes_the_instrument(m
 
     assert result == ["candle1"]
     assert seen_params == {"instrument_name": "DOGE_USD", "timeframe": "1h", "count": 50}
+
+
+def _fake_candle(t=1_700_000_000_000, c=100.0):
+    return {"t": t, "o": c, "h": c, "l": c, "c": c, "v": 1.0}
+
+
+def test_main_writes_every_output_file_end_to_end(tmp_path, monkeypatch):
+    import json
+
+    import scripts.fetch_market_data as fetch_market_data
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(fetch_market_data, "OTHER_INSTRUMENTS", [("ETH_USDT", "paper_trading/bars_eth.csv")])
+    monkeypatch.setattr(fetch_market_data, "MEME_PRECISE_SYMBOLS", ["DOGEUSD"])
+    monkeypatch.setattr(fetch_market_data, "MEME_WIDE_SYMBOLS", ["DOGEUSD"])
+    monkeypatch.setattr(fetch_market_data, "fetch_candlestick", lambda symbol, timeframe, count=300: [_fake_candle()])
+    monkeypatch.setattr(fetch_market_data, "fetch_tickers", lambda: [{"i": "DOGE_USD", "a": "0.1", "b": "0.2", "c": "0.15", "v": "1000", "h": "0.2", "l": "0.1", "t": 1_700_000_000_000}])
+    monkeypatch.setattr(fetch_market_data, "fetch_order_book", lambda symbol: {"bids": [["1", "2"]], "asks": [["3", "4"]], "timestamp": "t"})
+    monkeypatch.setattr(fetch_market_data, "fetch_funding_rate", lambda instrument_name=None, count=1: {"rate": "0.0001", "timestamp": "t", "instrument_name": instrument_name})
+    monkeypatch.setattr(fetch_market_data, "fetch_fear_greed", lambda: {"value": 50, "classification": "Neutral", "timestamp": "t"})
+
+    fetch_market_data.main()
+
+    assert os.path.exists("paper_trading/bars.csv")
+    assert os.path.exists("paper_trading/bars_15m.csv")
+    assert os.path.exists("paper_trading/bars_eth.csv")
+    assert os.path.exists("paper_trading/memecoins/DOGEUSD.csv")
+
+    with open("paper_trading/memecoins_wide_tickers.json") as f:
+        wide = json.load(f)
+    assert "DOGEUSD" in wide["symbols"]
+
+    with open("paper_trading/btc_market_snapshot.json") as f:
+        snapshot = json.load(f)
+    assert snapshot["order_book"]["bids"] == [["1", "2"]]
+    assert snapshot["funding_rate"]["rate"] == "0.0001"
+
+    with open("paper_trading/eth_market_snapshot.json") as f:
+        eth_snapshot = json.load(f)
+    assert eth_snapshot["funding_rate"]["rate"] == "0.0001"
+
+    with open("paper_trading/fear_greed.json") as f:
+        fng = json.load(f)
+    assert fng["value"] == 50
+
+
+def test_main_omits_market_snapshot_when_book_and_funding_both_fail(tmp_path, monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(fetch_market_data, "OTHER_INSTRUMENTS", [])
+    monkeypatch.setattr(fetch_market_data, "MEME_PRECISE_SYMBOLS", [])
+    monkeypatch.setattr(fetch_market_data, "MEME_WIDE_SYMBOLS", [])
+    monkeypatch.setattr(fetch_market_data, "fetch_candlestick", lambda symbol, timeframe, count=300: [_fake_candle()])
+    monkeypatch.setattr(fetch_market_data, "fetch_tickers", lambda: [])
+
+    def raise_error(*args, **kwargs):
+        raise RuntimeError("exchange unreachable")
+
+    monkeypatch.setattr(fetch_market_data, "fetch_order_book", raise_error)
+    monkeypatch.setattr(fetch_market_data, "fetch_funding_rate", raise_error)
+    monkeypatch.setattr(fetch_market_data, "fetch_fear_greed", raise_error)
+
+    fetch_market_data.main()  # must not raise despite every optional fetch failing
+
+    assert not os.path.exists("paper_trading/btc_market_snapshot.json")
+    assert not os.path.exists("paper_trading/eth_market_snapshot.json")
+    assert not os.path.exists("paper_trading/fear_greed.json")
+    # The core bars still got written even though every optional extra failed.
+    assert os.path.exists("paper_trading/bars.csv")
+
+
+def test_main_skips_a_failing_memecoin_and_continues_with_the_rest(tmp_path, monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(fetch_market_data, "OTHER_INSTRUMENTS", [])
+    monkeypatch.setattr(fetch_market_data, "MEME_PRECISE_SYMBOLS", ["BROKENUSD", "OKUSD"])
+    monkeypatch.setattr(fetch_market_data, "MEME_WIDE_SYMBOLS", [])
+    monkeypatch.setattr(fetch_market_data, "fetch_tickers", lambda: [])
+    monkeypatch.setattr(fetch_market_data, "fetch_order_book", lambda symbol: {"bids": [], "asks": [], "timestamp": "t"})
+    monkeypatch.setattr(fetch_market_data, "fetch_funding_rate", lambda instrument_name=None, count=1: None)
+    monkeypatch.setattr(fetch_market_data, "fetch_fear_greed", lambda: None)
+
+    def fake_candlestick(symbol, timeframe, count=300):
+        if symbol == "BROKENUSD" and timeframe == "1h":
+            raise RuntimeError("this coin's feed is down")
+        return [_fake_candle()]
+
+    monkeypatch.setattr(fetch_market_data, "fetch_candlestick", fake_candlestick)
+
+    fetch_market_data.main()  # BROKENUSD's failure must not stop OKUSD from being written
+
+    assert not os.path.exists("paper_trading/memecoins/BROKENUSD.csv")
+    assert os.path.exists("paper_trading/memecoins/OKUSD.csv")
