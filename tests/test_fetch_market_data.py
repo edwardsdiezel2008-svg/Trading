@@ -172,3 +172,192 @@ def test_merge_bars_csv_date_only_mode_collapses_intraday_candles_onto_one_daily
         rows = list(csv.reader(f))
     assert rows[1][0] == "2026-01-01"
     assert rows[1][1] == "2.0"  # the later same-day candle wins
+
+
+def test_get_returns_the_result_payload_on_success(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    class FakeResponse:
+        ok = True
+        status_code = 200
+        url = "https://api.crypto.com/exchange/v1/public/get-tickers"
+        text = ""
+
+        def json(self):
+            return {"code": 0, "result": {"data": ["ok"]}}
+
+    monkeypatch.setattr(fetch_market_data.requests, "get", lambda url, params, timeout: FakeResponse())
+
+    assert fetch_market_data._get("get-tickers") == {"data": ["ok"]}
+
+
+def test_get_retries_on_a_transient_error_then_succeeds(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    calls = []
+
+    class FakeResponse:
+        ok = True
+        status_code = 200
+        url = "https://api.crypto.com/exchange/v1/public/get-tickers"
+        text = ""
+
+        def json(self):
+            return {"code": 0, "result": {"data": []}}
+
+    def fake_get(url, params, timeout):
+        calls.append(url)
+        if len(calls) < 3:
+            raise ConnectionError("temporary network blip")
+        return FakeResponse()
+
+    monkeypatch.setattr(fetch_market_data.requests, "get", fake_get)
+    monkeypatch.setattr(fetch_market_data.time, "sleep", lambda seconds: None)
+
+    result = fetch_market_data._get("get-tickers", retries=3)
+
+    assert len(calls) == 3
+    assert result == {"data": []}
+
+
+def test_get_raises_after_exhausting_all_retries(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    def fake_get(url, params, timeout):
+        raise ConnectionError("exchange is unreachable")
+
+    monkeypatch.setattr(fetch_market_data.requests, "get", fake_get)
+    monkeypatch.setattr(fetch_market_data.time, "sleep", lambda seconds: None)
+
+    try:
+        fetch_market_data._get("get-tickers", retries=3)
+        assert False, "expected a RuntimeError"
+    except RuntimeError as e:
+        assert "get-tickers" in str(e)
+        assert "after 3 attempts" in str(e)
+
+
+def test_get_raises_on_a_non_ok_http_status_with_body_text_included(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    class FakeResponse:
+        ok = False
+        status_code = 404
+        url = "https://api.crypto.com/exchange/v1/public/get-tickers"
+        text = "instrument not found"
+
+        def json(self):
+            raise AssertionError("should not be called when resp.ok is False")
+
+    monkeypatch.setattr(fetch_market_data.requests, "get", lambda url, params, timeout: FakeResponse())
+    monkeypatch.setattr(fetch_market_data.time, "sleep", lambda seconds: None)
+
+    try:
+        fetch_market_data._get("get-tickers", retries=1)
+        assert False, "expected a RuntimeError"
+    except RuntimeError as e:
+        assert "404" in str(e)
+        assert "instrument not found" in str(e)
+
+
+def test_get_raises_when_the_api_body_reports_a_nonzero_error_code(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    class FakeResponse:
+        ok = True
+        status_code = 200
+        url = "https://api.crypto.com/exchange/v1/public/get-tickers"
+        text = ""
+
+        def json(self):
+            return {"code": 10004, "message": "INVALID_REQUEST"}
+
+    monkeypatch.setattr(fetch_market_data.requests, "get", lambda url, params, timeout: FakeResponse())
+    monkeypatch.setattr(fetch_market_data.time, "sleep", lambda seconds: None)
+
+    try:
+        fetch_market_data._get("get-tickers", retries=1)
+        assert False, "expected a RuntimeError"
+    except RuntimeError as e:
+        assert "10004" in str(e)
+
+
+def test_fetch_candlestick_paginated_stops_when_a_page_adds_no_new_candles(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    def make_candle(ts_ms):
+        return {"t": ts_ms, "o": "1", "h": "1", "l": "1", "c": "1", "v": "1"}
+
+    # Page 1: three candles at t=3000,2000,1000. Page 2: the API doesn't
+    # really support end_ts pagination here and just returns the same latest
+    # page again - the "no new candles" guard should stop after that repeat
+    # rather than looping forever.
+    page1 = [make_candle(3000), make_candle(2000), make_candle(1000)]
+    calls = []
+
+    def fake_get(path, params=None):
+        calls.append(dict(params or {}))
+        return {"data": page1}
+
+    monkeypatch.setattr(fetch_market_data, "_get", fake_get)
+    monkeypatch.setattr(fetch_market_data.time, "sleep", lambda seconds: None)
+
+    candles = fetch_market_data.fetch_candlestick_paginated("BTCUSD", "1h", max_candles=100, page_size=3)
+
+    assert len(candles) == 3
+    assert len(calls) == 2  # one real page, one repeat that triggers the stop guard
+    assert calls[0]["instrument_name"] == "BTC_USD"
+
+
+def test_fetch_candlestick_paginated_stops_once_max_candles_is_reached(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    def make_candle(ts_ms):
+        return {"t": ts_ms, "o": "1", "h": "1", "l": "1", "c": "1", "v": "1"}
+
+    # Each page is strictly older than the last, so pagination could in
+    # principle continue forever - max_candles must be what stops it.
+    pages = [
+        [make_candle(30000), make_candle(20000)],
+        [make_candle(10000), make_candle(0)],
+        [make_candle(-10000), make_candle(-20000)],
+    ]
+    call_count = [0]
+
+    def fake_get(path, params=None):
+        page = pages[call_count[0]]
+        call_count[0] += 1
+        return {"data": page}
+
+    monkeypatch.setattr(fetch_market_data, "_get", fake_get)
+    monkeypatch.setattr(fetch_market_data.time, "sleep", lambda seconds: None)
+
+    candles = fetch_market_data.fetch_candlestick_paginated("BTCUSD", "1h", max_candles=4, page_size=2)
+
+    assert len(candles) >= 4
+    assert call_count[0] == 2  # stopped as soon as max_candles was reached
+
+
+def test_fetch_tickers_returns_the_data_list(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    monkeypatch.setattr(fetch_market_data, "_get", lambda path: {"data": [{"i": "BTC_USD"}]})
+
+    assert fetch_market_data.fetch_tickers() == [{"i": "BTC_USD"}]
+
+
+def test_fetch_candlestick_returns_the_data_list_and_normalizes_the_instrument(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    seen_params = {}
+
+    def fake_get(path, params):
+        seen_params.update(params)
+        return {"data": ["candle1"]}
+
+    monkeypatch.setattr(fetch_market_data, "_get", fake_get)
+
+    result = fetch_market_data.fetch_candlestick("DOGEUSD", "1h", count=50)
+
+    assert result == ["candle1"]
+    assert seen_params == {"instrument_name": "DOGE_USD", "timeframe": "1h", "count": 50}
