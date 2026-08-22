@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 
@@ -95,3 +96,35 @@ def test_atr_is_nan_before_the_warmup_period_and_positive_after():
     assert atr.iloc[:13].isna().all()
     assert atr.iloc[13:].notna().all()
     assert (atr.iloc[13:] > 0).all()
+
+
+def test_main_ranks_breakouts_and_reports_skipped_coins(tmp_path, monkeypatch):
+    import scripts.memecoin_scan_update as memecoin_scan_update
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(memecoin_scan_update, "MEME_COINS", ["BREAKOUT_USD", "FLAT_USD", "THIN_USD"])
+
+    n = MIN_BARS + 5
+    breakout_rows = [[ts, 1.0, 1.1, 0.9, 1.0, 100] for ts in _hourly_timestamps(n)]
+    breakout_rows[-1] = [_hourly_timestamps(n)[-1], 1.0, 5.0, 1.0, 5.0, 100]  # a real breakout on the last bar
+    _write_bars_csv("paper_trading/memecoins/BREAKOUT_USD.csv", breakout_rows)
+
+    flat_rows = [[ts, 1.0, 1.1, 0.9, 1.0, 100] for ts in _hourly_timestamps(n)]
+    _write_bars_csv("paper_trading/memecoins/FLAT_USD.csv", flat_rows)
+    # THIN_USD's bars file is never written - scan_coin returns None for it,
+    # and main() must not choke on that (only "ok"/"insufficient_data" rows
+    # actually reach the output, so an entirely-missing coin is silently
+    # absent from both ranked and skipped - a real, current behavior, not
+    # something this test is asserting should be different).
+
+    memecoin_scan_update.main()
+
+    with open("paper_trading/memecoin_scan.json") as f:
+        out = json.load(f)
+
+    assert out["lookback_bars"] == memecoin_scan_update.LOOKBACK
+    assert [r["symbol"] for r in out["ranked"]] == ["BREAKOUT_USD", "FLAT_USD"]
+    assert out["ranked"][0]["is_breakout"] is True
+    assert out["ranked"][0]["rank"] == 1
+    assert out["ranked"][1]["is_breakout"] is False
+    assert out["skipped"] == []
