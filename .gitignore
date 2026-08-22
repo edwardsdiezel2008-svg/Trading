@@ -3,6 +3,7 @@ __pycache__/
 .venv/
 venv/
 *.egg-info/
+.coverage
 
 # Downloaded trading logs are large and often licensed data - keep them local only.
 data/raw/*
