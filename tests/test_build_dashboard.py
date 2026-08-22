@@ -2,12 +2,17 @@ import json
 import os
 import sys
 
+import pandas as pd
 import pytest
 
 sys.path.insert(0, ".")
 
 import scripts.rug_watch as rug_watch
 from scripts.build_paper_trading_dashboard import (
+    EMPTY_META_STRATEGY,
+    EMPTY_POSITIONS,
+    EMPTY_SENSITIVITY,
+    EMPTY_WALKFORWARD,
     SUFFIX_SYMBOL_FALLBACK,
     TRACK_META,
     TRACK_SUFFIXES,
@@ -16,12 +21,19 @@ from scripts.build_paper_trading_dashboard import (
     _pearson,
     build_backtest_lab_page,
     build_news_page,
+    compute_correlations,
     compute_cross_asset_robustness,
     compute_cross_futures_robustness,
+    compute_current_regimes,
     compute_rug_watch_summary,
     diversify_news,
+    load_meta_strategy,
     load_recent_bars,
     load_rug_watch_streaks,
+    load_sensitivity,
+    load_track,
+    load_walkforward,
+    summarize_track,
 )
 
 
@@ -428,3 +440,162 @@ def test_rug_watch_streaks_only_reports_symbols_flagged_in_the_latest_run(tmp_pa
         {"timestamp": "t1", "flagged": {"FRESH": "severe"}},
     ])
     assert load_rug_watch_streaks() == {"FRESH": 1}
+
+
+def test_load_walkforward_missing_file_returns_empty_default():
+    assert load_walkforward("_does_not_exist") == dict(EMPTY_WALKFORWARD)
+
+
+def test_load_walkforward_reads_real_file(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    with open("paper_trading/walkforward_zz.json", "w") as f:
+        json.dump({"symbol": "BTC_USDT", "results": [{"strategy": "X"}]}, f)
+    assert load_walkforward("_zz") == {"symbol": "BTC_USDT", "results": [{"strategy": "X"}]}
+
+
+def test_load_sensitivity_missing_file_returns_empty_default():
+    assert load_sensitivity("_does_not_exist") == dict(EMPTY_SENSITIVITY)
+
+
+def test_load_sensitivity_reads_real_file(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    with open("paper_trading/sensitivity_zz.json", "w") as f:
+        json.dump({"results": [{"strategy": "Y"}]}, f)
+    assert load_sensitivity("_zz") == {"results": [{"strategy": "Y"}]}
+
+
+def test_load_meta_strategy_missing_file_returns_empty_default():
+    assert load_meta_strategy("_does_not_exist") == dict(EMPTY_META_STRATEGY)
+
+
+def test_load_meta_strategy_reads_real_file(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    with open("paper_trading/meta_strategy_zz.json", "w") as f:
+        json.dump({"current_regime": "trending/low_vol"}, f)
+    assert load_meta_strategy("_zz") == {"current_regime": "trending/low_vol"}
+
+
+def test_load_track_missing_positions_returns_empty_defaults():
+    positions, trades, track_record = load_track("_does_not_exist")
+    assert positions == dict(EMPTY_POSITIONS)
+    assert trades == []
+    assert track_record == []
+
+
+def test_load_track_reads_and_types_real_files(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    with open("paper_trading/positions_zz.json", "w") as f:
+        json.dump({"symbol": "BTC_USDT", "strategies": {}}, f)
+    _write_bars_csv(
+        "paper_trading/trade_log_zz.csv",
+        ["strategy", "net_pnl", "entry_price", "exit_price"],
+        [["MA_Crossover", "12.5", "100", "101"]],
+    )
+    _write_bars_csv(
+        "paper_trading/track_record_zz.csv",
+        ["date", "strategy", "equity", "return_since_tracking_start_pct", "position"],
+        [["2026-01-01", "MA_Crossover", "100500.0", "0.5", "1"]],
+    )
+
+    positions, trades, track_record = load_track("_zz")
+
+    assert positions == {"symbol": "BTC_USDT", "strategies": {}}
+    assert trades == [{"strategy": "MA_Crossover", "net_pnl": 12.5, "entry_price": 100.0, "exit_price": 101.0}]
+    assert track_record[0]["equity"] == 100500.0
+    assert track_record[0]["position"] == 1.0
+
+
+def test_load_track_skips_track_record_when_file_is_absent(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    with open("paper_trading/positions_zz.json", "w") as f:
+        json.dump({"strategies": {}}, f)
+    _write_bars_csv("paper_trading/trade_log_zz.csv", ["strategy", "net_pnl", "entry_price", "exit_price"], [])
+
+    _, _, track_record = load_track("_zz")
+    assert track_record == []
+
+
+def test_summarize_track_reports_unseeded_when_no_strategies_yet():
+    assert summarize_track({"strategies": {}}, "BTC Daily", "BTC/USDT") == {
+        "label": "BTC Daily", "symbol": "BTC/USDT", "seeded": False,
+    }
+
+
+def test_summarize_track_ranks_strategies_and_floors_a_wiped_out_one_at_minus_100_pct():
+    positions = {
+        "updated_at_utc": "2026-01-01T00:00:00Z",
+        "bar_count": 500,
+        "leverage": 3.0,
+        "buy_and_hold_equity_curve": [["2026-01-01", 100_000.0], ["2026-01-02", 105_000.0]],
+        "strategies": {
+            "Winner": {"equity": 120_000.0},
+            "WipedOut": {"equity": -50.0},
+            "Loser": {"equity": 90_000.0},
+        },
+    }
+    summary = summarize_track(positions, "BTC Perp", "BTC/USDT")
+
+    assert summary["seeded"] is True
+    assert summary["total"] == 3
+    assert summary["profitable"] == 1
+    assert summary["best_name"] == "Winner"
+    assert summary["best_return"] == pytest.approx(0.20)
+    assert summary["buy_and_hold_return"] == pytest.approx(0.05)
+    assert summary["leverage"] == 3.0
+
+
+def test_summarize_track_buy_and_hold_return_is_none_without_a_curve():
+    positions = {"strategies": {"Solo": {"equity": 100_000.0}}}
+    summary = summarize_track(positions, "SOL Daily", "SOL/USDT")
+    assert summary["buy_and_hold_return"] is None
+
+
+def test_compute_correlations_pairs_up_assets_with_overlapping_return_history(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    _write_bars_csv(
+        "paper_trading/bars.csv", ["timestamp", "open", "high", "low", "close", "volume"],
+        [["2026-01-0%d" % d, 0, 0, 0, 100 + d, 0] for d in range(1, 6)],
+    )
+    _write_bars_csv(
+        "paper_trading/bars_eth.csv", ["timestamp", "open", "high", "low", "close", "volume"],
+        [["2026-01-0%d" % d, 0, 0, 0, 100 + d, 0] for d in range(1, 6)],
+    )
+    # SOL file absent - compute_correlations should just skip it, not crash.
+
+    result = compute_correlations()
+
+    assert set(result["assets"]) == {"BTC", "ETH"}
+    assert len(result["pairs"]) == 1
+    assert result["pairs"][0]["correlation"] == pytest.approx(1.0)  # identical price paths
+
+
+def test_compute_current_regimes_skips_assets_with_no_bars_file(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    assert compute_current_regimes() == {}
+
+
+def test_compute_current_regimes_reports_trend_vol_and_adx_for_an_available_asset(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    n = 120
+    # A steady uptrend with real high/low spread gives classify_regimes real
+    # ADX/vol signal to report, rather than the NaN warmup a too-short or
+    # degenerate (zero-range) series would produce.
+    dates = pd.date_range("2026-01-01", periods=n, freq="1D")
+    closes = [100 + d * 0.8 for d in range(n)]
+    rows = [[dates[d].isoformat(), c - 0.5, c + 0.5, c - 1.0, c, 1000] for d, c in enumerate(closes)]
+    _write_bars_csv("paper_trading/bars.csv", ["timestamp", "open", "high", "low", "close", "volume"], rows)
+
+    regimes = compute_current_regimes()
+
+    assert "BTC" in regimes
+    assert regimes["BTC"]["trend_regime"] in {"trending", "ranging"}
+    assert regimes["BTC"]["vol_regime"] in {"high_vol", "low_vol"}
+    assert isinstance(regimes["BTC"]["adx"], float)
