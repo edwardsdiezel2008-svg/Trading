@@ -87,3 +87,128 @@ def test_nq_extra_intervals_has_distinct_intervals_and_paths():
         row[2] for row in INDEX_FUTURES if row[0] == "NQ=F"
     }
     assert not (set(paths) & existing_nq_paths)
+
+
+def test_fetch_history_retries_on_empty_response_then_succeeds(monkeypatch):
+    import yfinance as yf
+
+    import scripts.fetch_index_futures as fetch_index_futures
+
+    good_df = _make_df([("2026-08-01", 100.0, 101.0, 99.0, 100.5, 10.0)])
+    calls = []
+
+    class FakeTicker:
+        def __init__(self, symbol):
+            pass
+
+        def history(self, period, interval, auto_adjust):
+            calls.append(1)
+            return pd.DataFrame() if len(calls) < 3 else good_df
+
+    monkeypatch.setattr(yf, "Ticker", FakeTicker)
+    monkeypatch.setattr(fetch_index_futures.time, "sleep", lambda seconds: None)
+
+    df = fetch_index_futures._fetch_history("NQ=F", period="10y", interval="1d", retries=3)
+
+    assert len(calls) == 3
+    assert not df.empty
+
+
+def test_fetch_history_retries_on_an_exception_then_succeeds(monkeypatch):
+    import yfinance as yf
+
+    import scripts.fetch_index_futures as fetch_index_futures
+
+    good_df = _make_df([("2026-08-01", 100.0, 101.0, 99.0, 100.5, 10.0)])
+    calls = []
+
+    class FakeTicker:
+        def __init__(self, symbol):
+            pass
+
+        def history(self, period, interval, auto_adjust):
+            calls.append(1)
+            if len(calls) < 2:
+                raise ConnectionError("temporary network blip")
+            return good_df
+
+    monkeypatch.setattr(yf, "Ticker", FakeTicker)
+    monkeypatch.setattr(fetch_index_futures.time, "sleep", lambda seconds: None)
+
+    df = fetch_index_futures._fetch_history("NQ=F", period="10y", interval="1d", retries=3)
+
+    assert len(calls) == 2
+    assert not df.empty
+
+
+def test_fetch_history_raises_after_exhausting_all_retries(monkeypatch):
+    import yfinance as yf
+
+    import scripts.fetch_index_futures as fetch_index_futures
+
+    class FakeTicker:
+        def __init__(self, symbol):
+            pass
+
+        def history(self, period, interval, auto_adjust):
+            raise ConnectionError("Yahoo is unreachable")
+
+    monkeypatch.setattr(yf, "Ticker", FakeTicker)
+    monkeypatch.setattr(fetch_index_futures.time, "sleep", lambda seconds: None)
+
+    try:
+        fetch_index_futures._fetch_history("NQ=F", period="10y", interval="1d", retries=3)
+        assert False, "expected a RuntimeError"
+    except RuntimeError as e:
+        assert "NQ=F" in str(e)
+        assert "after 3 attempts" in str(e)
+
+
+def test_main_writes_every_symbol_and_interval_when_all_fetches_succeed(monkeypatch):
+    import scripts.fetch_index_futures as fetch_index_futures
+
+    fake_df = _make_df([("2026-08-01", 100.0, 101.0, 99.0, 100.5, 10.0)])
+    merged_paths = []
+
+    monkeypatch.setattr(fetch_index_futures, "_fetch_history", lambda symbol, period, interval, retries=3: fake_df)
+    monkeypatch.setattr(fetch_index_futures, "merge_bars_csv", lambda path, candles, date_only: merged_paths.append(path) or 1)
+
+    fetch_index_futures.main()  # should not raise
+
+    expected = {row[1] for row in INDEX_FUTURES} | {row[2] for row in INDEX_FUTURES} | {row[2] for row in NQ_EXTRA_INTERVALS}
+    assert set(merged_paths) == expected
+
+
+def test_main_raises_systemexit_when_every_fetch_fails(monkeypatch):
+    import scripts.fetch_index_futures as fetch_index_futures
+
+    def always_fails(symbol, period, interval, retries=3):
+        raise RuntimeError("Yahoo is unreachable")
+
+    monkeypatch.setattr(fetch_index_futures, "_fetch_history", always_fails)
+
+    try:
+        fetch_index_futures.main()
+        assert False, "expected a SystemExit"
+    except SystemExit as e:
+        assert "failed" in str(e)
+
+
+def test_main_continues_past_a_single_symbols_failure(monkeypatch):
+    import scripts.fetch_index_futures as fetch_index_futures
+
+    fake_df = _make_df([("2026-08-01", 100.0, 101.0, 99.0, 100.5, 10.0)])
+    merged_paths = []
+
+    def flaky_fetch(symbol, period, interval, retries=3):
+        if symbol == "ES=F":
+            raise RuntimeError("ES=F is unreachable")
+        return fake_df
+
+    monkeypatch.setattr(fetch_index_futures, "_fetch_history", flaky_fetch)
+    monkeypatch.setattr(fetch_index_futures, "merge_bars_csv", lambda path, candles, date_only: merged_paths.append(path) or 1)
+
+    fetch_index_futures.main()  # ES=F fails, but others should still write - no SystemExit
+
+    assert "paper_trading/bars_es.csv" not in merged_paths
+    assert "paper_trading/bars_nq.csv" in merged_paths
