@@ -1,3 +1,4 @@
+import os
 import sys
 
 import pandas as pd
@@ -163,3 +164,48 @@ def test_select_chart_ids_excludes_none_metrics_from_ranking_not_from_extremes()
     assert id(none_metrics_extreme) in ids  # kept via _is_extreme despite None metrics
     assert id(none_metrics_ordinary) not in ids  # no metrics to rank by, not extreme
     assert id(ranked) in ids
+
+
+def test_main_runs_end_to_end_and_writes_the_output_json(tmp_path, monkeypatch):
+    import json
+
+    import scripts.build_backtest_lab as build_backtest_lab
+    from src.backtest.strategies.base import Strategy
+
+    class TinyStrategy(Strategy):
+        PARAM_SPACE = {"level": [95, 105]}
+
+        @property
+        def name(self):
+            return f"Tiny({self.params.get('level', 100)})"
+
+        def generate_signals(self, bars):
+            level = self.params.get("level", 100)
+            return (bars["close"] > level).astype(int)
+
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    prices = [90.0] * 30 + list(range(90, 130)) + [130.0] * 30
+    idx = pd.date_range("2026-01-01", periods=len(prices), freq="1min")
+    bars = pd.DataFrame({"open": prices, "high": prices, "low": prices, "close": prices, "volume": 100}, index=idx)
+    bars.reset_index(names="timestamp").to_csv("paper_trading/bars_tiny.csv", index=False)
+
+    monkeypatch.setattr(build_backtest_lab, "ALL_STRATEGY_CLASSES", [TinyStrategy])
+    monkeypatch.setattr(build_backtest_lab, "TRACKS", [("tiny", "Tiny Track", "paper_trading/bars_tiny.csv", "TEST", "1min")])
+    monkeypatch.setattr(build_backtest_lab, "OUTPUT_PATH", "paper_trading/backtest_lab_test.json")
+
+    build_backtest_lab.main()
+
+    with open("paper_trading/backtest_lab_test.json") as f:
+        out = json.load(f)
+
+    assert list(out["tracks"].keys()) == ["tiny"]
+    assert out["tracks"]["tiny"]["symbol"] == "TEST"
+    assert len(out["tracks"]["tiny"]["bars"]) == len(prices)
+
+    strat_list = out["strategies"]["tiny"]
+    names = {s["name"] for s in strat_list}
+    # {} (defaults, level=100) plus the two real grid values, none colliding.
+    assert names == {"Tiny(100)", "Tiny(95)", "Tiny(105)"}
+    for s in strat_list:
+        assert "trades" in s  # every config here is small enough to be an extreme or default
