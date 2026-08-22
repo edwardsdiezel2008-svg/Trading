@@ -45,3 +45,42 @@ def test_history_survives_a_corrupt_existing_file(tmp_path, monkeypatch):
 
     history = _update_rug_watch_history([_row("A", -40)], "2026-08-10T00:00:00Z")
     assert len(history) == 1
+
+
+def test_main_ranks_movers_flags_thin_liquidity_and_writes_output(tmp_path, monkeypatch):
+    import scripts.memecoin_wide_scan as memecoin_wide_scan
+
+    tickers_path = tmp_path / "tickers.json"
+    output_path = tmp_path / "wide_scan.json"
+    history_path = tmp_path / "rug_watch_history.json"
+    monkeypatch.setattr(memecoin_wide_scan, "TICKERS_PATH", str(tickers_path))
+    monkeypatch.setattr(memecoin_wide_scan, "OUTPUT_PATH", str(output_path))
+    monkeypatch.setattr(rug_watch, "HISTORY_PATH", str(history_path))
+
+    tickers_path.write_text(json.dumps({"symbols": {
+        # Up on the day, sitting right at its 24h high - top of the ranked list.
+        "PUMP_USD": {"last": 1.0, "high": 1.0, "low": 0.8, "change": 0.30, "volume_value": 500_000, "timestamp": "t1"},
+        # Up on the day but with thin liquidity - still ranked, flagged separately.
+        "THIN_USD": {"last": 2.0, "high": 2.5, "low": 1.5, "change": 0.05, "volume_value": 1_000, "timestamp": "t1"},
+        # Down on the day - lands in not_moving, not ranked.
+        "DUMP_USD": {"last": 0.5, "high": 1.0, "low": 0.4, "change": -0.50, "volume_value": 100_000, "timestamp": "t1"},
+    }}))
+
+    memecoin_wide_scan.main()
+
+    with open(output_path) as f:
+        out = json.load(f)
+
+    assert out["universe_size"] == 3
+    assert [r["symbol"] for r in out["ranked"]] == ["PUMP_USD", "THIN_USD"]
+    assert out["ranked"][0]["rank"] == 1
+    assert out["ranked"][1]["thin_liquidity"] is True
+    assert out["ranked"][0]["thin_liquidity"] is False
+    assert [r["symbol"] for r in out["not_moving"]] == ["DUMP_USD"]
+
+    # DUMP_USD's -50% change and -50% pct_from_24h_high both clear the
+    # severe rug-watch threshold, so main() should have logged it via the
+    # already-tested _update_rug_watch_history path.
+    with open(history_path) as f:
+        history = json.load(f)
+    assert history["runs"][-1]["flagged"] == {"DUMP_USD": "severe"}
