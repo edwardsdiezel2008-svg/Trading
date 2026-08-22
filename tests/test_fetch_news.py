@@ -261,3 +261,67 @@ def test_parse_feed_includes_image_and_important_flag():
     item2 = parse_feed("TestSource", root2)[0]
     assert item2["image"] is None
     assert item2["important"] is False
+
+
+def test_fetch_rss_retries_then_succeeds(monkeypatch):
+    import scripts.fetch_news as fetch_news
+
+    calls = []
+
+    class FakeResponse:
+        content = b"<rss><channel></channel></rss>"
+
+        def raise_for_status(self):
+            pass
+
+    def fake_get(url, timeout, headers):
+        calls.append(url)
+        if len(calls) < 3:
+            raise ConnectionError("temporary network blip")
+        return FakeResponse()
+
+    monkeypatch.setattr(fetch_news.requests, "get", fake_get)
+    monkeypatch.setattr(fetch_news.time, "sleep", lambda seconds: None)
+
+    root = fetch_news._fetch_rss("https://example.com/feed", retries=3)
+
+    assert len(calls) == 3
+    assert root.tag == "rss"
+
+
+def test_fetch_rss_raises_after_exhausting_all_retries(monkeypatch):
+    import scripts.fetch_news as fetch_news
+
+    def fake_get(url, timeout, headers):
+        raise ConnectionError("feed is down")
+
+    monkeypatch.setattr(fetch_news.requests, "get", fake_get)
+    monkeypatch.setattr(fetch_news.time, "sleep", lambda seconds: None)
+
+    try:
+        fetch_news._fetch_rss("https://example.com/feed", retries=3)
+        assert False, "expected a RuntimeError"
+    except RuntimeError as e:
+        assert "https://example.com/feed" in str(e)
+        assert "after 3 attempts" in str(e)
+
+
+def test_main_writes_news_json_from_fetch_all_news(tmp_path, monkeypatch):
+    import json
+    import os
+
+    import scripts.fetch_news as fetch_news
+
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    fake_items = [{"title": "Test headline", "link": "https://example.com/1", "tags": ["BTC"]}]
+    monkeypatch.setattr(fetch_news, "fetch_all_news", lambda: fake_items)
+
+    fetch_news.main()
+
+    with open("paper_trading/news.json") as f:
+        out = json.load(f)
+
+    assert out["items"] == fake_items
+    assert out["sources"] == [s for s, _ in fetch_news.FEEDS]
+    assert "updated_at_utc" in out
