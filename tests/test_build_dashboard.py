@@ -16,10 +16,13 @@ from scripts.build_paper_trading_dashboard import (
     SUFFIX_SYMBOL_FALLBACK,
     TRACK_META,
     TRACK_SUFFIXES,
+    TRACKS,
     _cross_track_robustness,
     _daily_returns,
     _pearson,
     build_backtest_lab_page,
+    build_details_page,
+    build_index_page,
     build_news_page,
     compute_correlations,
     compute_cross_asset_robustness,
@@ -599,3 +602,84 @@ def test_compute_current_regimes_reports_trend_vol_and_adx_for_an_available_asse
     assert regimes["BTC"]["trend_regime"] in {"trending", "ranging"}
     assert regimes["BTC"]["vol_regime"] in {"high_vol", "low_vol"}
     assert isinstance(regimes["BTC"]["adx"], float)
+
+
+def _make_loaded():
+    """A minimal but complete `loaded` dict covering every real
+    TRACK_SUFFIXES entry - what build_details_page/build_index_page expect
+    main() to have already assembled from load_track/load_recent_bars/
+    load_walkforward/etc. before either builder runs."""
+    loaded = {}
+    for suffix in TRACK_SUFFIXES:
+        loaded[suffix] = {
+            "positions": {"symbol": "BTC_USDT", "strategies": {}},
+            "trades": [],
+            "track_record": [],
+            "bars": [],
+            "walkforward": dict(EMPTY_WALKFORWARD),
+            "sensitivity": dict(EMPTY_SENSITIVITY),
+            "meta_strategy": dict(EMPTY_META_STRATEGY),
+        }
+    return loaded
+
+
+def test_build_details_page_fills_every_placeholder_for_every_track(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+
+    placeholders = ["__RUG_WATCH_STREAKS_JSON__"]
+    for _, pos_key, trades_key, track_key, bars_key, wf_key, sens_key, meta_key in TRACKS:
+        placeholders += [f"__{k}__" for k in (pos_key, trades_key, track_key, bars_key, wf_key, sens_key, meta_key)]
+    for key in ("MEMECOIN_SCAN_JSON", "WIDE_MEMECOIN_SCAN_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "CORRELATIONS_JSON", "NEWS_JSON"):
+        placeholders.append(f"__{key}__")
+    with open("paper_trading/dashboard_template.html", "w") as f:
+        f.write("<html>" + "\n".join(placeholders) + "</html>")
+
+    build_details_page(
+        _make_loaded(), memecoin_scan={"ranked": []}, wide_scan={"ranked": []},
+        market_snapshot={"value": 1}, fear_greed={"value": 50}, correlations={"pairs": []}, news={"items": []},
+    )
+
+    # build_details_page's own internal assertions already confirm every
+    # placeholder got filled (it would have raised otherwise) - just check
+    # our data actually made it into the written file.
+    with open("paper_trading/dashboard.html") as f:
+        out = f.read()
+    assert '"BTC_USDT"' in out
+    assert '"value": 1' in out
+
+
+def test_build_index_page_fills_every_placeholder(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+
+    index_placeholders = [
+        "TRACK_SUMMARIES_JSON", "OVERVIEW_BARS_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON",
+        "TOP_MOVERS_JSON", "WIDE_UNIVERSE_SIZE", "TOP_NEWS_JSON", "CROSS_ASSET_ROBUSTNESS_JSON",
+        "CROSS_FUTURES_ROBUSTNESS_JSON", "SURVIVOR_STRESS_TEST_JSON", "REGIMES_JSON", "RUG_WATCH_JSON",
+    ]
+    with open("paper_trading/index_template.html", "w") as f:
+        f.write("<html>" + "\n".join(f"__{k}__" for k in index_placeholders) + "</html>")
+
+    build_index_page(
+        _make_loaded(), wide_scan={"ranked": [], "not_moving": []}, memecoin_scan={"ranked": []},
+        market_snapshot={}, fear_greed={}, news={"items": []}, regimes={}, survivor_stress_test={"results": []},
+    )
+
+    with open("paper_trading/index.html") as f:
+        out = f.read()
+    for key in index_placeholders:
+        assert f"__{key}__" not in out
+
+
+def test_build_index_page_skips_gracefully_when_template_is_missing(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+
+    build_index_page(
+        _make_loaded(), wide_scan={}, memecoin_scan={}, market_snapshot={}, fear_greed={},
+        news={"items": []}, regimes={}, survivor_stress_test={},
+    )
+
+    assert not os.path.exists("paper_trading/index.html")
+    assert "Skipping" in capsys.readouterr().out
