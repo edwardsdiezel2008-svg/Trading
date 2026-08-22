@@ -457,3 +457,111 @@ def test_main_skips_a_failing_memecoin_and_continues_with_the_rest(tmp_path, mon
 
     assert not os.path.exists("paper_trading/memecoins/BROKENUSD.csv")
     assert os.path.exists("paper_trading/memecoins/OKUSD.csv")
+
+
+def test_fetch_order_book_handles_the_data_wrapped_shape(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    monkeypatch.setattr(fetch_market_data, "_get", lambda path, params: {
+        "depth": 10,
+        "data": [{"bids": [["100", "1"]], "asks": [["101", "2"]], "t": 1_700_000_000_000}],
+    })
+
+    book = fetch_market_data.fetch_order_book("BTC_USD")
+
+    assert book["bids"] == [["100", "1"]]
+    assert book["asks"] == [["101", "2"]]
+    assert book["timestamp"].startswith("2023-11-14")
+
+
+def test_fetch_order_book_handles_the_flat_top_level_shape(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    monkeypatch.setattr(fetch_market_data, "_get", lambda path, params: {
+        "bids": [["100", "1"]], "asks": [["101", "2"]],
+    })
+
+    book = fetch_market_data.fetch_order_book("BTC_USD")
+
+    assert book["bids"] == [["100", "1"]]
+    assert book["asks"] == [["101", "2"]]
+    assert book["timestamp"] == ""
+
+
+def test_fetch_funding_rate_returns_the_latest_entry(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    seen = {}
+
+    def fake_get(path, params, base_url=None):
+        seen["base_url"] = base_url
+        return {"data": [{"v": "0.0001", "t": 1_700_000_000_000}]}
+
+    monkeypatch.setattr(fetch_market_data, "_get", fake_get)
+
+    rate = fetch_market_data.fetch_funding_rate("BTCUSD-PERP")
+
+    assert rate["rate"] == "0.0001"
+    assert rate["instrument_name"] == "BTCUSD-PERP"
+    assert rate["timestamp"].startswith("2023-11-14")
+    assert seen["base_url"] == fetch_market_data.DERIV_BASE_URL
+
+
+def test_fetch_funding_rate_returns_none_when_there_is_no_data(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    monkeypatch.setattr(fetch_market_data, "_get", lambda path, params, base_url=None: {"data": []})
+
+    assert fetch_market_data.fetch_funding_rate("BTCUSD-PERP") is None
+
+
+def test_fetch_fear_greed_parses_the_latest_entry(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    class FakeResponse:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"data": [{"value": "34", "value_classification": "Fear", "timestamp": "1700000000"}]}
+
+    monkeypatch.setattr(fetch_market_data.requests, "get", lambda url, params, timeout: FakeResponse())
+
+    fng = fetch_market_data.fetch_fear_greed()
+
+    assert fng["value"] == 34
+    assert fng["classification"] == "Fear"
+    assert fng["timestamp"].startswith("2023-11-14")
+
+
+def test_fetch_fear_greed_returns_none_when_there_is_no_data(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    class FakeResponse:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"data": []}
+
+    monkeypatch.setattr(fetch_market_data.requests, "get", lambda url, params, timeout: FakeResponse())
+
+    assert fetch_market_data.fetch_fear_greed() is None
+
+
+def test_fetch_fear_greed_tolerates_an_unparseable_timestamp(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    class FakeResponse:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"data": [{"value": "50", "value_classification": "Neutral", "timestamp": "not-a-number"}]}
+
+    monkeypatch.setattr(fetch_market_data.requests, "get", lambda url, params, timeout: FakeResponse())
+
+    fng = fetch_market_data.fetch_fear_greed()
+
+    assert fng["value"] == 50
+    assert fng["timestamp"] == "not-a-number"  # left as-is when it can't be parsed as an epoch
