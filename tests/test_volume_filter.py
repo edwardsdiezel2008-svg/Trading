@@ -75,3 +75,51 @@ def test_direction_flip_is_treated_as_a_new_entry_and_can_be_blocked():
 def test_name_shows_inner_name_and_multiple():
     filt = VolumeConfirmationFilter(FixedSignal([0]), min_volume_multiple=1.5)
     assert "Vol1.5x" in filt.name
+
+
+def _pattern_bars(breakout_volume, n_warmup=20):
+    """n_warmup flat bars (steady volume, no signal) then a mother bar, an
+    inside bar consolidating within it, and a breakout bar that closes above
+    the mother bar's high - the exact setup InsideBarBreakout needs to fire
+    a long entry, with breakout_volume controlling whether that entry clears
+    the wrapper's volume confirmation."""
+    from src.backtest.strategies.volume_filter import InsideBarBreakoutVolumeConfirmed
+
+    warmup_close = [100.0] * n_warmup
+    closes = warmup_close + [100.0, 100.5, 115.0]  # mother, inside, breakout
+    highs = [100.5] * n_warmup + [110.0, 102.0, 115.0]
+    lows = [99.5] * n_warmup + [90.0, 98.0, 114.0]
+    volumes = [100.0] * n_warmup + [100.0, 100.0, breakout_volume]
+    idx = pd.date_range("2026-01-05", periods=len(closes), freq="5min")
+    bars = pd.DataFrame(
+        {"open": closes, "high": highs, "low": lows, "close": closes, "volume": volumes}, index=idx
+    )
+    return bars, InsideBarBreakoutVolumeConfirmed
+
+
+def test_inside_bar_breakout_volume_confirmed_fires_on_a_confirmed_breakout():
+    bars, cls = _pattern_bars(breakout_volume=500.0)
+    strat = cls(params={"max_range_ratio": 0.6, "min_volume_multiple": 1.0})
+    out = strat.generate_signals(bars)
+    assert out.iloc[-1] == 1  # high volume clears the 1.0x average - entry passes through
+
+
+def test_inside_bar_breakout_volume_confirmed_blocks_on_thin_breakout_volume():
+    bars, cls = _pattern_bars(breakout_volume=10.0)
+    strat = cls(params={"max_range_ratio": 0.6, "min_volume_multiple": 1.0})
+    out = strat.generate_signals(bars)
+    assert out.iloc[-1] == 0  # thin volume - the breakout is suppressed, stays flat
+
+
+def test_inside_bar_breakout_volume_confirmed_name_reflects_its_params():
+    from src.backtest.strategies.volume_filter import InsideBarBreakoutVolumeConfirmed
+
+    strat = InsideBarBreakoutVolumeConfirmed(params={"max_range_ratio": 0.5, "min_volume_multiple": 1.5})
+    assert strat.name == "Inside_Bar_Breakout_VolConfirmed(0.5,1.5x)"
+
+
+def test_inside_bar_breakout_volume_confirmed_name_defaults_when_params_missing():
+    from src.backtest.strategies.volume_filter import InsideBarBreakoutVolumeConfirmed
+
+    strat = InsideBarBreakoutVolumeConfirmed(params={})
+    assert strat.name == "Inside_Bar_Breakout_VolConfirmed(0.6,1x)"
