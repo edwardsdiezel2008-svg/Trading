@@ -2,7 +2,6 @@ import os
 import sys
 
 import pandas as pd
-import pytest
 
 sys.path.insert(0, ".")
 
