@@ -72,3 +72,30 @@ def test_load_bars_resamples_raw_ticks(tmp_path):
     bars = load_bars(str(path), freq="1min")
     assert set(bars.columns) == {"open", "high", "low", "close", "volume"}
     assert len(bars) >= 3
+
+
+def test_load_bars_raises_when_no_timestamp_column_is_identifiable(tmp_path):
+    path = tmp_path / "bars.csv"
+    # Has open/high/low/close (so _looks_like_bars says yes) but no column
+    # matching any recognized timestamp alias.
+    pd.DataFrame({
+        "open": [1, 2], "high": [1.5, 2.5], "low": [0.5, 1.5], "close": [1.2, 2.2], "volume": [10, 20],
+    }).to_csv(path, index=False)
+
+    with pytest.raises(ValueError, match="timestamp column"):
+        load_bars(str(path))
+
+
+def test_load_bars_defaults_missing_volume_to_zero(tmp_path):
+    path = tmp_path / "bars.csv"
+    # A real shape this project has hit: some historical exports have OHLC
+    # but no volume column at all - load_bars must fill it in rather than
+    # raising, since volume is the one OHLCV field that isn't required.
+    pd.DataFrame({
+        "timestamp": pd.date_range("2026-01-05", periods=3, freq="1min"),
+        "open": [1, 2, 3], "high": [1.5, 2.5, 3.5], "low": [0.5, 1.5, 2.5], "close": [1.2, 2.2, 3.2],
+    }).to_csv(path, index=False)
+
+    bars = load_bars(str(path))
+    assert list(bars.columns) == ["open", "high", "low", "close", "volume"]
+    assert (bars["volume"] == 0.0).all()
