@@ -1,21 +1,21 @@
-# SOL/USDT Paper Trading (1D) — updated 2026-08-23T19:06:12.642123+00:00
+# SOL/USDT Paper Trading (1D) — updated 2026-08-23T19:50:36.636782+00:00
 
 Latest bar: 2026-08-23 00:00:00 · 1,952 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $294,221 | +194.2% | — | 1 |
-| Engulfing_Reversal(0.3) | LONG | $3,236,318 | +3136.3% | 0.96 | 136 |
-| Supertrend(10,m=3.0) | LONG | $2,327,239 | +2227.2% | 0.89 | 42 |
-| ATR_Vol_Breakout(14,k=1.5) | LONG | $827,990 | +728.0% | 0.74 | 22 |
-| Donchian_Breakout(20) | LONG | $514,835 | +414.8% | 0.65 | 41 |
-| Parabolic_SAR(af=0.02,max=0.2) | LONG | $364,367 | +264.4% | 0.61 | 151 |
-| MA_Crossover(10/50) | LONG | $232,249 | +132.2% | 0.53 | 51 |
-| MACD_Momentum(12/26/9) | LONG | $188,779 | +88.8% | 0.49 | 138 |
+| *Buy & Hold (benchmark)* | — | $294,314 | +194.3% | — | 1 |
+| Engulfing_Reversal(0.3) | LONG | $3,237,339 | +3137.3% | 0.96 | 136 |
+| Supertrend(10,m=3.0) | LONG | $2,327,973 | +2228.0% | 0.89 | 42 |
+| ATR_Vol_Breakout(14,k=1.5) | LONG | $828,252 | +728.3% | 0.74 | 22 |
+| Donchian_Breakout(20) | LONG | $514,998 | +415.0% | 0.65 | 41 |
+| Parabolic_SAR(af=0.02,max=0.2) | LONG | $364,482 | +264.5% | 0.61 | 151 |
+| MA_Crossover(10/50) | LONG | $232,323 | +132.3% | 0.53 | 51 |
+| MACD_Momentum(12/26/9) | LONG | $188,839 | +88.8% | 0.49 | 138 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
-| Keltner_Breakout(20,m=2.0) | LONG | $47,657 | -52.3% | 0.26 | 34 |
-| Inside_Bar_Breakout(0.6) | SHORT | $3,396 | -96.6% | -0.07 | 33 |
-| RSI_Reversion(14,30/70) | SHORT | $3,169 | -96.8% | -0.55 | 58 |
+| Keltner_Breakout(20,m=2.0) | LONG | $47,672 | -52.3% | 0.26 | 34 |
+| Inside_Bar_Breakout(0.6) | SHORT | $3,395 | -96.6% | -0.07 | 33 |
+| RSI_Reversion(14,30/70) | SHORT | $3,168 | -96.8% | -0.55 | 58 |
 | TPO_Reversion(60,p=5) | SHORT | $266 | -99.7% | -0.80 | 135 |
 | Stochastic_Reversion(14,20/80) | FLAT | $90 | -99.9% | -0.81 | 74 |
 | VolProfile_Reversion(30) | SHORT | $85 | -99.9% | -1.10 | 185 |
