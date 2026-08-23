@@ -56,3 +56,34 @@ def test_short_span_does_not_produce_absurd_cagr():
 def pytest_approx(x):
     import pytest
     return pytest.approx(x)
+
+
+def test_annualization_factor_falls_back_to_252_with_fewer_than_two_bars_and_no_freq_hint():
+    from src.backtest.metrics import _annualization_factor
+
+    idx = pd.date_range("2026-01-05", periods=1, freq="1min")
+    bars = pd.DataFrame({"open": 1, "high": 1, "low": 1, "close": 1, "volume": 1}, index=idx)
+
+    assert _annualization_factor(bars, freq_hint=None) == 252.0
+
+
+def test_annualization_factor_falls_back_to_252_when_the_median_gap_is_zero():
+    from src.backtest.metrics import _annualization_factor
+
+    # Duplicate/out-of-order timestamps collapse the median gap to zero -
+    # dividing trading_seconds_per_year by that would raise ZeroDivisionError
+    # rather than a graceful fallback.
+    idx = pd.DatetimeIndex(["2026-01-05", "2026-01-05", "2026-01-05"])
+    bars = pd.DataFrame({"open": 1, "high": 1, "low": 1, "close": 1, "volume": 1}, index=idx)
+
+    assert _annualization_factor(bars, freq_hint=None) == 252.0
+
+
+def test_annualization_factor_infers_from_real_bar_spacing_without_a_freq_hint():
+    from src.backtest.metrics import _annualization_factor
+
+    idx = pd.date_range("2026-01-05", periods=5, freq="1h")
+    bars = pd.DataFrame({"open": 1, "high": 1, "low": 1, "close": 1, "volume": 1}, index=idx)
+
+    factor = _annualization_factor(bars, freq_hint=None)
+    assert factor == pytest_approx(252 * 6.5)  # hourly bars over a 6.5h session
