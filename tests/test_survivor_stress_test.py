@@ -135,3 +135,81 @@ def test_portfolio_analysis_aligns_on_the_intersection_of_differing_date_ranges(
     assert result["aligned_start"] == "2026-01-07"
     assert result["aligned_end"] == "2026-01-20"
     assert result["aligned_bar_count"] == 14
+
+
+def test_run_one_produces_a_complete_stress_test_result_for_a_real_strategy(tmp_path, monkeypatch):
+    import numpy as np
+
+    from scripts.survivor_stress_test import run_one
+    from src.backtest.strategies.trend import MovingAverageCrossover
+
+    monkeypatch.chdir(tmp_path)
+    n = 300
+    idx = pd.date_range("2020-01-01", periods=n, freq="D")
+    # Two clean trend regimes (up then down) with a little noise, so the
+    # crossover strategy actually fires trades in both directions across
+    # several walk-forward folds rather than sitting flat the whole test.
+    rng = np.random.default_rng(0)
+    trend = np.concatenate([np.linspace(100.0, 200.0, n // 2), np.linspace(200.0, 100.0, n - n // 2)])
+    close = trend + rng.normal(0, 0.5, n)
+    bars = pd.DataFrame({
+        "open": close, "high": close + 1.0, "low": close - 1.0, "close": close, "volume": 1000.0,
+    }, index=idx)
+    bars_path = "bars_test.csv"
+    bars.reset_index(names="timestamp").to_csv(bars_path, index=False)
+
+    result, oos_curve = run_one("Test Track", bars_path, "MES", "1D", MovingAverageCrossover)
+
+    assert result["label"] == "Test Track"
+    assert result["symbol"] == "MES"
+    assert result["strategy"] == MovingAverageCrossover().name
+    assert result["n_folds"] == 5
+    assert 0 <= result["folds_positive"] <= result["n_folds"]
+    assert len(result["fold_returns"]) == result["n_folds"]
+    assert isinstance(result["normal_significant"], bool)
+    assert isinstance(result["stressed_significant"], bool)
+    # Cost-stressed OOS return should never beat the normal-cost run - 3x
+    # slippage can only add friction, never remove it.
+    assert result["stressed_oos_return"] <= result["normal_oos_return"] + 1e-9
+    assert result["regime_breakdown"]  # at least one regime bucket attributed
+    assert len(oos_curve) > 0
+
+
+def test_main_writes_the_full_output_json_for_a_small_survivor_list(tmp_path, monkeypatch):
+    import json
+
+    import numpy as np
+
+    import scripts.survivor_stress_test as survivor_stress_test
+    from src.backtest.strategies.mean_reversion import RSIReversion
+    from src.backtest.strategies.trend import MovingAverageCrossover
+
+    monkeypatch.chdir(tmp_path)
+    n = 300
+    idx = pd.date_range("2020-01-01", periods=n, freq="D")
+    rng = np.random.default_rng(1)
+    trend = np.concatenate([np.linspace(100.0, 200.0, n // 2), np.linspace(200.0, 100.0, n - n // 2)])
+    close = trend + rng.normal(0, 0.5, n)
+    bars = pd.DataFrame({
+        "open": close, "high": close + 1.0, "low": close - 1.0, "close": close, "volume": 1000.0,
+    }, index=idx)
+    bars.reset_index(names="timestamp").to_csv("bars_test.csv", index=False)
+
+    monkeypatch.setattr(survivor_stress_test, "SURVIVORS", [
+        ("Test Track A", "bars_test.csv", "MES", "1D", MovingAverageCrossover),
+        ("Test Track B", "bars_test.csv", "MES", "1D", RSIReversion),
+    ])
+
+    survivor_stress_test.main(["--output", "out.json"])
+
+    with open("out.json") as f:
+        out = json.load(f)
+
+    assert len(out["results"]) == 2
+    assert {r["label"] for r in out["results"]} == {"Test Track A", "Test Track B"}
+    assert "generated_at_utc" in out
+    # Both survivors share the "1D" frequency, so the portfolio step should
+    # have run a real combination rather than falling back to the
+    # too-few-overlapping-bars note.
+    assert "note" not in out["portfolio_analysis"]
+    assert "portfolio_total_return" in out["portfolio_analysis"]
