@@ -161,3 +161,25 @@ def test_max_loss_fraction_off_by_default():
     without_param = run_backtest(bars, strat, spec, initial_capital=10_000, sizing="percent_equity", slippage_ticks=0)
     assert with_explicit_none.equity_curve.tolist() == without_param.equity_curve.tolist()
     assert len(with_explicit_none.trades) == len(without_param.trades) == 1
+
+
+def test_trade_return_pct_is_zero_when_entry_equity_is_zero():
+    from src.backtest.engine import Trade
+
+    # A degenerate/synthetic Trade with zero entry_equity (e.g. an account
+    # already wiped out) must not raise ZeroDivisionError.
+    trade = Trade(
+        entry_time=pd.Timestamp("2026-01-01"), exit_time=pd.Timestamp("2026-01-02"),
+        direction=1, entry_price=100.0, exit_price=105.0, units=1.0,
+        gross_pnl=5.0, costs=0.0, net_pnl=5.0, entry_equity=0.0,
+    )
+    assert trade.return_pct == 0.0
+
+
+def test_position_size_returns_zero_for_non_positive_equity_or_price():
+    from src.backtest.engine import _position_size
+
+    spec = _flat_spec()
+    assert _position_size(equity=0.0, price=100.0, spec=spec, capital_fraction=1.0, sizing="percent_equity", fixed_units=0) == 0.0
+    assert _position_size(equity=-500.0, price=100.0, spec=spec, capital_fraction=1.0, sizing="percent_equity", fixed_units=0) == 0.0
+    assert _position_size(equity=10_000.0, price=0.0, spec=spec, capital_fraction=1.0, sizing="percent_equity", fixed_units=0) == 0.0
