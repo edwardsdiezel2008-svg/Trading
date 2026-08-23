@@ -38,3 +38,48 @@ def test_regime_label_is_combination_of_trend_and_vol():
     valid = regimes.dropna(subset=["regime"])
     for label, row in zip(valid["regime"], valid.itertuples()):
         assert label == f"{row.trend_regime}/{row.vol_regime}"
+
+
+def _flat_result(idx, equity, positions=None):
+    from src.backtest.engine import BacktestResult
+
+    bars = pd.DataFrame({"open": 100, "high": 100, "low": 100, "close": 100, "volume": 1}, index=idx)
+    positions = positions if positions is not None else pd.Series(1, index=idx)
+    return BacktestResult(
+        strategy_name="Test", instrument="TEST", bars=bars, signals=positions,
+        positions=positions, equity_curve=pd.Series(equity, index=idx), trades=[],
+    )
+
+
+def test_explain_result_reports_not_enough_data_when_no_bar_has_a_classified_regime():
+    from src.backtest.regime import explain_result
+
+    idx = pd.date_range("2026-01-05", periods=5, freq="1min")
+    result = _flat_result(idx, [10_000, 10_100, 10_050, 10_200, 10_150])
+    # A "regimes" frame with every bar unclassified (as classify_regimes
+    # produces during its own warmup period) - attribute_performance should
+    # drop every row, leaving nothing to attribute.
+    regimes = pd.DataFrame({"regime": [np.nan] * 5, "trend_regime": [np.nan] * 5, "vol_regime": [np.nan] * 5}, index=idx)
+
+    summary = explain_result(result, regimes)
+    assert summary == "Test on TEST: not enough data to classify regimes."
+
+
+def test_explain_result_reports_the_best_and_worst_regime_when_they_differ():
+    from src.backtest.regime import explain_result
+
+    idx = pd.date_range("2026-01-05", periods=4, freq="1min")
+    # Bar-over-bar equity deltas: +100, -50, +200 (bar 0's diff is NaN -> 0),
+    # bucketed one bar each into "up" (bars 0-1) then "down" (bars 2-3), so
+    # "down" nets +150 total and "up" nets +100 - "down" should be reported
+    # as the best regime, "up" as the worst.
+    result = _flat_result(idx, [10_000, 10_100, 10_050, 10_250])
+    regimes = pd.DataFrame({
+        "regime": ["up", "up", "down", "down"],
+        "trend_regime": ["trending"] * 4, "vol_regime": ["low_vol"] * 4,
+    }, index=idx)
+
+    summary = explain_result(result, regimes)
+    assert "Best regime: 'down'" in summary
+    assert "Worst regime: 'up'" in summary
+    assert "Test on TEST: net P&L $250" in summary
