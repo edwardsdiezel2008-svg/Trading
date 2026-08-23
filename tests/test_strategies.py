@@ -87,6 +87,22 @@ def test_ma_crossover_flips_on_clean_trend_reversal():
     assert signals.iloc[-1] == -1
 
 
+def test_ma_crossover_sma_kind_also_flips_on_a_clean_trend_reversal():
+    # kind="sma" is an alternate branch (rolling mean instead of the default
+    # ewm) that isn't exercised by any other test - same trend-reversal shape
+    # as the default-kind test above, just switching the moving-average kind.
+    up = np.linspace(100, 200, 60)
+    down = np.linspace(200, 100, 60)
+    price = np.concatenate([up, down])
+    idx = pd.date_range("2026-01-05", periods=len(price), freq="1min")
+    bars = pd.DataFrame({"open": price, "high": price, "low": price, "close": price, "volume": 100}, index=idx)
+
+    strategy = MovingAverageCrossover(params={"fast": 5, "slow": 20, "kind": "sma"})
+    signals = strategy.generate_signals(bars)
+    assert signals.iloc[40] == 1
+    assert signals.iloc[-1] == -1
+
+
 def test_supertrend_flips_on_clean_trend_reversal():
     up = np.linspace(100, 300, 60)
     down = np.linspace(300, 100, 60)
