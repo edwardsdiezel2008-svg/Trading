@@ -1,25 +1,25 @@
-# BTC/USDT Paper Trading (1D) — updated 2026-08-23T05:49:35.783717+00:00
+# BTC/USDT Paper Trading (1D) — updated 2026-08-23T07:51:41.477566+00:00
 
 Latest bar: 2026-08-23 00:00:00 · 2,162 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $722,830 | +622.8% | — | 1 |
-| Inside_Bar_Breakout(0.6) | LONG | $1,356,297 | +1256.3% | 0.90 | 31 |
-| Keltner_Breakout(20,m=2.0) | LONG | $951,385 | +851.4% | 0.83 | 29 |
-| MA_Crossover(10/50) | LONG | $761,119 | +661.1% | 0.77 | 46 |
-| ATR_Vol_Breakout(14,k=1.5) | LONG | $534,212 | +434.2% | 0.67 | 49 |
-| Donchian_Breakout(20) | LONG | $251,774 | +151.8% | 0.46 | 47 |
-| MACD_Momentum(12/26/9) | LONG | $143,758 | +43.8% | 0.32 | 161 |
-| Engulfing_Reversal(0.3) | SHORT | $113,647 | +13.6% | 0.26 | 150 |
+| *Buy & Hold (benchmark)* | — | $721,992 | +622.0% | — | 1 |
+| Inside_Bar_Breakout(0.6) | LONG | $1,354,723 | +1254.7% | 0.90 | 31 |
+| Keltner_Breakout(20,m=2.0) | LONG | $950,281 | +850.3% | 0.83 | 29 |
+| MA_Crossover(10/50) | LONG | $760,235 | +660.2% | 0.77 | 46 |
+| ATR_Vol_Breakout(14,k=1.5) | LONG | $533,592 | +433.6% | 0.67 | 49 |
+| Donchian_Breakout(20) | LONG | $251,481 | +151.5% | 0.46 | 47 |
+| MACD_Momentum(12/26/9) | LONG | $143,591 | +43.6% | 0.32 | 161 |
+| Engulfing_Reversal(0.3) | SHORT | $113,892 | +13.9% | 0.27 | 150 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
-| Supertrend(10,m=3.0) | LONG | $44,035 | -56.0% | 0.02 | 56 |
-| Parabolic_SAR(af=0.02,max=0.2) | LONG | $39,769 | -60.2% | -0.01 | 180 |
-| RSI_Reversion(14,30/70) | SHORT | $12,618 | -87.4% | -0.78 | 72 |
-| Bollinger_Reversion(20,2sd) | SHORT | $10,347 | -89.7% | -0.40 | 84 |
-| TPO_Reversion(60,p=5) | SHORT | $9,948 | -90.1% | -0.56 | 156 |
-| ZScore_Reversion(20,z=2.0) | SHORT | $7,719 | -92.3% | -0.55 | 93 |
-| VolProfile_Reversion(30) | SHORT | $7,577 | -92.4% | -0.68 | 246 |
-| CCI_Reversion(20,100) | SHORT | $6,558 | -93.4% | -0.65 | 192 |
-| Stochastic_Reversion(14,20/80) | SHORT | $5,017 | -95.0% | -0.72 | 76 |
-| VWAP_Reversion(20,2%) | SHORT | $1,855 | -98.1% | -0.60 | 168 |
+| Supertrend(10,m=3.0) | LONG | $43,984 | -56.0% | 0.02 | 56 |
+| Parabolic_SAR(af=0.02,max=0.2) | LONG | $39,723 | -60.3% | -0.01 | 180 |
+| RSI_Reversion(14,30/70) | SHORT | $12,636 | -87.4% | -0.78 | 72 |
+| Bollinger_Reversion(20,2sd) | SHORT | $10,362 | -89.6% | -0.40 | 84 |
+| TPO_Reversion(60,p=5) | SHORT | $9,962 | -90.0% | -0.56 | 156 |
+| ZScore_Reversion(20,z=2.0) | SHORT | $7,730 | -92.3% | -0.55 | 93 |
+| VolProfile_Reversion(30) | SHORT | $7,588 | -92.4% | -0.68 | 246 |
+| CCI_Reversion(20,100) | SHORT | $6,567 | -93.4% | -0.65 | 192 |
+| Stochastic_Reversion(14,20/80) | SHORT | $5,022 | -95.0% | -0.72 | 76 |
+| VWAP_Reversion(20,2%) | SHORT | $1,857 | -98.1% | -0.60 | 168 |
