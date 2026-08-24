@@ -565,3 +565,54 @@ def test_fetch_fear_greed_tolerates_an_unparseable_timestamp(monkeypatch):
 
     assert fng["value"] == 50
     assert fng["timestamp"] == "not-a-number"  # left as-is when it can't be parsed as an epoch
+
+
+def test_fetch_candlestick_paginated_stops_on_a_completely_empty_page(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    def make_candle(ts_ms):
+        return {"t": ts_ms, "o": "1", "h": "1", "l": "1", "c": "1", "v": "1"}
+
+    # History genuinely runs out: page 1 has real candles, page 2 comes back
+    # with an empty data list rather than repeating page 1 or returning fewer
+    # candles than requested.
+    pages = [[make_candle(3000), make_candle(2000)], []]
+    call_count = [0]
+
+    def fake_get(path, params=None):
+        page = pages[call_count[0]]
+        call_count[0] += 1
+        return {"data": page}
+
+    monkeypatch.setattr(fetch_market_data, "_get", fake_get)
+    monkeypatch.setattr(fetch_market_data.time, "sleep", lambda seconds: None)
+
+    candles = fetch_market_data.fetch_candlestick_paginated("BTCUSD", "1h", max_candles=100, page_size=2)
+
+    assert len(candles) == 2
+    assert call_count[0] == 2
+
+
+def test_fetch_candlestick_paginated_stops_when_a_page_is_smaller_than_requested(monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    def make_candle(ts_ms):
+        return {"t": ts_ms, "o": "1", "h": "1", "l": "1", "c": "1", "v": "1"}
+
+    # The exchange has fewer candles left than a full page_size - a real
+    # signal that history is exhausted, distinct from an outright empty page.
+    pages = [[make_candle(3000), make_candle(2000), make_candle(1000)], [make_candle(500)]]
+    call_count = [0]
+
+    def fake_get(path, params=None):
+        page = pages[call_count[0]]
+        call_count[0] += 1
+        return {"data": page}
+
+    monkeypatch.setattr(fetch_market_data, "_get", fake_get)
+    monkeypatch.setattr(fetch_market_data.time, "sleep", lambda seconds: None)
+
+    candles = fetch_market_data.fetch_candlestick_paginated("BTCUSD", "1h", max_candles=100, page_size=3)
+
+    assert len(candles) == 4  # both pages' candles kept
+    assert call_count[0] == 2  # stopped after the short page, no third request
