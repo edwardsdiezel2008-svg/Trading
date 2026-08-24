@@ -153,3 +153,39 @@ class TestRunMetaStrategyWalkforward:
         seg = eq.loc[fold2.test_start:fold2.test_end]
         assert seg.nunique() == 1, "a fold starting from non-positive running_capital should freeze, not rescale"
         assert seg.iloc[0] == pytest.approx(eq.loc[fold1.test_end])
+
+
+def test_a_strategy_that_starts_raising_partway_through_is_skipped_without_crashing():
+    # Succeeds exactly once (the very first generate_signals call, inside
+    # select_strategy_per_regime's fold-1 training backtest) and raises on
+    # every call after that - covering three real, otherwise-hard-to-trigger
+    # edges in one pass: select_strategy_per_regime skipping a strategy whose
+    # backtest raises (fold 2+'s training pass), run_meta_strategy_walkforward
+    # skipping a strategy whose test-window signal raises (fold 1's second
+    # call), and a selected regime falling back to flat when its assigned
+    # strategy's signal wasn't computed.
+    class RaisesAfterFirstCallStrategy(Strategy):
+        call_count = 0
+
+        def generate_signals(self, bars):
+            type(self).call_count += 1
+            if type(self).call_count > 1:
+                raise RuntimeError("this strategy breaks after its first computation")
+            return (bars["close"] > bars["close"].mean()).astype(int)
+
+    RaisesAfterFirstCallStrategy.call_count = 0
+
+    class StableStrategy(Strategy):
+        def generate_signals(self, bars):
+            return (bars["close"] > bars["close"].mean()).astype(int)
+
+    bars = _trending_ranging_bars(n_cycles=4)
+
+    result = run_meta_strategy_walkforward(
+        bars, [RaisesAfterFirstCallStrategy, StableStrategy], SPEC, n_folds=3, min_regime_bars=20, freq_hint="1D",
+    )
+
+    # Despite the flaky strategy failing on almost every call, the whole
+    # walk-forward still completes with every requested fold.
+    assert len(result.folds) == 3
+    assert RaisesAfterFirstCallStrategy.call_count > 1  # confirms the raising path was actually exercised
