@@ -166,6 +166,80 @@ def test_select_chart_ids_excludes_none_metrics_from_ranking_not_from_extremes()
     assert id(ranked) in ids
 
 
+def test_strategy_configs_skips_the_grid_for_a_class_with_no_param_space(monkeypatch):
+    import scripts.build_backtest_lab as build_backtest_lab
+    from src.backtest.strategies.base import Strategy
+
+    class NoGridStrategy(Strategy):
+        PARAM_SPACE = {}
+
+        def generate_signals(self, bars):
+            return pd.Series(0, index=bars.index)
+
+    monkeypatch.setattr(build_backtest_lab, "ALL_STRATEGY_CLASSES", [NoGridStrategy])
+
+    configs = build_backtest_lab.strategy_configs()
+
+    # Only the hardcoded-defaults entry - no grid combos to add since the
+    # class's own PARAM_SPACE is empty.
+    assert configs == [(NoGridStrategy, {})]
+
+
+def test_param_extremes_of_a_class_with_no_param_space_is_two_empty_dicts():
+    class NoGridStrategy2:
+        PARAM_SPACE = {}
+
+    lo, hi = _param_extremes(NoGridStrategy2)
+    assert lo == {}
+    assert hi == {}
+
+
+def test_main_skips_a_grid_combo_whose_name_collides_with_an_earlier_entry(tmp_path, monkeypatch):
+    import json
+
+    import scripts.build_backtest_lab as build_backtest_lab
+    from src.backtest.strategies.base import Strategy
+
+    class CollidingStrategy(Strategy):
+        # Its own hardcoded default (level=100, via .get's fallback) is also
+        # a real point on this grid, so the grid combo for level=100
+        # resolves to the exact same name as the defaults entry already
+        # computed - the dedup skip at main()'s "continue" should drop it.
+        PARAM_SPACE = {"level": [100, 105]}
+
+        @property
+        def name(self):
+            return f"Colliding({self.params.get('level', 100)})"
+
+        def generate_signals(self, bars):
+            level = self.params.get("level", 100)
+            return (bars["close"] > level).astype(int)
+
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    prices = [90.0] * 30 + list(range(90, 130)) + [130.0] * 30
+    idx = pd.date_range("2026-01-01", periods=len(prices), freq="1min")
+    bars = pd.DataFrame({"open": prices, "high": prices, "low": prices, "close": prices, "volume": 100}, index=idx)
+    bars.reset_index(names="timestamp").to_csv("paper_trading/bars_collide.csv", index=False)
+
+    monkeypatch.setattr(build_backtest_lab, "ALL_STRATEGY_CLASSES", [CollidingStrategy])
+    monkeypatch.setattr(build_backtest_lab, "TRACKS", [("collide", "Collide Track", "paper_trading/bars_collide.csv", "TEST", "1min")])
+    monkeypatch.setattr(build_backtest_lab, "OUTPUT_PATH", "paper_trading/backtest_lab_collide.json")
+
+    build_backtest_lab.main()
+
+    with open("paper_trading/backtest_lab_collide.json") as f:
+        out = json.load(f)
+
+    strat_list = out["strategies"]["collide"]
+    names = [s["name"] for s in strat_list]
+    # level=100 shows up once (defaults), not twice (defaults + redundant
+    # grid combo) - the collision was skipped rather than double-counted.
+    assert names.count("Colliding(100)") == 1
+    assert "Colliding(105)" in names
+    assert len(strat_list) == 2
+
+
 def test_main_runs_end_to_end_and_writes_the_output_json(tmp_path, monkeypatch):
     import json
 
