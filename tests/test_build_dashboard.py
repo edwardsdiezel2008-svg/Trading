@@ -231,6 +231,21 @@ def test_load_recent_bars_stays_five_wide_without_a_volume_column(tmp_path, monk
     assert load_recent_bars("_zz") == [["2026-01-01", 100.0, 110.0, 90.0, 105.0]]
 
 
+def test_load_recent_bars_returns_empty_list_when_the_bars_file_is_missing(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    assert load_recent_bars("_nope") == []
+
+
+def test_load_recent_bars_skips_a_row_with_an_unparseable_price(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _write_bars_csv(
+        "paper_trading/bars_zz.csv",
+        ["timestamp", "open", "high", "low", "close", "volume"],
+        [["2026-01-01", "not-a-number", 110, 90, 105, 100], ["2026-01-02", 101, 111, 91, 106, 200]],
+    )
+    assert load_recent_bars("_zz") == [["2026-01-02", 101.0, 111.0, 91.0, 106.0, 200.0]]
+
+
 def _item(source, i):
     return {"source": source, "title": f"{source} story {i}", "link": f"https://x/{source}/{i}"}
 
@@ -602,6 +617,36 @@ def test_compute_current_regimes_reports_trend_vol_and_adx_for_an_available_asse
     assert regimes["BTC"]["trend_regime"] in {"trending", "ranging"}
     assert regimes["BTC"]["vol_regime"] in {"high_vol", "low_vol"}
     assert isinstance(regimes["BTC"]["adx"], float)
+
+
+def test_compute_current_regimes_skips_an_asset_still_in_its_warmup_period(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    # Far too few bars for classify_regimes' rolling windows to have
+    # produced a real (non-NaN) regime at the most recent bar yet.
+    dates = pd.date_range("2026-01-01", periods=5, freq="1D")
+    rows = [[d.isoformat(), 100, 101, 99, 100, 1000] for d in dates]
+    _write_bars_csv("paper_trading/bars.csv", ["timestamp", "open", "high", "low", "close", "volume"], rows)
+
+    assert compute_current_regimes() == {}
+
+
+def test_compute_current_regimes_warns_and_continues_when_classification_raises(tmp_path, monkeypatch, capsys):
+    import scripts.build_paper_trading_dashboard as build_paper_trading_dashboard
+
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    # File exists (so the os.path.exists gate passes) but the actual
+    # classification call fails - a real strategy is one bad/malformed
+    # bars file shouldn't take the whole dashboard build down with it.
+    _write_bars_csv("paper_trading/bars.csv", ["timestamp", "open", "high", "low", "close"], [["2026-01-01", 100, 101, 99, 100]])
+    monkeypatch.setattr(
+        build_paper_trading_dashboard, "classify_regimes",
+        lambda bars: (_ for _ in ()).throw(RuntimeError("classification blew up")),
+    )
+
+    assert compute_current_regimes() == {}
+    assert "WARN" in capsys.readouterr().out
 
 
 def _make_loaded():
