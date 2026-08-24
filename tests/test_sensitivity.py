@@ -64,3 +64,24 @@ def test_raises_without_param_space():
 
     with pytest.raises(ValueError):
         param_sensitivity(_bars(), NoGrid, _spec())
+
+
+def test_a_parameter_value_that_raises_gets_nan_metrics_instead_of_crashing_the_sweep():
+    class FlakyStrategy(Strategy):
+        PARAM_SPACE = {"level": [1, 2, 3]}
+
+        def generate_signals(self, bars):
+            if self.params.get("level") == 2:
+                raise ValueError("this parameter value blows up")
+            return pd.Series(0, index=bars.index)
+
+    result = param_sensitivity(_bars(), FlakyStrategy, _spec())
+
+    good_rows = result.detail[result.detail["value"] != 2]
+    bad_row = result.detail[result.detail["value"] == 2].iloc[0]
+
+    assert (good_rows["num_trades"] == 0).all()  # AlwaysFlat-style: no trades, but a real result
+    assert np.isnan(bad_row["total_return"])
+    assert np.isnan(bad_row["sharpe"])
+    assert np.isnan(bad_row["max_drawdown"])
+    assert bad_row["num_trades"] == 0
