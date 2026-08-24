@@ -152,3 +152,23 @@ def test_raises_without_param_space():
     bars = _bars(_trending_prices(n=200))
     with pytest.raises(ValueError):
         run_walk_forward(bars, NoGrid, _spec(), n_folds=2)
+
+
+def test_a_combo_that_raises_during_training_is_skipped_and_never_chosen():
+    class PartiallyFlakyStrategy(Strategy):
+        PARAM_SPACE = {"level": [90, 100, 999]}
+
+        def generate_signals(self, bars):
+            level = self.params.get("level", 100)
+            if level == 999:
+                raise RuntimeError("this parameter value is intentionally broken")
+            return (bars["close"] > level).astype(int)
+
+    bars = _bars(_trending_prices())
+    wf = run_walk_forward(bars, PartiallyFlakyStrategy, _spec(), n_folds=4)
+
+    # The broken combo must never win a fold's grid search - it always raises
+    # during scoring, so its score is never even considered - and the whole
+    # run must still complete rather than crashing on the bad parameter value.
+    assert all(f.chosen_params["level"] != 999 for f in wf.folds)
+    assert len(wf.folds) == 4
