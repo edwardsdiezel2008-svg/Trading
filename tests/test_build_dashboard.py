@@ -36,6 +36,7 @@ from scripts.build_paper_trading_dashboard import (
     load_sensitivity,
     load_track,
     load_walkforward,
+    main,
     summarize_track,
 )
 
@@ -756,3 +757,65 @@ def test_build_index_page_skips_gracefully_when_template_is_missing(tmp_path, mo
 
     assert not os.path.exists("paper_trading/index.html")
     assert "Skipping" in capsys.readouterr().out
+
+
+def test_main_writes_the_dashboard_end_to_end_with_no_data_files_present(tmp_path, monkeypatch, capsys):
+    # The real production shape: every load_* helper already gracefully
+    # defaults when its underlying file is missing, so main() must complete
+    # cleanly from a completely empty paper_trading/ dir - nothing here is
+    # mocked, this exercises the real orchestration path end to end.
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+
+    placeholders = ["__RUG_WATCH_STREAKS_JSON__"]
+    for _, pos_key, trades_key, track_key, bars_key, wf_key, sens_key, meta_key in TRACKS:
+        placeholders += [f"__{k}__" for k in (pos_key, trades_key, track_key, bars_key, wf_key, sens_key, meta_key)]
+    for key in ("MEMECOIN_SCAN_JSON", "WIDE_MEMECOIN_SCAN_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "CORRELATIONS_JSON", "NEWS_JSON"):
+        placeholders.append(f"__{key}__")
+    with open("paper_trading/dashboard_template.html", "w") as f:
+        f.write("<html>" + "\n".join(placeholders) + "</html>")
+
+    main()  # index/news/backtest-lab templates are absent - each must skip gracefully rather than crash
+
+    assert os.path.exists("paper_trading/dashboard.html")
+    assert not os.path.exists("paper_trading/index.html")
+    assert not os.path.exists("paper_trading/news.html")
+    assert not os.path.exists("paper_trading/backtest_lab.json")
+    out = capsys.readouterr().out
+    assert "Wrote paper_trading/dashboard.html" in out
+    assert out.count("Skipping") == 3  # index, news, and backtest-lab templates all missing
+
+
+def test_main_reads_every_optional_json_file_when_present(tmp_path, monkeypatch):
+    # The counterpart to the missing-files test above: each of main()'s
+    # optional JSON inputs actually exists this time, exercising the
+    # os.path.exists(...) True branch for all six rather than their defaults.
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+
+    placeholders = ["__RUG_WATCH_STREAKS_JSON__"]
+    for _, pos_key, trades_key, track_key, bars_key, wf_key, sens_key, meta_key in TRACKS:
+        placeholders += [f"__{k}__" for k in (pos_key, trades_key, track_key, bars_key, wf_key, sens_key, meta_key)]
+    for key in ("MEMECOIN_SCAN_JSON", "WIDE_MEMECOIN_SCAN_JSON", "BTC_MARKET_SNAPSHOT_JSON", "FEAR_GREED_JSON", "CORRELATIONS_JSON", "NEWS_JSON"):
+        placeholders.append(f"__{key}__")
+    with open("paper_trading/dashboard_template.html", "w") as f:
+        f.write("<html>" + "\n".join(placeholders) + "</html>")
+
+    with open("paper_trading/memecoin_scan.json", "w") as f:
+        json.dump({"ranked": [], "skipped": []}, f)
+    with open("paper_trading/memecoin_wide_scan.json", "w") as f:
+        json.dump({"ranked": [], "not_moving": []}, f)
+    with open("paper_trading/btc_market_snapshot.json", "w") as f:
+        json.dump({"order_book": None, "funding_rate": None}, f)
+    with open("paper_trading/fear_greed.json", "w") as f:
+        json.dump({"value": 42, "classification": "Neutral"}, f)
+    with open("paper_trading/news.json", "w") as f:
+        json.dump({"items": []}, f)
+    with open("paper_trading/survivor_stress_test.json", "w") as f:
+        json.dump({"results": []}, f)
+
+    main()  # must not raise, and must actually pick up the real file contents
+
+    with open("paper_trading/dashboard.html") as f:
+        out = f.read()
+    assert '"value": 42' in out  # fear_greed.json's real content, not the {"value": None} default
