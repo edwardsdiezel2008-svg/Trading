@@ -46,3 +46,16 @@ def test_simulated_return_freezes_rather_than_flips_sign_when_account_was_alread
     # loss (or gain) from a sign-flipped division.
     assert row["final_CAD"] == 100.0
     assert row["return_pct"] == 0.0
+
+
+def test_main_raises_systemexit_when_days_is_not_less_than_the_bar_count(tmp_path):
+    import pytest
+
+    prices = np.full(20, 100.0)
+    idx = pd.date_range("2026-01-01", periods=len(prices), freq="1D")
+    bars = pd.DataFrame({"open": prices, "high": prices, "low": prices, "close": prices, "volume": 100}, index=idx)
+    csv_path = tmp_path / "bars.csv"
+    bars.reset_index(names="timestamp").to_csv(csv_path, index=False)
+
+    with pytest.raises(SystemExit, match="must be less than the available bar count"):
+        simulate_recent_period.main(["--data", f"{csv_path}:TEST", "--freq", "1D", "--days", "20", "--capital", "100"])
