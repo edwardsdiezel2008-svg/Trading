@@ -371,6 +371,20 @@ def test_volume_profile_reversion_flat_when_price_never_moves():
     assert (signals.iloc[30:] == 0).all()
 
 
+def test_volume_profile_reversion_stays_flat_when_the_window_has_zero_volume():
+    # Price genuinely ranges bar to bar (high=101/low=99 every bar), but every
+    # bar's volume is 0 - a real shape some feeds report during illiquid
+    # periods. The volume histogram then sums to zero even though price
+    # varies, so the value area is undefined (NaN) and the bar must be
+    # skipped rather than raising or dividing by zero.
+    rows = [_bar(100.0, 101.0, 99.0, 100.0, v=0)] * 40
+    idx = pd.date_range("2026-01-05", periods=len(rows), freq="1min")
+    bars = pd.DataFrame(rows, index=idx)
+    strategy = VolumeProfileReversion(params={"lookback": 30})
+    signals = strategy.generate_signals(bars)
+    assert (signals.iloc[30:] == 0).all()
+
+
 def test_tpo_reversion_goes_long_below_a_heavily_visited_value_area():
     # 11 TPO periods (55 bars) all print at 100, then 1 period (5 bars) at
     # 90 - by period *count* (not volume) 100 dominates the profile, so a
