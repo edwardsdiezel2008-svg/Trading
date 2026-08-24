@@ -54,7 +54,20 @@ class CostAwareFilter(Strategy):
         raw = self.inner.generate_signals(bars).reindex(bars.index).fillna(0)
         atr = _true_range(bars).ewm(alpha=1 / self.atr_period, adjust=False, min_periods=self.atr_period).mean()
         round_trip_cost_frac = 2 * (self.spec.commission_pct + self.spec.slippage_pct)
-        expected_move_frac = (atr / bars["close"]).fillna(0.0)
+        # abs(close): a handful of instruments this project tracks (crude oil
+        # futures went negative in April 2020) can have a non-positive price.
+        # atr is always >= 0, so dividing by a raw negative close flips the
+        # sign and makes a huge real move read as a large *negative* fraction
+        # - always failing the >= threshold below and freezing the position
+        # exactly when volatility (and the case for trading through it) is
+        # highest. Using the price's magnitude keeps this a measure of "how
+        # big is the move relative to the price level" regardless of sign.
+        # replace(inf, nan) then fillna(0.0) covers a literal 0.0 close the
+        # same way an unwarmed-up (NaN) atr already is: no signal either way
+        # about whether the move clears the cost floor, so default to
+        # blocking (holding the prior position) rather than dividing by zero
+        # into +inf, which would otherwise force allowed=True unconditionally.
+        expected_move_frac = (atr / bars["close"].abs()).replace([np.inf, -np.inf], np.nan).fillna(0.0)
         allowed = (expected_move_frac >= self.min_cost_multiple * round_trip_cost_frac).to_numpy()
 
         raw_vals = raw.to_numpy()
