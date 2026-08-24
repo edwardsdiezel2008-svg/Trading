@@ -368,6 +368,47 @@ def _fake_candle(t=1_700_000_000_000, c=100.0):
     return {"t": t, "o": c, "h": c, "l": c, "c": c, "v": 1.0}
 
 
+def test_backfill_daily_history_writes_every_target_via_pagination(tmp_path, monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(fetch_market_data, "OTHER_INSTRUMENTS", [("ETH_USDT", "paper_trading/bars_eth.csv")])
+
+    def fake_paginated(symbol, timeframe, max_candles):
+        return [_fake_candle(t=1_700_000_000_000 + i * 86_400_000) for i in range(3)]
+
+    monkeypatch.setattr(fetch_market_data, "fetch_candlestick_paginated", fake_paginated)
+
+    fetch_market_data.backfill_daily_history(max_candles=100)
+
+    assert os.path.exists("paper_trading/bars.csv")
+    assert os.path.exists("paper_trading/bars_eth.csv")
+    with open("paper_trading/bars.csv") as f:
+        rows = list(csv.reader(f))
+    assert len(rows) == 4  # header + 3 candles
+
+
+def test_backfill_daily_history_warns_and_continues_past_a_failing_symbol(tmp_path, monkeypatch, capsys):
+    import scripts.fetch_market_data as fetch_market_data
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(fetch_market_data, "OTHER_INSTRUMENTS", [("ETH_USDT", "paper_trading/bars_eth.csv")])
+
+    def fake_paginated(symbol, timeframe, max_candles):
+        if symbol == fetch_market_data.BTC_SYMBOL:
+            raise RuntimeError("exchange unreachable")
+        return [_fake_candle()]
+
+    monkeypatch.setattr(fetch_market_data, "fetch_candlestick_paginated", fake_paginated)
+
+    fetch_market_data.backfill_daily_history(max_candles=100)
+
+    out = capsys.readouterr().out
+    assert "WARN: backfill failed for BTC_USDT" in out
+    assert not os.path.exists("paper_trading/bars.csv")
+    assert os.path.exists("paper_trading/bars_eth.csv")  # the other target still ran
+
+
 def test_main_writes_every_output_file_end_to_end(tmp_path, monkeypatch):
     import json
 
