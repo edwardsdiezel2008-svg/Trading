@@ -285,6 +285,17 @@ def test_diversify_news_preserves_recency_order_within_the_cap():
     assert [it["title"] for it in top] == [it["title"] for it in items]
 
 
+def test_diversify_news_returns_early_once_the_primary_pass_alone_reaches_the_limit():
+    # Six distinct sources, one item each, well under the per-source cap -
+    # the primary pass fills `limit` on its own, so the function must
+    # return right there rather than falling through to the (here,
+    # unnecessary) backfill loop.
+    items = [_item(f"S{i}", 0) for i in range(6)]
+    top = diversify_news(items, limit=6, max_per_source=2)
+    assert len(top) == 6
+    assert {it["source"] for it in top} == {f"S{i}" for i in range(6)}
+
+
 def test_build_news_page_embeds_the_full_feed_and_leaves_no_placeholder(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     os.makedirs("paper_trading", exist_ok=True)
@@ -433,6 +444,13 @@ def _write_history(path, runs):
 
 def test_rug_watch_streaks_empty_without_a_history_file(tmp_path, monkeypatch):
     monkeypatch.setattr(rug_watch, "HISTORY_PATH", str(tmp_path / "missing.json"))
+    assert load_rug_watch_streaks() == {}
+
+
+def test_rug_watch_streaks_empty_when_the_history_file_has_no_runs_yet(tmp_path, monkeypatch):
+    path = tmp_path / "history.json"
+    monkeypatch.setattr(rug_watch, "HISTORY_PATH", str(path))
+    _write_history(path, [])
     assert load_rug_watch_streaks() == {}
 
 
