@@ -64,3 +64,58 @@ def test_main_leveraged_track_adds_liquidation_and_funding_fields(tmp_path, monk
     for entry in positions["strategies"].values():
         assert "funding_accrued_usd" in entry
         assert "funding_last_accrued_utc" in entry
+
+
+def test_main_leveraged_track_builds_on_a_prior_run_s_funding_accrual(tmp_path, monkeypatch):
+    from datetime import datetime, timedelta, timezone
+
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "paper_trading").mkdir()
+    _write_bars_csv(tmp_path / "paper_trading" / "bars_perp.csv")
+    with open(tmp_path / "paper_trading" / "btc_market_snapshot.json", "w") as f:
+        json.dump({"funding_rate": {"rate": 0.0001}}, f)
+
+    # Simulate an existing positions file from a real earlier hourly run - a
+    # funding_last_accrued_utc more than the 30-minute re-application guard
+    # in the past, so this run's own accrual actually builds on it rather
+    # than the fresh-start ("prior_ts is None") path every other test uses.
+    strategy_names = [cls().name for cls in ALL_STRATEGY_CLASSES]
+    stale_ts = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
+    prior_positions = {
+        name: {"funding_accrued_usd": 5.0, "funding_last_accrued_utc": stale_ts}
+        for name in strategy_names
+    }
+    with open(tmp_path / "paper_trading" / "positions_perp.json", "w") as f:
+        json.dump({"symbol": "BTC_USDT", "leverage": 3.0, "strategies": prior_positions}, f)
+
+    main([
+        "--suffix", "_perp", "--freq", "1D", "--tracking-start", "2026-01-10",
+        "--symbol", "BTC_USDT", "--leverage", "3.0",
+        "--bars-file", "paper_trading/bars_perp.csv",
+    ])
+
+    with open(tmp_path / "paper_trading" / "positions_perp.json") as f:
+        positions = json.load(f)
+
+    for entry in positions["strategies"].values():
+        # The prior run's $5 baseline must still be reflected (not reset to
+        # 0), and the timestamp must have moved forward from the stale value.
+        assert entry["funding_accrued_usd"] != 0.0
+        assert entry["funding_last_accrued_utc"] != stale_ts
+
+
+def test_main_applies_the_cost_aware_filter_when_requested(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "paper_trading").mkdir()
+    _write_bars_csv(tmp_path / "paper_trading" / "bars.csv")
+
+    main(["--freq", "1D", "--tracking-start", "2026-01-10", "--symbol", "BTC_USDT", "--cost-aware-min-multiple", "5.0"])
+
+    positions_path = tmp_path / "paper_trading" / "positions.json"
+    assert positions_path.exists()
+    with open(positions_path) as f:
+        positions = json.load(f)
+
+    # CostAwareFilter delegates .name to the wrapped strategy, so the keys
+    # are unchanged even though the filter is genuinely active underneath.
+    assert set(positions["strategies"].keys()) == {cls().name for cls in ALL_STRATEGY_CLASSES}
