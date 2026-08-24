@@ -616,3 +616,59 @@ def test_fetch_candlestick_paginated_stops_when_a_page_is_smaller_than_requested
 
     assert len(candles) == 4  # both pages' candles kept
     assert call_count[0] == 2  # stopped after the short page, no third request
+
+
+def test_main_continues_past_an_other_instrument_daily_fetch_failure(tmp_path, monkeypatch):
+    import scripts.fetch_market_data as fetch_market_data
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(fetch_market_data, "OTHER_INSTRUMENTS", [
+        ("ETH_USDT", "paper_trading/bars_eth.csv"), ("SOL_USDT", "paper_trading/bars_sol.csv"),
+    ])
+    monkeypatch.setattr(fetch_market_data, "MEME_PRECISE_SYMBOLS", [])
+    monkeypatch.setattr(fetch_market_data, "MEME_WIDE_SYMBOLS", [])
+    monkeypatch.setattr(fetch_market_data, "fetch_tickers", lambda: [])
+    monkeypatch.setattr(fetch_market_data, "fetch_order_book", lambda symbol: {"bids": [], "asks": [], "timestamp": "t"})
+    monkeypatch.setattr(fetch_market_data, "fetch_funding_rate", lambda instrument_name=None, count=1: None)
+    monkeypatch.setattr(fetch_market_data, "fetch_fear_greed", lambda: None)
+
+    def flaky_fetch(symbol, timeframe, count=300):
+        if symbol == "ETH_USDT" and timeframe == "1D":
+            raise RuntimeError("ETH_USDT daily fetch is unreachable")
+        return [_fake_candle()]
+
+    monkeypatch.setattr(fetch_market_data, "fetch_candlestick", flaky_fetch)
+
+    fetch_market_data.main()  # ETH_USDT's failure must not stop SOL_USDT or crash the run
+
+    assert not os.path.exists("paper_trading/bars_eth.csv")
+    assert os.path.exists("paper_trading/bars_sol.csv")
+
+
+def test_main_warns_but_continues_when_a_wide_scan_symbol_is_missing_from_tickers(tmp_path, monkeypatch):
+    import json
+
+    import scripts.fetch_market_data as fetch_market_data
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(fetch_market_data, "OTHER_INSTRUMENTS", [])
+    monkeypatch.setattr(fetch_market_data, "MEME_PRECISE_SYMBOLS", [])
+    monkeypatch.setattr(fetch_market_data, "MEME_WIDE_SYMBOLS", ["FOUNDUSD", "MISSINGUSD"])
+    monkeypatch.setattr(fetch_market_data, "fetch_candlestick", lambda symbol, timeframe, count=300: [_fake_candle()])
+    # Only FOUNDUSD's ticker actually comes back - MISSINGUSD is a real gap
+    # some symbols hit (delisted, mistyped, or simply absent from this run's
+    # snapshot) and main() must report it rather than crashing or silently
+    # fabricating an entry.
+    monkeypatch.setattr(fetch_market_data, "fetch_tickers", lambda: [
+        {"i": "FOUND_USD", "a": "0.1", "b": "0.2", "c": "0.15", "v": "1000", "h": "0.2", "l": "0.1", "t": 1_700_000_000_000},
+    ])
+    monkeypatch.setattr(fetch_market_data, "fetch_order_book", lambda symbol: {"bids": [], "asks": [], "timestamp": "t"})
+    monkeypatch.setattr(fetch_market_data, "fetch_funding_rate", lambda instrument_name=None, count=1: None)
+    monkeypatch.setattr(fetch_market_data, "fetch_fear_greed", lambda: None)
+
+    fetch_market_data.main()  # must not raise despite the missing symbol
+
+    with open("paper_trading/memecoins_wide_tickers.json") as f:
+        wide = json.load(f)
+    assert "FOUNDUSD" in wide["symbols"]
+    assert "MISSINGUSD" not in wide["symbols"]
