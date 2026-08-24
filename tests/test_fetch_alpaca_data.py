@@ -6,7 +6,7 @@ import pytest
 
 sys.path.insert(0, ".")
 
-from scripts.fetch_alpaca_data import _fetch_stock_bars, main, parse_args
+from scripts.fetch_alpaca_data import _fetch_crypto_bars, _fetch_stock_bars, main, parse_args
 
 
 def _multi_symbol_df(symbols):
@@ -37,6 +37,59 @@ def test_fetch_stock_bars_raises_systemexit_when_credentials_are_missing(monkeyp
 
     with pytest.raises(SystemExit, match="Missing credentials"):
         _fetch_stock_bars(args)
+
+
+class _FakeBarsResponse:
+    def __init__(self, df):
+        self.df = df
+
+
+def test_fetch_stock_bars_builds_the_request_and_returns_the_client_s_dataframe(monkeypatch):
+    import alpaca.data.historical as adh
+
+    captured = {}
+
+    class FakeStockClient:
+        def __init__(self, **kwargs):
+            captured["client_kwargs"] = kwargs
+
+        def get_stock_bars(self, request):
+            captured["request"] = request
+            return _FakeBarsResponse(_multi_symbol_df(["AAPL"]))
+
+    monkeypatch.setenv("ALPACA_API_KEY", "test-key")
+    monkeypatch.setenv("ALPACA_SECRET_KEY", "test-secret")
+    monkeypatch.setattr(adh, "StockHistoricalDataClient", FakeStockClient)
+
+    args = parse_args(["--symbols", "AAPL", "--start", "2026-01-01", "--end", "2026-01-03", "--feed", "sip"])
+    df = _fetch_stock_bars(args)
+
+    assert captured["client_kwargs"] == {"api_key": "test-key", "secret_key": "test-secret"}
+    assert captured["request"].symbol_or_symbols == ["AAPL"]
+    assert df.equals(_multi_symbol_df(["AAPL"]))
+
+
+def test_fetch_crypto_bars_needs_no_credentials_and_returns_the_client_s_dataframe(monkeypatch):
+    import alpaca.data.historical as adh
+
+    captured = {}
+
+    class FakeCryptoClient:
+        def __init__(self, **kwargs):
+            captured["client_kwargs"] = kwargs
+
+        def get_crypto_bars(self, request):
+            captured["request"] = request
+            return _FakeBarsResponse(_multi_symbol_df(["BTC/USD"]))
+
+    monkeypatch.setattr(adh, "CryptoHistoricalDataClient", FakeCryptoClient)
+
+    args = parse_args(["--asset-class", "crypto", "--symbols", "BTC/USD", "--start", "2026-01-01", "--end", "2026-01-03"])
+    df = _fetch_crypto_bars(args)
+
+    assert captured["client_kwargs"] == {}
+    assert captured["request"].symbol_or_symbols == ["BTC/USD"]
+    assert df.equals(_multi_symbol_df(["BTC/USD"]))
 
 
 def test_main_writes_a_csv_per_symbol_with_slash_safe_filenames(tmp_path, monkeypatch):
