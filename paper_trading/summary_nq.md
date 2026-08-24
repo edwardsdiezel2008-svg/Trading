@@ -1,25 +1,25 @@
-# MNQ Paper Trading (1D) — updated 2026-08-23T23:54:21.336021+00:00
+# MNQ Paper Trading (1D) — updated 2026-08-24T03:37:09.507009+00:00
 
 Latest bar: 2026-08-23 00:00:00 · 2,525 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $615,325 | +515.3% | — | 1 |
-| Inside_Bar_Breakout(0.6) | SHORT | $122,394 | +22.4% | 0.37 | 22 |
-| Donchian_Breakout(20) | LONG | $115,892 | +15.9% | 0.28 | 52 |
-| Supertrend(10,m=3.0) | LONG | $112,928 | +12.9% | 0.23 | 68 |
-| MA_Crossover(10/50) | LONG | $112,438 | +12.4% | 0.23 | 64 |
+| *Buy & Hold (benchmark)* | — | $612,695 | +512.7% | — | 1 |
+| Inside_Bar_Breakout(0.6) | SHORT | $122,646 | +22.6% | 0.37 | 22 |
+| Donchian_Breakout(20) | LONG | $115,641 | +15.6% | 0.27 | 52 |
+| Supertrend(10,m=3.0) | LONG | $112,677 | +12.7% | 0.23 | 68 |
+| MA_Crossover(10/50) | LONG | $112,186 | +12.2% | 0.22 | 64 |
 | TPO_Reversion(60,p=5) | FLAT | $110,368 | +10.4% | 0.25 | 215 |
 | RSI_Reversion(14,30/70) | FLAT | $106,918 | +6.9% | 0.30 | 83 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $104,022 | +4.0% | 0.11 | 91 |
 | Bollinger_Reversion(20,2sd) | FLAT | $101,136 | +1.1% | 0.05 | 78 |
 | CCI_Reversion(20,100) | FLAT | $100,654 | +0.7% | 0.04 | 247 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
-| Engulfing_Reversal(0.3) | LONG | $99,957 | -0.0% | 0.04 | 142 |
-| Parabolic_SAR(af=0.02,max=0.2) | SHORT | $98,052 | -1.9% | 0.00 | 260 |
-| VWAP_Reversion(20,2%) | SHORT | $97,472 | -2.5% | -0.01 | 140 |
+| Engulfing_Reversal(0.3) | LONG | $99,706 | -0.3% | 0.03 | 142 |
+| Parabolic_SAR(af=0.02,max=0.2) | SHORT | $98,303 | -1.7% | 0.01 | 260 |
+| VWAP_Reversion(20,2%) | SHORT | $97,724 | -2.3% | -0.01 | 140 |
 | VolProfile_Reversion(30) | FLAT | $96,850 | -3.1% | -0.05 | 265 |
-| MACD_Momentum(12/26/9) | SHORT | $92,550 | -7.5% | -0.09 | 200 |
-| Keltner_Breakout(20,m=2.0) | SHORT | $92,398 | -7.6% | -0.08 | 39 |
+| MACD_Momentum(12/26/9) | SHORT | $92,802 | -7.2% | -0.08 | 200 |
+| Keltner_Breakout(20,m=2.0) | SHORT | $92,650 | -7.4% | -0.08 | 39 |
 | Stochastic_Reversion(14,20/80) | FLAT | $90,186 | -9.8% | -0.20 | 102 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $85,288 | -14.7% | -0.19 | 45 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $85,539 | -14.5% | -0.19 | 45 |
