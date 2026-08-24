@@ -401,6 +401,16 @@ def _precise(symbol, drawdown_from_window_high_pct):
     return {"symbol": symbol, "drawdown_from_window_high_pct": drawdown_from_window_high_pct}
 
 
+def test_rug_watch_summary_ignores_a_precise_scan_row_with_too_mild_a_drawdown():
+    # A real drawdown value is present, but nowhere near either severity
+    # threshold - distinct from the missing-field case above, this exercises
+    # severity_for_multiday_drawdown actually returning None/falsy.
+    wide_scan = {"ranked": [], "not_moving": []}
+    memecoin_scan = {"ranked": [_precise("MILD", -4)]}
+    summary = compute_rug_watch_summary(wide_scan, memecoin_scan)
+    assert summary == {"flagged_count": 0, "severe_count": 0, "top_symbol": None}
+
+
 def test_rug_watch_summary_flags_a_coin_only_the_multiday_drawdown_catches():
     # SLIDER never crosses the 24h thresholds but has been grinding down for
     # days - only the precise-scan multi-day check should catch it.
