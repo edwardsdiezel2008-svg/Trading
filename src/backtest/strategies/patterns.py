@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 
 from .base import Strategy
+from .volatility import _atr
 
 
 class EngulfingReversal(Strategy):
@@ -145,3 +146,117 @@ class OpeningRangeBreakout(Strategy):
 
         signal = raw.groupby(dates).transform(lambda s: s.ffill()).fillna(0)
         return signal
+
+
+class OpeningRangeBreakoutATRTarget(Strategy):
+    """OpeningRangeBreakout with a defined risk:reward instead of holding
+    until the opposite breakout or session end: stop-loss is `atr_mult` x
+    ATR(`atr_period`) away from the entry price, target is the *prior*
+    session's high (for a long) or low (for a short) - a level the market
+    already respected once, and a natural place for a breakout to stall or
+    reverse. A trade is only taken if that target is still ahead of price
+    at entry (skips breakouts that have already blown past yesterday's
+    extreme, leaving no room to run). Entry trigger is identical to
+    OpeningRangeBreakout: a close beyond the opening range, confirmed by
+    sitting on the same side of the session's cumulative VWAP.
+
+    Position is flattened at the start of every new session regardless of
+    whether the stop/target was hit (same day-trade convention as
+    OpeningRangeBreakout), and a fresh signal can re-enter later the same
+    session after a stop-out.
+    Params: range_bars=6 (30 minutes of 5-minute bars), atr_mult=1.5,
+    atr_period=14.
+    """
+
+    PARAM_SPACE = {"range_bars": [3, 6, 9, 12], "atr_mult": [1.0, 1.5, 2.0, 3.0]}
+
+    @property
+    def name(self) -> str:
+        range_bars = self.params.get("range_bars", 6)
+        atr_mult = self.params.get("atr_mult", 1.5)
+        return f"ORB_ATR_Target({range_bars},{atr_mult:.1f}xATR)"
+
+    def generate_signals(self, bars: pd.DataFrame) -> pd.Series:
+        range_bars = self.params.get("range_bars", 6)
+        atr_mult = self.params.get("atr_mult", 1.5)
+        atr_period = self.params.get("atr_period", 14)
+
+        idx = bars.index
+        et = (idx.tz_localize("UTC") if idx.tz is None else idx.tz_convert("UTC")).tz_convert("America/New_York")
+        session_date = et.normalize()
+        cash_open = session_date + pd.Timedelta(hours=9, minutes=30)
+        dates = session_date.where(et >= cash_open, session_date - pd.Timedelta(days=1))
+
+        orb_high = bars.groupby(dates)["high"].transform(lambda s: s.iloc[:range_bars].max())
+        orb_low = bars.groupby(dates)["low"].transform(lambda s: s.iloc[:range_bars].min())
+
+        typical = (bars["high"] + bars["low"] + bars["close"]) / 3
+        pv = typical * bars["volume"]
+        cum_pv = pv.groupby(dates).cumsum()
+        cum_vol = bars["volume"].groupby(dates).cumsum().replace(0, np.nan)
+        vwap = cum_pv / cum_vol
+
+        bar_num = bars.groupby(dates).cumcount()
+        valid = bar_num >= range_bars
+
+        # Yesterday's session high/low, broadcast back onto every bar of
+        # today's session - the day-trade target level.
+        daily_high = bars.groupby(dates)["high"].max()
+        daily_low = bars.groupby(dates)["low"].min()
+        prior_day_high = dates.map(daily_high.shift(1))
+        prior_day_low = dates.map(daily_low.shift(1))
+
+        atr = _atr(bars, atr_period)
+
+        # A purely backward-looking check (this bar's session date vs. the
+        # previous bar's) - not the previous bar's *price*, just its known-
+        # in-advance calendar bucket, so it carries none of the lookahead
+        # risk a next-bar check would.
+        dates_arr = dates.to_numpy()
+        new_session = np.empty(len(bars), dtype=bool)
+        new_session[0] = True
+        new_session[1:] = dates_arr[1:] != dates_arr[:-1]
+
+        close = bars["close"].to_numpy()
+        high = bars["high"].to_numpy()
+        low = bars["low"].to_numpy()
+        orb_high_a = orb_high.to_numpy()
+        orb_low_a = orb_low.to_numpy()
+        vwap_a = vwap.to_numpy()
+        valid_a = valid.to_numpy()
+        prior_high_a = prior_day_high.to_numpy()
+        prior_low_a = prior_day_low.to_numpy()
+        atr_a = atr.to_numpy()
+
+        n = len(bars)
+        signal = np.zeros(n)
+        direction = 0
+        stop = target = 0.0
+
+        for i in range(n):
+            if new_session[i]:
+                direction = 0
+
+            if direction != 0:
+                hit_stop = (low[i] <= stop) if direction == 1 else (high[i] >= stop)
+                hit_target = (high[i] >= target) if direction == 1 else (low[i] <= target)
+                if hit_stop or hit_target:
+                    direction = 0
+
+            if direction == 0 and valid_a[i]:
+                a = atr_a[i]
+                if not np.isnan(a):
+                    if (not np.isnan(orb_high_a[i]) and close[i] > orb_high_a[i] and close[i] > vwap_a[i]
+                            and not np.isnan(prior_high_a[i]) and prior_high_a[i] > close[i]):
+                        direction = 1
+                        stop = close[i] - atr_mult * a
+                        target = prior_high_a[i]
+                    elif (not np.isnan(orb_low_a[i]) and close[i] < orb_low_a[i] and close[i] < vwap_a[i]
+                            and not np.isnan(prior_low_a[i]) and prior_low_a[i] < close[i]):
+                        direction = -1
+                        stop = close[i] + atr_mult * a
+                        target = prior_low_a[i]
+
+            signal[i] = direction
+
+        return pd.Series(signal, index=idx)
