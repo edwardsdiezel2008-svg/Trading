@@ -125,7 +125,7 @@ Genuinely useful finding from running all four alongside their spot
 equivalents: leverage doesn't just scale returns by a fixed multiple. The
 ETH and SOL perpetual tracks have consistently shown far fewer profitable
 strategies than their unleveraged spot equivalents (see the live dashboard
-for current counts, now across 18 strategies rather than the original 9) -
+for current counts, now across 19 strategies rather than the original 9) -
 the same drawdowns that a spot position recovers from can instead trigger a
 permanent liquidation at leverage, which compounds very differently over
 dozens of trades. That's a real result of the simulation, not a bug in it.
@@ -133,7 +133,7 @@ dozens of trades. That's a real result of the simulation, not a bug in it.
 ## Index Futures
 
 Twelve tracks (`_nq`/`_nq5m`, `_es`/`_es5m`, `_ym`/`_ym5m`, `_gc`/`_gc5m`,
-`_rty`/`_rty5m`, `_cl`/`_cl5m`, each daily/5-min) run all 18 strategies
+`_rty`/`_rty5m`, `_cl`/`_cl5m`, each daily/5-min) run all 19 strategies
 against **real futures prices** - CME's Nasdaq-100 E-mini (NQ=F), S&P 500
 E-mini (ES=F), Dow E-mini (YM=F), and Russell 2000 E-mini (RTY=F), plus
 COMEX Gold (GC=F) and NYMEX WTI Crude Oil (CL=F), all continuous front
@@ -280,12 +280,12 @@ these snapshots were run in the same round these instruments were added.
 
 ## Pattern-recognition strategies
 
-Three of the 18 strategies read the raw shape of the candles rather than an
+Four of the 19 strategies read the raw shape of the candles rather than an
 indicator series - added specifically because intraday timeframes (the
 5-minute Nasdaq Futures track most of all) show far more of these setups
-per session than a daily chart does. All three live in
-`src/backtest/strategies/patterns.py` and are standard, publicly documented
-setups, not something invented for this project:
+per session than a daily chart does. All four live in
+`src/backtest/strategies/patterns.py`; the first three are standard,
+publicly documented setups, not something invented for this project:
 
 - **Engulfing Reversal** - a two-candle reversal: a bullish engulfing
   candle (a green candle whose body fully engulfs the prior red candle's
@@ -300,6 +300,11 @@ setups, not something invented for this project:
   of the session's cumulative VWAP, triggers an entry held until the
   opposite breakout or session end. On daily bars (one bar = one session)
   this correctly never fires - ORB is an inherently intraday concept.
+- **ORB ATR Target** - the same opening-range breakout entry, but with a
+  defined risk:reward instead of holding until session end: stop-loss at
+  a multiple of ATR from entry, target at the prior session's high (long)
+  or low (short). Skips a breakout that's already blown past that target
+  with no room left to run.
 
 **Bug found and fixed while focusing on the Nasdaq Futures tracks
 specifically:** Opening Range Breakout's session boundary was originally a
@@ -404,7 +409,7 @@ each strategy's walk-forward OOS equity curve, producing a 90% confidence
 interval on total return. If that interval still includes zero, the result
 can't be told apart from a strategy with no real edge at this sample size -
 even when the point estimate itself is positive. Not a rigorous hypothesis
-test (multiple testing across 18 strategies per track isn't corrected for),
+test (multiple testing across 19 strategies per track isn't corrected for),
 just an honest uncertainty band a bare point estimate doesn't carry.
 
 Wired into `walkforward_snapshot.py` - every `walkforward*.json` now carries
@@ -418,35 +423,39 @@ itself doesn't change (it still clears the plain profitable/robust/stable
 bars), but the caveat makes the added uncertainty impossible to miss.
 
 **The real result, run across every one of the 20 walkforward snapshots
-(360 strategy-track combinations total, 18 strategies x 20 tracks), is
-sobering and reported in full rather than softened:** 108 of those 360
-(30.0%) clear the plain "robust" bar (positive OOS return and positive
-OOS Sharpe). Only **10** (2.8%) also have a 90% confidence interval that
+(380 strategy-track combinations total, 19 strategies x 20 tracks), is
+sobering and reported in full rather than softened:** 110 of those 380
+(28.9%) clear the plain "robust" bar (positive OOS return and positive
+OOS Sharpe). Only **11** (2.9%) also have a 90% confidence interval that
 excludes zero - statistically distinguishable from no real edge at all,
-given how much data actually went into each estimate. Those ten:
+given how much data actually went into each estimate. Those eleven:
 
-- `RSI_Reversion(14,30/70)` on Nasdaq daily: +17.1% OOS, 90% CI [+7.5%, +28.6%]
-- `RSI_Reversion(14,30/70)` on S&P 500 daily: +6.6% OOS, 90% CI [+0.8%, +13.6%]
-- `RSI_Reversion(14,30/70)` on Dow daily: +4.5% OOS, 90% CI [+0.1%, +10.0%]
-- `MA_Crossover(10/50)` on Gold daily: +22.1% OOS, 90% CI [+1.4%, +50.4%]
-- `Donchian_Breakout(20)` on Gold daily: +23.2% OOS, 90% CI [+2.8%, +47.6%]
-- `CCI_Reversion(20,100)` on Crude Oil daily: +5.2% OOS, 90% CI [+0.9%, +11.0%]
-- `CCI_Reversion(20,100)` on Dow daily: +3.7% OOS, 90% CI [+0.1%, +7.8%]
-- `Stochastic_Reversion(14,20/80)` on Nasdaq 5-min: +5.5% OOS, 90% CI [+0.8%, +10.6%]
-- `Stochastic_Reversion(14,20/80)` on Russell 2000 5-min: +0.9% OOS, 90% CI [+0.1%, +1.8%]
-- `VWAP_Reversion(20,2%)` on Gold 5-min: +0.4% OOS, 90% CI [+0.1%, +0.8%]
+- `ATR_Vol_Breakout(14,k=1.5)` on BTC Perp 15-min: +53.9% OOS, 90% CI [+2.1%, +139.3%]
+- `Donchian_Breakout(20)` on Gold daily: +25.2% OOS, 90% CI [+3.9%, +50.6%]
+- `MA_Crossover(10/50)` on Gold daily: +22.3% OOS, 90% CI [+1.6%, +50.3%]
+- `ATR_Vol_Breakout(14,k=1.5)` on BTC 15-min: +18.5% OOS, 90% CI [+1.9%, +39.3%]
+- `RSI_Reversion(14,30/70)` on Nasdaq daily: +17.1% OOS, 90% CI [+7.0%, +28.0%]
+- `RSI_Reversion(14,30/70)` on S&P 500 daily: +6.6% OOS, 90% CI [+0.8%, +13.9%]
+- `Stochastic_Reversion(14,20/80)` on Nasdaq 5-min: +5.6% OOS, 90% CI [+0.8%, +10.6%]
+- `CCI_Reversion(20,100)` on Crude Oil daily: +5.2% OOS, 90% CI [+0.8%, +10.4%]
+- `ORB_ATR_Target(6,1.5xATR)` on Gold 5-min: +4.8% OOS, 90% CI [+1.2%, +8.8%]
+- `RSI_Reversion(14,30/70)` on Dow daily: +4.5% OOS, 90% CI [+0.3%, +10.2%]
+- `CCI_Reversion(20,100)` on Dow daily: +3.7% OOS, 90% CI [+0.2%, +7.2%]
 
-Seven of the ten are daily tracks and three are 5-minute; still no
-crypto/perpetual result has survived. `RSI_Reversion` shows up 3 of the 10
-times, on three independent equity-index futures - the same instrument-
-family consistency the "Cross-futures validated" panel already surfaces,
-now with actual statistical backing behind it rather than just a plain
-positive-Sharpe count. This doesn't mean the other 98 "robust" results are
-worthless - a real edge can still exist below what this sample size can
-statistically confirm - but it does mean roughly 9 out of 10 walk-forward
-"robust" verdicts on this dashboard, taken alone, are not yet distinguishable
-from noise. That is exactly the honest answer to "what's actually
-profitable" this feature was built to surface.
+Seven of the eleven are daily tracks, two are 15-minute, and two are
+5-minute. The two 15-minute results - `ATR_Vol_Breakout` on both spot BTC
+and 3x-leveraged BTC Perp - are the first crypto/perpetual results to
+clear this bar; every prior run of this analysis had none. `RSI_Reversion`
+shows up 3 of the 11 times, on three independent equity-index futures -
+the same instrument-family consistency the "Cross-futures validated"
+panel already surfaces, now with actual statistical backing behind it
+rather than just a plain positive-Sharpe count. This doesn't mean the
+other 99 "robust" results are worthless - a real edge can still exist
+below what this sample size can statistically confirm - but it does mean
+roughly 9 out of 10 walk-forward "robust" verdicts on this dashboard,
+taken alone, are not yet distinguishable from noise. That is exactly the
+honest answer to "what's actually profitable" this feature was built to
+surface.
 
 ## Survivor stress test
 
@@ -597,7 +606,7 @@ A separate page (`paper_trading/backtest_lab.html`) for a question none of
 the tables above answer directly: given a real starting balance and a real
 drawdown limit, would a specific strategy's actual historical run have
 survived it? Built by `scripts/build_backtest_lab.py`, which backtests each
-of the 18 strategies against its own `PARAM_SPACE`'s full, real, documented
+of the 19 strategies against its own `PARAM_SPACE`'s full, real, documented
 parameter grid - not samples, not invented values - capped at 50
 combinations per strategy (an evenly-spaced thinning of the real grid only
 kicks in if a strategy's grid actually exceeds that; today the largest,

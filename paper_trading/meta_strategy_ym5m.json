@@ -3,7 +3,7 @@
   "freq": "5min",
   "n_folds": 5,
   "min_regime_bars": 20,
-  "generated_at_utc": "2026-08-10T17:45:38.948070Z",
+  "generated_at_utc": "2026-08-25T17:06:20.857410Z",
   "current_regime": "trending/high_vol",
   "recommended_strategy": "Opening_Range_Breakout(6)",
   "live_regime_map": {
@@ -14,88 +14,87 @@
   "oos_metrics": {
     "strategy": "MetaStrategySelector",
     "instrument": "MYM",
-    "total_return": -0.027051515361790512,
-    "cagr": -0.04644307025200012,
-    "sharpe": -2.719047326818704,
-    "sortino": -3.3703332160362356,
-    "max_drawdown": -0.03091421072458471,
-    "calmar": -1.502321073818197,
-    "num_trades": 374,
-    "win_rate": 0.3502673796791444,
-    "profit_factor": 0.6984985648045926,
-    "avg_win": 48.29770992366412,
-    "avg_loss": -37.275720164609055,
-    "avg_trade": -7.302139037433155,
-    "avg_bars_held": 28.657754010695186,
-    "total_costs": 1309.0,
+    "total_return": -0.009735310246898998,
+    "cagr": -0.01380598065147498,
+    "sharpe": -0.98070827652385,
+    "sortino": -1.1976829613706599,
+    "max_drawdown": -0.017878243305547818,
+    "calmar": -0.7722224390575796,
+    "num_trades": 470,
+    "win_rate": 0.40425531914893614,
+    "profit_factor": 0.8776355421686747,
+    "avg_win": 36.805263157894736,
+    "avg_loss": -28.457142857142856,
+    "avg_trade": -2.074468085106383,
+    "avg_bars_held": 24.323404255319147,
+    "total_costs": 1645.0,
     "exposure": NaN,
-    "final_equity": 97294.84846382095
+    "final_equity": 99026.4689753101
   },
   "folds": [
     {
       "fold_idx": 1,
-      "test_start": "2026-06-11 03:15:00",
-      "test_end": "2026-06-24 02:15:00",
+      "test_start": "2026-06-14 23:05:00",
+      "test_end": "2026-06-29 16:40:00",
       "regime_map": {
-        "ranging/high_vol": "MA_Crossover(10/50)",
-        "trending/low_vol": "Inside_Bar_Breakout(0.6)",
-        "trending/high_vol": "Supertrend(10,m=3.0)",
+        "trending/low_vol": "Keltner_Breakout(20,m=2.0)",
+        "ranging/high_vol": "Keltner_Breakout(20,m=2.0)",
+        "trending/high_vol": "Opening_Range_Breakout(6)",
         "ranging/low_vol": "Inside_Bar_Breakout(0.6)"
       },
-      "test_total_return": -0.008329999999999949,
-      "test_sharpe": -3.33515412157076
+      "test_total_return": 0.0018199999999999328,
+      "test_sharpe": 0.7612009064285575
     },
     {
       "fold_idx": 2,
-      "test_start": "2026-06-24 02:20:00",
-      "test_end": "2026-07-07 01:20:00",
+      "test_start": "2026-06-29 16:45:00",
+      "test_end": "2026-07-14 11:35:00",
       "regime_map": {
         "trending/low_vol": "Supertrend(10,m=3.0)",
         "trending/high_vol": "Opening_Range_Breakout(6)",
-        "ranging/high_vol": "Inside_Bar_Breakout(0.6)",
+        "ranging/high_vol": "Stochastic_Reversion(14,20/80)",
         "ranging/low_vol": "Inside_Bar_Breakout(0.6)"
       },
-      "test_total_return": -0.004090000000000038,
-      "test_sharpe": -1.8673100121418424
+      "test_total_return": -0.005809999999999982,
+      "test_sharpe": -3.1013768831139368
     },
     {
       "fold_idx": 3,
-      "test_start": "2026-07-07 01:25:00",
-      "test_end": "2026-07-17 06:40:00",
+      "test_start": "2026-07-14 11:40:00",
+      "test_end": "2026-07-28 12:35:00",
       "regime_map": {
         "trending/low_vol": "Supertrend(10,m=3.0)",
         "trending/high_vol": "Opening_Range_Breakout(6)",
-        "ranging/high_vol": "Inside_Bar_Breakout(0.6)",
+        "ranging/high_vol": "Stochastic_Reversion(14,20/80)",
         "ranging/low_vol": "Inside_Bar_Breakout(0.6)"
       },
-      "test_total_return": -0.005565000000000042,
-      "test_sharpe": -3.0534826283333416
+      "test_total_return": -0.005170000000000008,
+      "test_sharpe": -2.8281976201596337
     },
     {
       "fold_idx": 4,
-      "test_start": "2026-07-17 06:45:00",
-      "test_end": "2026-07-29 12:15:00",
+      "test_start": "2026-07-28 12:40:00",
+      "test_end": "2026-08-11 13:25:00",
       "regime_map": {
-        "trending/low_vol": "Supertrend(10,m=3.0)",
-        "trending/high_vol": "Opening_Range_Breakout(6)",
-        "ranging/low_vol": "Inside_Bar_Breakout(0.6)",
-        "ranging/high_vol": "ZScore_Reversion(20,z=2.0)"
-      },
-      "test_total_return": -0.010425000000000018,
-      "test_sharpe": -6.749651109478676
-    },
-    {
-      "fold_idx": 5,
-      "test_start": "2026-07-29 12:20:00",
-      "test_end": "2026-08-10 17:30:00",
-      "regime_map": {
-        "trending/low_vol": "Supertrend(10,m=3.0)",
+        "trending/low_vol": "MA_Crossover(10/50)",
         "trending/high_vol": "Opening_Range_Breakout(6)",
         "ranging/low_vol": "Inside_Bar_Breakout(0.6)",
         "ranging/high_vol": "Inside_Bar_Breakout(0.6)"
       },
-      "test_total_return": 0.001100000000000101,
-      "test_sharpe": 0.5987590162775006
+      "test_total_return": -0.0012499999999999734,
+      "test_sharpe": -0.5587435420793931
+    },
+    {
+      "fold_idx": 5,
+      "test_start": "2026-08-11 13:30:00",
+      "test_end": "2026-08-25 14:20:00",
+      "regime_map": {
+        "trending/low_vol": "MA_Crossover(10/50)",
+        "trending/high_vol": "Opening_Range_Breakout(6)",
+        "ranging/high_vol": "Inside_Bar_Breakout(0.6)"
+      },
+      "test_total_return": 0.000660000000000105,
+      "test_sharpe": 0.4662253987247385
     }
   ]
 }

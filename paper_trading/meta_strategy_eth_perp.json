@@ -3,8 +3,8 @@
   "freq": "1D",
   "n_folds": 5,
   "min_regime_bars": 20,
-  "generated_at_utc": "2026-08-20T07:24:23.747510Z",
-  "current_regime": "ranging/high_vol",
+  "generated_at_utc": "2026-08-25T17:03:13.685764Z",
+  "current_regime": "trending/high_vol",
   "recommended_strategy": "Inside_Bar_Breakout(0.6)",
   "live_regime_map": {
     "trending/low_vol": "MA_Crossover(10/50)",
@@ -15,87 +15,87 @@
   "oos_metrics": {
     "strategy": "MetaStrategySelector",
     "instrument": "ETH_USDT",
-    "total_return": -1.0001921973096137,
+    "total_return": -1.000162514222622,
     "cagr": NaN,
-    "sharpe": -0.016454709573116788,
-    "sortino": -0.018776013281975788,
-    "max_drawdown": -1.0001921973096137,
+    "sharpe": -0.03845917177762512,
+    "sortino": -0.04385594676683844,
+    "max_drawdown": -1.0001581220333167,
     "calmar": NaN,
-    "num_trades": 68,
-    "win_rate": 0.3235294117647059,
-    "profit_factor": 0.6190751627130853,
-    "avg_win": 18272.942981380693,
-    "avg_loss": -14116.59540901502,
-    "avg_trade": -3637.627106239935,
-    "avg_bars_held": 24.029411764705884,
-    "total_costs": 23168.894837172495,
+    "num_trades": 67,
+    "win_rate": 0.31343283582089554,
+    "profit_factor": 0.5680391179339622,
+    "avg_win": 18253.61496410389,
+    "avg_loss": -14670.067229065055,
+    "avg_trade": -4350.7041535941935,
+    "avg_bars_held": 24.35820895522388,
+    "total_costs": 23078.570256802803,
     "exposure": NaN,
-    "final_equity": -19.21973096136967
+    "final_equity": -16.251422262213143
   },
   "folds": [
     {
       "fold_idx": 1,
-      "test_start": "2021-09-16 00:00:00",
-      "test_end": "2022-09-10 00:00:00",
+      "test_start": "2021-09-17 00:00:00",
+      "test_end": "2022-09-12 00:00:00",
       "regime_map": {
         "trending/low_vol": "Donchian_Breakout(20)",
         "ranging/low_vol": "Donchian_Breakout(20)",
         "trending/high_vol": "Donchian_Breakout(20)"
       },
-      "test_total_return": -0.8521076258986361,
-      "test_sharpe": 0.1273724254212216
+      "test_total_return": -0.798901213139058,
+      "test_sharpe": 0.22662319978413148
     },
     {
       "fold_idx": 2,
-      "test_start": "2022-09-11 00:00:00",
-      "test_end": "2023-09-05 00:00:00",
+      "test_start": "2022-09-13 00:00:00",
+      "test_end": "2023-09-08 00:00:00",
       "regime_map": {
         "trending/low_vol": "MA_Crossover(10/50)",
         "ranging/low_vol": "MA_Crossover(10/50)",
         "ranging/high_vol": "Inside_Bar_Breakout(0.6)",
         "trending/high_vol": "Inside_Bar_Breakout(0.6)"
       },
-      "test_total_return": -0.8478445566838859,
-      "test_sharpe": 0.32875595368617744
+      "test_total_return": -0.8849234176465172,
+      "test_sharpe": 0.23804305977974383
     },
     {
       "fold_idx": 3,
-      "test_start": "2023-09-06 00:00:00",
-      "test_end": "2024-08-30 00:00:00",
+      "test_start": "2023-09-09 00:00:00",
+      "test_end": "2024-09-02 00:00:00",
       "regime_map": {
         "trending/low_vol": "MA_Crossover(10/50)",
         "ranging/low_vol": "MA_Crossover(10/50)",
         "ranging/high_vol": "Inside_Bar_Breakout(0.6)",
         "trending/high_vol": "Inside_Bar_Breakout(0.6)"
       },
-      "test_total_return": 1.0477330319854907,
-      "test_sharpe": 0.9948403461506639
+      "test_total_return": 0.4986849171780219,
+      "test_sharpe": 0.7818212965493162
     },
     {
       "fold_idx": 4,
-      "test_start": "2024-08-31 00:00:00",
-      "test_end": "2025-08-25 00:00:00",
+      "test_start": "2024-09-03 00:00:00",
+      "test_end": "2025-08-29 00:00:00",
       "regime_map": {
         "trending/low_vol": "MA_Crossover(10/50)",
         "ranging/low_vol": "MA_Crossover(10/50)",
         "ranging/high_vol": "Inside_Bar_Breakout(0.6)",
         "trending/high_vol": "Inside_Bar_Breakout(0.6)"
       },
-      "test_total_return": -1.0041710048394425,
-      "test_sharpe": -0.9821835743743265
+      "test_total_return": -1.0046858095390716,
+      "test_sharpe": -0.9570087794071576
     },
     {
       "fold_idx": 5,
-      "test_start": "2025-08-26 00:00:00",
-      "test_end": "2026-08-20 00:00:00",
+      "test_start": "2025-08-30 00:00:00",
+      "test_end": "2026-08-25 00:00:00",
       "regime_map": {
         "trending/low_vol": "MA_Crossover(10/50)",
         "ranging/low_vol": "MA_Crossover(10/50)",
         "ranging/high_vol": "Inside_Bar_Breakout(0.6)",
         "trending/high_vol": "Inside_Bar_Breakout(0.6)"
       },
-      "test_total_return": -0.8171962768066829,
-      "test_sharpe": -0.14142509965248493
+      "test_total_return": -0.7251462597614837,
+      "test_sharpe": 0.05607221324310801
     }
   ]
 }

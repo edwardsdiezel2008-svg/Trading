@@ -207,7 +207,7 @@
     <p>The point isn't to promise a strategy that works. It's to be honest about which of 18 reasonable, well-known trading ideas actually hold up against real data, and to show the evidence - including the ones that don't hold up - rather than curate a highlight reel.</p>
   </div>
 
-  <div class="section-label">The 18 strategies</div>
+  <div class="section-label">The 19 strategies</div>
   <div class="strategy-grid">
     <div class="strategy-card">
       <div class="strategy-top"><span class="strategy-name">MA_Crossover</span><span class="pill pill-trend">Trend</span></div>
@@ -298,6 +298,11 @@
       <div class="strategy-top"><span class="strategy-name">Opening_Range_Breakout</span><span class="pill pill-breakout">Pattern</span></div>
       <p class="strategy-desc">The standard 5-minute ORB day-trading setup: the first few bars of each session set an "opening range," and a breakout of that range confirmed by VWAP triggers an entry held until session end.</p>
       <p class="strategy-needs">Needs: an intraday timeframe with real session structure - correctly never fires on daily bars.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-top"><span class="strategy-name">ORB_ATR_Target</span><span class="pill pill-breakout">Pattern</span></div>
+      <p class="strategy-desc">Same opening-range breakout entry as Opening_Range_Breakout, but with a defined risk:reward instead of holding until session end: an ATR-based stop-loss and a target at the prior session's high (long) or low (short) - a level the market already respected once.</p>
+      <p class="strategy-needs">Needs: the same intraday session structure as Opening_Range_Breakout, plus a prior session to draw a target from.</p>
     </div>
   </div>
 

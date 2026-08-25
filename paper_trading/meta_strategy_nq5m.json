@@ -3,100 +3,100 @@
   "freq": "5min",
   "n_folds": 5,
   "min_regime_bars": 20,
-  "generated_at_utc": "2026-08-10T08:32:04.650811Z",
-  "current_regime": "ranging/low_vol",
-  "recommended_strategy": "Opening_Range_Breakout(6)",
+  "generated_at_utc": "2026-08-25T17:04:26.392062Z",
+  "current_regime": "ranging/high_vol",
+  "recommended_strategy": "Stochastic_Reversion(14,20/80)",
   "live_regime_map": {
-    "trending/low_vol": "MA_Crossover(10/50)",
-    "trending/high_vol": "Engulfing_Reversal(0.3)",
-    "ranging/low_vol": "Opening_Range_Breakout(6)",
-    "ranging/high_vol": "Bollinger_Reversion(20,2sd)"
+    "trending/low_vol": "Keltner_Breakout(20,m=2.0)",
+    "trending/high_vol": "Parabolic_SAR(af=0.02,max=0.2)",
+    "ranging/low_vol": "CCI_Reversion(20,100)",
+    "ranging/high_vol": "Stochastic_Reversion(14,20/80)"
   },
   "oos_metrics": {
     "strategy": "MetaStrategySelector",
     "instrument": "MNQ",
-    "total_return": -0.04835906463403661,
-    "cagr": -0.08325056399353592,
-    "sharpe": -1.259610850514074,
-    "sortino": -1.523784636854767,
-    "max_drawdown": -0.09635067847520257,
-    "calmar": -0.8640371330126319,
-    "num_trades": 533,
-    "win_rate": 0.4071294559099437,
-    "profit_factor": 0.8778046955264392,
-    "avg_win": 159.463133640553,
-    "avg_loss": -124.74841772151899,
-    "avg_trade": -9.037523452157599,
-    "avg_bars_held": 16.285178236397748,
-    "total_costs": 1066.0,
+    "total_return": -0.056527119537867376,
+    "cagr": -0.07958216015936503,
+    "sharpe": -1.3780319168045703,
+    "sortino": -1.6050712101364144,
+    "max_drawdown": -0.11159452173621784,
+    "calmar": -0.7131368002766103,
+    "num_trades": 853,
+    "win_rate": 0.4900351699882767,
+    "profit_factor": 0.8690353705100944,
+    "avg_win": 90.93062200956938,
+    "avg_loss": -100.54482758620689,
+    "avg_trade": -6.715123094958968,
+    "avg_bars_held": 11.650644783118405,
+    "total_costs": 1706.0,
     "exposure": NaN,
-    "final_equity": 95164.09353659634
+    "final_equity": 94347.28804621326
   },
   "folds": [
     {
       "fold_idx": 1,
-      "test_start": "2026-06-11 01:40:00",
-      "test_end": "2026-06-23 23:05:00",
+      "test_start": "2026-06-14 23:05:00",
+      "test_end": "2026-06-29 16:35:00",
       "regime_map": {
         "trending/high_vol": "Supertrend(10,m=3.0)",
-        "trending/low_vol": "MA_Crossover(10/50)",
+        "trending/low_vol": "Parabolic_SAR(af=0.02,max=0.2)",
         "ranging/low_vol": "ATR_Vol_Breakout(14,k=1.5)",
-        "ranging/high_vol": "Bollinger_Reversion(20,2sd)"
+        "ranging/high_vol": "ORB_ATR_Target(6,1.5xATR)"
       },
-      "test_total_return": 0.013374999999999915,
-      "test_sharpe": 1.6153142325870364
+      "test_total_return": -0.02968499999999996,
+      "test_sharpe": -2.9406882652211226
     },
     {
       "fold_idx": 2,
-      "test_start": "2026-06-23 23:10:00",
-      "test_end": "2026-07-06 19:35:00",
+      "test_start": "2026-06-29 16:40:00",
+      "test_end": "2026-07-14 11:30:00",
       "regime_map": {
-        "trending/high_vol": "MA_Crossover(10/50)",
-        "trending/low_vol": "Supertrend(10,m=3.0)",
-        "ranging/low_vol": "ATR_Vol_Breakout(14,k=1.5)",
-        "ranging/high_vol": "Bollinger_Reversion(20,2sd)"
+        "trending/low_vol": "Keltner_Breakout(20,m=2.0)",
+        "trending/high_vol": "Inside_Bar_Breakout(0.6)",
+        "ranging/low_vol": "Opening_Range_Breakout(6)",
+        "ranging/high_vol": "ORB_ATR_Target(6,1.5xATR)"
       },
-      "test_total_return": -0.042655,
-      "test_sharpe": -4.768981500153897
+      "test_total_return": -0.023780000000000023,
+      "test_sharpe": -2.935076263149651
     },
     {
       "fold_idx": 3,
-      "test_start": "2026-07-06 19:40:00",
-      "test_end": "2026-07-17 00:20:00",
+      "test_start": "2026-07-14 11:35:00",
+      "test_end": "2026-07-28 12:30:00",
       "regime_map": {
-        "trending/low_vol": "Supertrend(10,m=3.0)",
+        "trending/low_vol": "Keltner_Breakout(20,m=2.0)",
         "trending/high_vol": "MA_Crossover(10/50)",
-        "ranging/low_vol": "ZScore_Reversion(20,z=2.0)",
-        "ranging/high_vol": "Bollinger_Reversion(20,2sd)"
+        "ranging/low_vol": "CCI_Reversion(20,100)",
+        "ranging/high_vol": "ORB_ATR_Target(6,1.5xATR)"
       },
-      "test_total_return": -0.016384999999999983,
-      "test_sharpe": -2.681611464944291
+      "test_total_return": -0.013279999999999959,
+      "test_sharpe": -1.587108786410057
     },
     {
       "fold_idx": 4,
-      "test_start": "2026-07-17 00:25:00",
-      "test_end": "2026-07-29 04:10:00",
+      "test_start": "2026-07-28 12:35:00",
+      "test_end": "2026-08-11 13:20:00",
       "regime_map": {
-        "trending/low_vol": "Donchian_Breakout(20)",
-        "trending/high_vol": "MA_Crossover(10/50)",
-        "ranging/low_vol": "ZScore_Reversion(20,z=2.0)",
+        "trending/low_vol": "Keltner_Breakout(20,m=2.0)",
+        "trending/high_vol": "ATR_Vol_Breakout(14,k=1.5)",
+        "ranging/low_vol": "CCI_Reversion(20,100)",
         "ranging/high_vol": "Bollinger_Reversion(20,2sd)"
       },
-      "test_total_return": -0.016565000000000052,
-      "test_sharpe": -2.5321515386098605
+      "test_total_return": -0.0030200000000000227,
+      "test_sharpe": -0.3428678408424852
     },
     {
       "fold_idx": 5,
-      "test_start": "2026-07-29 04:15:00",
-      "test_end": "2026-08-10 07:50:00",
+      "test_start": "2026-08-11 13:25:00",
+      "test_end": "2026-08-25 14:20:00",
       "regime_map": {
-        "trending/low_vol": "MA_Crossover(10/50)",
-        "trending/high_vol": "ATR_Vol_Breakout(14,k=1.5)",
-        "ranging/low_vol": "Opening_Range_Breakout(6)",
-        "ranging/high_vol": "MACD_Momentum(12/26/9)"
+        "trending/low_vol": "Keltner_Breakout(20,m=2.0)",
+        "trending/high_vol": "Parabolic_SAR(af=0.02,max=0.2)",
+        "ranging/low_vol": "CCI_Reversion(20,100)",
+        "ranging/high_vol": "ATR_Vol_Breakout(14,k=1.5)"
       },
-      "test_total_return": 0.014059999999999961,
-      "test_sharpe": 1.8229450023155067
+      "test_total_return": 0.01248500000000008,
+      "test_sharpe": 2.0143661290501162
     }
   ]
 }
