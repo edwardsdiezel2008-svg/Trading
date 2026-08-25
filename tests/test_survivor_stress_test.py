@@ -35,6 +35,37 @@ def test_annualized_sharpe_positive_for_a_rising_series_with_variance():
     assert _annualized_sharpe(returns) > 0
 
 
+def test_annualized_sharpe_scales_with_the_given_periods_per_year():
+    # A real regression this project's own future SURVIVORS updates could
+    # have hit silently: the annualization factor must actually depend on
+    # the bar frequency passed in, not stay hardcoded at the daily value
+    # (252) regardless of what's really being annualized.
+    returns = pd.Series([0.02, 0.01, 0.03, 0.015, 0.025])
+    daily = _annualized_sharpe(returns, periods_per_year=252)
+    five_min = _annualized_sharpe(returns, periods_per_year=252 * 78)
+    assert five_min == pytest.approx(daily * (78 ** 0.5))
+
+
+def test_annualized_sharpe_defaults_to_daily_when_periods_per_year_omitted():
+    returns = pd.Series([0.02, 0.01, 0.03, 0.015, 0.025])
+    assert _annualized_sharpe(returns) == pytest.approx(_annualized_sharpe(returns, periods_per_year=252))
+
+
+def test_portfolio_analysis_freq_hint_selects_the_matching_annualization_factor():
+    idx = pd.date_range("2026-01-01", periods=12, freq="D")
+    returns_seq = [0.01, -0.005, 0.02, -0.01, 0.015, 0.005, -0.02, 0.03, -0.015, 0.01, -0.005]
+    curve = _compound_curve(idx, returns_seq)
+    curves = {"A": curve, "B": curve.copy()}
+
+    daily_result = portfolio_analysis(curves, freq_hint="1D")
+    five_min_result = portfolio_analysis(curves, freq_hint="5min")
+    unrecognized_result = portfolio_analysis(curves, freq_hint="not-a-real-freq")
+
+    assert five_min_result["portfolio_sharpe"] == pytest.approx(daily_result["portfolio_sharpe"] * (78 ** 0.5))
+    # An unrecognized (or omitted) freq_hint falls back to the daily factor.
+    assert unrecognized_result["portfolio_sharpe"] == pytest.approx(daily_result["portfolio_sharpe"])
+
+
 def test_portfolio_analysis_returns_a_note_when_too_few_overlapping_bars():
     idx = pd.date_range("2026-01-01", periods=5, freq="D")
     curves = {

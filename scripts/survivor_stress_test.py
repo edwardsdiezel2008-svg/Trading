@@ -54,6 +54,7 @@ sys.path.insert(0, ".")
 from src.backtest.data_loader import load_bars
 from src.backtest.engine import run_backtest
 from src.backtest.instruments import get_spec
+from src.backtest.metrics import _BARS_PER_YEAR
 from src.backtest.regime import attribute_performance, classify_regimes
 from src.backtest.significance import bootstrap_return_ci
 from src.backtest.strategies.mean_reversion import CCIReversion, RSIReversion, StochasticReversion, VWAPReversion
@@ -147,18 +148,25 @@ def pd_isna(v):
     return v != v  # NaN check without importing pandas at module scope for this alone
 
 
-def _annualized_sharpe(returns: pd.Series) -> float:
+def _annualized_sharpe(returns: pd.Series, periods_per_year: float = 252) -> float:
     if len(returns) < 2 or returns.std() == 0:
         return float("nan")
-    return float(returns.mean() / returns.std() * np.sqrt(252))
+    return float(returns.mean() / returns.std() * np.sqrt(periods_per_year))
 
 
-def portfolio_analysis(curves: dict[str, pd.Series]) -> dict:
+def portfolio_analysis(curves: dict[str, pd.Series], freq_hint: str | None = None) -> dict:
     """Equal-weighted combination of the survivors' OOS equity curves,
     aligned on their common date intersection (an inner join - each curve
     only has values on its own instrument's trading days, and CME futures
     calendars aren't perfectly identical across index/commodity products).
+
+    freq_hint selects the right annualization factor for the Sharpe
+    calculations below (e.g. 252*78 periods/year for 5-minute bars, not the
+    252 that's only correct for daily) - select_largest_frequency_group()
+    already guarantees every curve here shares one frequency, so a single
+    hint covers all of them. Falls back to 252 (daily) if unrecognized.
     """
+    periods_per_year = _BARS_PER_YEAR.get(freq_hint, 252)
     returns = {name: eq.pct_change().dropna() for name, eq in curves.items()}
     df = pd.DataFrame(returns).dropna()
     if df.empty or len(df) < 10:
@@ -179,7 +187,7 @@ def portfolio_analysis(curves: dict[str, pd.Series]) -> dict:
         r_aligned = r.reindex(df.index).dropna()
         individual_aligned[name] = {
             "total_return": float((1.0 + r_aligned).prod() - 1.0),
-            "sharpe": _annualized_sharpe(r_aligned),
+            "sharpe": _annualized_sharpe(r_aligned, periods_per_year),
         }
 
     return {
@@ -192,7 +200,7 @@ def portfolio_analysis(curves: dict[str, pd.Series]) -> dict:
         "average_individual_return": float(np.mean([v["total_return"] for v in individual_aligned.values()])),
         "average_individual_sharpe": float(np.mean([v["sharpe"] for v in individual_aligned.values()])),
         "portfolio_total_return": float(portfolio_equity.iloc[-1] / 100_000.0 - 1.0),
-        "portfolio_sharpe": _annualized_sharpe(portfolio_returns),
+        "portfolio_sharpe": _annualized_sharpe(portfolio_returns, periods_per_year),
         "portfolio_ci_low": ci["ci_low"],
         "portfolio_ci_high": ci["ci_high"],
         "portfolio_significant": ci["significant"],
@@ -241,7 +249,7 @@ def main(argv=None):
     portfolio_freq, portfolio_curves = select_largest_frequency_group(SURVIVORS, curves)
     print(f"\nCombining the {len(portfolio_curves)} {portfolio_freq} survivors into an equal-weighted portfolio "
           f"({len(SURVIVORS) - len(portfolio_curves)} other-frequency survivor(s) excluded - can't align to a shared calendar)...")
-    portfolio = portfolio_analysis(portfolio_curves)
+    portfolio = portfolio_analysis(portfolio_curves, freq_hint=portfolio_freq)
     if "note" in portfolio:
         print(f"  {portfolio['note']}")
     else:
