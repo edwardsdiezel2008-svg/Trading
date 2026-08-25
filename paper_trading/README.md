@@ -424,21 +424,21 @@ bars), but the caveat makes the added uncertainty impossible to miss.
 
 **The real result, run across every one of the 20 walkforward snapshots
 (380 strategy-track combinations total, 19 strategies x 20 tracks), is
-sobering and reported in full rather than softened:** 110 of those 380
-(28.9%) clear the plain "robust" bar (positive OOS return and positive
+sobering and reported in full rather than softened:** 112 of those 380
+(29.5%) clear the plain "robust" bar (positive OOS return and positive
 OOS Sharpe). Only **11** (2.9%) also have a 90% confidence interval that
 excludes zero - statistically distinguishable from no real edge at all,
 given how much data actually went into each estimate. Those eleven:
 
-- `ATR_Vol_Breakout(14,k=1.5)` on BTC Perp 15-min: +53.9% OOS, 90% CI [+2.1%, +139.3%]
-- `Donchian_Breakout(20)` on Gold daily: +25.2% OOS, 90% CI [+3.9%, +50.6%]
-- `MA_Crossover(10/50)` on Gold daily: +22.3% OOS, 90% CI [+1.6%, +50.3%]
-- `ATR_Vol_Breakout(14,k=1.5)` on BTC 15-min: +18.5% OOS, 90% CI [+1.9%, +39.3%]
+- `ATR_Vol_Breakout(14,k=1.5)` on BTC Perp 15-min: +56.5% OOS, 90% CI [+3.8%, +143.4%]
+- `Donchian_Breakout(20)` on Gold daily: +25.4% OOS, 90% CI [+4.1%, +50.8%]
+- `MA_Crossover(10/50)` on Gold daily: +22.5% OOS, 90% CI [+1.7%, +50.3%]
+- `ATR_Vol_Breakout(14,k=1.5)` on BTC 15-min: +19.2% OOS, 90% CI [+2.3%, +40.6%]
 - `RSI_Reversion(14,30/70)` on Nasdaq daily: +17.1% OOS, 90% CI [+7.0%, +28.0%]
 - `RSI_Reversion(14,30/70)` on S&P 500 daily: +6.6% OOS, 90% CI [+0.8%, +13.9%]
-- `Stochastic_Reversion(14,20/80)` on Nasdaq 5-min: +5.6% OOS, 90% CI [+0.8%, +10.6%]
+- `Stochastic_Reversion(14,20/80)` on Nasdaq 5-min: +5.5% OOS, 90% CI [+0.8%, +10.3%]
 - `CCI_Reversion(20,100)` on Crude Oil daily: +5.2% OOS, 90% CI [+0.8%, +10.4%]
-- `ORB_ATR_Target(6,1.5xATR)` on Gold 5-min: +4.8% OOS, 90% CI [+1.2%, +8.8%]
+- `ORB_ATR_Target(6,1.5xATR)` on Gold 5-min: +4.9% OOS, 90% CI [+1.3%, +8.7%]
 - `RSI_Reversion(14,30/70)` on Dow daily: +4.5% OOS, 90% CI [+0.3%, +10.2%]
 - `CCI_Reversion(20,100)` on Dow daily: +3.7% OOS, 90% CI [+0.2%, +7.2%]
 
@@ -450,7 +450,7 @@ shows up 3 of the 11 times, on three independent equity-index futures -
 the same instrument-family consistency the "Cross-futures validated"
 panel already surfaces, now with actual statistical backing behind it
 rather than just a plain positive-Sharpe count. This doesn't mean the
-other 99 "robust" results are worthless - a real edge can still exist
+other 101 "robust" results are worthless - a real edge can still exist
 below what this sample size can statistically confirm - but it does mean
 roughly 9 out of 10 walk-forward "robust" verdicts on this dashboard,
 taken alone, are not yet distinguishable from noise. That is exactly the

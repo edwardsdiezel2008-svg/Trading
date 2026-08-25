@@ -3,7 +3,7 @@
   "freq": "1D",
   "n_folds": 5,
   "min_regime_bars": 20,
-  "generated_at_utc": "2026-08-25T17:03:13.685764Z",
+  "generated_at_utc": "2026-08-25T17:49:36.051756Z",
   "current_regime": "trending/high_vol",
   "recommended_strategy": "Inside_Bar_Breakout(0.6)",
   "live_regime_map": {
@@ -23,12 +23,12 @@
     "calmar": NaN,
     "num_trades": 67,
     "win_rate": 0.31343283582089554,
-    "profit_factor": 0.5680391179339622,
-    "avg_win": 18253.61496410389,
+    "profit_factor": 0.5677997764218622,
+    "avg_win": 18245.92386032447,
     "avg_loss": -14670.067229065055,
-    "avg_trade": -4350.7041535941935,
+    "avg_trade": -4353.11479806237,
     "avg_bars_held": 24.35820895522388,
-    "total_costs": 23078.570256802803,
+    "total_costs": 23078.3681126484,
     "exposure": NaN,
     "final_equity": -16.251422262213143
   },
@@ -94,8 +94,8 @@
         "ranging/high_vol": "Inside_Bar_Breakout(0.6)",
         "trending/high_vol": "Inside_Bar_Breakout(0.6)"
       },
-      "test_total_return": -0.7251462597614837,
-      "test_sharpe": 0.05607221324310801
+      "test_total_return": -0.7267613915551623,
+      "test_sharpe": 0.053148205211604065
     }
   ]
 }

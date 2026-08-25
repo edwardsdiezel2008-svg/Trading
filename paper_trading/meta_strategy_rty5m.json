@@ -3,9 +3,9 @@
   "freq": "5min",
   "n_folds": 5,
   "min_regime_bars": 20,
-  "generated_at_utc": "2026-08-25T17:08:13.957619Z",
-  "current_regime": "trending/high_vol",
-  "recommended_strategy": "Engulfing_Reversal(0.3)",
+  "generated_at_utc": "2026-08-25T17:54:45.364098Z",
+  "current_regime": "ranging/high_vol",
+  "recommended_strategy": "Stochastic_Reversion(14,20/80)",
   "live_regime_map": {
     "trending/low_vol": "MA_Crossover(10/50)",
     "trending/high_vol": "Engulfing_Reversal(0.3)",
@@ -15,87 +15,87 @@
   "oos_metrics": {
     "strategy": "MetaStrategySelector",
     "instrument": "M2K",
-    "total_return": -0.023136995140445205,
-    "cagr": -0.03281835080611273,
-    "sharpe": -2.5825161505721344,
-    "sortino": -2.68299285859728,
-    "max_drawdown": -0.026654753909384772,
-    "calmar": -1.2312381842909395,
-    "num_trades": 883,
-    "win_rate": 0.420158550396376,
-    "profit_factor": 0.7534808137208663,
-    "avg_win": 19.184095060857484,
-    "avg_loss": -18.449010086059566,
-    "avg_trade": -2.637139180616506,
-    "avg_bars_held": 11.039637599093998,
-    "total_costs": 1501.100000000024,
+    "total_return": -0.016935882827796456,
+    "cagr": -0.02400984186581845,
+    "sharpe": -1.91346131272926,
+    "sortino": -2.0449122589417565,
+    "max_drawdown": -0.02259223516361594,
+    "calmar": -1.0627475188681428,
+    "num_trades": 884,
+    "win_rate": 0.42081447963800905,
+    "profit_factor": 0.8208199735933831,
+    "avg_win": 20.938411983366937,
+    "avg_loss": -18.533984851837154,
+    "avg_trade": -1.9234287175657525,
+    "avg_bars_held": 11.078054298642535,
+    "total_costs": 1502.800000000024,
     "exposure": NaN,
-    "final_equity": 97686.30048595548
+    "final_equity": 98306.41171722036
   },
   "folds": [
     {
       "fold_idx": 1,
-      "test_start": "2026-06-14 23:00:00",
-      "test_end": "2026-06-29 16:30:00",
+      "test_start": "2026-06-14 23:25:00",
+      "test_end": "2026-06-29 17:20:00",
       "regime_map": {
-        "trending/high_vol": "Supertrend(10,m=3.0)",
+        "trending/high_vol": "Engulfing_Reversal(0.3)",
         "trending/low_vol": "MA_Crossover(10/50)",
         "ranging/low_vol": "Engulfing_Reversal(0.3)",
         "ranging/high_vol": "Keltner_Breakout(20,m=2.0)"
       },
-      "test_total_return": -0.007577873046889394,
-      "test_sharpe": -2.8429191676791272
+      "test_total_return": -0.002174995117206757,
+      "test_sharpe": -0.8144741931859965
     },
     {
       "fold_idx": 2,
-      "test_start": "2026-06-29 16:35:00",
-      "test_end": "2026-07-14 11:20:00",
+      "test_start": "2026-06-29 17:25:00",
+      "test_end": "2026-07-14 12:35:00",
       "regime_map": {
         "trending/low_vol": "MA_Crossover(10/50)",
         "trending/high_vol": "Engulfing_Reversal(0.3)",
         "ranging/high_vol": "Stochastic_Reversion(14,20/80)",
         "ranging/low_vol": "Engulfing_Reversal(0.3)"
       },
-      "test_total_return": -0.0026750830078322574,
-      "test_sharpe": -1.6314028850920341
+      "test_total_return": -0.0030690805664262966,
+      "test_sharpe": -1.8685184443825391
     },
     {
       "fold_idx": 3,
-      "test_start": "2026-07-14 11:25:00",
-      "test_end": "2026-07-28 12:10:00",
+      "test_start": "2026-07-14 12:40:00",
+      "test_end": "2026-07-28 13:55:00",
       "regime_map": {
         "trending/low_vol": "MA_Crossover(10/50)",
         "trending/high_vol": "Engulfing_Reversal(0.3)",
         "ranging/high_vol": "TPO_Reversion(60,p=5)",
         "ranging/low_vol": "Engulfing_Reversal(0.3)"
       },
-      "test_total_return": -0.012291980468777441,
-      "test_sharpe": -7.1306256084516635
+      "test_total_return": -0.010233980468777548,
+      "test_sharpe": -6.426678006435582
     },
     {
       "fold_idx": 4,
-      "test_start": "2026-07-28 12:15:00",
-      "test_end": "2026-08-11 13:05:00",
+      "test_start": "2026-07-28 14:00:00",
+      "test_end": "2026-08-11 15:15:00",
       "regime_map": {
         "trending/low_vol": "MA_Crossover(10/50)",
         "trending/high_vol": "Engulfing_Reversal(0.3)",
         "ranging/low_vol": "Stochastic_Reversion(14,20/80)",
-        "ranging/high_vol": "TPO_Reversion(60,p=5)"
+        "ranging/high_vol": "Stochastic_Reversion(14,20/80)"
       },
-      "test_total_return": 0.003392009765601278,
-      "test_sharpe": 2.142038243113922
+      "test_total_return": 0.003408968261699785,
+      "test_sharpe": 2.1306793079641344
     },
     {
       "fold_idx": 5,
-      "test_start": "2026-08-11 13:10:00",
-      "test_end": "2026-08-25 14:20:00",
+      "test_start": "2026-08-11 15:20:00",
+      "test_end": "2026-08-25 16:55:00",
       "regime_map": {
         "trending/low_vol": "MA_Crossover(10/50)",
         "trending/high_vol": "Engulfing_Reversal(0.3)",
         "ranging/high_vol": "TPO_Reversion(60,p=5)"
       },
-      "test_total_return": -0.0041330122070486475,
-      "test_sharpe": -4.0578218567708975
+      "test_total_return": -0.004934021972673341,
+      "test_sharpe": -4.867300972037034
     }
   ]
 }

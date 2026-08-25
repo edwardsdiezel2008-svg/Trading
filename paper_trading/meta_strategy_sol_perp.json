@@ -3,7 +3,7 @@
   "freq": "1D",
   "n_folds": 5,
   "min_regime_bars": 20,
-  "generated_at_utc": "2026-08-25T17:03:28.512853Z",
+  "generated_at_utc": "2026-08-25T17:49:50.528907Z",
   "current_regime": "trending/low_vol",
   "recommended_strategy": "Supertrend(10,m=3.0)",
   "live_regime_map": {
@@ -22,12 +22,12 @@
     "calmar": NaN,
     "num_trades": 84,
     "win_rate": 0.4166666666666667,
-    "profit_factor": 0.7271619875386094,
-    "avg_win": 29843.07567461958,
+    "profit_factor": 0.727156860361189,
+    "avg_win": 29842.86525280659,
     "avg_loss": -29314.6272632911,
-    "avg_trade": -4665.584372494983,
+    "avg_trade": -4665.672048250396,
     "avg_bars_held": 14.535714285714286,
-    "total_costs": 57020.97904418483,
+    "total_costs": 57020.96982670867,
     "exposure": NaN,
     "final_equity": -19.21053476450814
   },
@@ -89,8 +89,8 @@
         "trending/high_vol": "Parabolic_SAR(af=0.02,max=0.2)",
         "trending/low_vol": "Supertrend(10,m=3.0)"
       },
-      "test_total_return": -0.6634991953931197,
-      "test_sharpe": 0.06857842460375134
+      "test_total_return": -0.6635728430276666,
+      "test_sharpe": 0.0684574514233057
     }
   ]
 }

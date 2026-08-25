@@ -3,7 +3,7 @@
   "freq": "1D",
   "n_folds": 5,
   "min_regime_bars": 20,
-  "generated_at_utc": "2026-08-25T17:03:46.908144Z",
+  "generated_at_utc": "2026-08-25T17:50:09.410447Z",
   "current_regime": "ranging/high_vol",
   "recommended_strategy": "Supertrend(10,m=3.0)",
   "live_regime_map": {
@@ -15,22 +15,22 @@
   "oos_metrics": {
     "strategy": "MetaStrategySelector",
     "instrument": "MNQ",
-    "total_return": 0.20695481264184612,
-    "cagr": 0.02276296318116322,
-    "sharpe": 0.3810856297595136,
-    "sortino": 0.5244396014761835,
+    "total_return": 0.20724834576010975,
+    "cagr": 0.022792723445019814,
+    "sharpe": 0.38153115503241836,
+    "sortino": 0.5250618800261633,
     "max_drawdown": -0.1433886129833274,
-    "calmar": 0.1587501455489356,
+    "calmar": 0.15895769525066858,
     "num_trades": 116,
     "win_rate": 0.5258620689655172,
-    "profit_factor": 1.3640342447802918,
+    "profit_factor": 1.364689944500284,
     "avg_win": 1279.844262295082,
-    "avg_loss": -1040.6363636363637,
-    "avg_trade": 179.61637931034483,
+    "avg_loss": -1040.1363636363637,
+    "avg_trade": 179.85344827586206,
     "avg_bars_held": 16.396551724137932,
     "total_costs": 232.0,
     "exposure": NaN,
-    "final_equity": 120695.48126418462
+    "final_equity": 120724.83457601098
   },
   "folds": [
     {
@@ -95,8 +95,8 @@
         "ranging/high_vol": "Supertrend(10,m=3.0)",
         "trending/high_vol": "VWAP_Reversion(20,2%)"
       },
-      "test_total_return": 0.13074999999999992,
-      "test_sharpe": 0.7977634883226665
+      "test_total_return": 0.13102499999999995,
+      "test_sharpe": 0.7992217125013326
     }
   ]
 }

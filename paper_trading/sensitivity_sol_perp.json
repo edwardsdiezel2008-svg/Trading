@@ -1,7 +1,7 @@
 {
   "symbol": "SOL_USDT",
   "freq": "1D",
-  "generated_at_utc": "2026-08-25T16:57:58.857947Z",
+  "generated_at_utc": "2026-08-25T17:44:18.698107Z",
   "results": [
     {
       "strategy": "MA_Crossover(10/50)",
@@ -36,7 +36,7 @@
       "n_values_tested": 10,
       "frac_profitable": 0.0,
       "sharpe_min": -0.3185986612141891,
-      "sharpe_max": 0.3798344331797277
+      "sharpe_max": 0.37986995033992743
     },
     {
       "strategy": "Bollinger_Reversion(20,2sd)",
@@ -71,14 +71,14 @@
       "n_values_tested": 8,
       "frac_profitable": 0.0,
       "sharpe_min": -0.35921060405354993,
-      "sharpe_max": 1.1239464201514302
+      "sharpe_max": 1.1239327092072964
     },
     {
       "strategy": "Supertrend(10,m=3.0)",
       "n_values_tested": 8,
       "frac_profitable": 0.125,
       "sharpe_min": -0.4379943470940442,
-      "sharpe_max": 0.7337043806988449
+      "sharpe_max": 0.7336981056559666
     },
     {
       "strategy": "Keltner_Breakout(20,m=2.0)",

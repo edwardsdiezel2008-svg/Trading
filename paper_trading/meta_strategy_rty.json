@@ -3,7 +3,7 @@
   "freq": "1D",
   "n_folds": 5,
   "min_regime_bars": 20,
-  "generated_at_utc": "2026-08-25T17:07:33.780179Z",
+  "generated_at_utc": "2026-08-25T17:54:04.480251Z",
   "current_regime": "ranging/low_vol",
   "recommended_strategy": "MACD_Momentum(12/26/9)",
   "live_regime_map": {
@@ -15,22 +15,22 @@
   "oos_metrics": {
     "strategy": "MetaStrategySelector",
     "instrument": "M2K",
-    "total_return": -0.052144439158735234,
-    "cagr": -0.007015129043039914,
-    "sharpe": -0.2992672269967367,
-    "sortino": -0.4577077787515177,
+    "total_return": -0.05219873728884539,
+    "cagr": -0.00702260685561007,
+    "sharpe": -0.2995979760127409,
+    "sortino": -0.4582402187187653,
     "max_drawdown": -0.07879038638931969,
-    "calmar": -0.08903534256548383,
+    "calmar": -0.08913025024283937,
     "num_trades": 168,
     "win_rate": 0.4166666666666667,
-    "profit_factor": 0.8060567943462139,
+    "profit_factor": 0.8058934005724624,
     "avg_win": 312.3999407087053,
-    "avg_loss": -276.8326206752232,
-    "avg_trade": -31.319053431919663,
+    "avg_loss": -276.88874810666454,
+    "avg_trade": -31.351794433593767,
     "avg_bars_held": 11.017857142857142,
     "total_costs": 285.5999999999991,
     "exposure": NaN,
-    "final_equity": 94785.55608412648
+    "final_equity": 94780.12627111546
   },
   "folds": [
     {
@@ -95,8 +95,8 @@
         "ranging/high_vol": "VWAP_Reversion(20,2%)",
         "ranging/low_vol": "Engulfing_Reversal(0.3)"
       },
-      "test_total_return": -0.03980700732422293,
-      "test_sharpe": -1.079144834340195
+      "test_total_return": -0.03986201220703545,
+      "test_sharpe": -1.0806671924843336
     }
   ]
 }

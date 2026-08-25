@@ -3,7 +3,7 @@
   "freq": "1D",
   "n_folds": 5,
   "min_regime_bars": 20,
-  "generated_at_utc": "2026-08-25T17:02:21.464623Z",
+  "generated_at_utc": "2026-08-25T17:48:42.926336Z",
   "current_regime": "trending/high_vol",
   "recommended_strategy": "Inside_Bar_Breakout(0.6)",
   "live_regime_map": {
@@ -14,22 +14,22 @@
   "oos_metrics": {
     "strategy": "MetaStrategySelector",
     "instrument": "BTC_USDT",
-    "total_return": -0.9782662216673611,
-    "cagr": -0.41424619113388184,
-    "sharpe": 0.43907768126227764,
-    "sortino": 0.6342392566311728,
+    "total_return": -0.9782936826800346,
+    "cagr": -0.4143496330621973,
+    "sharpe": 0.43897225227821296,
+    "sortino": 0.6340965352163298,
     "max_drawdown": -0.9973534795784345,
-    "calmar": -0.4153454112467499,
+    "calmar": -0.41544912766267816,
     "num_trades": 99,
     "win_rate": 0.3838383838383838,
-    "profit_factor": 0.8606589858663672,
-    "avg_win": 19739.226433085485,
+    "profit_factor": 0.8604380657153317,
+    "avg_win": 19734.15962618922,
     "avg_loss": -14287.386163529423,
-    "avg_trade": -1226.6661769499601,
+    "avg_trade": -1228.611011920245,
     "avg_bars_held": 16.848484848484848,
-    "total_costs": 62481.1283251534,
+    "total_costs": 62480.88735060764,
     "exposure": NaN,
-    "final_equity": 2173.3778332638917
+    "final_equity": 2170.631731996546
   },
   "folds": [
     {
@@ -92,8 +92,8 @@
         "trending/low_vol": "Keltner_Breakout(20,m=2.0)",
         "ranging/low_vol": "Parabolic_SAR(af=0.02,max=0.2)"
       },
-      "test_total_return": 0.5238304032684318,
-      "test_sharpe": 0.7634354524707829
+      "test_total_return": 0.52190501664785,
+      "test_sharpe": 0.7623967927541652
     }
   ]
 }

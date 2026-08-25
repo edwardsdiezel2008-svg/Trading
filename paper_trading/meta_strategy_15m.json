@@ -3,9 +3,9 @@
   "freq": "15min",
   "n_folds": 5,
   "min_regime_bars": 20,
-  "generated_at_utc": "2026-08-25T17:02:05.575958Z",
-  "current_regime": "trending/high_vol",
-  "recommended_strategy": "ATR_Vol_Breakout(14,k=1.5)",
+  "generated_at_utc": "2026-08-25T17:48:26.990120Z",
+  "current_regime": "ranging/low_vol",
+  "recommended_strategy": null,
   "live_regime_map": {
     "trending/high_vol": "ATR_Vol_Breakout(14,k=1.5)",
     "trending/low_vol": "ATR_Vol_Breakout(14,k=1.5)",
@@ -14,81 +14,80 @@
   "oos_metrics": {
     "strategy": "MetaStrategySelector",
     "instrument": "BTC_USDT",
-    "total_return": -0.24334812394533412,
-    "cagr": -0.6972729477788808,
-    "sharpe": -8.939254745331143,
-    "sortino": -8.071719572948604,
-    "max_drawdown": -0.25771871877270364,
-    "calmar": -2.7055580250414186,
-    "num_trades": 57,
-    "win_rate": 0.21052631578947367,
-    "profit_factor": 0.1433171569121403,
-    "avg_win": 373.7758631004721,
-    "avg_loss": -695.4754450966642,
-    "avg_trade": -470.3699065288461,
-    "avg_bars_held": 15.929824561403509,
-    "total_costs": 13897.56041599423,
+    "total_return": -0.2356789571253678,
+    "cagr": -0.682003493702499,
+    "sharpe": -8.595778875126552,
+    "sortino": -7.765849540133573,
+    "max_drawdown": -0.24799938942384064,
+    "calmar": -2.750020858063196,
+    "num_trades": 56,
+    "win_rate": 0.21428571428571427,
+    "profit_factor": 0.14347350873875672,
+    "avg_win": 361.7128157004517,
+    "avg_loss": -687.5760591881212,
+    "avg_trade": -462.72844314057,
+    "avg_bars_held": 16.107142857142858,
+    "total_costs": 13658.201071647363,
     "exposure": NaN,
-    "final_equity": 75665.18760546659
+    "final_equity": 76432.10428746323
   },
   "folds": [
     {
       "fold_idx": 1,
-      "test_start": "2026-08-09 16:30:00",
-      "test_end": "2026-08-12 20:45:00",
+      "test_start": "2026-08-09 17:00:00",
+      "test_end": "2026-08-12 21:30:00",
       "regime_map": {
         "ranging/low_vol": "Inside_Bar_Breakout(0.6)",
         "trending/high_vol": "Engulfing_Reversal(0.3)",
         "ranging/high_vol": "Donchian_Breakout(20)"
       },
-      "test_total_return": -0.0667704538393854,
-      "test_sharpe": -14.93387187803977
+      "test_total_return": -0.06735665530334689,
+      "test_sharpe": -15.015425020181663
     },
     {
       "fold_idx": 2,
-      "test_start": "2026-08-12 21:00:00",
-      "test_end": "2026-08-16 01:15:00",
+      "test_start": "2026-08-12 21:45:00",
+      "test_end": "2026-08-16 02:30:00",
       "regime_map": {
         "ranging/low_vol": "ATR_Vol_Breakout(14,k=1.5)",
         "trending/low_vol": "Inside_Bar_Breakout(0.6)",
         "ranging/high_vol": "Donchian_Breakout(20)"
       },
-      "test_total_return": -0.0567831446849133,
-      "test_sharpe": -13.856946759373223
+      "test_total_return": -0.058538473597344765,
+      "test_sharpe": -14.136876751261047
     },
     {
       "fold_idx": 3,
-      "test_start": "2026-08-16 01:30:00",
-      "test_end": "2026-08-19 05:30:00",
+      "test_start": "2026-08-16 02:45:00",
+      "test_end": "2026-08-19 07:15:00",
       "regime_map": {
-        "trending/low_vol": "Inside_Bar_Breakout(0.6)",
-        "ranging/low_vol": "ORB_ATR_Target(6,1.5xATR)"
+        "trending/low_vol": "Inside_Bar_Breakout(0.6)"
       },
-      "test_total_return": -0.01749437697581302,
-      "test_sharpe": -10.690086081545251
+      "test_total_return": -0.018434133807801456,
+      "test_sharpe": -11.662416179338635
     },
     {
       "fold_idx": 4,
-      "test_start": "2026-08-19 05:45:00",
-      "test_end": "2026-08-22 10:00:00",
+      "test_start": "2026-08-19 07:30:00",
+      "test_end": "2026-08-22 12:00:00",
       "regime_map": {
         "trending/low_vol": "Inside_Bar_Breakout(0.6)",
         "ranging/high_vol": "Inside_Bar_Breakout(0.6)"
       },
-      "test_total_return": -0.10900776097222287,
-      "test_sharpe": -13.943116734736686
+      "test_total_return": -0.09827069741642935,
+      "test_sharpe": -12.391796360606595
     },
     {
       "fold_idx": 5,
-      "test_start": "2026-08-22 10:15:00",
-      "test_end": "2026-08-25 14:30:00",
+      "test_start": "2026-08-22 12:15:00",
+      "test_end": "2026-08-25 17:00:00",
       "regime_map": {
         "trending/high_vol": "ATR_Vol_Breakout(14,k=1.5)",
         "trending/low_vol": "ATR_Vol_Breakout(14,k=1.5)",
         "ranging/high_vol": "Inside_Bar_Breakout(0.6)"
       },
-      "test_total_return": -0.018055110249107997,
-      "test_sharpe": -1.9212781305618005
+      "test_total_return": -0.016527968033797413,
+      "test_sharpe": -1.7555269265012015
     }
   ]
 }
