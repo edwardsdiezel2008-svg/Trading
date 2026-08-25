@@ -23,6 +23,7 @@ from src.backtest.strategies import (
     ZScoreReversion,
     build_default_strategies,
 )
+from src.backtest.strategies.patterns import OpeningRangeBreakoutATRTarget
 
 ALL = [
     MovingAverageCrossover(),
@@ -261,6 +262,114 @@ def test_opening_range_breakout_never_fires_on_daily_bars():
     strategy = OpeningRangeBreakout(params={"range_bars": 6})
     signals = strategy.generate_signals(bars)
     assert (signals == 0).all()
+
+
+def test_orb_atr_target_exits_on_target_hit():
+    # Prior session's high (110) becomes today's long target. Entry bar
+    # breaks the opening range and closes at 105, well below that target,
+    # so the trade is taken; a later bar's high (111) clears the target and
+    # should close the position out.
+    day1 = [_bar(100, 101, 99, 100), _bar(100, 102, 99, 101), _bar(101, 103, 100, 102), _bar(102, 110, 101, 108)]
+    idx1 = pd.date_range("2026-01-05 09:30", periods=4, freq="5min")
+    day2 = [
+        _bar(100, 101, 99, 100), _bar(100, 101.5, 99.5, 100.5), _bar(100.5, 102, 100, 101),
+        _bar(101, 106, 101, 105),   # entry: closes above the opening range (102) and VWAP
+        _bar(105, 107, 104, 106),   # still holding
+        _bar(106, 111, 105, 110),   # high (111) clears the target (110) - exit
+    ]
+    idx2 = pd.date_range("2026-01-06 09:30", periods=6, freq="5min")
+    bars = pd.DataFrame(day1 + day2, index=idx1.append(idx2))
+
+    strategy = OpeningRangeBreakoutATRTarget(params={"range_bars": 3, "atr_mult": 1.0, "atr_period": 2})
+    signals = strategy.generate_signals(bars)
+
+    assert signals.iloc[7] == 1  # entry bar
+    assert signals.iloc[8] == 1  # still holding, target not yet reached
+    assert signals.iloc[9] == 0  # target hit - flat
+
+
+def test_orb_atr_target_exits_on_stop_hit():
+    # Same entry as the target-hit case, but the following bar's low drops
+    # back down through the ATR-based stop instead of ever nearing the
+    # target - should close out via the stop, not ride it out.
+    day1 = [_bar(100, 101, 99, 100), _bar(100, 102, 99, 101), _bar(101, 103, 100, 102), _bar(102, 110, 101, 108)]
+    idx1 = pd.date_range("2026-01-05 09:30", periods=4, freq="5min")
+    day2 = [
+        _bar(100, 101, 99, 100), _bar(100, 101.5, 99.5, 100.5), _bar(100.5, 102, 100, 101),
+        _bar(101, 106, 101, 105),   # entry
+        _bar(103, 104, 100, 101),   # low (100) breaches the stop (~100.8) - exit
+    ]
+    idx2 = pd.date_range("2026-01-06 09:30", periods=5, freq="5min")
+    bars = pd.DataFrame(day1 + day2, index=idx1.append(idx2))
+
+    strategy = OpeningRangeBreakoutATRTarget(params={"range_bars": 3, "atr_mult": 1.0, "atr_period": 2})
+    signals = strategy.generate_signals(bars)
+
+    assert signals.iloc[7] == 1  # entry bar
+    assert signals.iloc[8] == 0  # stopped out
+
+
+def test_orb_atr_target_skips_entry_when_target_already_behind_price():
+    # The prior session's high (102) sits BELOW where the breakout bar
+    # already closes (105) - there's no room left to the target, so the
+    # trade should be skipped entirely rather than entered with an
+    # already-invalidated target.
+    day1 = [_bar(100, 101, 99, 100), _bar(100, 101.5, 99, 100.5), _bar(100, 102, 99, 101)]
+    idx1 = pd.date_range("2026-01-05 09:30", periods=3, freq="5min")
+    day2 = [
+        _bar(100, 101, 99, 100), _bar(100, 101.5, 99.5, 100.5), _bar(100.5, 102, 100, 101),
+        _bar(101, 106, 101, 105),   # would otherwise trigger entry
+    ]
+    idx2 = pd.date_range("2026-01-06 09:30", periods=4, freq="5min")
+    bars = pd.DataFrame(day1 + day2, index=idx1.append(idx2))
+
+    strategy = OpeningRangeBreakoutATRTarget(params={"range_bars": 3, "atr_mult": 1.0, "atr_period": 2})
+    signals = strategy.generate_signals(bars)
+
+    assert (signals == 0).all()
+
+
+def test_orb_atr_target_goes_short_below_range_and_vwap():
+    day1 = [_bar(100, 101, 99, 100), _bar(100, 101, 98, 99), _bar(99, 100, 97, 98), _bar(98, 99, 90, 92)]  # day1 low = 90
+    idx1 = pd.date_range("2026-01-05 09:30", periods=4, freq="5min")
+    day2 = [
+        _bar(100, 101, 99, 100), _bar(100, 100.5, 99.5, 99.8), _bar(99.8, 100, 99, 99.5),
+        _bar(99, 99, 94, 95),   # breaks below the opening range low and VWAP; target (90) still below price
+    ]
+    idx2 = pd.date_range("2026-01-06 09:30", periods=4, freq="5min")
+    bars = pd.DataFrame(day1 + day2, index=idx1.append(idx2))
+
+    strategy = OpeningRangeBreakoutATRTarget(params={"range_bars": 3, "atr_mult": 1.0, "atr_period": 2})
+    signals = strategy.generate_signals(bars)
+
+    assert signals.iloc[-1] == -1
+
+
+def test_orb_atr_target_name_reports_range_bars_and_atr_multiple():
+    strategy = OpeningRangeBreakoutATRTarget(params={"range_bars": 9, "atr_mult": 2.0})
+    assert strategy.name == "ORB_ATR_Target(9,2.0xATR)"
+
+
+def test_orb_atr_target_resets_flat_at_new_session():
+    # Session 1 enters and is still holding (target far away, never hit) at
+    # its very last bar - session 2 should still start flat rather than
+    # carrying that position over the day boundary.
+    day0 = [_bar(100, 200, 99, 150)] * 2  # establishes a very distant prior high (200) as session 1's target
+    idx0 = pd.date_range("2026-01-04 09:30", periods=2, freq="5min")
+    day1 = [
+        _bar(100, 101, 99, 100), _bar(100, 101.5, 99.5, 100.5), _bar(100.5, 102, 100, 101),
+        _bar(101, 106, 101, 105),  # entry; target (200) is nowhere close to being hit
+    ]
+    idx1 = pd.date_range("2026-01-05 09:30", periods=4, freq="5min")
+    day2 = [_bar(100, 101, 99, 100)] * 2
+    idx2 = pd.date_range("2026-01-06 09:30", periods=2, freq="5min")
+    bars = pd.DataFrame(day0 + day1 + day2, index=idx0.append(idx1).append(idx2))
+
+    strategy = OpeningRangeBreakoutATRTarget(params={"range_bars": 3, "atr_mult": 1.0, "atr_period": 2})
+    signals = strategy.generate_signals(bars)
+
+    assert signals.iloc[5] == 1  # still holding at session 1's last bar
+    assert (signals.iloc[6:] == 0).all()  # session 2 starts flat regardless
 
 
 def test_parabolic_sar_flips_on_clean_trend_reversal():
