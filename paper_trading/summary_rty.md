@@ -1,25 +1,25 @@
-# M2K Paper Trading (1D) — updated 2026-08-25T03:29:07.012401+00:00
+# M2K Paper Trading (1D) — updated 2026-08-25T05:53:52.371711+00:00
 
-Latest bar: 2026-08-24 00:00:00 · 2,299 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-25 00:00:00 · 2,300 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $213,388 | +113.4% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $213,324 | +113.3% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $106,430 | +6.4% | 0.38 | 141 |
-| Parabolic_SAR(af=0.02,max=0.2) | SHORT | $106,386 | +6.4% | 0.34 | 226 |
+| Parabolic_SAR(af=0.02,max=0.2) | SHORT | $106,391 | +6.4% | 0.34 | 226 |
 | Bollinger_Reversion(20,2sd) | FLAT | $104,820 | +4.8% | 0.33 | 83 |
-| Keltner_Breakout(20,m=2.0) | LONG | $102,961 | +3.0% | 0.16 | 32 |
+| Keltner_Breakout(20,m=2.0) | LONG | $102,956 | +3.0% | 0.16 | 32 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $102,697 | +2.7% | 0.21 | 89 |
 | Stochastic_Reversion(14,20/80) | FLAT | $101,956 | +2.0% | 0.16 | 84 |
-| MACD_Momentum(12/26/9) | SHORT | $100,375 | +0.4% | 0.03 | 179 |
+| MACD_Momentum(12/26/9) | SHORT | $100,379 | +0.4% | 0.03 | 179 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
 | TPO_Reversion(60,p=5) | FLAT | $99,978 | -0.0% | 0.01 | 160 |
-| Engulfing_Reversal(0.3) | SHORT | $99,772 | -0.2% | -0.00 | 116 |
-| MA_Crossover(10/50) | LONG | $99,571 | -0.4% | -0.01 | 64 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $99,442 | -0.6% | -0.02 | 27 |
+| Engulfing_Reversal(0.3) | SHORT | $99,777 | -0.2% | -0.00 | 116 |
+| MA_Crossover(10/50) | LONG | $99,567 | -0.4% | -0.01 | 64 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $99,447 | -0.6% | -0.02 | 27 |
 | CCI_Reversion(20,100) | FLAT | $99,297 | -0.7% | -0.04 | 225 |
-| Donchian_Breakout(20) | LONG | $99,114 | -0.9% | -0.04 | 54 |
+| Donchian_Breakout(20) | LONG | $99,110 | -0.9% | -0.04 | 54 |
 | VolProfile_Reversion(30) | FLAT | $98,955 | -1.0% | -0.08 | 222 |
-| Inside_Bar_Breakout(0.6) | LONG | $98,425 | -1.6% | -0.06 | 19 |
+| Inside_Bar_Breakout(0.6) | LONG | $98,420 | -1.6% | -0.06 | 19 |
 | RSI_Reversion(14,30/70) | FLAT | $98,289 | -1.7% | -0.21 | 62 |
-| Supertrend(10,m=3.0) | LONG | $98,259 | -1.7% | -0.08 | 58 |
+| Supertrend(10,m=3.0) | LONG | $98,254 | -1.7% | -0.08 | 58 |
