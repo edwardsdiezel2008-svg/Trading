@@ -17,7 +17,7 @@ everything below covers the underlying research toolkit it's built on.
 src/backtest/
   data_loader.py     Load raw tick logs -> normalized OHLCV bars
   instruments.py      Contract specs (multiplier, tick size) for futures + equities
-  strategies/          18 strategies: trend, mean-reversion, volatility,
+  strategies/          19 strategies: trend, mean-reversion, volatility,
                         candlestick/price-action patterns, volume/market
                         profile - plus cost-aware/regime/volume filter wrappers
   engine.py            Backtest engine (next-bar execution, commissions, slippage)

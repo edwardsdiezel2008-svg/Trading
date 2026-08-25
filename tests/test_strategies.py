@@ -13,6 +13,7 @@ from src.backtest.strategies import (
     MACDMomentum,
     MovingAverageCrossover,
     OpeningRangeBreakout,
+    OpeningRangeBreakoutATRTarget,
     ParabolicSAR,
     RSIReversion,
     StochasticReversion,
@@ -23,7 +24,6 @@ from src.backtest.strategies import (
     ZScoreReversion,
     build_default_strategies,
 )
-from src.backtest.strategies.patterns import OpeningRangeBreakoutATRTarget
 
 ALL = [
     MovingAverageCrossover(),
@@ -42,6 +42,7 @@ ALL = [
     EngulfingReversal(),
     InsideBarBreakout(),
     OpeningRangeBreakout(),
+    OpeningRangeBreakoutATRTarget(),
     VolumeProfileReversion(),
     TPOReversion(),
 ]
@@ -69,8 +70,8 @@ def test_signals_are_valid_positions(strategy):
 
 def test_build_default_strategies_returns_one_of_each():
     strategies = build_default_strategies()
-    assert len(strategies) == 18
-    assert len({s.name for s in strategies}) == 18
+    assert len(strategies) == 19
+    assert len({s.name for s in strategies}) == 19
 
 
 def test_ma_crossover_flips_on_clean_trend_reversal():
