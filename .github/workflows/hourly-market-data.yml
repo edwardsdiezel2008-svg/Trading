@@ -166,6 +166,16 @@ jobs:
           if [ -f paper_trading/backtest_lab.json ]; then
             cp paper_trading/backtest_lab.json _site/backtest_lab.json
           fi
+          # dashboard.html's <link rel="manifest"> / apple-touch-icon
+          # references are same-directory-relative - these have to sit
+          # alongside the staged HTML too, or "Add to Home Screen" on iPhone
+          # falls back to a blank/generic icon instead of the real one.
+          if [ -f paper_trading/manifest.json ]; then
+            cp paper_trading/manifest.json _site/manifest.json
+          fi
+          if [ -f paper_trading/apple-touch-icon.png ]; then
+            cp paper_trading/apple-touch-icon.png _site/apple-touch-icon.png
+          fi
           echo "site_ready=true" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-pages-artifact@v3
