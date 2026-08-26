@@ -13,3 +13,12 @@ data/sample/*.csv
 
 reports/*
 !reports/.gitkeep
+
+# Memecoin launch: never commit wallet keys, secrets, or local env config.
+memecoin/node_modules/
+memecoin/*.env
+memecoin/.env
+memecoin/**/*keypair*.json
+memecoin/wallet.json
+memecoin/launch-summary.json
+memecoin/metadata.json
