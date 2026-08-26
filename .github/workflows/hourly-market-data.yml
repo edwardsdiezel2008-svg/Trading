@@ -85,6 +85,24 @@ jobs:
             fi
           done
 
+      - name: Update Nasdaq Futures extra timeframes (1-min, 15-min, 1-hour - NQ only)
+        run: |
+          if [ -f "paper_trading/bars_nq1m.csv" ]; then
+            python scripts/paper_trade_update.py --suffix "_nq1m" --symbol MNQ --freq 1min --tracking-start "2026-08-11" --cost-aware-min-multiple 1.0 --bars-file "paper_trading/bars_nq1m.csv"
+          else
+            echo "Skipping nq1m update - no bars_nq1m.csv yet (first fetch hasn't succeeded)"
+          fi
+          if [ -f "paper_trading/bars_nq15m.csv" ]; then
+            python scripts/paper_trade_update.py --suffix "_nq15m" --symbol MNQ --freq 15min --tracking-start "2026-08-11" --cost-aware-min-multiple 1.0 --bars-file "paper_trading/bars_nq15m.csv"
+          else
+            echo "Skipping nq15m update - no bars_nq15m.csv yet (first fetch hasn't succeeded)"
+          fi
+          if [ -f "paper_trading/bars_nq1h.csv" ]; then
+            python scripts/paper_trade_update.py --suffix "_nq1h" --symbol MNQ --freq 1h --tracking-start "2026-08-11" --bars-file "paper_trading/bars_nq1h.csv"
+          else
+            echo "Skipping nq1h update - no bars_nq1h.csv yet (first fetch hasn't succeeded)"
+          fi
+
       - name: Update memecoin scanners (precise + wide)
         run: |
           python scripts/memecoin_scan_update.py
@@ -92,6 +110,22 @@ jobs:
 
       - name: Fetch market news
         run: python scripts/fetch_news.py
+
+      # 19 strategies x up to 50 real PARAM_SPACE combos each x 7 tracks
+      # (~1,650-1,850 backtests), ~5 minutes - recomputed from scratch every
+      # run (same "just recompute everything" approach as the walk-forward/
+      # sensitivity/survivor-stress-test scripts) rather than incrementally,
+      # since correctness from a full recompute is worth more than the
+      # saved time here. Skipped only if one of the seven 1-5min bar files
+      # genuinely doesn't exist yet (first-ever run before any fetch step
+      # above has produced it).
+      - name: Update Backtest Lab (19 strategies, up to 50 configs each, 7 one-to-five-minute tracks)
+        run: |
+          if [ -f "paper_trading/bars_nq1m.csv" ] && [ -f "paper_trading/bars_nq5m.csv" ]; then
+            python scripts/build_backtest_lab.py
+          else
+            echo "Skipping Backtest Lab update - 1-5min bar files not seeded yet"
+          fi
 
       - name: Rebuild dashboard HTML
         run: python scripts/build_paper_trading_dashboard.py
@@ -113,9 +147,35 @@ jobs:
         id: stage
         run: |
           mkdir -p _site
-          cp paper_trading/index.html _site/index.html
-          cp paper_trading/dashboard.html _site/dashboard.html
-          cp paper_trading/learn.html _site/learn.html
+          # Every top-level built page, not a hand-maintained list - a new
+          # page (news.html, backtest_lab.html) previously had to be added
+          # here separately and wasn't, so it silently never deployed
+          # despite building and testing clean locally. Excludes
+          # *_template.html (the editable sources, not deploy targets).
+          for f in paper_trading/*.html; do
+            base=$(basename "$f")
+            case "$base" in
+              *_template.html) continue ;;
+            esac
+            cp "$f" "_site/$base"
+          done
+          # backtest_lab.html fetches this at runtime rather than having it
+          # inlined (13MB is too much to parse synchronously as part of the
+          # page's own script) - so it has to be staged alongside the HTML,
+          # not just referenced by the build step that writes the HTML.
+          if [ -f paper_trading/backtest_lab.json ]; then
+            cp paper_trading/backtest_lab.json _site/backtest_lab.json
+          fi
+          # dashboard.html's <link rel="manifest"> / apple-touch-icon
+          # references are same-directory-relative - these have to sit
+          # alongside the staged HTML too, or "Add to Home Screen" on iPhone
+          # falls back to a blank/generic icon instead of the real one.
+          if [ -f paper_trading/manifest.json ]; then
+            cp paper_trading/manifest.json _site/manifest.json
+          fi
+          if [ -f paper_trading/apple-touch-icon.png ]; then
+            cp paper_trading/apple-touch-icon.png _site/apple-touch-icon.png
+          fi
           echo "site_ready=true" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-pages-artifact@v3
