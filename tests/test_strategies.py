@@ -158,6 +158,26 @@ def test_vwap_reversion_flat_when_price_tracks_vwap():
     assert (signals.iloc[20:] == 0).all()
 
 
+def test_vwap_reversion_does_not_flip_sign_when_vwap_goes_negative():
+    # Real, not hypothetical: CL (crude oil) futures traded at -$37.63 on
+    # 2020-04-20 (still present in paper_trading/bars_cl.csv). A rolling
+    # window dominated by deeply negative typical prices can carry the
+    # rolling VWAP itself negative - dividing by that raw (signed) vwap
+    # flips the sign of the whole distance, so a close that's genuinely
+    # ABOVE vwap (closer to zero, i.e. less negative) reads as being below
+    # it. Here vwap is ~-100 and close is -50 - closer to zero, so price is
+    # actually above vwap and this should signal SHORT, not the LONG a
+    # sign-flipped distance would wrongly produce.
+    price = [-100.0] * 20 + [-50.0]
+    idx = pd.date_range("2026-01-05", periods=len(price), freq="1min")
+    bars = pd.DataFrame({
+        "open": price, "high": price, "low": price, "close": price, "volume": 1000.0,
+    }, index=idx)
+    strategy = VWAPReversion(params={"window": 20, "entry_pct": 0.02, "exit_pct": 0.005})
+    signals = strategy.generate_signals(bars)
+    assert signals.iloc[-1] == -1
+
+
 def _bar(o, h, l, c, v=100):
     return {"open": o, "high": h, "low": l, "close": c, "volume": v}
 

@@ -130,7 +130,13 @@ class VWAPReversion(Strategy):
         pv_sum = (typical * volume).rolling(window).sum()
         vol_sum = volume.rolling(window).sum().replace(0, np.nan)
         vwap = pv_sum / vol_sum
-        dist = (close - vwap) / vwap
+        # abs(vwap), not vwap: CL futures went negative in April 2020, and a
+        # rolling window dominated by negative typical prices can carry vwap
+        # negative too. Dividing by a negative vwap flips the sign of the
+        # whole distance - price sitting ABOVE vwap would read as being
+        # below it (and vice versa). abs() keeps "how far" correct regardless
+        # of vwap's own sign; (close - vwap) still carries the true direction.
+        dist = (close - vwap) / vwap.abs()
 
         raw = pd.Series(np.nan, index=bars.index)
         raw[dist <= -entry_pct] = 1
