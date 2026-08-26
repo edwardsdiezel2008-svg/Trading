@@ -142,7 +142,18 @@ def run_walk_forward(
         # first value already reflects the first test bar's P&L, matching `multiple`
         # below - otherwise the stitched curve would silently reset to flat at every
         # fold boundary instead of compounding continuously through it.
-        if equity_at_train_end > 0:
+        #
+        # Guard on running_capital too, not just equity_at_train_end: each fold's
+        # full_res is a fresh recompute from bar 0 using THAT fold's own newly
+        # grid-searched best_combo, so equity_at_train_end can come back positive
+        # even after running_capital (the actual carried-forward, chronological
+        # multiplier built from each fold's realized combo) has already gone
+        # non-positive from an earlier fold's blowup - a later fold simply picking
+        # safer params doesn't undo a prior fold's loss. Rebasing a blown account
+        # off a later fold's unrelated positive equity_at_train_end would un-freeze
+        # a curve that should stay flat.
+        alive = running_capital > 0 and equity_at_train_end > 0
+        if alive:
             rebased = (test_equity_abs / equity_at_train_end) * running_capital
         else:
             rebased = pd.Series(running_capital, index=test_equity_abs.index)
@@ -151,7 +162,8 @@ def run_walk_forward(
         positions_pieces.append(test_positions)
         signals_pieces.append(test_signals)
         combined_trades.extend(fold_trades)
-        running_capital = running_capital * multiple
+        if alive:
+            running_capital = running_capital * multiple
 
         folds.append(Fold(
             fold_idx=k,

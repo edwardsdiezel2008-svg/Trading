@@ -138,6 +138,47 @@ def test_oos_curve_flat_lines_once_a_fold_blows_the_account_negative():
     assert seg.nunique() == 1, "a fold starting from non-positive equity should flat-line, not rescale"
 
 
+def test_oos_curve_stays_frozen_even_when_a_later_fold_avoids_the_blowup():
+    # A different way for the same "no more capital to compound" invariant to
+    # break: unlike the test above (where the SAME strategy behavior blows up
+    # equity_at_train_end for both the running total and the fold's own
+    # recompute in lockstep), each fold here grid-searches its own best_combo
+    # independently. A later fold can pick a combo whose from-bar-0 recompute
+    # never touches the earlier blowup at all - so equity_at_train_end comes
+    # back positive - even though running_capital (the actual chronological
+    # multiplier, built from each fold's OWN realized combo as the walk
+    # actually happened) is still negative from an earlier fold's loss. The
+    # display must stay frozen on running_capital's sign, not equity_at_train_end's.
+    class DirectionPick(Strategy):
+        PARAM_SPACE = {"direction": [1, -1]}
+
+        def generate_signals(self, bars):
+            return pd.Series(self.params.get("direction", 1), index=bars.index)
+
+    n = 300
+    prices = np.empty(n)
+    prices[:150] = np.linspace(200.0, 100.0, 150)      # decline: favors short
+    prices[150:225] = np.linspace(100.0, 5000.0, 75)   # huge spike: blows up a short
+    prices[225:] = np.linspace(5000.0, 5200.0, 75)     # mild continued rise: favors long
+    bars = _bars(prices)
+    spec = InstrumentSpec("TEST", "equity", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0)
+
+    wf = run_walk_forward(bars, DirectionPick, spec, n_folds=3, capital_fraction=1.0, sizing="percent_equity")
+
+    assert len(wf.folds) == 3
+    # Confirms this setup actually exercises the bug's precondition: fold 2
+    # picked "short" (blown up by the spike in its own test window) while
+    # fold 3 picked "long" instead.
+    assert wf.folds[1].chosen_params["direction"] == -1
+    assert wf.folds[2].chosen_params["direction"] == 1
+
+    eq = wf.oos_equity_curve
+    fold3 = wf.folds[2]
+    assert eq.loc[fold3.test_start] <= 0  # running_capital is still negative entering fold 3
+    seg = eq.loc[fold3.test_start:fold3.test_end]
+    assert seg.nunique() == 1, "a fold that avoids the blowup must not un-freeze an already-blown account"
+
+
 def test_raises_when_too_little_data_for_first_fold():
     bars = _bars(_trending_prices(n=20, seed=1))
     with pytest.raises(ValueError):
