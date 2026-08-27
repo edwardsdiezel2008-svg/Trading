@@ -1,6 +1,6 @@
 # Crypto + index futures paper trading cockpit
 
-Simulated (no real money) live trading of 18 backtested strategies across 20
+Simulated (no real money) live trading of 19 backtested strategies across 20
 tracks - BTC (daily, 15-minute, 3x leveraged perpetual daily, 3x leveraged
 perpetual 15-minute), ETH (daily, 3x leveraged perpetual), SOL (daily, 3x
 leveraged perpetual), and real CME/COMEX/NYMEX futures across six markets -
