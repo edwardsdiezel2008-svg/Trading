@@ -14,7 +14,10 @@ minimal landing page; `/dashboard.html` is the full detail page with every
 track, chart, and table; `/learn.html` is a static methodology/glossary
 page - what each strategy trades, how results get validated (walk-forward,
 param stability, cross-asset robustness), and what every metric on the
-dashboard means.
+dashboard means. `dashboard.html` is also installable as a home-screen app
+on iPhone (Safari -> Share -> Add to Home Screen): a `manifest.json` +
+`apple-touch-icon.png` give it a real icon and a standalone, no-address-bar
+launch instead of a plain bookmark.
 
 ## How it actually works
 
