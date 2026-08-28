@@ -1,16 +1,16 @@
-# BTC/USDT Paper Trading (1D) — updated 2026-08-27T23:20:21.856488+00:00
+# BTC/USDT Paper Trading (1D) — updated 2026-08-28T01:19:25.215836+00:00
 
-Latest bar: 2026-08-27 00:00:00 · 2,166 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-28 00:00:00 · 2,167 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $761,662 | +661.7% | — | 1 |
-| Keltner_Breakout(20,m=2.0) | LONG | $818,089 | +718.1% | 0.76 | 29 |
-| MA_Crossover(10/50) | LONG | $295,436 | +195.4% | 0.66 | 46 |
-| ATR_Vol_Breakout(14,k=1.5) | LONG | $195,965 | +96.0% | 0.64 | 49 |
+| *Buy & Hold (benchmark)* | — | $767,914 | +667.9% | — | 1 |
+| Keltner_Breakout(20,m=2.0) | LONG | $833,986 | +734.0% | 0.76 | 29 |
+| MA_Crossover(10/50) | LONG | $301,177 | +201.2% | 0.66 | 46 |
+| ATR_Vol_Breakout(14,k=1.5) | LONG | $199,773 | +99.8% | 0.65 | 49 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $100,000 | +0.0% | — | 0 |
-| MACD_Momentum(12/26/9) | LONG | $2,103 | -97.9% | 0.32 | 161 |
+| MACD_Momentum(12/26/9) | LONG | $2,140 | -97.9% | 0.32 | 161 |
 | Parabolic_SAR(af=0.02,max=0.2) | LONG | $40 | -100.0% | -0.04 | 180 |
 | Engulfing_Reversal(0.3) | FLAT | $-0 | -100.0% | 0.12 | 150 |
 | CCI_Reversion(20,100) | FLAT | $-273 | -100.3% | -0.70 | 9 |
