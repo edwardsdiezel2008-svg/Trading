@@ -183,3 +183,38 @@ def test_position_size_returns_zero_for_non_positive_equity_or_price():
     assert _position_size(equity=0.0, price=100.0, spec=spec, capital_fraction=1.0, sizing="percent_equity", fixed_units=0) == 0.0
     assert _position_size(equity=-500.0, price=100.0, spec=spec, capital_fraction=1.0, sizing="percent_equity", fixed_units=0) == 0.0
     assert _position_size(equity=10_000.0, price=0.0, spec=spec, capital_fraction=1.0, sizing="percent_equity", fixed_units=0) == 0.0
+
+
+def test_position_size_returns_zero_for_non_positive_equity_even_with_fixed_units():
+    # fixed_units sizing derives size from a constant, not from equity, so it
+    # has no natural reason to stop once equity is blown - it must still
+    # refuse to size a position once the account has no equity left,
+    # otherwise a blown fixed_units account (every futures track's default
+    # sizing) could keep re-entering fixed-size trades forever.
+    from src.backtest.engine import _position_size
+
+    spec = _flat_spec()
+    assert _position_size(equity=0.0, price=100.0, spec=spec, capital_fraction=1.0, sizing="fixed_units", fixed_units=1000) == 0.0
+    assert _position_size(equity=-500.0, price=100.0, spec=spec, capital_fraction=1.0, sizing="fixed_units", fixed_units=1000) == 0.0
+
+
+def test_fixed_units_sizing_does_not_re_enter_after_max_loss_fraction_wipes_the_account():
+    # A long entered at 100 crashes to 1 - a >99% loss that blows equity deep
+    # negative despite max_loss_fraction=0.5's force-close (the same single-
+    # bar-gap-risk precondition documented on max_loss_fraction). The
+    # strategy then flips to short at bar 2. Before the _position_size fix,
+    # fixed_units sizing ignored the equity<=0 guard entirely, so this short
+    # would open anyway with a negative entry_equity - a blown account that
+    # keeps trading, contradicting max_loss_fraction's whole purpose. Must
+    # stay flat instead.
+    closes = [100, 100, 1, 1, 1, 1]
+    opens = [100, 100, 100, 1, 1, 1]
+    bars = _bars(closes, opens=opens)
+    spec = _flat_spec()
+    strat = FlipAtBar(params={"flip_at": 2})
+
+    result = run_backtest(bars, strat, spec, initial_capital=10_000, sizing="fixed_units", fixed_units=1000, slippage_ticks=0, max_loss_fraction=0.5)
+
+    assert len(result.trades) == 1  # only the original long, no re-entry short
+    assert (result.positions.iloc[2:] == 0).all()  # flat for the rest of the backtest
+    assert (result.equity_curve.iloc[2:] == result.equity_curve.iloc[2]).all()  # frozen, not moving further

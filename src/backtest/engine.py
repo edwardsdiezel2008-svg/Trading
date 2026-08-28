@@ -78,10 +78,21 @@ def _position_size(
     sizing: str,
     fixed_units: float,
 ) -> float:
+    # Checked before the sizing branch, not just inside percent_equity's: a
+    # blown account (equity <= 0) must never re-enter, in fixed_units mode
+    # too - fixed_units sizing doesn't derive size from equity, so without
+    # this it would keep opening fixed-size trades forever after max_loss_
+    # fraction's force-close, contradicting this module's own stated intent
+    # that a real account gets liquidated, not left to keep trading a wiped
+    # margin. Futures tracks (this system's only fixed_units users) default
+    # to fixed_units, so this guard is what actually makes max_loss_fraction
+    # a real floor for them rather than just a delay before ruin.
+    if equity <= 0:
+        return 0.0
     if sizing == "fixed_units":
         return float(fixed_units)
     notional_per_unit = price * spec.multiplier
-    if notional_per_unit <= 0 or equity <= 0:
+    if notional_per_unit <= 0:
         return 0.0
     raw_units = (equity * capital_fraction) / notional_per_unit
     if spec.fractional_units:
