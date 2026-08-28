@@ -183,7 +183,17 @@ def _update_track_record(bars, strategy_name, result, capital, tracking_start, t
     eq = result.equity_curve
     equity_at_start = eq.iloc[start_idx - 1] if start_idx > 0 else capital
     current_equity = eq.iloc[-1]
-    return_since_start = current_equity / equity_at_start - 1 if equity_at_start else 0.0
+    # Guard on equity_at_start > 0, not just truthy: a max_loss_fraction floor
+    # only checks at bar close, so a large enough gap can still push equity
+    # non-positive (see engine.py's own max_loss_fraction docstring). A
+    # negative equity_at_start is truthy, so `if equity_at_start` lets the
+    # division through - and a MORE negative current_equity (i.e. the account
+    # losing further) can divide out to a ratio > 1, displaying as a POSITIVE
+    # return when the account actually lost more money. Once the tracking
+    # window's starting equity is already non-positive there's no capital
+    # left to measure a return against, so show 0% rather than a sign-flipped
+    # percentage.
+    return_since_start = current_equity / equity_at_start - 1 if equity_at_start > 0 else 0.0
 
     latest_bar_key = str(bars.index[-1])
     row = {

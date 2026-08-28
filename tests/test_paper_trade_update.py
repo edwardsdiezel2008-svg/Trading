@@ -93,6 +93,27 @@ def test_update_track_record_falls_back_to_capital_when_tracking_start_predates_
     assert df.iloc[0]["return_since_tracking_start_pct"] == pytest.approx((200.0 / 100_000.0 - 1) * 100, abs=1e-6)
 
 
+def test_update_track_record_shows_zero_not_a_sign_flip_when_start_equity_is_already_negative(tmp_path):
+    # A max_loss_fraction floor is only checked at bar close, so a large
+    # enough gap can still push equity non-positive (confirmed reachable on
+    # real futures data - see engine.py's max_loss_fraction docstring). If
+    # the bar right before tracking_start already has negative equity and
+    # the account loses even MORE by the latest bar, dividing a more-negative
+    # current_equity by a negative equity_at_start can produce a ratio > 1 -
+    # i.e. a POSITIVE displayed return for an account that actually lost
+    # more money. Must show 0%, not a sign-flipped percentage, whichever
+    # direction equity moves from there.
+    idx = pd.date_range("2026-01-01", periods=3, freq="D")
+    bars = pd.DataFrame({"close": [1.0] * 3}, index=idx)
+    result = _result([100.0, -1000.0, -1200.0], [1, 1, 1], idx)
+    path = tmp_path / "track_record.csv"
+    _update_track_record(bars, "Trend", result, capital=100_000.0, tracking_start=idx[2], track_record_path=str(path))
+
+    df = pd.read_csv(path)
+    assert df.iloc[0]["equity"] == -1200.0
+    assert df.iloc[0]["return_since_tracking_start_pct"] == 0.0
+
+
 def test_update_track_record_replaces_rather_than_duplicates_the_same_date_and_strategy(tmp_path):
     idx = pd.date_range("2026-01-01", periods=2, freq="D")
     bars = pd.DataFrame({"close": [1.0, 1.0]}, index=idx)
