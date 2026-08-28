@@ -1,0 +1,131 @@
+<!--
+  Landing page template. Fill in the placeholders below (search for {{ }})
+  before publishing - most importantly {{MINT_ADDRESS}}, which should only
+  go live once the token is actually minted, and the disclaimer at the
+  bottom, which should stay as-is.
+
+  This is a static file with no build step - open it directly, or deploy
+  it however you deploy the rest of this repo's pages (see
+  .github/workflows/ for the existing GitHub Pages pattern).
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TOKEN_NAME}} ({{TOKEN_SYMBOL}})</title>
+<style>
+  :root {
+    --bg: #0b0b12;
+    --panel: #15151f;
+    --border: #2a2a3a;
+    --text: #f2f2f7;
+    --muted: #9a9ab0;
+    --accent: #7c5cff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 48px 20px 80px; }
+  header { text-align: center; margin-bottom: 40px; }
+  .symbol-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+  }
+  h1 { font-size: 40px; margin: 0 0 8px; }
+  .tagline { color: var(--muted); font-size: 18px; margin: 0; }
+  .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
+  .btn {
+    display: inline-block;
+    padding: 12px 22px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  section { margin-top: 36px; }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+  }
+  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 16px; }
+  .mint-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    padding: 12px 14px;
+    word-break: break-all;
+  }
+  .checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .checklist li { display: flex; gap: 10px; align-items: baseline; font-size: 14px; color: var(--muted); }
+  .checklist li::before { content: "\2713"; color: #4ade80; font-weight: bold; }
+  .disclaimer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <span class="symbol-badge">${{TOKEN_SYMBOL}}</span>
+      <h1>{{TOKEN_NAME}}</h1>
+      <p class="tagline">{{ONE_LINE_PREMISE}}</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="{{DEX_LINK}}">Trade</a>
+        <a class="btn btn-secondary" href="https://solscan.io/token/{{MINT_ADDRESS}}">View on Solscan</a>
+        <a class="btn btn-secondary" href="{{TWITTER_LINK}}">X / Twitter</a>
+        <a class="btn btn-secondary" href="{{TELEGRAM_LINK}}">Telegram</a>
+      </div>
+    </header>
+
+    <section class="panel">
+      <h2>Contract</h2>
+      <div class="mint-row">
+        <span>{{MINT_ADDRESS}}</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Verified on-chain</h2>
+      <ul class="checklist">
+        <li>Mint authority revoked - supply is fixed forever</li>
+        <li>Freeze authority revoked - no wallet can be frozen</li>
+        <li>Liquidity locked/burned - see transaction: <a href="{{LP_LOCK_TX_LINK}}" style="color: inherit;">{{LP_LOCK_TX_LINK}}</a></li>
+        <li>100% of supply to liquidity - no team/presale allocation</li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      {{TOKEN_NAME}} is a memecoin with no inherent utility or expectation
+      of financial return. Nothing on this page is financial advice.
+      Cryptocurrency, and memecoins in particular, are highly speculative
+      and you should only ever risk money you can afford to lose
+      completely. Do your own research.
+    </p>
+  </div>
+</body>
+</html>

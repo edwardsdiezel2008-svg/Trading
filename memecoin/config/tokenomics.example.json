@@ -1,0 +1,34 @@
+{
+  "_comment": "Copy to tokenomics.json and edit. This feeds the off-chain metadata JSON (upload-metadata.js) that wallets/explorers/DEXes display. Keep it accurate - mismatched or missing fields are a top reason legitimate-effort tokens get flagged as low-effort or scam.",
+
+  "name": "Example Memecoin",
+  "symbol": "EXMC",
+  "description": "One or two honest sentences about what this token is and is not. Do not claim utility, returns, or partnerships that don't exist.",
+
+  "decimals": 6,
+  "totalSupply": 1000000000,
+
+  "image": "https://your-permanent-image-host/logo.png",
+  "external_url": "https://your-landing-page.example",
+
+  "socials": {
+    "twitter": "https://x.com/yourhandle",
+    "telegram": "https://t.me/yourgroup",
+    "website": "https://your-landing-page.example"
+  },
+
+  "supplyAllocation": {
+    "_comment": "Document where every token goes. 100% to the LP at launch (fair-launch style) is the single strongest trust signal a new memecoin can give - it means no pre-sale allocation for the deployer to dump. If you deviate from that, disclose the split publicly before launch, not after.",
+    "liquidityPool": "100%",
+    "team": "0%",
+    "marketing": "0%"
+  },
+
+  "creatorCommitments": {
+    "_comment": "What revoke-authorities.js and the LP guide will actually do - fill in true/false honestly and then do it, since these are externally verifiable on-chain and on Solscan/RugCheck within minutes of launch.",
+    "mintAuthorityRevoked": true,
+    "freezeAuthorityRevoked": true,
+    "liquidityLockedOrBurned": true,
+    "liquidityLockDurationDays": 0
+  }
+}
