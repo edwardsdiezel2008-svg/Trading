@@ -35,7 +35,12 @@ def compute_metrics(result: BacktestResult, initial_capital: float, freq_hint: s
     returns = equity.pct_change().dropna()
     ann_factor = _annualization_factor(result.bars, freq_hint)
 
-    total_return = (equity.iloc[-1] / initial_capital) - 1 if len(equity) else 0.0
+    # initial_capital can be non-positive here (walk-forward passes a fold's
+    # own equity_at_train_end, which is <= 0 once that fold started already
+    # blown) - dividing by it would flip signs into a misleading ratio rather
+    # than error, so treat it the same "flat, no return to report" way the
+    # rest of walkforward.py treats an already-blown account.
+    total_return = (equity.iloc[-1] / initial_capital) - 1 if len(equity) and initial_capital > 0 else 0.0
     n_periods = len(equity)
     years = n_periods / ann_factor if ann_factor else np.nan
     # Annualizing a short backtest compounds noise into meaningless numbers
@@ -43,7 +48,7 @@ def compute_metrics(result: BacktestResult, initial_capital: float, freq_hint: s
     # CAGR/Calmar are only reported once the backtest spans at least a month.
     # total_return is always exact regardless of span - use that for short runs.
     min_years_for_annualization = 1 / 12
-    can_annualize = years and years >= min_years_for_annualization and equity.iloc[-1] > 0
+    can_annualize = years and years >= min_years_for_annualization and equity.iloc[-1] > 0 and initial_capital > 0
     cagr = (equity.iloc[-1] / initial_capital) ** (1 / years) - 1 if can_annualize else np.nan
 
     vol = returns.std()

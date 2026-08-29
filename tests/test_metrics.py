@@ -58,6 +58,21 @@ def pytest_approx(x):
     return pytest.approx(x)
 
 
+def test_total_return_and_cagr_are_safe_when_initial_capital_is_non_positive():
+    # walk-forward passes a fold's own equity_at_train_end as initial_capital,
+    # which is <= 0 once that fold started already blown. Dividing by it would
+    # flip signs into a misleading return (or, with a fractional annualization
+    # exponent, silently produce NaN from a negative base) instead of the
+    # "flat, nothing to report" treatment the rest of walkforward.py gives an
+    # already-blown account.
+    equity = [800, 900, 1_000]
+    result = _result_from_equity(equity)
+    metrics = compute_metrics(result, initial_capital=-500)
+
+    assert metrics["total_return"] == 0.0
+    assert np.isnan(metrics["cagr"])
+
+
 def test_annualization_factor_falls_back_to_252_with_fewer_than_two_bars_and_no_freq_hint():
     from src.backtest.metrics import _annualization_factor
 
