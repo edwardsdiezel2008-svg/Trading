@@ -1,4 +1,4 @@
-# MES Paper Trading (5min) — updated 2026-08-29T09:26:53.060160+00:00
+# MES Paper Trading (5min) — updated 2026-08-29T10:17:36.269988+00:00
 
 Latest bar: 2026-08-28 20:55:00 · 17,454 bars of history · $100,000 starting capital per strategy
 
