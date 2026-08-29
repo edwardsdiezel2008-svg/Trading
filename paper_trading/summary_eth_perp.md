@@ -1,13 +1,13 @@
-# ETH/USDT Paper Trading (1D) — updated 2026-08-28T23:17:15.102845+00:00
+# ETH/USDT Paper Trading (1D) — updated 2026-08-29T00:17:30.946074+00:00
 
-Latest bar: 2026-08-28 00:00:00 · 2,167 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-29 00:00:00 · 2,168 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $707,906 | +607.9% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $709,557 | +609.6% | — | 1 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $100,000 | +0.0% | — | 0 |
-| Supertrend(10,m=3.0) | LONG | $2,300 | -97.7% | 0.57 | 48 |
+| Supertrend(10,m=3.0) | LONG | $2,311 | -97.7% | 0.57 | 48 |
 | Parabolic_SAR(af=0.02,max=0.2) | LONG | $0 | -100.0% | -0.11 | 174 |
 | Stochastic_Reversion(14,20/80) | FLAT | $-8 | -100.0% | 0.26 | 3 |
 | MACD_Momentum(12/26/9) | FLAT | $-1,421 | -101.4% | -0.22 | 12 |
@@ -18,7 +18,7 @@ Latest bar: 2026-08-28 00:00:00 · 2,167 bars of history · $100,000 starting ca
 | RSI_Reversion(14,30/70) | FLAT | $-8,034 | -108.0% | -0.39 | 4 |
 | VWAP_Reversion(20,2%) | FLAT | $-14,888 | -114.9% | -0.43 | 5 |
 | CCI_Reversion(20,100) | FLAT | $-29,895 | -129.9% | -0.26 | 8 |
-| TPO_Reversion(60,p=5) | FLAT | $-47,802 | -147.8% | -0.27 | 5 |
+| TPO_Reversion(60,p=5) | FLAT | $-47,802 | -147.8% | -0.26 | 5 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $-49,134 | -149.1% | 0.14 | 2 |
 | Inside_Bar_Breakout(0.6) | FLAT | $-89,236 | -189.2% | -0.01 | 2 |
 | MA_Crossover(10/50) | FLAT | $-190,049 | -290.0% | 0.03 | 3 |
