@@ -113,7 +113,14 @@ def load_bars(path: str, freq: str = "1min", column_map: dict[str, str] | None =
                 raise ValueError(f"Missing required column '{target}' in {path}")
             renamed[col] = target
         full = full.rename(columns=renamed)
-        return full[["open", "high", "low", "close", "volume"]]
+        # A NaN/blank OHLC value (a bad print from the upstream data source,
+        # e.g. Yahoo Finance occasionally returning an empty field for a
+        # given date) would otherwise load silently and poison the engine's
+        # cumulative equity sum for the rest of the backtest - every bar
+        # after it comes out NaN too, since equity is built via `+=`. The
+        # tick-resampling path below already drops such rows; the bar-level
+        # path needs the same guard.
+        return full[["open", "high", "low", "close", "volume"]].dropna(subset=["open", "high", "low", "close"])
 
     ticks = load_ticks(path, column_map=column_map)
     return ticks_to_bars(ticks, freq=freq)

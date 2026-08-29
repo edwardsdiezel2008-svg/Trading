@@ -556,6 +556,33 @@ def test_load_track_reads_and_types_real_files(tmp_path, monkeypatch):
     assert track_record[0]["position"] == 1.0
 
 
+def test_load_track_skips_a_row_with_a_blank_equity_instead_of_crashing(tmp_path, monkeypatch):
+    # A real outage this project hit: a NaN equity (from a data-source bad
+    # print poisoning a backtest's cumulative sum - see
+    # data_loader.load_bars) writes out as a blank CSV field, not "nan" -
+    # float('') raises. One corrupted row for one strategy must not take
+    # down the site build for every track; the good rows must still load.
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("paper_trading", exist_ok=True)
+    with open("paper_trading/positions_zz.json", "w") as f:
+        json.dump({"strategies": {}}, f)
+    _write_bars_csv("paper_trading/trade_log_zz.csv", ["strategy", "net_pnl", "entry_price", "exit_price"], [])
+    _write_bars_csv(
+        "paper_trading/track_record_zz.csv",
+        ["date", "strategy", "equity", "return_since_tracking_start_pct", "position"],
+        [
+            ["2026-01-01", "MA_Crossover", "", "", "1"],
+            ["2026-01-01", "Donchian_Breakout", "100500.0", "0.5", "1"],
+        ],
+    )
+
+    _, _, track_record = load_track("_zz")
+
+    assert len(track_record) == 1
+    assert track_record[0]["strategy"] == "Donchian_Breakout"
+    assert track_record[0]["equity"] == 100500.0
+
+
 def test_load_track_skips_track_record_when_file_is_absent(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     os.makedirs("paper_trading", exist_ok=True)

@@ -86,6 +86,26 @@ def test_load_bars_raises_when_no_timestamp_column_is_identifiable(tmp_path):
         load_bars(str(path))
 
 
+def test_load_bars_drops_rows_with_nan_ohlc(tmp_path):
+    # A real outage this project hit: a data source (Yahoo Finance) wrote a
+    # blank close for one date in an otherwise-fine bar-level CSV. Loading
+    # it silently would poison run_backtest's cumulative equity sum for
+    # every bar from that point on (equity is built via `+=`), corrupting
+    # the whole backtest rather than just the one bad bar - the same
+    # protection ticks_to_bars already gives the resampling path.
+    path = tmp_path / "bars.csv"
+    pd.DataFrame({
+        "timestamp": pd.date_range("2026-01-05", periods=4, freq="1min"),
+        "open": [1, 2, None, 4], "high": [1.5, 2.5, 3.5, 4.5],
+        "low": [0.5, 1.5, 2.5, 3.5], "close": [1.2, 2.2, 3.2, 4.2],
+        "volume": [10, 20, 30, 40],
+    }).to_csv(path, index=False)
+
+    bars = load_bars(str(path))
+    assert len(bars) == 3
+    assert not bars["open"].isna().any()
+
+
 def test_load_bars_defaults_missing_volume_to_zero(tmp_path):
     path = tmp_path / "bars.csv"
     # A real shape this project has hit: some historical exports have OHLC

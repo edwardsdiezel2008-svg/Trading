@@ -368,11 +368,20 @@ def load_track(suffix):
     track_record = []
     if os.path.exists(track_record_path):
         with open(track_record_path) as f:
-            track_record = list(csv.DictReader(f))
-        for r in track_record:
-            r["equity"] = float(r["equity"])
-            r["return_since_tracking_start_pct"] = float(r["return_since_tracking_start_pct"])
-            r["position"] = float(r["position"])
+            raw_rows = list(csv.DictReader(f))
+        for r in raw_rows:
+            # A NaN equity (e.g. from a data-source bad print poisoning a
+            # backtest's cumulative sum - see data_loader.load_bars) writes
+            # out as a blank field, not the text "nan" - `float('')` raises.
+            # One corrupted historical row must not crash the whole site
+            # build for every track; skip just that row instead.
+            try:
+                r["equity"] = float(r["equity"])
+                r["return_since_tracking_start_pct"] = float(r["return_since_tracking_start_pct"])
+                r["position"] = float(r["position"])
+            except ValueError:
+                continue
+            track_record.append(r)
 
     return positions, trades, track_record
 
