@@ -161,6 +161,33 @@ def test_merge_bars_csv_preserves_existing_rows_not_present_in_the_new_batch(tmp
     assert len(rows) == 3  # header + two data rows, the older one kept
 
 
+def test_merge_bars_csv_skips_a_candle_with_unparseable_ohlc_instead_of_writing_it(tmp_path):
+    # A real outage this project hit: a blank/unparseable field from the
+    # upstream source (Yahoo Finance) passed through _sanitize_ohlc
+    # unchanged and got written straight into the CSV - load_bars then
+    # loaded that garbage silently, poisoning run_backtest's cumulative
+    # equity sum for every bar afterward and crashing the site build
+    # downstream. A missing bar (skip it) is far cheaper than a bad one
+    # baked permanently into the historical record.
+    path = str(tmp_path / "bars.csv")
+    candles = [
+        {"t": 1_700_000_000_000, "o": "", "h": 3, "l": 1, "c": 2.5, "v": 10},
+        {"t": 1_699_900_000_000, "o": 1, "h": 2, "l": 0.5, "c": 1.5, "v": 5},
+    ]
+    n = merge_bars_csv(path, candles)
+    assert n == 1
+    with open(path) as f:
+        rows = list(csv.reader(f))
+    assert len(rows) == 2  # header + only the one good row
+    assert rows[1][1] == "1.0"
+
+
+def test_merge_bars_csv_skips_a_candle_with_nan_ohlc(tmp_path):
+    path = str(tmp_path / "bars.csv")
+    n = merge_bars_csv(path, [{"t": 1_700_000_000_000, "o": float("nan"), "h": 3, "l": 1, "c": 2.5, "v": 10}])
+    assert n == 0
+
+
 def test_merge_bars_csv_date_only_mode_collapses_intraday_candles_onto_one_daily_row(tmp_path):
     path = str(tmp_path / "bars.csv")
     candles = [

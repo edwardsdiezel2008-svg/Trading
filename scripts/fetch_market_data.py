@@ -20,6 +20,7 @@ import argparse
 import csv
 import datetime
 import json
+import math
 import os
 import time
 
@@ -328,6 +329,7 @@ def merge_bars_csv(path, candles, date_only=False):
             for row in r:
                 rows[row[0]] = row
 
+    skipped = 0
     for c in candles:
         dt = _candle_timestamp(c)
         ts = dt.strftime("%Y-%m-%d") if date_only else dt.strftime("%Y-%m-%d %H:%M:%S")
@@ -337,7 +339,21 @@ def merge_bars_csv(path, candles, date_only=False):
         cl = c.get("c", c.get("close"))
         v = c.get("v", c.get("volume", 0))
         o, h, l, cl = _sanitize_ohlc(o, h, l, cl)
+        # _sanitize_ohlc only clamps a bad low - an unparseable or NaN
+        # o/h/l/close (a real Yahoo Finance failure mode: a blank field for
+        # one date) passes through untouched, which would otherwise write
+        # garbage straight into the permanent historical CSV. That corrupted
+        # this project once already: load_bars loaded the bad row silently,
+        # poisoning run_backtest's cumulative equity sum for every bar after
+        # it and crashing the site build downstream. Skip the whole candle
+        # rather than commit it - a missing bar is much cheaper to recover
+        # from than a bad one baked into history.
+        if not all(isinstance(x, (int, float)) and math.isfinite(x) for x in (o, h, l, cl)):
+            skipped += 1
+            continue
         rows[ts] = [ts, o, h, l, cl, v]
+    if skipped:
+        print(f"WARN merge_bars_csv({path}): skipped {skipped} candle(s) with unparseable/non-finite OHLC")
 
     with open(path, "w", newline="") as f:
         w = csv.writer(f)
