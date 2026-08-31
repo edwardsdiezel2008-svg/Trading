@@ -1,6 +1,6 @@
-# MNQ Paper Trading (15min) — updated 2026-08-31T10:18:29.365531+00:00
+# MNQ Paper Trading (15min) — updated 2026-08-31T11:19:10.679751+00:00
 
-Latest bar: 2026-08-31 10:00:00 · 5,869 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-08-31 11:00:00 · 5,873 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
@@ -14,8 +14,8 @@ Latest bar: 2026-08-31 10:00:00 · 5,869 bars of history · $100,000 starting ca
 | CCI_Reversion(20,100) | LONG | $100,764 | +0.8% | 0.19 | 552 |
 | VolProfile_Reversion(30) | FLAT | $100,252 | +0.3% | 0.08 | 629 |
 | VWAP_Reversion(20,2%) | FLAT | $100,222 | +0.2% | 0.30 | 1 |
-| Stochastic_Reversion(14,20/80) | FLAT | $100,150 | +0.2% | 0.06 | 217 |
-| ORB_ATR_Target(6,1.5xATR) | LONG | $99,587 | -0.4% | -0.15 | 141 |
+| Stochastic_Reversion(14,20/80) | LONG | $100,142 | +0.1% | 0.06 | 218 |
+| ORB_ATR_Target(6,1.5xATR) | FLAT | $99,593 | -0.4% | -0.15 | 141 |
 | RSI_Reversion(14,30/70) | FLAT | $97,574 | -2.4% | -0.86 | 156 |
 | Donchian_Breakout(20) | LONG | $95,352 | -4.6% | -0.69 | 136 |
 | Parabolic_SAR(af=0.02,max=0.2) | SHORT | $94,474 | -5.5% | -0.84 | 550 |
