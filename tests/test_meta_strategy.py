@@ -141,9 +141,14 @@ class TestRunMetaStrategyWalkforward:
             {},  # fold 3: flat
             {},  # the final live_regime_map call after the fold loop
         ]
+        # max_drawdown_fraction disabled - this test needs fold 1's forced
+        # short to genuinely blow the account negative (the whole point being
+        # tested), which the new 5% portfolio-wide drawdown breaker would
+        # otherwise stop well short of.
         with patch("src.backtest.meta_strategy.select_strategy_per_regime", side_effect=forced_regime_maps):
             result = run_meta_strategy_walkforward(
                 bars, [AlwaysShort, AlwaysLong], spec, n_folds=3, capital_fraction=1.0, sizing="percent_equity",
+                max_drawdown_fraction=None,
             )
 
         eq = result.oos_equity_curve

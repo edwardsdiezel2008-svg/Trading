@@ -113,6 +113,7 @@ def run_backtest(
     fixed_units: float = 1.0,
     slippage_ticks: float = 1.0,
     max_loss_fraction: float | None = None,
+    max_drawdown_fraction: float | None = 0.05,
 ) -> BacktestResult:
     """Run one strategy over one instrument's bars.
 
@@ -129,6 +130,17 @@ def run_backtest(
     the position is closed, so equity can go arbitrarily negative (e.g. a
     short held through a 3x rally). Real accounts never let that happen -
     they liquidate you first.
+
+    max_drawdown_fraction: a portfolio-wide circuit breaker, distinct from
+    max_loss_fraction's per-trade stop. Tracks equity's running peak; the
+    moment current equity falls this fraction below that peak, any open
+    position is force-closed and the strategy is halted flat for the
+    *remainder of the backtest* - no re-entry even if the signal later
+    wants one. Defaults to 0.05 (5%) so every caller gets this floor unless
+    it explicitly opts out with max_drawdown_fraction=None. A test that
+    means to exercise unbounded/extreme-drawdown behavior on purpose (e.g.
+    to isolate max_loss_fraction's own force-close, or NaN propagation)
+    needs to pass None explicitly - otherwise this breaker fires first.
     """
     if sizing is None:
         sizing = "fixed_units" if spec.asset_class == "future" else "percent_equity"
@@ -152,11 +164,15 @@ def run_backtest(
     entry_equity = None
     entry_bar_idx = None
     trades: list[Trade] = []
+    peak_equity = initial_capital
+    halted = False
 
     target = target_positions.to_numpy()
 
     for i in range(n):
-        p = int(target[i])
+        # Once max_drawdown_fraction has halted the strategy, no new entry is
+        # ever taken again - override whatever the signal wants with flat.
+        p = 0 if halted else int(target[i])
         o = open_[i]
         c = close[i]
 
@@ -209,7 +225,38 @@ def run_backtest(
         if current_direction != 0:
             equity += current_units * current_direction * (c - o) * spec.multiplier
 
-        # 4. Stop-loss/liquidation floor: force-close if this leg's mark-to-market
+        # 4. Portfolio-wide drawdown breaker: force-close (if a position is open)
+        #    and halt ALL future trading the moment equity falls max_drawdown_
+        #    fraction below its running peak. Unlike max_loss_fraction below,
+        #    there is no fresh entry afterward - this bar's `halted = True`
+        #    makes every subsequent bar's target position 0 (see top of loop).
+        if not halted and max_drawdown_fraction is not None:
+            peak_equity = max(peak_equity, equity)
+            if peak_equity > 0 and (peak_equity - equity) / peak_equity >= max_drawdown_fraction:
+                if current_direction != 0:
+                    exit_cost = _trade_cost(current_units, c, spec, slippage_ticks)
+                    equity -= exit_cost
+                    gross_pnl = current_units * current_direction * (c - entry_price) * spec.multiplier
+                    trade = Trade(
+                        entry_time=entry_time,
+                        exit_time=bars.index[i],
+                        direction=current_direction,
+                        entry_price=entry_price,
+                        exit_price=c,
+                        units=current_units,
+                        gross_pnl=gross_pnl,
+                        costs=current_entry_cost + exit_cost,
+                        net_pnl=gross_pnl - current_entry_cost - exit_cost,
+                        entry_equity=entry_equity,
+                    )
+                    trade._bars_held = i - entry_bar_idx
+                    trades.append(trade)
+                    current_direction = 0
+                    current_units = 0.0
+                    current_entry_cost = 0.0
+                halted = True
+
+        # 5. Stop-loss/liquidation floor: force-close if this leg's mark-to-market
         #    loss has reached max_loss_fraction of the equity it was opened with.
         #    A fresh entry next bar is still possible if the signal still wants one.
         if current_direction != 0 and max_loss_fraction is not None and entry_equity:

@@ -163,7 +163,12 @@ def test_oos_curve_stays_frozen_even_when_a_later_fold_avoids_the_blowup():
     bars = _bars(prices)
     spec = InstrumentSpec("TEST", "equity", multiplier=1.0, tick_size=0.01, commission_per_unit=0.0)
 
-    wf = run_walk_forward(bars, DirectionPick, spec, n_folds=3, capital_fraction=1.0, sizing="percent_equity")
+    # max_drawdown_fraction disabled - this test needs the grid search to
+    # genuinely pick "short" for a fold that then blows up on the spike (the
+    # scenario under test), which the new 5% portfolio-wide drawdown breaker
+    # would otherwise short-circuit before the blowup - and would also change
+    # which combo the grid search scores as best.
+    wf = run_walk_forward(bars, DirectionPick, spec, n_folds=3, capital_fraction=1.0, sizing="percent_equity", max_drawdown_fraction=None)
 
     assert len(wf.folds) == 3
     # Confirms this setup actually exercises the bug's precondition: fold 2

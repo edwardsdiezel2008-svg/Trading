@@ -135,8 +135,12 @@ def test_max_loss_fraction_force_closes_before_the_strategy_would_exit():
     spec = _flat_spec()
     strat = LongUntil(params={"flip_at": 2})
 
-    capped = run_backtest(bars, strat, spec, initial_capital=10_000, sizing="percent_equity", slippage_ticks=0, max_loss_fraction=0.5)
-    uncapped = run_backtest(bars, strat, spec, initial_capital=10_000, sizing="percent_equity", slippage_ticks=0)
+    # max_drawdown_fraction disabled on both sides - this test isolates
+    # max_loss_fraction's own per-trade force-close timing, which the new
+    # portfolio-wide drawdown breaker would otherwise trigger first given
+    # this scenario's 60% crash.
+    capped = run_backtest(bars, strat, spec, initial_capital=10_000, sizing="percent_equity", slippage_ticks=0, max_loss_fraction=0.5, max_drawdown_fraction=None)
+    uncapped = run_backtest(bars, strat, spec, initial_capital=10_000, sizing="percent_equity", slippage_ticks=0, max_drawdown_fraction=None)
 
     assert len(capped.trades) == 1
     assert capped.trades[0].exit_time == bars.index[2]  # stopped out mid-backtest
@@ -218,3 +222,41 @@ def test_fixed_units_sizing_does_not_re_enter_after_max_loss_fraction_wipes_the_
     assert len(result.trades) == 1  # only the original long, no re-entry short
     assert (result.positions.iloc[2:] == 0).all()  # flat for the rest of the backtest
     assert (result.equity_curve.iloc[2:] == result.equity_curve.iloc[2]).all()  # frozen, not moving further
+
+
+def test_max_drawdown_fraction_defaults_on_and_halts_flat_forever():
+    # 5% is the default even when the parameter isn't passed at all - every
+    # caller of run_backtest gets this floor unless it explicitly opts out.
+    # AlwaysLong keeps signaling long forever, so a position staying flat
+    # after the breach can only be the drawdown halt overriding the signal.
+    bars = _bars([100, 100, 90, 90, 90], opens=[100, 100, 100, 90, 90])
+    spec = _flat_spec()
+
+    result = run_backtest(bars, AlwaysLong(), spec, initial_capital=10_000, sizing="percent_equity", slippage_ticks=0)
+
+    assert len(result.trades) == 1
+    assert result.trades[0].exit_time == bars.index[2]  # forced closed the bar the 10% drop lands
+    assert result.equity_curve.tolist() == pytest.approx([10_000, 10_000, 9_000, 9_000, 9_000])
+    assert result.positions.tolist() == [0, 1, 0, 0, 0]  # never re-enters despite AlwaysLong still signaling long
+
+
+def test_max_drawdown_fraction_is_measured_from_the_running_peak_not_initial_capital():
+    # Equity rises to a peak of 11,000, then falls to 10,400 - a loss of
+    # 5.45% from that peak but still ABOVE the 10,000 starting capital (i.e.
+    # a naive "loss from initial_capital" check would see no loss at all).
+    # The breaker must still fire, proving it's peak-based.
+    prices = [100, 100, 110, 104, 90]
+    bars = _bars(prices, opens=prices)
+    spec = _flat_spec()
+
+    capped = run_backtest(bars, AlwaysLong(), spec, initial_capital=10_000, sizing="percent_equity", slippage_ticks=0)
+    uncapped = run_backtest(bars, AlwaysLong(), spec, initial_capital=10_000, sizing="percent_equity", slippage_ticks=0, max_drawdown_fraction=None)
+
+    assert capped.equity_curve.tolist() == pytest.approx([10_000, 10_000, 11_000, 10_400, 10_400])
+    assert capped.positions.tolist() == [0, 1, 1, 0, 0]
+    assert capped.equity_curve.iloc[3] > 10_000  # still above initial capital when the halt fires
+
+    # Same price path, breaker disabled: the position rides out the further
+    # drop instead of freezing at bar 3.
+    assert uncapped.equity_curve.tolist() == pytest.approx([10_000, 10_000, 11_000, 10_400, 9_000])
+    assert uncapped.positions.tolist() == [0, 1, 1, 1, 1]
