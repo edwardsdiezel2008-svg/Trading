@@ -1,17 +1,17 @@
-# MNQ Paper Trading (15min) — updated 2026-09-01T17:24:17.842276+00:00
+# MNQ Paper Trading (15min) — updated 2026-09-01T18:28:26.693848+00:00
 
-Latest bar: 2026-09-01 17:00:00 · 5,989 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-01 18:15:00 · 5,994 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $95,414 | -4.6% | — | 1 |
-| Bollinger_Reversion(20,2sd) | FLAT | $108,128 | +8.1% | 1.67 | 217 |
-| Engulfing_Reversal(0.3) | LONG | $106,146 | +6.1% | 0.96 | 410 |
-| TPO_Reversion(60,p=5) | FLAT | $101,052 | +1.1% | 0.26 | 420 |
+| *Buy & Hold (benchmark)* | — | $95,212 | -4.8% | — | 1 |
+| Bollinger_Reversion(20,2sd) | FLAT | $108,213 | +8.2% | 1.69 | 217 |
+| Engulfing_Reversal(0.3) | SHORT | $106,198 | +6.2% | 0.97 | 411 |
+| TPO_Reversion(60,p=5) | LONG | $100,968 | +1.0% | 0.24 | 421 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $100,860 | +0.9% | 0.25 | 151 |
 | MACD_Momentum(12/26/9) | FLAT | $100,773 | +0.8% | 0.22 | 110 |
 | VWAP_Reversion(20,2%) | FLAT | $100,222 | +0.2% | 0.29 | 1 |
-| VolProfile_Reversion(30) | FLAT | $99,852 | -0.1% | -0.01 | 640 |
+| VolProfile_Reversion(30) | FLAT | $99,866 | -0.1% | -0.01 | 641 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $99,798 | -0.2% | -0.07 | 145 |
 | MA_Crossover(10/50) | FLAT | $99,142 | -0.9% | -0.18 | 46 |
 | Opening_Range_Breakout(6) | FLAT | $98,765 | -1.2% | -0.32 | 38 |
@@ -20,7 +20,7 @@ Latest bar: 2026-09-01 17:00:00 · 5,989 bars of history · $100,000 starting ca
 | Donchian_Breakout(20) | FLAT | $98,142 | -1.9% | -0.42 | 42 |
 | Supertrend(10,m=3.0) | FLAT | $97,532 | -2.5% | -0.57 | 47 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $97,530 | -2.5% | -0.48 | 57 |
-| RSI_Reversion(14,30/70) | FLAT | $97,404 | -2.6% | -0.91 | 161 |
+| RSI_Reversion(14,30/70) | FLAT | $97,460 | -2.5% | -0.89 | 161 |
 | CCI_Reversion(20,100) | FLAT | $95,607 | -4.4% | -2.53 | 52 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $95,560 | -4.4% | -1.69 | 50 |
 | Stochastic_Reversion(14,20/80) | FLAT | $95,131 | -4.9% | -2.25 | 30 |
