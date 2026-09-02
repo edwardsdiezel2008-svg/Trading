@@ -2,7 +2,7 @@
   "symbol": "MCL",
   "freq": "1D",
   "leverage": 1.0,
-  "updated_at_utc": "2026-09-02T07:24:47.349765+00:00",
+  "updated_at_utc": "2026-09-02T08:26:24.853026+00:00",
   "latest_bar": "2026-09-02 00:00:00",
   "bar_count": 2533,
   "buy_and_hold_equity_curve": [
@@ -1004,7 +1004,7 @@
     ],
     [
       "2026-09-02 00:00:00",
-      216231.13
+      215991.36
     ]
   ],
   "strategies": {
@@ -6056,7 +6056,7 @@
     "Bollinger_Reversion(20,2sd)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 103000.36,
+      "equity": 103010.36,
       "open_trade": {
         "direction": -1,
         "entry_price": 90.6500015258789,
@@ -7063,14 +7063,14 @@
         ],
         [
           "2026-09-02 00:00:00",
-          103000.36
+          103010.36
         ]
       ]
     },
     "ZScore_Reversion(20,z=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 108089.08,
+      "equity": 108099.08,
       "open_trade": {
         "direction": -1,
         "entry_price": 90.6500015258789,
@@ -8077,7 +8077,7 @@
         ],
         [
           "2026-09-02 00:00:00",
-          108089.08
+          108099.08
         ]
       ]
     },
