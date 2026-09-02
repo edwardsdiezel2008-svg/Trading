@@ -335,7 +335,7 @@ date,strategy,equity,return_since_tracking_start_pct,position
 2026-09-01 00:00:00,VolProfile_Reversion(30),93665.76,0.0,0.0
 2026-09-01 00:00:00,"ZScore_Reversion(20,z=2.0)",108044.6,0.0,0.0
 2026-09-02 00:00:00,"ATR_Vol_Breakout(14,k=1.5)",103759.16,0.0,0.0
-2026-09-02 00:00:00,"Bollinger_Reversion(20,2sd)",102958.36,0.002,-1.0
+2026-09-02 00:00:00,"Bollinger_Reversion(20,2sd)",102945.36,-0.01,-1.0
 2026-09-02 00:00:00,"CCI_Reversion(20,100)",95099.84,0.0,0.0
 2026-09-02 00:00:00,Donchian_Breakout(20),101919.52,0.0,0.0
 2026-09-02 00:00:00,Engulfing_Reversal(0.3),99116.24,0.0,0.0
@@ -352,4 +352,4 @@ date,strategy,equity,return_since_tracking_start_pct,position
 2026-09-02 00:00:00,"TPO_Reversion(60,p=5)",90816.32,0.0,0.0
 2026-09-02 00:00:00,"VWAP_Reversion(20,2%)",95496.84,0.0,0.0
 2026-09-02 00:00:00,VolProfile_Reversion(30),93665.76,0.0,0.0
-2026-09-02 00:00:00,"ZScore_Reversion(20,z=2.0)",108047.08,0.002,-1.0
+2026-09-02 00:00:00,"ZScore_Reversion(20,z=2.0)",108034.08,-0.01,-1.0
