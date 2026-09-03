@@ -1,12 +1,12 @@
-# MES Paper Trading (1D) — updated 2026-09-03T09:25:02.540672+00:00
+# MES Paper Trading (1D) — updated 2026-09-03T10:24:58.471254+00:00
 
 Latest bar: 2026-09-03 00:00:00 · 2,535 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $353,780 | +253.8% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $353,112 | +253.1% | — | 1 |
 | RSI_Reversion(14,30/70) | FLAT | $106,991 | +7.0% | 0.53 | 84 |
-| MA_Crossover(10/50) | LONG | $106,925 | +6.9% | 0.21 | 58 |
+| MA_Crossover(10/50) | LONG | $106,853 | +6.9% | 0.21 | 58 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $103,928 | +3.9% | 0.21 | 140 |
 | VolProfile_Reversion(30) | FLAT | $101,578 | +1.6% | 0.08 | 275 |
 | Donchian_Breakout(20) | FLAT | $101,290 | +1.3% | 0.08 | 29 |
