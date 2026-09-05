@@ -1,4 +1,4 @@
-# MYM Paper Trading (5min) — updated 2026-09-05T12:26:38.509392+00:00
+# MYM Paper Trading (5min) — updated 2026-09-05T13:21:54.042049+00:00
 
 Latest bar: 2026-09-04 20:55:00 · 18,882 bars of history · $100,000 starting capital per strategy
 
