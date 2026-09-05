@@ -1,4 +1,4 @@
-# MGC Paper Trading (5min) — updated 2026-09-05T02:23:04.043485+00:00
+# MGC Paper Trading (5min) — updated 2026-09-05T03:23:09.855004+00:00
 
 Latest bar: 2026-09-04 20:55:00 · 18,887 bars of history · $100,000 starting capital per strategy
 
