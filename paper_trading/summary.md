@@ -1,10 +1,10 @@
-# BTC/USDT Paper Trading (1D) — updated 2026-09-05T06:25:59.554629+00:00
+# BTC/USDT Paper Trading (1D) — updated 2026-09-05T07:20:51.583668+00:00
 
 Latest bar: 2026-09-05 00:00:00 · 2,175 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $755,369 | +655.4% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $755,915 | +655.9% | — | 1 |
 | Inside_Bar_Breakout(0.6) | FLAT | $156,892 | +56.9% | 0.74 | 1 |
 | MACD_Momentum(12/26/9) | FLAT | $149,022 | +49.0% | 0.67 | 1 |
 | Donchian_Breakout(20) | FLAT | $145,796 | +45.8% | 0.64 | 1 |
