@@ -1,4 +1,4 @@
-# MES Paper Trading (5min) — updated 2026-09-05T03:22:52.930209+00:00
+# MES Paper Trading (5min) — updated 2026-09-05T04:22:48.755975+00:00
 
 Latest bar: 2026-09-04 20:55:00 · 18,829 bars of history · $100,000 starting capital per strategy
 
@@ -15,7 +15,7 @@ Latest bar: 2026-09-04 20:55:00 · 18,829 bars of history · $100,000 starting c
 | RSI_Reversion(14,30/70) | FLAT | $99,923 | -0.1% | -0.08 | 511 |
 | Keltner_Breakout(20,m=2.0) | SHORT | $99,420 | -0.6% | -0.22 | 282 |
 | ORB_ATR_Target(6,1.5xATR) | SHORT | $99,192 | -0.8% | -0.57 | 302 |
-| VolProfile_Reversion(30) | LONG | $98,765 | -1.2% | -0.78 | 2028 |
+| VolProfile_Reversion(30) | LONG | $98,772 | -1.2% | -0.77 | 2028 |
 | Donchian_Breakout(20) | SHORT | $98,439 | -1.6% | -0.61 | 456 |
 | CCI_Reversion(20,100) | FLAT | $98,439 | -1.6% | -0.90 | 1873 |
 | Supertrend(10,m=3.0) | FLAT | $97,157 | -2.8% | -1.45 | 207 |

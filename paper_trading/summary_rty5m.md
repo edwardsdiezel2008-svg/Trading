@@ -1,4 +1,4 @@
-# M2K Paper Trading (5min) — updated 2026-09-05T03:23:18.224587+00:00
+# M2K Paper Trading (5min) — updated 2026-09-05T04:23:10.968015+00:00
 
 Latest bar: 2026-09-04 21:00:00 · 18,823 bars of history · $100,000 starting capital per strategy
 
@@ -18,7 +18,7 @@ Latest bar: 2026-09-04 21:00:00 · 18,823 bars of history · $100,000 starting c
 | CCI_Reversion(20,100) | LONG | $97,549 | -2.5% | -2.41 | 1849 |
 | MA_Crossover(10/50) | LONG | $97,548 | -2.5% | -1.70 | 502 |
 | Keltner_Breakout(20,m=2.0) | LONG | $97,249 | -2.8% | -1.92 | 337 |
-| VolProfile_Reversion(30) | FLAT | $97,224 | -2.8% | -2.88 | 2025 |
+| VolProfile_Reversion(30) | FLAT | $97,226 | -2.8% | -2.88 | 2026 |
 | Opening_Range_Breakout(6) | LONG | $97,121 | -2.9% | -2.27 | 137 |
 | Donchian_Breakout(20) | LONG | $97,114 | -2.9% | -2.01 | 475 |
 | Parabolic_SAR(af=0.02,max=0.2) | SHORT | $96,845 | -3.2% | -2.20 | 1674 |
