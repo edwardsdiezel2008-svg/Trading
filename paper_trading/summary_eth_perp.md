@@ -1,10 +1,10 @@
-# ETH/USDT Paper Trading (1D) — updated 2026-09-04T23:20:14.284380+00:00
+# ETH/USDT Paper Trading (1D) — updated 2026-09-05T00:32:42.289232+00:00
 
-Latest bar: 2026-09-04 00:00:00 · 2,174 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-05 00:00:00 · 2,175 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $711,232 | +611.2% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $712,143 | +612.1% | — | 1 |
 | Inside_Bar_Breakout(0.6) | FLAT | $134,050 | +34.0% | 0.33 | 1 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $123,144 | +23.1% | 0.46 | 2 |
 | Bollinger_Reversion(20,2sd) | FLAT | $105,541 | +5.5% | 0.17 | 1 |
@@ -21,6 +21,6 @@ Latest bar: 2026-09-04 00:00:00 · 2,174 bars of history · $100,000 starting ca
 | VWAP_Reversion(20,2%) | FLAT | $89,316 | -10.7% | -0.34 | 1 |
 | RSI_Reversion(14,30/70) | FLAT | $87,150 | -12.8% | -0.08 | 2 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $85,442 | -14.6% | -0.34 | 1 |
-| VolProfile_Reversion(30) | FLAT | $74,935 | -25.1% | -0.28 | 2 |
+| VolProfile_Reversion(30) | FLAT | $74,935 | -25.1% | -0.27 | 2 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $72,939 | -27.1% | -0.34 | 1 |
 | TPO_Reversion(60,p=5) | FLAT | $67,801 | -32.2% | -0.39 | 1 |
