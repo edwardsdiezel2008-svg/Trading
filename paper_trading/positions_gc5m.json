@@ -2,7 +2,7 @@
   "symbol": "MGC",
   "freq": "5min",
   "leverage": 1.0,
-  "updated_at_utc": "2026-09-05T08:24:04.967448+00:00",
+  "updated_at_utc": "2026-09-05T09:22:23.591005+00:00",
   "latest_bar": "2026-09-04 20:55:00",
   "bar_count": 18887,
   "buy_and_hold_equity_curve": [
@@ -1004,14 +1004,14 @@
     ],
     [
       "2026-09-04 20:55:00",
-      98065.93
+      98052.79
     ]
   ],
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 109706.75,
+      "equity": 109700.75,
       "open_trade": {
         "direction": 1,
         "entry_price": 4484.7998046875,
@@ -2018,14 +2018,14 @@
         ],
         [
           "2026-09-04 20:55:00",
-          109706.75
+          109700.75
         ]
       ]
     },
     "Donchian_Breakout(20)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 102584.21,
+      "equity": 102578.2,
       "open_trade": {
         "direction": 1,
         "entry_price": 4482.7998046875,
@@ -3032,14 +3032,14 @@
         ],
         [
           "2026-09-04 20:55:00",
-          102584.21
+          102578.2
         ]
       ]
     },
     "MACD_Momentum(12/26/9)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 104436.56,
+      "equity": 104442.56,
       "open_trade": {
         "direction": -1,
         "entry_price": 4478.2001953125,
@@ -4046,7 +4046,7 @@
         ],
         [
           "2026-09-04 20:55:00",
-          104436.56
+          104442.56
         ]
       ]
     },
@@ -8089,7 +8089,7 @@
     "Stochastic_Reversion(14,20/80)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 97263.61,
+      "equity": 97257.61,
       "open_trade": {
         "direction": 1,
         "entry_price": 4477.60009765625,
@@ -9096,7 +9096,7 @@
         ],
         [
           "2026-09-04 20:55:00",
-          97263.61
+          97257.61
         ]
       ]
     },
@@ -10112,7 +10112,7 @@
     "ATR_Vol_Breakout(14,k=1.5)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 105697.02,
+      "equity": 105703.02,
       "open_trade": {
         "direction": -1,
         "entry_price": 4441.7998046875,
@@ -11119,14 +11119,14 @@
         ],
         [
           "2026-09-04 20:55:00",
-          105697.02
+          105703.02
         ]
       ]
     },
     "Supertrend(10,m=3.0)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 102903.8,
+      "equity": 102897.8,
       "open_trade": {
         "direction": 1,
         "entry_price": 4482.7998046875,
@@ -12133,14 +12133,14 @@
         ],
         [
           "2026-09-04 20:55:00",
-          102903.8
+          102897.8
         ]
       ]
     },
     "Keltner_Breakout(20,m=2.0)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 105634.59,
+      "equity": 105628.59,
       "open_trade": {
         "direction": 1,
         "entry_price": 4482.7998046875,
@@ -13147,7 +13147,7 @@
         ],
         [
           "2026-09-04 20:55:00",
-          105634.59
+          105628.59
         ]
       ]
     },
