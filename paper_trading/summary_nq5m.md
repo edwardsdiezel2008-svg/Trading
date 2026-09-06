@@ -1,12 +1,12 @@
-# MNQ Paper Trading (5min) — updated 2026-09-06T21:21:20.133271+00:00
+# MNQ Paper Trading (5min) — updated 2026-09-06T22:22:11.926091+00:00
 
-Latest bar: 2026-09-04 20:55:00 · 18,829 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-06 22:10:00 · 18,830 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
 | *Buy & Hold (benchmark)* | — | $97,189 | -2.8% | — | 1 |
-| Stochastic_Reversion(14,20/80) | LONG | $102,878 | +2.9% | 0.67 | 739 |
-| TPO_Reversion(60,p=5) | FLAT | $101,444 | +1.4% | 0.34 | 1409 |
+| Stochastic_Reversion(14,20/80) | FLAT | $102,878 | +2.9% | 0.67 | 739 |
+| TPO_Reversion(60,p=5) | SHORT | $101,442 | +1.4% | 0.34 | 1410 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $101,115 | +1.1% | 0.25 | 117 |
 | ORB_ATR_Target(6,1.5xATR) | SHORT | $100,856 | +0.9% | 0.27 | 329 |
 | MA_Crossover(10/50) | FLAT | $100,132 | +0.1% | 0.05 | 132 |
