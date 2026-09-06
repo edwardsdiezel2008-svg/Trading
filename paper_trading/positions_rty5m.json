@@ -2,7 +2,7 @@
   "symbol": "M2K",
   "freq": "5min",
   "leverage": 1.0,
-  "updated_at_utc": "2026-09-06T03:23:55.310260+00:00",
+  "updated_at_utc": "2026-09-06T04:23:27.183852+00:00",
   "latest_bar": "2026-09-04 21:00:00",
   "bar_count": 18823,
   "buy_and_hold_equity_curve": [
@@ -8092,15 +8092,10 @@
       ]
     },
     "Stochastic_Reversion(14,20/80)": {
-      "position": 1,
-      "position_label": "LONG",
-      "equity": 99943.58,
-      "open_trade": {
-        "direction": 1,
-        "entry_price": 2974.5,
-        "entry_time": "2026-09-04 20:55:00",
-        "units": 1.0
-      },
+      "position": 0,
+      "position_label": "FLAT",
+      "equity": 99929.58,
+      "open_trade": null,
       "as_of": "2026-09-04 21:00:00",
       "equity_curve": [
         [
@@ -9101,20 +9096,15 @@
         ],
         [
           "2026-09-04 21:00:00",
-          99943.58
+          99929.58
         ]
       ]
     },
     "CCI_Reversion(20,100)": {
-      "position": 1,
-      "position_label": "LONG",
-      "equity": 97548.69,
-      "open_trade": {
-        "direction": 1,
-        "entry_price": 2973.800048828125,
-        "entry_time": "2026-09-04 21:00:00",
-        "units": 1.0
-      },
+      "position": 0,
+      "position_label": "FLAT",
+      "equity": 97536.39,
+      "open_trade": null,
       "as_of": "2026-09-04 21:00:00",
       "equity_curve": [
         [
@@ -10115,7 +10105,7 @@
         ],
         [
           "2026-09-04 21:00:00",
-          97548.69
+          97536.39
         ]
       ]
     },
@@ -19236,10 +19226,15 @@
       ]
     },
     "TPO_Reversion(60,p=5)": {
-      "position": 0,
-      "position_label": "FLAT",
-      "equity": 98662.8,
-      "open_trade": null,
+      "position": -1,
+      "position_label": "SHORT",
+      "equity": 98647.1,
+      "open_trade": {
+        "direction": -1,
+        "entry_price": 2973.800048828125,
+        "entry_time": "2026-09-04 21:00:00",
+        "units": 1.0
+      },
       "as_of": "2026-09-04 21:00:00",
       "equity_curve": [
         [
@@ -20240,7 +20235,7 @@
         ],
         [
           "2026-09-04 21:00:00",
-          98662.8
+          98647.1
         ]
       ]
     }
