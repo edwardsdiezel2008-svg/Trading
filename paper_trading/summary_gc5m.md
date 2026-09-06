@@ -1,11 +1,11 @@
-# MGC Paper Trading (5min) — updated 2026-09-06T22:22:44.497583+00:00
+# MGC Paper Trading (5min) — updated 2026-09-06T23:22:00.310713+00:00
 
-Latest bar: 2026-09-06 22:10:00 · 18,888 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-06 23:05:00 · 18,889 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
 | *Buy & Hold (benchmark)* | — | $98,053 | -1.9% | — | 1 |
-| MA_Crossover(10/50) | LONG | $109,701 | +9.7% | 1.80 | 476 |
+| MA_Crossover(10/50) | SHORT | $109,699 | +9.7% | 1.80 | 477 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $108,085 | +8.1% | 2.71 | 398 |
 | ATR_Vol_Breakout(14,k=1.5) | SHORT | $105,703 | +5.7% | 1.08 | 297 |
 | Keltner_Breakout(20,m=2.0) | LONG | $105,629 | +5.6% | 1.07 | 272 |
