@@ -1,12 +1,12 @@
-# MCL Paper Trading (5min) — updated 2026-09-07T01:24:01.854681+00:00
+# MCL Paper Trading (5min) — updated 2026-09-07T02:25:13.228065+00:00
 
-Latest bar: 2026-09-07 01:10:00 · 18,890 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-07 02:10:00 · 18,891 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
 | *Buy & Hold (benchmark)* | — | $102,087 | +2.1% | — | 1 |
 | Supertrend(10,m=3.0) | LONG | $102,142 | +2.1% | 0.97 | 455 |
-| Donchian_Breakout(20) | SHORT | $100,821 | +0.8% | 0.38 | 436 |
+| Donchian_Breakout(20) | LONG | $100,820 | +0.8% | 0.38 | 437 |
 | Bollinger_Reversion(20,2sd) | FLAT | $100,652 | +0.7% | 0.39 | 673 |
 | RSI_Reversion(14,30/70) | FLAT | $100,459 | +0.5% | 0.46 | 528 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $100,207 | +0.2% | 0.13 | 762 |
