@@ -1,6 +1,6 @@
-# M2K Paper Trading (5min) — updated 2026-09-06T23:22:13.362462+00:00
+# M2K Paper Trading (5min) — updated 2026-09-07T00:36:31.493911+00:00
 
-Latest bar: 2026-09-06 23:05:00 · 18,825 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-07 00:20:00 · 18,826 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
@@ -13,7 +13,7 @@ Latest bar: 2026-09-06 23:05:00 · 18,825 bars of history · $100,000 starting c
 | Bollinger_Reversion(20,2sd) | FLAT | $98,977 | -1.0% | -0.93 | 655 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $98,858 | -1.1% | -1.11 | 737 |
 | TPO_Reversion(60,p=5) | FLAT | $98,663 | -1.3% | -1.37 | 1441 |
-| MACD_Momentum(12/26/9) | SHORT | $98,178 | -1.8% | -1.27 | 1532 |
+| MACD_Momentum(12/26/9) | LONG | $98,176 | -1.8% | -1.27 | 1533 |
 | ATR_Vol_Breakout(14,k=1.5) | LONG | $97,591 | -2.4% | -1.66 | 408 |
 | CCI_Reversion(20,100) | FLAT | $97,549 | -2.5% | -2.41 | 1849 |
 | MA_Crossover(10/50) | LONG | $97,548 | -2.5% | -1.70 | 502 |
