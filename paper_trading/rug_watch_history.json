@@ -1,12 +1,6 @@
 {
   "runs": [
     {
-      "timestamp": "2026-09-01T20:24:46.669534+00:00",
-      "flagged": {
-        "GEKKOUSD": "elevated"
-      }
-    },
-    {
       "timestamp": "2026-09-01T21:29:10.241016+00:00",
       "flagged": {}
     },
@@ -857,6 +851,14 @@
     {
       "timestamp": "2026-09-09T19:47:54.438911+00:00",
       "flagged": {}
+    },
+    {
+      "timestamp": "2026-09-09T22:20:16.611068+00:00",
+      "flagged": {
+        "WENUSD": "elevated",
+        "USELESSUSD": "elevated",
+        "CASHCATUSD": "elevated"
+      }
     }
   ]
 }
