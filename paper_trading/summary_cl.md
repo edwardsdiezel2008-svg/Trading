@@ -1,18 +1,18 @@
-# MCL Paper Trading (1D) — updated 2026-09-11T03:19:34.224812+00:00
+# MCL Paper Trading (1D) — updated 2026-09-11T05:19:17.783692+00:00
 
-Latest bar: 2026-09-10 00:00:00 · 2,540 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-11 00:00:00 · 2,541 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $247,183 | +147.2% | — | 1 |
-| ZScore_Reversion(20,z=2.0) | SHORT | $106,798 | +6.8% | 0.33 | 96 |
+| *Buy & Hold (benchmark)* | — | $244,522 | +144.5% | — | 1 |
+| ZScore_Reversion(20,z=2.0) | SHORT | $106,909 | +6.9% | 0.33 | 96 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $106,325 | +6.3% | 0.26 | 89 |
-| RSI_Reversion(14,30/70) | SHORT | $105,834 | +5.8% | 0.38 | 68 |
+| RSI_Reversion(14,30/70) | SHORT | $105,201 | +5.2% | 0.34 | 68 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $103,759 | +3.8% | 0.15 | 17 |
 | Inside_Bar_Breakout(0.6) | FLAT | $103,726 | +3.7% | 0.16 | 7 |
 | Supertrend(10,m=3.0) | FLAT | $103,044 | +3.0% | 0.13 | 27 |
 | Donchian_Breakout(20) | FLAT | $101,920 | +1.9% | 0.09 | 24 |
-| Bollinger_Reversion(20,2sd) | SHORT | $101,709 | +1.7% | 0.09 | 82 |
+| Bollinger_Reversion(20,2sd) | SHORT | $101,820 | +1.8% | 0.09 | 82 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $101,045 | +1.0% | 0.05 | 16 |
 | MA_Crossover(10/50) | FLAT | $100,334 | +0.3% | 0.03 | 33 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
@@ -20,7 +20,7 @@ Latest bar: 2026-09-10 00:00:00 · 2,540 bars of history · $100,000 starting ca
 | Engulfing_Reversal(0.3) | FLAT | $99,116 | -0.9% | -0.02 | 38 |
 | MACD_Momentum(12/26/9) | FLAT | $97,601 | -2.4% | -0.11 | 74 |
 | VWAP_Reversion(20,2%) | FLAT | $95,497 | -4.5% | -0.44 | 58 |
-| CCI_Reversion(20,100) | FLAT | $95,100 | -4.9% | -0.62 | 83 |
+| CCI_Reversion(20,100) | FLAT | $95,100 | -4.9% | -0.61 | 83 |
 | VolProfile_Reversion(30) | FLAT | $93,666 | -6.3% | -0.33 | 87 |
 | Stochastic_Reversion(14,20/80) | FLAT | $91,895 | -8.1% | -0.41 | 39 |
 | TPO_Reversion(60,p=5) | FLAT | $90,816 | -9.2% | -0.48 | 59 |
