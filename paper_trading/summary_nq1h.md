@@ -1,10 +1,10 @@
-# MNQ Paper Trading (1h) — updated 2026-09-14T06:15:48.649307+00:00
+# MNQ Paper Trading (1h) — updated 2026-09-14T08:20:46.612135+00:00
 
-Latest bar: 2026-09-14 06:00:00 · 14,256 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-14 08:00:00 · 14,258 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $159,569 | +59.6% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $159,040 | +59.0% | — | 1 |
 | MACD_Momentum(12/26/9) | FLAT | $114,394 | +14.4% | 0.55 | 485 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $106,737 | +6.7% | 0.30 | 100 |
 | Supertrend(10,m=3.0) | FLAT | $100,605 | +0.6% | 0.05 | 89 |
