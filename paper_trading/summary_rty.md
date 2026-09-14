@@ -1,22 +1,22 @@
-# M2K Paper Trading (1D) — updated 2026-09-14T14:00:04.464797+00:00
+# M2K Paper Trading (1D) — updated 2026-09-14T16:19:02.496324+00:00
 
 Latest bar: 2026-09-14 00:00:00 · 2,317 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $207,631 | +107.6% | — | 1 |
-| Parabolic_SAR(af=0.02,max=0.2) | SHORT | $106,792 | +6.8% | 0.36 | 226 |
-| VWAP_Reversion(20,2%) | LONG | $106,263 | +6.3% | 0.37 | 142 |
-| Bollinger_Reversion(20,2sd) | LONG | $104,588 | +4.6% | 0.31 | 84 |
-| Keltner_Breakout(20,m=2.0) | SHORT | $102,568 | +2.6% | 0.14 | 33 |
-| ZScore_Reversion(20,z=2.0) | LONG | $102,465 | +2.5% | 0.19 | 90 |
-| Stochastic_Reversion(14,20/80) | LONG | $102,197 | +2.2% | 0.17 | 86 |
+| *Buy & Hold (benchmark)* | — | $207,560 | +107.6% | — | 1 |
+| Parabolic_SAR(af=0.02,max=0.2) | SHORT | $106,797 | +6.8% | 0.36 | 226 |
+| VWAP_Reversion(20,2%) | LONG | $106,258 | +6.3% | 0.37 | 142 |
+| Bollinger_Reversion(20,2sd) | LONG | $104,583 | +4.6% | 0.31 | 84 |
+| Keltner_Breakout(20,m=2.0) | SHORT | $102,573 | +2.6% | 0.14 | 33 |
+| ZScore_Reversion(20,z=2.0) | LONG | $102,460 | +2.5% | 0.19 | 90 |
+| Stochastic_Reversion(14,20/80) | LONG | $102,192 | +2.2% | 0.17 | 86 |
 | Donchian_Breakout(20) | FLAT | $101,661 | +1.7% | 0.12 | 32 |
 | MACD_Momentum(12/26/9) | FLAT | $101,059 | +1.1% | 0.07 | 175 |
-| TPO_Reversion(60,p=5) | LONG | $100,140 | +0.1% | 0.02 | 162 |
+| TPO_Reversion(60,p=5) | LONG | $100,135 | +0.1% | 0.02 | 162 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $100,000 | +0.0% | — | 0 |
-| VolProfile_Reversion(30) | LONG | $99,116 | -0.9% | -0.06 | 224 |
+| VolProfile_Reversion(30) | LONG | $99,111 | -0.9% | -0.06 | 224 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $98,321 | -1.7% | -0.16 | 11 |
 | RSI_Reversion(14,30/70) | FLAT | $98,289 | -1.7% | -0.21 | 62 |
 | MA_Crossover(10/50) | FLAT | $98,245 | -1.8% | -0.11 | 40 |

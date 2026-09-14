@@ -1,16 +1,16 @@
-# MNQ Paper Trading (15min) — updated 2026-09-14T14:00:32.734109+00:00
+# MNQ Paper Trading (15min) — updated 2026-09-14T16:19:41.444874+00:00
 
-Latest bar: 2026-09-14 13:45:00 · 6,694 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-14 16:00:00 · 6,703 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $94,978 | -5.0% | — | 1 |
-| Bollinger_Reversion(20,2sd) | FLAT | $109,037 | +9.0% | 1.70 | 242 |
-| Engulfing_Reversal(0.3) | SHORT | $105,514 | +5.5% | 0.80 | 455 |
-| TPO_Reversion(60,p=5) | FLAT | $101,191 | +1.2% | 0.27 | 478 |
-| VolProfile_Reversion(30) | FLAT | $101,078 | +1.1% | 0.25 | 716 |
+| *Buy & Hold (benchmark)* | — | $96,333 | -3.7% | — | 1 |
+| Bollinger_Reversion(20,2sd) | SHORT | $108,082 | +8.1% | 1.51 | 243 |
+| Engulfing_Reversal(0.3) | LONG | $106,390 | +6.4% | 0.91 | 456 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $100,860 | +0.9% | 0.24 | 151 |
 | MACD_Momentum(12/26/9) | FLAT | $100,773 | +0.8% | 0.21 | 110 |
+| TPO_Reversion(60,p=5) | SHORT | $100,668 | +0.7% | 0.16 | 480 |
+| VolProfile_Reversion(30) | SHORT | $100,334 | +0.3% | 0.09 | 717 |
 | VWAP_Reversion(20,2%) | FLAT | $100,222 | +0.2% | 0.28 | 1 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $99,874 | -0.1% | -0.03 | 156 |
 | MA_Crossover(10/50) | FLAT | $99,142 | -0.9% | -0.17 | 46 |
@@ -18,7 +18,7 @@ Latest bar: 2026-09-14 13:45:00 · 6,694 bars of history · $100,000 starting ca
 | Inside_Bar_Breakout(0.6) | FLAT | $98,644 | -1.4% | -0.24 | 18 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $98,495 | -1.5% | -0.44 | 17 |
 | Donchian_Breakout(20) | FLAT | $98,142 | -1.9% | -0.40 | 42 |
-| RSI_Reversion(14,30/70) | FLAT | $97,920 | -2.1% | -0.67 | 185 |
+| RSI_Reversion(14,30/70) | SHORT | $97,984 | -2.0% | -0.65 | 186 |
 | Supertrend(10,m=3.0) | FLAT | $97,532 | -2.5% | -0.54 | 47 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $97,530 | -2.5% | -0.45 | 57 |
 | CCI_Reversion(20,100) | FLAT | $95,607 | -4.4% | -2.39 | 52 |
