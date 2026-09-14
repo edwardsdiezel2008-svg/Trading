@@ -1,18 +1,18 @@
-# MNQ Paper Trading (5min) — updated 2026-09-14T12:20:16.014356+00:00
+# MNQ Paper Trading (5min) — updated 2026-09-14T13:41:31.090309+00:00
 
-Latest bar: 2026-09-14 12:05:00 · 20,032 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-14 13:30:00 · 20,049 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $95,031 | -5.0% | — | 1 |
-| Stochastic_Reversion(14,20/80) | FLAT | $102,232 | +2.2% | 0.50 | 785 |
+| *Buy & Hold (benchmark)* | — | $94,980 | -5.0% | — | 1 |
+| Stochastic_Reversion(14,20/80) | FLAT | $102,199 | +2.2% | 0.49 | 785 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $101,115 | +1.1% | 0.24 | 117 |
-| ORB_ATR_Target(6,1.5xATR) | FLAT | $100,858 | +0.9% | 0.26 | 349 |
+| ORB_ATR_Target(6,1.5xATR) | FLAT | $100,848 | +0.8% | 0.26 | 349 |
 | MA_Crossover(10/50) | FLAT | $100,132 | +0.1% | 0.05 | 132 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| TPO_Reversion(60,p=5) | FLAT | $99,772 | -0.2% | -0.02 | 1478 |
+| TPO_Reversion(60,p=5) | FLAT | $99,856 | -0.1% | -0.01 | 1479 |
 | Engulfing_Reversal(0.3) | FLAT | $99,393 | -0.6% | -0.13 | 302 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $99,041 | -1.0% | -0.18 | 742 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $99,125 | -0.9% | -0.16 | 743 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $99,023 | -1.0% | -0.22 | 74 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $98,610 | -1.4% | -0.35 | 330 |
 | Opening_Range_Breakout(6) | FLAT | $98,606 | -1.4% | -0.28 | 59 |
@@ -21,6 +21,6 @@ Latest bar: 2026-09-14 12:05:00 · 20,032 bars of history · $100,000 starting c
 | Inside_Bar_Breakout(0.6) | FLAT | $97,522 | -2.5% | -0.38 | 85 |
 | RSI_Reversion(14,30/70) | FLAT | $97,142 | -2.9% | -1.06 | 540 |
 | MACD_Momentum(12/26/9) | FLAT | $97,036 | -3.0% | -0.78 | 301 |
-| CCI_Reversion(20,100) | FLAT | $95,584 | -4.4% | -1.02 | 1086 |
+| CCI_Reversion(20,100) | FLAT | $95,626 | -4.4% | -1.01 | 1086 |
 | Bollinger_Reversion(20,2sd) | FLAT | $95,228 | -4.8% | -2.71 | 61 |
 | VolProfile_Reversion(30) | FLAT | $95,029 | -5.0% | -2.91 | 187 |
