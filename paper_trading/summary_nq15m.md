@@ -1,24 +1,24 @@
-# MNQ Paper Trading (15min) — updated 2026-09-15T15:19:45.634987+00:00
+# MNQ Paper Trading (15min) — updated 2026-09-15T17:19:04.092381+00:00
 
-Latest bar: 2026-09-15 15:00:00 · 6,791 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-15 17:00:00 · 6,799 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $95,830 | -4.2% | — | 1 |
-| Bollinger_Reversion(20,2sd) | LONG | $107,978 | +8.0% | 1.48 | 245 |
-| Engulfing_Reversal(0.3) | SHORT | $106,766 | +6.8% | 0.96 | 461 |
+| *Buy & Hold (benchmark)* | — | $95,748 | -4.3% | — | 1 |
+| Bollinger_Reversion(20,2sd) | LONG | $107,928 | +7.9% | 1.47 | 245 |
+| Engulfing_Reversal(0.3) | LONG | $106,712 | +6.7% | 0.95 | 462 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $100,860 | +0.9% | 0.23 | 151 |
 | MACD_Momentum(12/26/9) | FLAT | $100,773 | +0.8% | 0.21 | 110 |
-| TPO_Reversion(60,p=5) | LONG | $100,298 | +0.3% | 0.08 | 482 |
+| TPO_Reversion(60,p=5) | LONG | $100,248 | +0.2% | 0.07 | 482 |
 | VWAP_Reversion(20,2%) | FLAT | $100,222 | +0.2% | 0.28 | 1 |
-| VolProfile_Reversion(30) | LONG | $100,022 | +0.0% | 0.03 | 729 |
+| VolProfile_Reversion(30) | FLAT | $100,080 | +0.1% | 0.04 | 730 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $99,874 | -0.1% | -0.03 | 156 |
 | MA_Crossover(10/50) | FLAT | $99,142 | -0.9% | -0.17 | 46 |
 | Opening_Range_Breakout(6) | FLAT | $98,765 | -1.2% | -0.30 | 38 |
 | Inside_Bar_Breakout(0.6) | FLAT | $98,644 | -1.4% | -0.24 | 18 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $98,495 | -1.5% | -0.44 | 17 |
 | Donchian_Breakout(20) | FLAT | $98,142 | -1.9% | -0.39 | 42 |
-| RSI_Reversion(14,30/70) | LONG | $97,985 | -2.0% | -0.65 | 190 |
+| RSI_Reversion(14,30/70) | FLAT | $97,963 | -2.0% | -0.65 | 190 |
 | Supertrend(10,m=3.0) | FLAT | $97,532 | -2.5% | -0.54 | 47 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $97,530 | -2.5% | -0.45 | 57 |
 | CCI_Reversion(20,100) | FLAT | $95,607 | -4.4% | -2.38 | 52 |
