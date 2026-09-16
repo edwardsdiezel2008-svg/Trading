@@ -1,14 +1,14 @@
-# MES Paper Trading (1D) — updated 2026-09-16T04:18:45.591625+00:00
+# MES Paper Trading (1D) — updated 2026-09-16T05:59:23.377414+00:00
 
-Latest bar: 2026-09-15 00:00:00 · 2,545 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-16 00:00:00 · 2,546 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $349,292 | +249.3% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $353,101 | +253.1% | — | 1 |
 | RSI_Reversion(14,30/70) | FLAT | $106,991 | +7.0% | 0.53 | 84 |
-| MA_Crossover(10/50) | LONG | $106,438 | +6.4% | 0.20 | 58 |
+| MA_Crossover(10/50) | LONG | $106,852 | +6.9% | 0.21 | 58 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $103,928 | +3.9% | 0.21 | 140 |
-| VolProfile_Reversion(30) | FLAT | $101,389 | +1.4% | 0.07 | 276 |
+| VolProfile_Reversion(30) | LONG | $101,431 | +1.4% | 0.07 | 277 |
 | Donchian_Breakout(20) | FLAT | $101,290 | +1.3% | 0.08 | 29 |
 | Supertrend(10,m=3.0) | FLAT | $100,392 | +0.4% | 0.03 | 29 |
 | MACD_Momentum(12/26/9) | FLAT | $100,154 | +0.2% | 0.02 | 123 |
@@ -19,7 +19,7 @@ Latest bar: 2026-09-15 00:00:00 · 2,545 bars of history · $100,000 starting ca
 | Keltner_Breakout(20,m=2.0) | FLAT | $97,918 | -2.1% | -0.11 | 15 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $95,957 | -4.0% | -0.28 | 17 |
 | Engulfing_Reversal(0.3) | FLAT | $95,250 | -4.7% | -0.39 | 51 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $95,210 | -4.8% | -0.39 | 30 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $95,210 | -4.8% | -0.38 | 30 |
 | CCI_Reversion(20,100) | FLAT | $95,141 | -4.9% | -0.40 | 90 |
 | Bollinger_Reversion(20,2sd) | FLAT | $94,977 | -5.0% | -0.39 | 27 |
 | TPO_Reversion(60,p=5) | FLAT | $94,554 | -5.4% | -0.46 | 66 |
