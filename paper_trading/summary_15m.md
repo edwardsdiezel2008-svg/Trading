@@ -1,15 +1,15 @@
-# BTC/USDT Paper Trading (15min) — updated 2026-09-16T05:58:54.004583+00:00
+# BTC/USDT Paper Trading (15min) — updated 2026-09-16T07:17:23.908771+00:00
 
-Latest bar: 2026-09-16 05:45:00 · 3,911 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-16 07:15:00 · 3,917 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $117,643 | +17.6% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $117,613 | +17.6% | — | 1 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $119,197 | +19.2% | 2.37 | 14 |
-| Supertrend(10,m=3.0) | FLAT | $118,407 | +18.4% | 2.50 | 11 |
+| Supertrend(10,m=3.0) | FLAT | $118,407 | +18.4% | 2.49 | 11 |
 | MA_Crossover(10/50) | FLAT | $115,725 | +15.7% | 2.40 | 14 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $114,127 | +14.1% | 1.96 | 12 |
-| Opening_Range_Breakout(6) | FLAT | $111,797 | +11.8% | 2.12 | 9 |
+| Opening_Range_Breakout(6) | FLAT | $111,797 | +11.8% | 2.11 | 9 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $105,338 | +5.3% | 0.96 | 20 |
 | Inside_Bar_Breakout(0.6) | FLAT | $104,122 | +4.1% | 0.96 | 5 |
 | MACD_Momentum(12/26/9) | FLAT | $101,288 | +1.3% | 0.36 | 7 |
@@ -18,9 +18,9 @@ Latest bar: 2026-09-16 05:45:00 · 3,911 bars of history · $100,000 starting ca
 | Donchian_Breakout(20) | FLAT | $96,108 | -3.9% | -1.51 | 6 |
 | Bollinger_Reversion(20,2sd) | FLAT | $95,551 | -4.4% | -1.69 | 4 |
 | Engulfing_Reversal(0.3) | FLAT | $95,436 | -4.6% | -2.35 | 4 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $94,891 | -5.1% | -2.10 | 4 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $94,891 | -5.1% | -2.09 | 4 |
 | RSI_Reversion(14,30/70) | FLAT | $94,532 | -5.5% | -1.99 | 5 |
-| TPO_Reversion(60,p=5) | FLAT | $94,531 | -5.5% | -2.21 | 5 |
+| TPO_Reversion(60,p=5) | FLAT | $94,531 | -5.5% | -2.20 | 5 |
 | VolProfile_Reversion(30) | FLAT | $94,109 | -5.9% | -2.09 | 8 |
 | CCI_Reversion(20,100) | FLAT | $94,015 | -6.0% | -2.61 | 6 |
 | Stochastic_Reversion(14,20/80) | FLAT | $93,493 | -6.5% | -2.17 | 4 |
