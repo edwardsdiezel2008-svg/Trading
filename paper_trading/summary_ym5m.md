@@ -1,23 +1,23 @@
-# MYM Paper Trading (5min) — updated 2026-09-18T18:30:20.468819+00:00
+# MYM Paper Trading (5min) — updated 2026-09-18T20:19:27.947650+00:00
 
-Latest bar: 2026-09-18 18:15:00 · 21,266 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-18 20:05:00 · 21,288 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $101,924 | +1.9% | — | 1 |
-| Opening_Range_Breakout(6) | SHORT | $100,646 | +0.6% | 0.41 | 143 |
-| Inside_Bar_Breakout(0.6) | SHORT | $100,526 | +0.5% | 0.29 | 237 |
+| *Buy & Hold (benchmark)* | — | $102,106 | +2.1% | — | 1 |
+| Opening_Range_Breakout(6) | SHORT | $100,600 | +0.6% | 0.38 | 143 |
+| Inside_Bar_Breakout(0.6) | SHORT | $100,480 | +0.5% | 0.26 | 237 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $100,286 | +0.3% | 0.32 | 311 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| RSI_Reversion(14,30/70) | FLAT | $98,334 | -1.7% | -2.43 | 594 |
-| Keltner_Breakout(20,m=2.0) | SHORT | $98,068 | -1.9% | -1.03 | 356 |
-| MA_Crossover(10/50) | LONG | $97,757 | -2.2% | -1.18 | 566 |
-| Donchian_Breakout(20) | LONG | $97,542 | -2.5% | -1.31 | 515 |
-| Stochastic_Reversion(14,20/80) | SHORT | $97,430 | -2.6% | -2.17 | 819 |
-| ZScore_Reversion(20,z=2.0) | SHORT | $97,384 | -2.6% | -2.03 | 826 |
-| Bollinger_Reversion(20,2sd) | SHORT | $96,965 | -3.0% | -2.23 | 715 |
+| RSI_Reversion(14,30/70) | FLAT | $98,336 | -1.7% | -2.42 | 596 |
+| Keltner_Breakout(20,m=2.0) | LONG | $98,086 | -1.9% | -1.02 | 357 |
+| MA_Crossover(10/50) | LONG | $97,804 | -2.2% | -1.16 | 566 |
+| Donchian_Breakout(20) | LONG | $97,588 | -2.4% | -1.29 | 515 |
+| Stochastic_Reversion(14,20/80) | FLAT | $97,403 | -2.6% | -2.19 | 819 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $97,356 | -2.6% | -2.05 | 826 |
+| Bollinger_Reversion(20,2sd) | FLAT | $96,943 | -3.1% | -2.25 | 715 |
 | Supertrend(10,m=3.0) | FLAT | $95,730 | -4.3% | -2.41 | 545 |
-| TPO_Reversion(60,p=5) | SHORT | $95,494 | -4.5% | -3.56 | 1516 |
+| TPO_Reversion(60,p=5) | FLAT | $95,478 | -4.5% | -3.57 | 1517 |
 | Engulfing_Reversal(0.3) | FLAT | $95,458 | -4.5% | -2.71 | 1001 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $95,403 | -4.6% | -2.58 | 432 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,148 | -4.9% | -2.98 | 1203 |
