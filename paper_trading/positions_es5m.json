@@ -2,7 +2,7 @@
   "symbol": "MES",
   "freq": "5min",
   "leverage": 1.0,
-  "updated_at_utc": "2026-09-19T02:18:43.582911+00:00",
+  "updated_at_utc": "2026-09-19T04:18:20.363991+00:00",
   "latest_bar": "2026-09-18 20:55:00",
   "bar_count": 21238,
   "buy_and_hold_equity_curve": [
@@ -1004,7 +1004,7 @@
     ],
     [
       "2026-09-18 20:55:00",
-      101715.0
+      101550.41
     ]
   ],
   "strategies": {
@@ -2020,7 +2020,7 @@
     "Donchian_Breakout(20)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99536.75,
+      "equity": 99474.25,
       "open_trade": {
         "direction": 1,
         "entry_price": 7693.0,
@@ -3027,7 +3027,7 @@
         ],
         [
           "2026-09-18 20:55:00",
-          99536.75
+          99474.25
         ]
       ]
     },
@@ -6061,7 +6061,7 @@
     "Bollinger_Reversion(20,2sd)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 101199.0,
+      "equity": 101261.5,
       "open_trade": {
         "direction": -1,
         "entry_price": 7697.75,
@@ -7068,14 +7068,14 @@
         ],
         [
           "2026-09-18 20:55:00",
-          101199.0
+          101261.5
         ]
       ]
     },
     "ZScore_Reversion(20,z=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 100287.25,
+      "equity": 100349.75,
       "open_trade": {
         "direction": -1,
         "entry_price": 7722.25,
@@ -8082,14 +8082,14 @@
         ],
         [
           "2026-09-18 20:55:00",
-          100287.25
+          100349.75
         ]
       ]
     },
     "Stochastic_Reversion(14,20/80)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 100300.25,
+      "equity": 100362.75,
       "open_trade": {
         "direction": -1,
         "entry_price": 7725.5,
@@ -9096,7 +9096,7 @@
         ],
         [
           "2026-09-18 20:55:00",
-          100300.25
+          100362.75
         ]
       ]
     },
@@ -12130,7 +12130,7 @@
     "Keltner_Breakout(20,m=2.0)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 100857.75,
+      "equity": 100795.25,
       "open_trade": {
         "direction": 1,
         "entry_price": 7700.0,
@@ -13137,7 +13137,7 @@
         ],
         [
           "2026-09-18 20:55:00",
-          100857.75
+          100795.25
         ]
       ]
     },
@@ -15162,7 +15162,7 @@
     "Inside_Bar_Breakout(0.6)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 101675.75,
+      "equity": 101613.25,
       "open_trade": {
         "direction": 1,
         "entry_price": 7715.0,
@@ -16169,14 +16169,14 @@
         ],
         [
           "2026-09-18 20:55:00",
-          101675.75
+          101613.25
         ]
       ]
     },
     "Opening_Range_Breakout(6)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 100392.5,
+      "equity": 100330.0,
       "open_trade": {
         "direction": 1,
         "entry_price": 7714.75,
@@ -17183,14 +17183,14 @@
         ],
         [
           "2026-09-18 20:55:00",
-          100392.5
+          100330.0
         ]
       ]
     },
     "ORB_ATR_Target(6,1.5xATR)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99004.5,
+      "equity": 98942.0,
       "open_trade": {
         "direction": 1,
         "entry_price": 7714.75,
@@ -18197,14 +18197,14 @@
         ],
         [
           "2026-09-18 20:55:00",
-          99004.5
+          98942.0
         ]
       ]
     },
     "VolProfile_Reversion(30)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 98618.25,
+      "equity": 98685.0,
       "open_trade": {
         "direction": -1,
         "entry_price": 7722.25,
@@ -19203,15 +19203,15 @@
         ],
         [
           "2026-09-18 06:40:00",
-          98663.5
+          98667.75
         ],
         [
           "2026-09-18 13:50:00",
-          98640.75
+          98645.0
         ],
         [
           "2026-09-18 20:55:00",
-          98618.25
+          98685.0
         ]
       ]
     },

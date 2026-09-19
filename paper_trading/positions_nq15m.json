@@ -2,7 +2,7 @@
   "symbol": "MNQ",
   "freq": "15min",
   "leverage": 1.0,
-  "updated_at_utc": "2026-09-19T02:19:29.845484+00:00",
+  "updated_at_utc": "2026-09-19T04:19:29.251894+00:00",
   "latest_bar": "2026-09-18 20:45:00",
   "bar_count": 7090,
   "buy_and_hold_equity_curve": [
@@ -1004,7 +1004,7 @@
     ],
     [
       "2026-09-18 20:45:00",
-      98025.9
+      97902.37
     ]
   ],
   "strategies": {
@@ -5047,7 +5047,7 @@
     "RSI_Reversion(14,30/70)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 97692.0,
+      "equity": 97767.5,
       "open_trade": {
         "direction": -1,
         "entry_price": 29916.0,
@@ -6054,14 +6054,14 @@
         ],
         [
           "2026-09-18 20:45:00",
-          97692.0
+          97767.5
         ]
       ]
     },
     "Bollinger_Reversion(20,2sd)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 107300.5,
+      "equity": 107376.0,
       "open_trade": {
         "direction": -1,
         "entry_price": 29832.25,
@@ -7068,7 +7068,7 @@
         ],
         [
           "2026-09-18 20:45:00",
-          107300.5
+          107376.0
         ]
       ]
     },
@@ -14138,7 +14138,7 @@
     "Engulfing_Reversal(0.3)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 106096.0,
+      "equity": 106020.5,
       "open_trade": {
         "direction": 1,
         "entry_price": 29780.5,
@@ -15145,7 +15145,7 @@
         ],
         [
           "2026-09-18 20:45:00",
-          106096.0
+          106020.5
         ]
       ]
     },
@@ -18179,7 +18179,7 @@
     "VolProfile_Reversion(30)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 99660.0,
+      "equity": 99735.0,
       "open_trade": {
         "direction": -1,
         "entry_price": 29832.25,
@@ -19182,18 +19182,18 @@
         ],
         [
           "2026-09-18 13:45:00",
-          99908.0
+          99907.5
         ],
         [
           "2026-09-18 20:45:00",
-          99660.0
+          99735.0
         ]
       ]
     },
     "TPO_Reversion(60,p=5)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 99918.5,
+      "equity": 99994.0,
       "open_trade": {
         "direction": -1,
         "entry_price": 29916.0,
@@ -20200,7 +20200,7 @@
         ],
         [
           "2026-09-18 20:45:00",
-          99918.5
+          99994.0
         ]
       ]
     }

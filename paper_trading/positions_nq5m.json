@@ -2,7 +2,7 @@
   "symbol": "MNQ",
   "freq": "5min",
   "leverage": 1.0,
-  "updated_at_utc": "2026-09-19T02:18:35.692945+00:00",
+  "updated_at_utc": "2026-09-19T04:18:08.391547+00:00",
   "latest_bar": "2026-09-18 20:55:00",
   "bar_count": 21238,
   "buy_and_hold_equity_curve": [
@@ -1004,7 +1004,7 @@
     ],
     [
       "2026-09-18 20:55:00",
-      98470.59
+      98346.5
     ]
   ],
   "strategies": {
@@ -5047,7 +5047,7 @@
     "RSI_Reversion(14,30/70)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 96230.5,
+      "equity": 96306.0,
       "open_trade": {
         "direction": -1,
         "entry_price": 29852.75,
@@ -6054,7 +6054,7 @@
         ],
         [
           "2026-09-18 20:55:00",
-          96230.5
+          96306.0
         ]
       ]
     },
@@ -7070,7 +7070,7 @@
     "ZScore_Reversion(20,z=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 98199.0,
+      "equity": 98274.5,
       "open_trade": {
         "direction": -1,
         "entry_price": 29819.25,
@@ -8077,14 +8077,14 @@
         ],
         [
           "2026-09-18 20:55:00",
-          98199.0
+          98274.5
         ]
       ]
     },
     "Stochastic_Reversion(14,20/80)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 100802.0,
+      "equity": 100877.5,
       "open_trade": {
         "direction": -1,
         "entry_price": 29736.75,
@@ -9091,7 +9091,7 @@
         ],
         [
           "2026-09-18 20:55:00",
-          100802.0
+          100877.5
         ]
       ]
     },
@@ -17170,7 +17170,7 @@
     "ORB_ATR_Target(6,1.5xATR)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 101232.5,
+      "equity": 101157.0,
       "open_trade": {
         "direction": 1,
         "entry_price": 29959.75,
@@ -18177,7 +18177,7 @@
         ],
         [
           "2026-09-18 20:55:00",
-          101232.5
+          101157.0
         ]
       ]
     },
@@ -19193,7 +19193,7 @@
     "TPO_Reversion(60,p=5)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 98125.0,
+      "equity": 98200.5,
       "open_trade": {
         "direction": -1,
         "entry_price": 29776.25,
@@ -20200,7 +20200,7 @@
         ],
         [
           "2026-09-18 20:55:00",
-          98125.0
+          98200.5
         ]
       ]
     }
