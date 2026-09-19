@@ -2,7 +2,7 @@
   "symbol": "MYM",
   "freq": "5min",
   "leverage": 1.0,
-  "updated_at_utc": "2026-09-19T07:18:42.968794+00:00",
+  "updated_at_utc": "2026-09-19T09:18:47.455189+00:00",
   "latest_bar": "2026-09-18 20:55:00",
   "bar_count": 21298,
   "buy_and_hold_equity_curve": [
@@ -1004,14 +1004,14 @@
     ],
     [
       "2026-09-18 20:55:00",
-      102127.24
+      102011.67
     ]
   ],
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 97809.0,
+      "equity": 97779.5,
       "open_trade": {
         "direction": 1,
         "entry_price": 52018.0,
@@ -2018,14 +2018,14 @@
         ],
         [
           "2026-09-18 20:55:00",
-          97809.0
+          97779.5
         ]
       ]
     },
     "Donchian_Breakout(20)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 97593.5,
+      "equity": 97564.0,
       "open_trade": {
         "direction": 1,
         "entry_price": 52024.0,
@@ -3032,7 +3032,7 @@
         ],
         [
           "2026-09-18 20:55:00",
-          97593.5
+          97564.0
         ]
       ]
     },
@@ -8084,7 +8084,7 @@
     "Stochastic_Reversion(14,20/80)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 97403.0,
+      "equity": 97432.5,
       "open_trade": {
         "direction": -1,
         "entry_price": 52145.0,
@@ -9091,7 +9091,7 @@
         ],
         [
           "2026-09-18 20:55:00",
-          97403.0
+          97432.5
         ]
       ]
     },
@@ -12125,7 +12125,7 @@
     "Keltner_Breakout(20,m=2.0)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 98091.5,
+      "equity": 98062.0,
       "open_trade": {
         "direction": 1,
         "entry_price": 52059.0,
@@ -13132,7 +13132,7 @@
         ],
         [
           "2026-09-18 20:55:00",
-          98091.5
+          98062.0
         ]
       ]
     },
@@ -15157,7 +15157,7 @@
     "Inside_Bar_Breakout(0.6)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 100474.0,
+      "equity": 100503.5,
       "open_trade": {
         "direction": -1,
         "entry_price": 52347.0,
@@ -16164,14 +16164,14 @@
         ],
         [
           "2026-09-18 20:55:00",
-          100474.0
+          100503.5
         ]
       ]
     },
     "Opening_Range_Breakout(6)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 100594.5,
+      "equity": 100624.0,
       "open_trade": {
         "direction": -1,
         "entry_price": 51951.0,
@@ -17178,7 +17178,7 @@
         ],
         [
           "2026-09-18 20:55:00",
-          100594.5
+          100624.0
         ]
       ]
     },
