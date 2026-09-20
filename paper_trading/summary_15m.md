@@ -1,10 +1,10 @@
-# BTC/USDT Paper Trading (15min) — updated 2026-09-20T00:17:57.685843+00:00
+# BTC/USDT Paper Trading (15min) — updated 2026-09-20T01:04:33.555851+00:00
 
-Latest bar: 2026-09-20 00:15:00 · 4,273 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-20 01:00:00 · 4,276 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $125,865 | +25.9% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $125,896 | +25.9% | — | 1 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $119,197 | +19.2% | 2.27 | 14 |
 | Supertrend(10,m=3.0) | FLAT | $118,407 | +18.4% | 2.39 | 11 |
 | MA_Crossover(10/50) | FLAT | $115,725 | +15.7% | 2.29 | 14 |
@@ -18,7 +18,7 @@ Latest bar: 2026-09-20 00:15:00 · 4,273 bars of history · $100,000 starting ca
 | Donchian_Breakout(20) | FLAT | $96,108 | -3.9% | -1.45 | 6 |
 | Bollinger_Reversion(20,2sd) | FLAT | $95,551 | -4.4% | -1.61 | 4 |
 | Engulfing_Reversal(0.3) | FLAT | $95,436 | -4.6% | -2.25 | 4 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $94,891 | -5.1% | -2.01 | 4 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $94,891 | -5.1% | -2.00 | 4 |
 | RSI_Reversion(14,30/70) | FLAT | $94,532 | -5.5% | -1.90 | 5 |
 | TPO_Reversion(60,p=5) | FLAT | $94,531 | -5.5% | -2.11 | 5 |
 | VolProfile_Reversion(30) | FLAT | $94,109 | -5.9% | -2.00 | 8 |
