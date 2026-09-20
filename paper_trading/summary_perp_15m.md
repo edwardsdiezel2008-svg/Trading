@@ -1,10 +1,10 @@
-# BTC/USDT Paper Trading (15min) — updated 2026-09-20T04:17:59.813429+00:00
+# BTC/USDT Paper Trading (15min) — updated 2026-09-20T06:11:37.155007+00:00
 
-Latest bar: 2026-09-20 04:15:00 · 4,289 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-20 06:00:00 · 4,296 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $124,679 | +24.7% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $124,652 | +24.7% | — | 1 |
 | Inside_Bar_Breakout(0.6) | FLAT | $105,366 | +5.4% | 0.76 | 2 |
 | MA_Crossover(10/50) | FLAT | $101,794 | +1.8% | 0.32 | 6 |
 | VolProfile_Reversion(30) | FLAT | $97,345 | -2.7% | -0.57 | 3 |
@@ -22,5 +22,5 @@ Latest bar: 2026-09-20 04:15:00 · 4,289 bars of history · $100,000 starting ca
 | TPO_Reversion(60,p=5) | FLAT | $94,920 | -5.1% | -1.76 | 3 |
 | CCI_Reversion(20,100) | FLAT | $94,764 | -5.2% | -1.72 | 3 |
 | Donchian_Breakout(20) | FLAT | $94,675 | -5.3% | -1.88 | 2 |
-| ORB_ATR_Target(6,1.5xATR) | FLAT | $94,653 | -5.3% | -1.62 | 2 |
+| ORB_ATR_Target(6,1.5xATR) | FLAT | $94,653 | -5.3% | -1.61 | 2 |
 | VWAP_Reversion(20,2%) | FLAT | $89,888 | -10.1% | -1.47 | 3 |
