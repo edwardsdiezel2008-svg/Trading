@@ -1,13 +1,13 @@
-# MNQ Paper Trading (5min) — updated 2026-09-21T00:18:14.332134+00:00
+# MNQ Paper Trading (5min) — updated 2026-09-21T01:03:26.157272+00:00
 
-Latest bar: 2026-09-21 00:05:00 · 21,262 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-21 00:50:00 · 21,271 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $98,758 | -1.2% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $98,894 | -1.1% | — | 1 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $101,307 | +1.3% | 0.36 | 366 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $101,115 | +1.1% | 0.24 | 117 |
-| Stochastic_Reversion(14,20/80) | SHORT | $100,729 | +0.7% | 0.17 | 823 |
+| Stochastic_Reversion(14,20/80) | FLAT | $100,766 | +0.8% | 0.18 | 823 |
 | MA_Crossover(10/50) | FLAT | $100,132 | +0.1% | 0.05 | 132 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
 | Engulfing_Reversal(0.3) | FLAT | $99,393 | -0.6% | -0.13 | 302 |
@@ -16,11 +16,11 @@ Latest bar: 2026-09-21 00:05:00 · 21,262 bars of history · $100,000 starting c
 | Opening_Range_Breakout(6) | FLAT | $98,606 | -1.4% | -0.27 | 59 |
 | Donchian_Breakout(20) | FLAT | $98,430 | -1.6% | -0.35 | 105 |
 | Supertrend(10,m=3.0) | FLAT | $98,334 | -1.7% | -0.28 | 222 |
-| ZScore_Reversion(20,z=2.0) | SHORT | $98,256 | -1.7% | -0.33 | 792 |
-| TPO_Reversion(60,p=5) | SHORT | $98,128 | -1.9% | -0.35 | 1560 |
+| ZScore_Reversion(20,z=2.0) | SHORT | $98,253 | -1.7% | -0.33 | 793 |
+| TPO_Reversion(60,p=5) | FLAT | $98,111 | -1.9% | -0.35 | 1561 |
 | Inside_Bar_Breakout(0.6) | FLAT | $97,522 | -2.5% | -0.37 | 85 |
 | MACD_Momentum(12/26/9) | FLAT | $97,036 | -3.0% | -0.76 | 301 |
-| RSI_Reversion(14,30/70) | SHORT | $96,277 | -3.7% | -1.33 | 579 |
+| RSI_Reversion(14,30/70) | FLAT | $96,307 | -3.7% | -1.32 | 580 |
 | CCI_Reversion(20,100) | FLAT | $95,626 | -4.4% | -0.98 | 1086 |
 | Bollinger_Reversion(20,2sd) | FLAT | $95,228 | -4.8% | -2.63 | 61 |
 | VolProfile_Reversion(30) | FLAT | $95,029 | -5.0% | -2.83 | 187 |
