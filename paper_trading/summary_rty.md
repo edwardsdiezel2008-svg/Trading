@@ -1,19 +1,19 @@
-# M2K Paper Trading (1D) — updated 2026-09-22T11:20:26.148365+00:00
+# M2K Paper Trading (1D) — updated 2026-09-22T13:20:33.780174+00:00
 
 Latest bar: 2026-09-22 00:00:00 · 2,324 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $206,786 | +106.8% | — | 1 |
-| Parabolic_SAR(af=0.02,max=0.2) | LONG | $107,275 | +7.3% | 0.38 | 227 |
-| VWAP_Reversion(20,2%) | LONG | $106,203 | +6.2% | 0.37 | 142 |
-| Bollinger_Reversion(20,2sd) | LONG | $104,529 | +4.5% | 0.31 | 84 |
-| Keltner_Breakout(20,m=2.0) | SHORT | $102,628 | +2.6% | 0.14 | 33 |
-| ZScore_Reversion(20,z=2.0) | LONG | $102,405 | +2.4% | 0.19 | 90 |
-| Stochastic_Reversion(14,20/80) | LONG | $102,138 | +2.1% | 0.17 | 86 |
+| *Buy & Hold (benchmark)* | — | $207,439 | +107.4% | — | 1 |
+| Parabolic_SAR(af=0.02,max=0.2) | LONG | $107,321 | +7.3% | 0.39 | 227 |
+| VWAP_Reversion(20,2%) | LONG | $106,249 | +6.2% | 0.37 | 142 |
+| Bollinger_Reversion(20,2sd) | LONG | $104,575 | +4.6% | 0.31 | 84 |
+| Keltner_Breakout(20,m=2.0) | SHORT | $102,582 | +2.6% | 0.14 | 33 |
+| ZScore_Reversion(20,z=2.0) | LONG | $102,451 | +2.5% | 0.19 | 90 |
+| Stochastic_Reversion(14,20/80) | LONG | $102,184 | +2.2% | 0.17 | 86 |
 | Donchian_Breakout(20) | FLAT | $101,661 | +1.7% | 0.12 | 32 |
 | MACD_Momentum(12/26/9) | FLAT | $101,059 | +1.1% | 0.07 | 175 |
-| TPO_Reversion(60,p=5) | LONG | $100,081 | +0.1% | 0.01 | 162 |
+| TPO_Reversion(60,p=5) | LONG | $100,127 | +0.1% | 0.02 | 162 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $100,000 | +0.0% | — | 0 |
 | VolProfile_Reversion(30) | FLAT | $98,981 | -1.0% | -0.08 | 224 |
