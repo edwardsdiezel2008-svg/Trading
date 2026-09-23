@@ -1,6 +1,6 @@
-# MYM Paper Trading (5min) — updated 2026-09-23T11:19:25.671218+00:00
+# MYM Paper Trading (5min) — updated 2026-09-23T11:30:30.485859+00:00
 
-Latest bar: 2026-09-23 11:05:00 · 22,006 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-23 11:15:00 · 22,008 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
@@ -13,7 +13,7 @@ Latest bar: 2026-09-23 11:05:00 · 22,006 bars of history · $100,000 starting c
 | Keltner_Breakout(20,m=2.0) | SHORT | $98,052 | -1.9% | -1.01 | 370 |
 | Donchian_Breakout(20) | SHORT | $97,781 | -2.2% | -1.15 | 530 |
 | MA_Crossover(10/50) | SHORT | $97,706 | -2.3% | -1.18 | 585 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $97,226 | -2.8% | -2.10 | 856 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $97,226 | -2.8% | -2.09 | 856 |
 | Stochastic_Reversion(14,20/80) | FLAT | $97,172 | -2.8% | -2.32 | 849 |
 | Bollinger_Reversion(20,2sd) | FLAT | $96,796 | -3.2% | -2.29 | 741 |
 | Supertrend(10,m=3.0) | FLAT | $95,724 | -4.3% | -2.37 | 545 |
