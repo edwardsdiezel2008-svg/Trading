@@ -1,10 +1,6 @@
 {
   "runs": [
     {
-      "timestamp": "2026-09-13T11:47:44.286378+00:00",
-      "flagged": {}
-    },
-    {
       "timestamp": "2026-09-13T14:20:35.464392+00:00",
       "flagged": {}
     },
@@ -729,6 +725,13 @@
     {
       "timestamp": "2026-09-23T20:32:06.415857+00:00",
       "flagged": {
+        "SPXUSD": "elevated"
+      }
+    },
+    {
+      "timestamp": "2026-09-23T22:22:17.476176+00:00",
+      "flagged": {
+        "TROLLUSD": "elevated",
         "SPXUSD": "elevated"
       }
     }
