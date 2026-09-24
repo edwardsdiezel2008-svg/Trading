@@ -519,6 +519,15 @@
       if (ti < trades.length && trades[ti][1] === i) {
         realized += trades[ti][5];
         ti++;
+        // Same-bar reversal: the next trade also enters on this exact bar
+        // (the real engine closes the old leg and marks the new leg's
+        // open-to-close move in the same pass over this bar), so its
+        // intrabar move belongs to this bar's equity too - without this,
+        // the new leg's move was silently dropped for the reversal bar.
+        if (ti < trades.length && trades[ti][0] === i) {
+          const dir2 = trades[ti][2], entryPx2 = trades[ti][3];
+          eq[i] += dir2 * (bars[i][1] - entryPx2) * multiplier;
+        }
       }
     }
     return eq;
