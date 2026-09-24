@@ -123,9 +123,14 @@ class OpeningRangeBreakout(Strategy):
         range_bars = self.params.get("range_bars", 6)
         idx = bars.index
         et = (idx.tz_localize("UTC") if idx.tz is None else idx.tz_convert("UTC")).tz_convert("America/New_York")
-        session_date = et.normalize()
+        # Compare in naive ET wall-clock time, not tz-aware arithmetic: adding a
+        # Timedelta to a tz-aware Timestamp advances by elapsed duration, not by
+        # wall-clock hours, so on the two annual DST-transition days it puts
+        # cash_open an hour off from actual 9:30 AM local time.
+        et_naive = et.tz_localize(None)
+        session_date = et_naive.normalize()
         cash_open = session_date + pd.Timedelta(hours=9, minutes=30)
-        dates = session_date.where(et >= cash_open, session_date - pd.Timedelta(days=1))
+        dates = session_date.where(et_naive >= cash_open, session_date - pd.Timedelta(days=1))
 
         orb_high = bars.groupby(dates)["high"].transform(lambda s: s.iloc[:range_bars].max())
         orb_low = bars.groupby(dates)["low"].transform(lambda s: s.iloc[:range_bars].min())
@@ -183,9 +188,14 @@ class OpeningRangeBreakoutATRTarget(Strategy):
 
         idx = bars.index
         et = (idx.tz_localize("UTC") if idx.tz is None else idx.tz_convert("UTC")).tz_convert("America/New_York")
-        session_date = et.normalize()
+        # Compare in naive ET wall-clock time, not tz-aware arithmetic: adding a
+        # Timedelta to a tz-aware Timestamp advances by elapsed duration, not by
+        # wall-clock hours, so on the two annual DST-transition days it puts
+        # cash_open an hour off from actual 9:30 AM local time.
+        et_naive = et.tz_localize(None)
+        session_date = et_naive.normalize()
         cash_open = session_date + pd.Timedelta(hours=9, minutes=30)
-        dates = session_date.where(et >= cash_open, session_date - pd.Timedelta(days=1))
+        dates = session_date.where(et_naive >= cash_open, session_date - pd.Timedelta(days=1))
 
         orb_high = bars.groupby(dates)["high"].transform(lambda s: s.iloc[:range_bars].max())
         orb_low = bars.groupby(dates)["low"].transform(lambda s: s.iloc[:range_bars].min())

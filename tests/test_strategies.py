@@ -274,6 +274,38 @@ def test_opening_range_breakout_session_spans_utc_midnight_correctly():
     assert (signals.iloc[3:] == 1).all()
 
 
+def test_opening_range_breakout_dst_spring_forward_session_boundary():
+    # 2026-03-08 is the US spring-forward DST transition: ET clocks jump
+    # 2:00 AM -> 3:00 AM local. Adding a Timedelta to a tz-aware Timestamp
+    # advances by elapsed duration rather than wall-clock hours, so a naive
+    # "normalize() + Timedelta(hours=9, minutes=30)" cash_open lands at
+    # 10:30 AM ET instead of 9:30 AM ET on this one day. That earlier bug
+    # would wrongly fold real premarket bars (8:00-8:10 ET) and the true
+    # opening-range bars (9:30-9:40 ET) into a single prior session, letting
+    # the 3rd opening-range bar be treated as already "valid" (bar_num >=
+    # range_bars) and fire a breakout signal against the premarket range -
+    # even though the real session's opening range isn't even complete yet.
+    # Correctly anchored to 9:30 AM ET, premarket and the new session's
+    # opening range are two separate 3-bar groups and neither has enough
+    # bars yet to be valid, so every signal here must stay flat.
+    premarket = [_bar(100.0, 100.2, 99.8, 100.0)] * 3
+    opening_range = [_bar(100.0, 100.2, 99.8, 100.0), _bar(100.0, 100.3, 99.9, 100.0), _bar(100.0, 105.5, 100.0, 105.0)]
+    idx = pd.DatetimeIndex(
+        [
+            "2026-03-08 13:00",
+            "2026-03-08 13:05",
+            "2026-03-08 13:10",
+            "2026-03-08 13:30",
+            "2026-03-08 13:35",
+            "2026-03-08 13:40",
+        ]
+    )
+    bars = pd.DataFrame(premarket + opening_range, index=idx)
+    strategy = OpeningRangeBreakout(params={"range_bars": 3})
+    signals = strategy.generate_signals(bars)
+    assert (signals == 0).all()
+
+
 def test_opening_range_breakout_never_fires_on_daily_bars():
     # One bar per session means bar_num is always 0 < range_bars - the
     # strategy should correctly stay flat the whole time.
