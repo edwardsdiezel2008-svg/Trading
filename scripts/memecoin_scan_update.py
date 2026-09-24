@@ -55,7 +55,13 @@ def scan_coin(symbol: str) -> dict | None:
     path = f"{BARS_DIR}/{symbol}.csv"
     if not os.path.exists(path):
         return None
-    bars = load_bars(path, freq="1h")
+    try:
+        bars = load_bars(path, freq="1h")
+    except Exception as exc:
+        # A truncated/empty bars file (e.g. left mid-write by an interrupted
+        # fetch) must not take down the scan for every other coin - report it
+        # as skipped, the same way "insufficient_data" already is.
+        return {"symbol": symbol, "status": "error", "error": str(exc)}
     if len(bars) < MIN_BARS:
         return {
             "symbol": symbol, "status": "insufficient_data",

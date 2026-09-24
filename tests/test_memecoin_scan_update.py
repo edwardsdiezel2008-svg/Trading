@@ -37,6 +37,22 @@ def test_scan_coin_reports_insufficient_data_below_the_minimum_bar_count(tmp_pat
     assert result["min_bars_needed"] == MIN_BARS
 
 
+def test_scan_coin_reports_error_status_instead_of_crashing_on_an_empty_bars_file(tmp_path, monkeypatch):
+    # A truncated/empty CSV (e.g. left mid-write by an interrupted fetch)
+    # makes load_bars raise pandas.errors.EmptyDataError. scan_coin must
+    # catch that and report it like any other skip, not propagate the
+    # exception - otherwise one bad coin file takes down the whole scan.
+    monkeypatch.chdir(tmp_path)
+    path = "paper_trading/memecoins/TESTUSD.csv"
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    open(path, "w").close()
+
+    result = scan_coin("TESTUSD")
+    assert result["status"] == "error"
+    assert result["symbol"] == "TESTUSD"
+    assert "error" in result
+
+
 def test_scan_coin_flags_a_breakout_above_the_prior_20_bar_high(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     n = MIN_BARS + 5
@@ -102,7 +118,7 @@ def test_main_ranks_breakouts_and_reports_skipped_coins(tmp_path, monkeypatch):
     import scripts.memecoin_scan_update as memecoin_scan_update
 
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(memecoin_scan_update, "MEME_COINS", ["BREAKOUT_USD", "FLAT_USD", "THIN_USD"])
+    monkeypatch.setattr(memecoin_scan_update, "MEME_COINS", ["BREAKOUT_USD", "FLAT_USD", "THIN_USD", "EMPTY_USD"])
 
     n = MIN_BARS + 5
     breakout_rows = [[ts, 1.0, 1.1, 0.9, 1.0, 100] for ts in _hourly_timestamps(n)]
@@ -116,6 +132,10 @@ def test_main_ranks_breakouts_and_reports_skipped_coins(tmp_path, monkeypatch):
     # actually reach the output, so an entirely-missing coin is silently
     # absent from both ranked and skipped - a real, current behavior, not
     # something this test is asserting should be different).
+    # EMPTY_USD's file exists but is truncated/empty - main() must not let
+    # that crash the scan for the other coins, and must report it as skipped.
+    os.makedirs("paper_trading/memecoins", exist_ok=True)
+    open("paper_trading/memecoins/EMPTY_USD.csv", "w").close()
 
     memecoin_scan_update.main()
 
@@ -127,4 +147,5 @@ def test_main_ranks_breakouts_and_reports_skipped_coins(tmp_path, monkeypatch):
     assert out["ranked"][0]["is_breakout"] is True
     assert out["ranked"][0]["rank"] == 1
     assert out["ranked"][1]["is_breakout"] is False
-    assert out["skipped"] == []
+    assert [r["symbol"] for r in out["skipped"]] == ["EMPTY_USD"]
+    assert out["skipped"][0]["status"] == "error"
