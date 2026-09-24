@@ -1,16 +1,16 @@
-# MGC Paper Trading (5min) — updated 2026-09-23T23:40:50.130931+00:00
+# MGC Paper Trading (5min) — updated 2026-09-24T01:19:26.719617+00:00
 
-Latest bar: 2026-09-23 23:25:00 · 22,148 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-24 01:05:00 · 22,168 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $94,706 | -5.3% | — | 1 |
-| MA_Crossover(10/50) | LONG | $108,414 | +8.4% | 1.37 | 566 |
+| *Buy & Hold (benchmark)* | — | $94,886 | -5.1% | — | 1 |
+| MA_Crossover(10/50) | LONG | $108,380 | +8.4% | 1.36 | 568 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $106,683 | +6.7% | 1.88 | 487 |
-| MACD_Momentum(12/26/9) | LONG | $105,665 | +5.7% | 0.93 | 1698 |
-| Keltner_Breakout(20,m=2.0) | SHORT | $105,636 | +5.6% | 0.93 | 323 |
-| ATR_Vol_Breakout(14,k=1.5) | LONG | $105,076 | +5.1% | 0.84 | 354 |
-| Supertrend(10,m=3.0) | SHORT | $102,586 | +2.6% | 0.44 | 555 |
+| MACD_Momentum(12/26/9) | LONG | $105,630 | +5.6% | 0.92 | 1702 |
+| Keltner_Breakout(20,m=2.0) | LONG | $105,516 | +5.5% | 0.91 | 324 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $105,052 | +5.1% | 0.84 | 355 |
+| Supertrend(10,m=3.0) | LONG | $102,559 | +2.6% | 0.44 | 556 |
 | Opening_Range_Breakout(6) | FLAT | $102,488 | +2.5% | 0.63 | 83 |
 | RSI_Reversion(14,30/70) | FLAT | $100,719 | +0.7% | 0.29 | 630 |
 | Donchian_Breakout(20) | FLAT | $100,015 | +0.0% | 0.03 | 532 |
@@ -22,5 +22,5 @@ Latest bar: 2026-09-23 23:25:00 · 22,148 bars of history · $100,000 starting c
 | ZScore_Reversion(20,z=2.0) | FLAT | $96,319 | -3.7% | -1.03 | 604 |
 | Engulfing_Reversal(0.3) | FLAT | $96,128 | -3.9% | -1.33 | 242 |
 | Stochastic_Reversion(14,20/80) | FLAT | $95,699 | -4.3% | -1.05 | 748 |
-| Bollinger_Reversion(20,2sd) | FLAT | $95,638 | -4.4% | -1.21 | 453 |
+| Bollinger_Reversion(20,2sd) | FLAT | $95,638 | -4.4% | -1.20 | 453 |
 | CCI_Reversion(20,100) | FLAT | $95,524 | -4.5% | -1.31 | 1259 |
