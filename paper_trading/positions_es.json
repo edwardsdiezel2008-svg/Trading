@@ -2,7 +2,7 @@
   "symbol": "MES",
   "freq": "1D",
   "leverage": 1.0,
-  "updated_at_utc": "2026-09-24T15:23:07.086479+00:00",
+  "updated_at_utc": "2026-09-24T16:26:00.931371+00:00",
   "latest_bar": "2026-09-24 00:00:00",
   "bar_count": 2553,
   "buy_and_hold_equity_curve": [
@@ -1004,14 +1004,15 @@
     ],
     [
       "2026-09-24 00:00:00",
-      355919.92
+      356518.24
     ]
   ],
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 105508.75,
+      "equity": 105573.75,
+      "max_drawdown": -0.0465,
       "open_trade": {
         "direction": 1,
         "entry_price": 7722.0,
@@ -2018,7 +2019,7 @@
         ],
         [
           "2026-09-24 00:00:00",
-          105508.75
+          105573.75
         ]
       ]
     },
@@ -2026,6 +2027,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 101289.5,
+      "max_drawdown": -0.0526,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -3035,6 +3037,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 100154.0,
+      "max_drawdown": -0.0522,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -4044,6 +4047,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 103927.5,
+      "max_drawdown": -0.0502,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -5053,6 +5057,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 106990.75,
+      "max_drawdown": -0.0137,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -6062,6 +6067,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 94977.25,
+      "max_drawdown": -0.0567,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -7071,6 +7077,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 95210.0,
+      "max_drawdown": -0.057,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -8080,6 +8087,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 94299.5,
+      "max_drawdown": -0.0583,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -9089,6 +9097,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 95141.25,
+      "max_drawdown": -0.0503,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -10098,6 +10107,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 95957.25,
+      "max_drawdown": -0.05,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -11107,6 +11117,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 100392.0,
+      "max_drawdown": -0.05,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -12116,6 +12127,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 97917.5,
+      "max_drawdown": -0.0529,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -13125,6 +13137,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 99023.0,
+      "max_drawdown": -0.0511,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -14134,6 +14147,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 95250.5,
+      "max_drawdown": -0.0505,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -15143,6 +15157,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 98993.75,
+      "max_drawdown": -0.0524,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -16152,6 +16167,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 100000.0,
+      "max_drawdown": 0.0,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -17161,6 +17177,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 100000.0,
+      "max_drawdown": 0.0,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
@@ -18169,7 +18186,8 @@
     "VolProfile_Reversion(30)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 102071.5,
+      "equity": 102006.5,
+      "max_drawdown": -0.0451,
       "open_trade": {
         "direction": -1,
         "entry_price": 7830.0,
@@ -19176,7 +19194,7 @@
         ],
         [
           "2026-09-24 00:00:00",
-          102071.5
+          102006.5
         ]
       ]
     },
@@ -19184,6 +19202,7 @@
       "position": 0,
       "position_label": "FLAT",
       "equity": 94554.25,
+      "max_drawdown": -0.056,
       "open_trade": null,
       "as_of": "2026-09-24 00:00:00",
       "equity_curve": [
