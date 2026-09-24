@@ -59,3 +59,23 @@ def test_main_raises_systemexit_when_days_is_not_less_than_the_bar_count(tmp_pat
 
     with pytest.raises(SystemExit, match="must be less than the available bar count"):
         simulate_recent_period.main(["--data", f"{csv_path}:TEST", "--freq", "1D", "--days", "20", "--capital", "100"])
+
+
+def test_main_raises_systemexit_when_days_is_zero_or_negative(tmp_path):
+    import pytest
+
+    # window_start_idx = len(bars) - args.days lands one past the last valid
+    # index when args.days is 0 (or further out of bounds when negative), so
+    # without a lower-bound check this raised an uncaught IndexError instead
+    # of the intended graceful SystemExit.
+    prices = np.full(20, 100.0)
+    idx = pd.date_range("2026-01-01", periods=len(prices), freq="1D")
+    bars = pd.DataFrame({"open": prices, "high": prices, "low": prices, "close": prices, "volume": 100}, index=idx)
+    csv_path = tmp_path / "bars.csv"
+    bars.reset_index(names="timestamp").to_csv(csv_path, index=False)
+
+    with pytest.raises(SystemExit, match="must be a positive number of bars"):
+        simulate_recent_period.main(["--data", f"{csv_path}:TEST", "--freq", "1D", "--days", "0", "--capital", "100"])
+
+    with pytest.raises(SystemExit, match="must be a positive number of bars"):
+        simulate_recent_period.main(["--data", f"{csv_path}:TEST", "--freq", "1D", "--days", "-5", "--capital", "100"])

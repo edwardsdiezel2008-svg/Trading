@@ -40,6 +40,8 @@ def main(argv=None):
     bars = load_bars(path, freq=args.freq)
     spec = get_spec(symbol.upper())
 
+    if args.days <= 0:
+        raise SystemExit(f"--days ({args.days}) must be a positive number of bars.")
     if args.days >= len(bars):
         raise SystemExit(f"--days ({args.days}) must be less than the available bar count ({len(bars)}).")
 
