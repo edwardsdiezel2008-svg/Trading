@@ -275,10 +275,16 @@ def main(argv=None):
         else:
             closed_trades = result.trades
 
+        # Computed from the full per-bar equity curve (metrics.py), not the
+        # 250-point downsampled one below - a sharp single-bar loss between
+        # two sampled points would otherwise be invisible to a drawdown
+        # computed only from `equity_curve`, understating the real risk.
+        max_drawdown = metrics["max_drawdown"]
         pos_entry = {
             "position": last_pos,
             "position_label": "LONG" if last_pos > 0 else "SHORT" if last_pos < 0 else "FLAT",
             "equity": round(last_equity, 2),
+            "max_drawdown": round(float(max_drawdown), 4) if pd.notna(max_drawdown) else None,
             "open_trade": open_trade,
             "as_of": str(bars.index[-1]),
             "equity_curve": _downsample_equity_curve(bars.index, result.equity_curve),

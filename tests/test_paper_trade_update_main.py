@@ -3,6 +3,7 @@ import sys
 
 import numpy as np
 import pandas as pd
+import pytest
 
 sys.path.insert(0, ".")
 
@@ -38,6 +39,7 @@ def test_main_unleveraged_writes_positions_trade_log_and_summary(tmp_path, monke
         assert entry["position_label"] in {"LONG", "SHORT", "FLAT"}
         assert "liquidation_price" not in entry  # only present for leveraged tracks
         assert isinstance(entry["equity_curve"], list) and entry["equity_curve"]
+        assert entry["max_drawdown"] is None or entry["max_drawdown"] <= 0
 
     assert (tmp_path / "paper_trading" / "trade_log.csv").exists()
     assert (tmp_path / "paper_trading" / "summary.md").exists()
@@ -119,3 +121,50 @@ def test_main_applies_the_cost_aware_filter_when_requested(tmp_path, monkeypatch
     # CostAwareFilter delegates .name to the wrapped strategy, so the keys
     # are unchanged even though the filter is genuinely active underneath.
     assert set(positions["strategies"].keys()) == {cls().name for cls in ALL_STRATEGY_CLASSES}
+
+
+def test_main_ships_max_drawdown_computed_from_the_full_curve_not_the_downsampled_one(tmp_path, monkeypatch):
+    import scripts.paper_trade_update as paper_trade_update
+    from src.backtest.strategies.base import Strategy
+
+    # A one-bar ~4% dip that fully recovers the very next bar - small enough
+    # to stay under the engine's default 5% portfolio drawdown breaker (so
+    # the position isn't force-halted and the recovery actually happens),
+    # placed at bar 249 of 500, an index _downsample_equity_curve's 250-point
+    # stride skips over entirely. The dashboard's old JS max-drawdown
+    # calculation (recomputed from that lossy 250-point curve) would see
+    # this dip's neighbors both back at the recovered level and report a
+    # near-zero drawdown; the shipped `max_drawdown` field is computed by
+    # metrics.py from the real, full-resolution equity curve instead, so it
+    # must actually reflect the dip.
+    class BuyAndHold(Strategy):
+        def generate_signals(self, bars):
+            return pd.Series(1, index=bars.index)
+
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "paper_trading").mkdir()
+    monkeypatch.setattr(paper_trade_update, "ALL_STRATEGY_CLASSES", [BuyAndHold])
+
+    n = 500
+    prices = np.full(n, 100.0)
+    prices[249] = 96.0
+    idx = pd.date_range("2026-01-05", periods=n, freq="1D")
+    bars = pd.DataFrame({"open": prices, "high": prices, "low": prices, "close": prices, "volume": 1000}, index=idx)
+    bars.reset_index(names="timestamp").to_csv(tmp_path / "paper_trading" / "bars.csv", index=False)
+
+    paper_trade_update.main(["--freq", "1D", "--tracking-start", "2026-01-10", "--symbol", "BTC_USDT"])
+
+    with open(tmp_path / "paper_trading" / "positions.json") as f:
+        positions = json.load(f)
+
+    entry = positions["strategies"]["BuyAndHold"]
+    assert entry["max_drawdown"] == pytest.approx(-0.04135, abs=1e-4)
+
+    # The bug this guards against: recomputing drawdown from the shipped,
+    # downsampled equity_curve instead would miss the dip almost entirely.
+    lossy = 0.0
+    peak = float("-inf")
+    for _, eq in entry["equity_curve"]:
+        peak = max(peak, eq)
+        lossy = min(lossy, eq / peak - 1) if peak > 0 else lossy
+    assert lossy > entry["max_drawdown"] + 0.01  # materially less negative - the dip is invisible to it

@@ -1267,7 +1267,12 @@
       // Floored at -100% for the same reason equity/totalReturn are above -
       // unconstrained short sizing can drive the simulated equity curve
       // below zero, which isn't a real percentage decline.
-      const maxDrawdown = Math.max(computeMaxDrawdown(p.equity_curve || []), -1);
+      // Prefer the backend's own max_drawdown (computed from the full,
+      // non-downsampled per-bar equity curve) when it's shipped - falling
+      // back to recomputing from the chart's 250-point equity_curve (which
+      // can miss a sharp move between two sampled points) only for older
+      // positions.json files written before this field existed.
+      const maxDrawdown = Math.max(p.max_drawdown ?? computeMaxDrawdown(p.equity_curve || []), -1);
       const wins = closedTrades.filter((t) => t.net_pnl > 0).length;
       const winRate = closedTrades.length ? wins / closedTrades.length : null;
       // Profit factor: gross profit / gross loss. Complements win rate - a
