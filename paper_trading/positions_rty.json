@@ -2,7 +2,7 @@
   "symbol": "M2K",
   "freq": "1D",
   "leverage": 1.0,
-  "updated_at_utc": "2026-09-24T12:22:29.827555+00:00",
+  "updated_at_utc": "2026-09-24T13:52:30.790355+00:00",
   "latest_bar": "2026-09-24 00:00:00",
   "bar_count": 2326,
   "buy_and_hold_equity_curve": [
@@ -1004,7 +1004,7 @@
     ],
     [
       "2026-09-24 00:00:00",
-      202292.9
+      202356.8
     ]
   ],
   "strategies": {
@@ -4038,7 +4038,7 @@
     "Parabolic_SAR(af=0.02,max=0.2)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 106958.09,
+      "equity": 106962.59,
       "open_trade": {
         "direction": 1,
         "entry_price": 2870.5,
@@ -5045,7 +5045,7 @@
         ],
         [
           "2026-09-24 00:00:00",
-          106958.09
+          106962.59
         ]
       ]
     },
@@ -6061,7 +6061,7 @@
     "Bollinger_Reversion(20,2sd)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 104212.2,
+      "equity": 104216.7,
       "open_trade": {
         "direction": 1,
         "entry_price": 2971.0,
@@ -7068,7 +7068,7 @@
         ],
         [
           "2026-09-24 00:00:00",
-          104212.2
+          104216.7
         ]
       ]
     },
@@ -12120,7 +12120,7 @@
     "Keltner_Breakout(20,m=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 102944.4,
+      "equity": 102939.9,
       "open_trade": {
         "direction": -1,
         "entry_price": 2926.39990234375,
@@ -13127,7 +13127,7 @@
         ],
         [
           "2026-09-24 00:00:00",
-          102944.4
+          102939.9
         ]
       ]
     },
@@ -18179,7 +18179,7 @@
     "VolProfile_Reversion(30)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 98924.0,
+      "equity": 98928.5,
       "open_trade": {
         "direction": 1,
         "entry_price": 2860.699951171875,
@@ -19186,14 +19186,14 @@
         ],
         [
           "2026-09-24 00:00:00",
-          98924.0
+          98928.5
         ]
       ]
     },
     "TPO_Reversion(60,p=5)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99764.1,
+      "equity": 99768.6,
       "open_trade": {
         "direction": 1,
         "entry_price": 2923.10009765625,
@@ -20200,7 +20200,7 @@
         ],
         [
           "2026-09-24 00:00:00",
-          99764.1
+          99768.6
         ]
       ]
     }
