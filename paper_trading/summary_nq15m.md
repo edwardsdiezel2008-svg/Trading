@@ -1,12 +1,12 @@
-# MNQ Paper Trading (15min) — updated 2026-09-24T08:20:34.052890+00:00
+# MNQ Paper Trading (15min) — updated 2026-09-24T09:59:57.368250+00:00
 
-Latest bar: 2026-09-24 08:00:00 · 7,407 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-24 09:45:00 · 7,414 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $99,942 | -0.1% | — | 1 |
-| Engulfing_Reversal(0.3) | LONG | $107,295 | +7.3% | 0.97 | 506 |
-| Bollinger_Reversion(20,2sd) | LONG | $105,332 | +5.3% | 0.96 | 263 |
+| *Buy & Hold (benchmark)* | — | $99,444 | -0.6% | — | 1 |
+| Engulfing_Reversal(0.3) | SHORT | $106,948 | +6.9% | 0.93 | 507 |
+| Bollinger_Reversion(20,2sd) | LONG | $105,028 | +5.0% | 0.90 | 263 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $100,860 | +0.9% | 0.22 | 151 |
 | MACD_Momentum(12/26/9) | FLAT | $100,773 | +0.8% | 0.20 | 110 |
 | VWAP_Reversion(20,2%) | FLAT | $100,222 | +0.2% | 0.26 | 1 |
@@ -15,12 +15,12 @@ Latest bar: 2026-09-24 08:00:00 · 7,407 bars of history · $100,000 starting ca
 | Opening_Range_Breakout(6) | FLAT | $98,765 | -1.2% | -0.29 | 38 |
 | Inside_Bar_Breakout(0.6) | FLAT | $98,644 | -1.4% | -0.23 | 18 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $98,495 | -1.5% | -0.42 | 17 |
-| TPO_Reversion(60,p=5) | LONG | $98,189 | -1.8% | -0.32 | 515 |
 | Donchian_Breakout(20) | FLAT | $98,142 | -1.9% | -0.38 | 42 |
-| VolProfile_Reversion(30) | FLAT | $97,672 | -2.3% | -0.43 | 783 |
+| TPO_Reversion(60,p=5) | LONG | $97,884 | -2.1% | -0.38 | 515 |
+| VolProfile_Reversion(30) | LONG | $97,576 | -2.4% | -0.45 | 785 |
 | Supertrend(10,m=3.0) | FLAT | $97,532 | -2.5% | -0.52 | 47 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $97,530 | -2.5% | -0.43 | 57 |
-| RSI_Reversion(14,30/70) | FLAT | $96,852 | -3.1% | -0.96 | 208 |
-| CCI_Reversion(20,100) | FLAT | $95,607 | -4.4% | -2.28 | 52 |
+| RSI_Reversion(14,30/70) | LONG | $96,652 | -3.3% | -1.02 | 209 |
+| CCI_Reversion(20,100) | FLAT | $95,607 | -4.4% | -2.27 | 52 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $95,560 | -4.4% | -1.52 | 50 |
 | Stochastic_Reversion(14,20/80) | FLAT | $95,131 | -4.9% | -2.02 | 30 |
