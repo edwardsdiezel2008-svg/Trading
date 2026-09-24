@@ -24,8 +24,9 @@ hardcoded defaults and PARAM_SPACE extremes, plus whichever configs land in
 the top 10 by total return or top 10 by Sharpe on that track) so the page's
 payload stays bounded no matter how many parameter combinations get
 backtested. Trade lists are
-[entry_idx, exit_idx, direction, entry_price, exit_price, net_pnl] tuples
-indexing into that track's bars. The page reconstructs the full per-bar
+[entry_idx, exit_idx, direction, entry_price, exit_price, net_pnl,
+entry_cost] tuples indexing into that track's bars. The page reconstructs
+the full per-bar
 equity curve and simulates the trailing-drawdown breach with pure
 arithmetic over these real numbers - no strategy logic is duplicated in
 JavaScript, so there's no way for the two to drift apart.
@@ -143,13 +144,17 @@ def _bars_json(bars):
 
 
 def _trades_json(trades, bars_index):
+    # entry_cost travels alongside net_pnl so the page can mark an open
+    # position to market intrabar without overstating it by the entry-side
+    # cost the real engine already deducted the moment the trade opened
+    # (net_pnl only reflects that deduction once the trade closes).
     loc = {ts: i for i, ts in enumerate(bars_index)}
     out = []
     for t in trades:
         out.append([
             loc[t.entry_time], loc[t.exit_time], int(t.direction),
             round(float(t.entry_price), 4), round(float(t.exit_price), 4),
-            round(float(t.net_pnl), 2),
+            round(float(t.net_pnl), 2), round(float(t.entry_cost), 4),
         ])
     return out
 

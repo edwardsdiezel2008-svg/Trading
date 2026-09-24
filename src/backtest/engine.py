@@ -38,6 +38,7 @@ class Trade:
     costs: float
     net_pnl: float
     entry_equity: float
+    entry_cost: float = 0.0  # this leg's own share of `costs` (excludes exit_cost)
 
     @property
     def return_pct(self) -> float:
@@ -199,6 +200,7 @@ def run_backtest(
                     costs=current_entry_cost + exit_cost,
                     net_pnl=gross_pnl - current_entry_cost - exit_cost,
                     entry_equity=entry_equity,
+                    entry_cost=current_entry_cost,
                 )
                 trade._bars_held = i - entry_bar_idx
                 trades.append(trade)
@@ -248,6 +250,7 @@ def run_backtest(
                         costs=current_entry_cost + exit_cost,
                         net_pnl=gross_pnl - current_entry_cost - exit_cost,
                         entry_equity=entry_equity,
+                        entry_cost=current_entry_cost,
                     )
                     trade._bars_held = i - entry_bar_idx
                     trades.append(trade)
@@ -276,6 +279,7 @@ def run_backtest(
                     costs=current_entry_cost + exit_cost,
                     net_pnl=gross_pnl - current_entry_cost - exit_cost,
                     entry_equity=entry_equity,
+                    entry_cost=current_entry_cost,
                 )
                 trade._bars_held = i - entry_bar_idx
                 trades.append(trade)
@@ -302,6 +306,7 @@ def run_backtest(
             costs=current_entry_cost + exit_cost,
             net_pnl=gross_pnl - current_entry_cost - exit_cost,
             entry_equity=entry_equity,
+            entry_cost=current_entry_cost,
         )
         trade._bars_held = (n - 1) - entry_bar_idx
         trades.append(trade)

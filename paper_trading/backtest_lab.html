@@ -508,11 +508,16 @@
       let unrealized = 0;
       if (ti < trades.length) {
         const t = trades[ti];
-        const entryIdx = t[0], exitIdx = t[1], dir = t[2], entryPx = t[3], netPnl = t[5];
+        const entryIdx = t[0], exitIdx = t[1], dir = t[2], entryPx = t[3], netPnl = t[5], entryCost = t[6];
         if (i === exitIdx) {
           unrealized = netPnl;
         } else if (i >= entryIdx) {
-          unrealized = dir * (bars[i][1] - entryPx) * multiplier;
+          // Mid-trade mark-to-market must also reflect the entry-side cost
+          // already deducted from real equity the moment this leg opened -
+          // net_pnl (used only at the exit bar above) already nets both
+          // entry and exit costs, but every bar before that only has the
+          // gross move unless the entry cost is subtracted here too.
+          unrealized = dir * (bars[i][1] - entryPx) * multiplier - entryCost;
         }
       }
       eq[i] = startingCapital + realized + unrealized;
@@ -522,11 +527,12 @@
         // Same-bar reversal: the next trade also enters on this exact bar
         // (the real engine closes the old leg and marks the new leg's
         // open-to-close move in the same pass over this bar), so its
-        // intrabar move belongs to this bar's equity too - without this,
-        // the new leg's move was silently dropped for the reversal bar.
+        // intrabar move (net of its own entry cost) belongs to this bar's
+        // equity too - without this, the new leg's move was silently
+        // dropped for the reversal bar.
         if (ti < trades.length && trades[ti][0] === i) {
-          const dir2 = trades[ti][2], entryPx2 = trades[ti][3];
-          eq[i] += dir2 * (bars[i][1] - entryPx2) * multiplier;
+          const dir2 = trades[ti][2], entryPx2 = trades[ti][3], entryCost2 = trades[ti][6];
+          eq[i] += dir2 * (bars[i][1] - entryPx2) * multiplier - entryCost2;
         }
       }
     }

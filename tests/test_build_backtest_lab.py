@@ -1,12 +1,16 @@
 import os
 import sys
 
+import numpy as np
 import pandas as pd
+import pytest
 
 sys.path.insert(0, ".")
 
-from src.backtest.engine import Trade
+from src.backtest.engine import Trade, run_backtest
+from src.backtest.instruments import get_spec
 from src.backtest.strategies import ALL_STRATEGY_CLASSES
+from src.backtest.strategies.base import Strategy
 from scripts.build_backtest_lab import (
     MAX_CONFIGS_PER_STRATEGY,
     _bars_json,
@@ -116,11 +120,12 @@ def test_trades_json_maps_entry_and_exit_times_to_integer_bar_positions():
         entry_time=idx[1], exit_time=idx[3], direction=1,
         entry_price=100.0, exit_price=105.0, units=1.0,
         gross_pnl=10.0, costs=1.5, net_pnl=8.5, entry_equity=100000.0,
+        entry_cost=0.75,
     )
 
     out = _trades_json([trade], idx)
 
-    assert out == [[1, 3, 1, 100.0, 105.0, 8.5]]
+    assert out == [[1, 3, 1, 100.0, 105.0, 8.5, 0.75]]
 
 
 def _fake_config(total_return, sharpe, is_extreme=False):
@@ -283,3 +288,59 @@ def test_main_runs_end_to_end_and_writes_the_output_json(tmp_path, monkeypatch):
     assert names == {"Tiny(100)", "Tiny(95)", "Tiny(105)"}
     for s in strat_list:
         assert "trades" in s  # every config here is small enough to be an extreme or default
+
+
+def test_trades_json_reconstructed_equity_curve_matches_the_real_engine_exactly():
+    # There is no JS test harness in this repo, so this is the only
+    # regression protection for backtest_lab_template.html's
+    # reconstructEquityCurve(): it reimplements that exact algorithm in
+    # Python against _trades_json's real output and checks it bar-for-bar
+    # against the real engine's own equity_curve, for a strategy that
+    # reverses position with no flat bar in between - the scenario where
+    # the JS previously fell out of sync with the engine (dropping the new
+    # leg's own intrabar move, and separately never accounting for the
+    # entry-side cost already deducted from real equity mid-trade). If the
+    # JS reconstruction or the engine's per-bar accounting ever changes,
+    # keep this mirror and the JS in lockstep.
+    class AlwaysInMarketFlip(Strategy):
+        def generate_signals(self, bars):
+            s = pd.Series(1, index=bars.index)
+            s.iloc[6:] = -1
+            return s
+
+    n = 12
+    idx = pd.date_range("2026-01-05 09:30", periods=n, freq="5min")
+    rng = np.random.default_rng(1)
+    opens = 100 + np.cumsum(rng.normal(0, 0.3, n))
+    closes = opens + rng.normal(0, 0.4, n)
+    bars = pd.DataFrame({
+        "open": opens, "high": np.maximum(opens, closes) + 0.5,
+        "low": np.minimum(opens, closes) - 0.5, "close": closes, "volume": 1000,
+    }, index=idx)
+    spec = get_spec("MNQ")
+    result = run_backtest(bars, AlwaysInMarketFlip(), spec, initial_capital=100_000.0, max_drawdown_fraction=None)
+    assert len(result.trades) >= 2  # must actually exercise a same-bar reversal
+
+    trades_js = _trades_json(result.trades, bars.index)
+    closes_arr = bars["close"].to_numpy()
+    multiplier = spec.multiplier
+
+    eq = [0.0] * n
+    ti, realized = 0, 0.0
+    for i in range(n):
+        unrealized = 0.0
+        if ti < len(trades_js):
+            entry_idx, exit_idx, direction, entry_px, _exit_px, net_pnl, entry_cost = trades_js[ti]
+            if i == exit_idx:
+                unrealized = net_pnl
+            elif i >= entry_idx:
+                unrealized = direction * (closes_arr[i] - entry_px) * multiplier - entry_cost
+        eq[i] = 100_000.0 + realized + unrealized
+        if ti < len(trades_js) and trades_js[ti][1] == i:
+            realized += trades_js[ti][5]
+            ti += 1
+            if ti < len(trades_js) and trades_js[ti][0] == i:
+                dir2, entry_px2, entry_cost2 = trades_js[ti][2], trades_js[ti][3], trades_js[ti][6]
+                eq[i] += dir2 * (closes_arr[i] - entry_px2) * multiplier - entry_cost2
+
+    assert eq == pytest.approx(result.equity_curve.tolist())
