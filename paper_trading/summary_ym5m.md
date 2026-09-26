@@ -1,4 +1,4 @@
-# MYM Paper Trading (5min) — updated 2026-09-26T03:18:29.387602+00:00
+# MYM Paper Trading (5min) — updated 2026-09-26T05:19:00.095628+00:00
 
 Latest bar: 2026-09-25 20:55:00 · 22,676 bars of history · $100,000 starting capital per strategy
 
@@ -10,17 +10,17 @@ Latest bar: 2026-09-25 20:55:00 · 22,676 bars of history · $100,000 starting c
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
 | Inside_Bar_Breakout(0.6) | LONG | $99,954 | -0.0% | -0.01 | 254 |
 | RSI_Reversion(14,30/70) | FLAT | $98,175 | -1.8% | -2.52 | 640 |
-| Keltner_Breakout(20,m=2.0) | LONG | $98,038 | -2.0% | -0.99 | 377 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $97,675 | -2.3% | -1.70 | 887 |
-| MA_Crossover(10/50) | LONG | $97,651 | -2.3% | -1.17 | 600 |
+| Keltner_Breakout(20,m=2.0) | LONG | $98,038 | -2.0% | -0.98 | 377 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $97,658 | -2.3% | -1.71 | 887 |
+| MA_Crossover(10/50) | LONG | $97,646 | -2.4% | -1.17 | 600 |
 | Donchian_Breakout(20) | LONG | $97,480 | -2.5% | -1.27 | 545 |
-| Stochastic_Reversion(14,20/80) | FLAT | $97,383 | -2.6% | -2.09 | 876 |
-| Bollinger_Reversion(20,2sd) | SHORT | $97,057 | -2.9% | -2.04 | 766 |
-| Supertrend(10,m=3.0) | FLAT | $95,724 | -4.3% | -2.33 | 545 |
+| Stochastic_Reversion(14,20/80) | FLAT | $97,386 | -2.6% | -2.09 | 876 |
+| Bollinger_Reversion(20,2sd) | SHORT | $97,056 | -2.9% | -2.04 | 766 |
+| Supertrend(10,m=3.0) | FLAT | $95,730 | -4.3% | -2.33 | 545 |
 | Engulfing_Reversal(0.3) | FLAT | $95,458 | -4.5% | -2.63 | 1001 |
-| ATR_Vol_Breakout(14,k=1.5) | FLAT | $95,405 | -4.6% | -2.50 | 430 |
-| TPO_Reversion(60,p=5) | FLAT | $95,343 | -4.7% | -3.47 | 1614 |
-| Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,143 | -4.9% | -2.89 | 1203 |
-| MACD_Momentum(12/26/9) | FLAT | $95,075 | -4.9% | -2.82 | 1290 |
-| CCI_Reversion(20,100) | FLAT | $95,002 | -5.0% | -4.21 | 1815 |
-| VolProfile_Reversion(30) | FLAT | $94,995 | -5.0% | -4.39 | 1792 |
+| ATR_Vol_Breakout(14,k=1.5) | FLAT | $95,403 | -4.6% | -2.50 | 432 |
+| TPO_Reversion(60,p=5) | FLAT | $95,348 | -4.7% | -3.47 | 1612 |
+| Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,148 | -4.9% | -2.88 | 1203 |
+| MACD_Momentum(12/26/9) | FLAT | $95,077 | -4.9% | -2.82 | 1290 |
+| VolProfile_Reversion(30) | FLAT | $95,006 | -5.0% | -4.38 | 1789 |
+| CCI_Reversion(20,100) | FLAT | $94,997 | -5.0% | -4.21 | 1791 |
