@@ -1,14 +1,14 @@
-# BTC/USDT Paper Trading (1D) — updated 2026-09-27T22:05:59.273101+00:00
+# BTC/USDT Paper Trading (1D) — updated 2026-09-28T00:18:55.758796+00:00
 
-Latest bar: 2026-09-27 00:00:00 · 2,197 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-28 00:00:00 · 2,198 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $801,366 | +701.4% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $801,804 | +701.8% | — | 1 |
 | MACD_Momentum(12/26/9) | FLAT | $145,451 | +45.5% | 0.53 | 1 |
 | Donchian_Breakout(20) | FLAT | $137,972 | +38.0% | 0.46 | 1 |
-| ATR_Vol_Breakout(14,k=1.5) | FLAT | $110,515 | +10.5% | 0.24 | 1 |
-| Keltner_Breakout(20,m=2.0) | FLAT | $110,515 | +10.5% | 0.24 | 1 |
+| ATR_Vol_Breakout(14,k=1.5) | FLAT | $110,515 | +10.5% | 0.23 | 1 |
+| Keltner_Breakout(20,m=2.0) | FLAT | $110,515 | +10.5% | 0.23 | 1 |
 | Inside_Bar_Breakout(0.6) | FLAT | $110,197 | +10.2% | 0.34 | 1 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $100,000 | +0.0% | — | 0 |

@@ -1,13 +1,13 @@
-# MYM Paper Trading (1D) — updated 2026-09-27T22:06:49.179219+00:00
+# MYM Paper Trading (1D) — updated 2026-09-28T00:19:45.989510+00:00
 
-Latest bar: 2026-09-25 00:00:00 · 2,554 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-27 00:00:00 · 2,555 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $282,696 | +182.7% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $281,758 | +181.8% | — | 1 |
 | RSI_Reversion(14,30/70) | FLAT | $105,251 | +5.3% | 0.50 | 73 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $103,716 | +3.7% | 0.19 | 162 |
-| Bollinger_Reversion(20,2sd) | LONG | $103,353 | +3.4% | 0.17 | 85 |
+| Bollinger_Reversion(20,2sd) | LONG | $103,266 | +3.3% | 0.16 | 85 |
 | Stochastic_Reversion(14,20/80) | FLAT | $101,860 | +1.9% | 0.11 | 95 |
 | MACD_Momentum(12/26/9) | FLAT | $100,570 | +0.6% | 0.04 | 103 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $100,263 | +0.3% | 0.02 | 27 |
@@ -19,7 +19,7 @@ Latest bar: 2026-09-25 00:00:00 · 2,554 bars of history · $100,000 starting ca
 | Supertrend(10,m=3.0) | FLAT | $98,002 | -2.0% | -0.20 | 26 |
 | MA_Crossover(10/50) | FLAT | $97,874 | -2.1% | -0.23 | 23 |
 | Engulfing_Reversal(0.3) | FLAT | $97,519 | -2.5% | -0.14 | 47 |
-| VWAP_Reversion(20,2%) | FLAT | $96,644 | -3.4% | -0.28 | 34 |
+| VWAP_Reversion(20,2%) | FLAT | $96,644 | -3.4% | -0.27 | 34 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $95,210 | -4.8% | -0.43 | 29 |
 | CCI_Reversion(20,100) | FLAT | $95,151 | -4.8% | -0.29 | 192 |
 | VolProfile_Reversion(30) | FLAT | $95,088 | -4.9% | -0.30 | 224 |
