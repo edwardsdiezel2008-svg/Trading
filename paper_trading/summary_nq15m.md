@@ -1,12 +1,12 @@
-# MNQ Paper Trading (15min) — updated 2026-09-29T19:20:52.728636+00:00
+# MNQ Paper Trading (15min) — updated 2026-09-29T20:45:56.132681+00:00
 
-Latest bar: 2026-09-29 19:00:00 · 7,728 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-29 20:30:00 · 7,734 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $100,301 | +0.3% | — | 1 |
-| Engulfing_Reversal(0.3) | LONG | $107,714 | +7.7% | 0.99 | 530 |
-| Bollinger_Reversion(20,2sd) | LONG | $105,973 | +6.0% | 1.02 | 274 |
+| *Buy & Hold (benchmark)* | — | $100,333 | +0.3% | — | 1 |
+| Engulfing_Reversal(0.3) | SHORT | $107,585 | +7.6% | 0.97 | 531 |
+| Bollinger_Reversion(20,2sd) | LONG | $105,992 | +6.0% | 1.03 | 274 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $100,860 | +0.9% | 0.22 | 151 |
 | MACD_Momentum(12/26/9) | FLAT | $100,773 | +0.8% | 0.20 | 110 |
 | VWAP_Reversion(20,2%) | FLAT | $100,222 | +0.2% | 0.26 | 1 |
