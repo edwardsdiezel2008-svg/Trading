@@ -1,23 +1,23 @@
-# MES Paper Trading (5min) — updated 2026-09-30T00:32:35.734772+00:00
+# MES Paper Trading (5min) — updated 2026-09-30T02:18:34.907546+00:00
 
-Latest bar: 2026-09-30 00:20:00 · 23,190 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-09-30 02:05:00 · 23,211 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $102,041 | +2.0% | — | 1 |
-| Inside_Bar_Breakout(0.6) | LONG | $102,481 | +2.5% | 0.82 | 167 |
-| Bollinger_Reversion(20,2sd) | SHORT | $101,322 | +1.3% | 0.61 | 826 |
-| Keltner_Breakout(20,m=2.0) | LONG | $101,146 | +1.1% | 0.39 | 333 |
-| Opening_Range_Breakout(6) | SHORT | $100,531 | +0.5% | 0.21 | 169 |
-| ZScore_Reversion(20,z=2.0) | SHORT | $100,116 | +0.1% | 0.07 | 924 |
-| Stochastic_Reversion(14,20/80) | SHORT | $100,102 | +0.1% | 0.06 | 863 |
+| *Buy & Hold (benchmark)* | — | $102,008 | +2.0% | — | 1 |
+| Inside_Bar_Breakout(0.6) | LONG | $102,468 | +2.5% | 0.82 | 167 |
+| Bollinger_Reversion(20,2sd) | FLAT | $101,346 | +1.3% | 0.63 | 826 |
+| Keltner_Breakout(20,m=2.0) | LONG | $101,134 | +1.1% | 0.39 | 333 |
+| Opening_Range_Breakout(6) | SHORT | $100,543 | +0.5% | 0.21 | 169 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $100,126 | +0.1% | 0.07 | 924 |
+| Stochastic_Reversion(14,20/80) | FLAT | $100,106 | +0.1% | 0.06 | 864 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
 | RSI_Reversion(14,30/70) | FLAT | $99,645 | -0.4% | -0.32 | 623 |
-| Donchian_Breakout(20) | LONG | $99,436 | -0.6% | -0.17 | 553 |
-| TPO_Reversion(60,p=5) | SHORT | $98,968 | -1.0% | -0.51 | 1712 |
+| Donchian_Breakout(20) | SHORT | $99,377 | -0.6% | -0.19 | 554 |
+| TPO_Reversion(60,p=5) | FLAT | $98,999 | -1.0% | -0.49 | 1713 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $98,910 | -1.1% | -0.65 | 393 |
-| VolProfile_Reversion(30) | FLAT | $98,420 | -1.6% | -0.84 | 2511 |
-| CCI_Reversion(20,100) | FLAT | $97,526 | -2.5% | -1.21 | 2293 |
+| VolProfile_Reversion(30) | FLAT | $98,425 | -1.6% | -0.84 | 2513 |
+| CCI_Reversion(20,100) | SHORT | $97,537 | -2.5% | -1.21 | 2297 |
 | Supertrend(10,m=3.0) | FLAT | $97,157 | -2.8% | -1.31 | 207 |
 | MA_Crossover(10/50) | FLAT | $97,141 | -2.9% | -1.20 | 312 |
 | MACD_Momentum(12/26/9) | FLAT | $96,811 | -3.2% | -1.40 | 739 |
