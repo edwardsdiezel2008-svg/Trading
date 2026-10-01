@@ -1,11 +1,11 @@
-# MNQ Paper Trading (15min) — updated 2026-10-01T01:19:17.609451+00:00
+# MNQ Paper Trading (15min) — updated 2026-10-01T03:20:01.764341+00:00
 
-Latest bar: 2026-10-01 01:00:00 · 7,840 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-01 03:00:00 · 7,848 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $100,789 | +0.8% | — | 1 |
-| Engulfing_Reversal(0.3) | SHORT | $107,568 | +7.6% | 0.96 | 535 |
+| *Buy & Hold (benchmark)* | — | $101,038 | +1.0% | — | 1 |
+| Engulfing_Reversal(0.3) | SHORT | $107,415 | +7.4% | 0.94 | 535 |
 | Bollinger_Reversion(20,2sd) | FLAT | $106,576 | +6.6% | 1.11 | 279 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $100,860 | +0.9% | 0.22 | 151 |
 | MACD_Momentum(12/26/9) | FLAT | $100,773 | +0.8% | 0.20 | 110 |
@@ -14,7 +14,7 @@ Latest bar: 2026-10-01 01:00:00 · 7,840 bars of history · $100,000 starting ca
 | MA_Crossover(10/50) | FLAT | $99,142 | -0.9% | -0.15 | 46 |
 | TPO_Reversion(60,p=5) | FLAT | $98,936 | -1.1% | -0.17 | 544 |
 | Opening_Range_Breakout(6) | FLAT | $98,765 | -1.2% | -0.28 | 38 |
-| VolProfile_Reversion(30) | FLAT | $98,736 | -1.3% | -0.21 | 828 |
+| VolProfile_Reversion(30) | SHORT | $98,696 | -1.3% | -0.22 | 829 |
 | Inside_Bar_Breakout(0.6) | FLAT | $98,644 | -1.4% | -0.22 | 18 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $98,495 | -1.5% | -0.41 | 17 |
 | Donchian_Breakout(20) | FLAT | $98,142 | -1.9% | -0.37 | 42 |
@@ -22,5 +22,5 @@ Latest bar: 2026-10-01 01:00:00 · 7,840 bars of history · $100,000 starting ca
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $97,530 | -2.5% | -0.42 | 57 |
 | RSI_Reversion(14,30/70) | FLAT | $96,894 | -3.1% | -0.91 | 221 |
 | CCI_Reversion(20,100) | FLAT | $95,607 | -4.4% | -2.21 | 52 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $95,560 | -4.4% | -1.48 | 50 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $95,560 | -4.4% | -1.47 | 50 |
 | Stochastic_Reversion(14,20/80) | FLAT | $95,131 | -4.9% | -1.97 | 30 |
