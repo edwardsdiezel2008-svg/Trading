@@ -1,21 +1,21 @@
-# MYM Paper Trading (5min) — updated 2026-09-30T23:46:50.046245+00:00
+# MYM Paper Trading (5min) — updated 2026-10-01T01:18:27.160996+00:00
 
-Latest bar: 2026-09-30 23:35:00 · 23,522 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-01 01:05:00 · 23,540 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $100,680 | +0.7% | — | 1 |
-| Opening_Range_Breakout(6) | SHORT | $100,102 | +0.1% | 0.06 | 159 |
+| *Buy & Hold (benchmark)* | — | $100,594 | +0.6% | — | 1 |
+| Opening_Range_Breakout(6) | SHORT | $100,124 | +0.1% | 0.08 | 159 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $99,921 | -0.1% | -0.08 | 351 |
-| Inside_Bar_Breakout(0.6) | SHORT | $99,682 | -0.3% | -0.15 | 259 |
-| RSI_Reversion(14,30/70) | FLAT | $98,132 | -1.9% | -2.49 | 669 |
-| Keltner_Breakout(20,m=2.0) | LONG | $97,786 | -2.2% | -1.08 | 391 |
-| Donchian_Breakout(20) | LONG | $97,581 | -2.4% | -1.18 | 563 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $97,396 | -2.6% | -1.84 | 919 |
-| MA_Crossover(10/50) | SHORT | $97,212 | -2.8% | -1.35 | 625 |
-| Stochastic_Reversion(14,20/80) | SHORT | $97,160 | -2.8% | -2.20 | 901 |
-| Bollinger_Reversion(20,2sd) | LONG | $96,828 | -3.2% | -2.12 | 795 |
+| Inside_Bar_Breakout(0.6) | SHORT | $99,704 | -0.3% | -0.14 | 259 |
+| RSI_Reversion(14,30/70) | FLAT | $98,130 | -1.9% | -2.50 | 670 |
+| Keltner_Breakout(20,m=2.0) | SHORT | $97,736 | -2.3% | -1.10 | 392 |
+| Donchian_Breakout(20) | SHORT | $97,532 | -2.5% | -1.20 | 564 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $97,406 | -2.6% | -1.83 | 920 |
+| Stochastic_Reversion(14,20/80) | FLAT | $97,179 | -2.8% | -2.18 | 902 |
+| MA_Crossover(10/50) | SHORT | $97,165 | -2.8% | -1.37 | 627 |
+| Bollinger_Reversion(20,2sd) | FLAT | $96,870 | -3.1% | -2.09 | 796 |
 | Supertrend(10,m=3.0) | FLAT | $95,730 | -4.3% | -2.29 | 545 |
 | Engulfing_Reversal(0.3) | FLAT | $95,458 | -4.5% | -2.58 | 1001 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $95,403 | -4.6% | -2.45 | 432 |

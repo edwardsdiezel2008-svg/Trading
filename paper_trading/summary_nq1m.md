@@ -1,21 +1,21 @@
-# MNQ Paper Trading (1min) — updated 2026-09-30T23:48:01.301264+00:00
+# MNQ Paper Trading (1min) — updated 2026-10-01T01:19:14.509902+00:00
 
-Latest bar: 2026-09-30 23:35:00 · 55,544 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-01 01:07:00 · 55,636 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $106,222 | +6.2% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $106,240 | +6.2% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
 | Opening_Range_Breakout(6) | FLAT | $98,186 | -1.8% | -0.96 | 63 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $98,036 | -2.0% | -1.08 | 474 |
-| Stochastic_Reversion(14,20/80) | SHORT | $97,698 | -2.3% | -1.22 | 2127 |
-| ZScore_Reversion(20,z=2.0) | SHORT | $97,276 | -2.7% | -1.38 | 2116 |
-| RSI_Reversion(14,30/70) | FLAT | $96,376 | -3.6% | -3.42 | 1486 |
+| Stochastic_Reversion(14,20/80) | SHORT | $97,580 | -2.4% | -1.29 | 2130 |
+| ZScore_Reversion(20,z=2.0) | SHORT | $97,100 | -2.9% | -1.47 | 2119 |
 | VolProfile_Reversion(30) | FLAT | $96,368 | -3.6% | -2.70 | 3595 |
+| RSI_Reversion(14,30/70) | FLAT | $96,360 | -3.6% | -3.43 | 1492 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $96,360 | -3.6% | -2.90 | 177 |
-| MA_Crossover(10/50) | FLAT | $96,294 | -3.7% | -2.98 | 301 |
+| MA_Crossover(10/50) | FLAT | $96,294 | -3.7% | -2.97 | 301 |
 | Supertrend(10,m=3.0) | FLAT | $96,290 | -3.7% | -2.97 | 295 |
-| Inside_Bar_Breakout(0.6) | FLAT | $96,200 | -3.8% | -1.73 | 412 |
+| Inside_Bar_Breakout(0.6) | FLAT | $96,200 | -3.8% | -1.72 | 412 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $96,186 | -3.8% | -1.77 | 685 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,984 | -4.0% | -3.22 | 859 |
 | Donchian_Breakout(20) | FLAT | $95,984 | -4.0% | -2.74 | 379 |
@@ -23,4 +23,4 @@ Latest bar: 2026-09-30 23:35:00 · 55,544 bars of history · $100,000 starting c
 | CCI_Reversion(20,100) | FLAT | $95,427 | -4.6% | -2.57 | 3923 |
 | Engulfing_Reversal(0.3) | FLAT | $95,249 | -4.8% | -2.82 | 1171 |
 | MACD_Momentum(12/26/9) | FLAT | $95,194 | -4.8% | -2.96 | 1389 |
-| TPO_Reversion(60,p=5) | FLAT | $95,112 | -4.9% | -2.66 | 3487 |
+| TPO_Reversion(60,p=5) | FLAT | $95,112 | -4.9% | -2.65 | 3487 |
