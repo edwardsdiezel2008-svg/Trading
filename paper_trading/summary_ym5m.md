@@ -1,4 +1,4 @@
-# MYM Paper Trading (5min) — updated 2026-10-03T10:18:57.632240+00:00
+# MYM Paper Trading (5min) — updated 2026-10-03T12:20:07.844333+00:00
 
 Latest bar: 2026-10-02 20:55:00 · 24,054 bars of history · $100,000 starting capital per strategy
 
@@ -12,15 +12,15 @@ Latest bar: 2026-10-02 20:55:00 · 24,054 bars of history · $100,000 starting c
 | RSI_Reversion(14,30/70) | FLAT | $98,149 | -1.9% | -2.39 | 691 |
 | Donchian_Breakout(20) | LONG | $97,710 | -2.3% | -1.08 | 577 |
 | Keltner_Breakout(20,m=2.0) | SHORT | $97,426 | -2.6% | -1.22 | 402 |
-| MA_Crossover(10/50) | LONG | $97,288 | -2.7% | -1.27 | 640 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $97,251 | -2.7% | -1.88 | 939 |
-| Stochastic_Reversion(14,20/80) | FLAT | $96,848 | -3.2% | -2.36 | 919 |
-| Bollinger_Reversion(20,2sd) | FLAT | $96,597 | -3.4% | -2.21 | 812 |
-| Supertrend(10,m=3.0) | FLAT | $95,724 | -4.3% | -2.27 | 545 |
+| MA_Crossover(10/50) | LONG | $97,284 | -2.7% | -1.27 | 640 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $97,236 | -2.8% | -1.89 | 939 |
+| Stochastic_Reversion(14,20/80) | FLAT | $96,850 | -3.1% | -2.36 | 919 |
+| Bollinger_Reversion(20,2sd) | FLAT | $96,596 | -3.4% | -2.21 | 812 |
+| Supertrend(10,m=3.0) | FLAT | $95,730 | -4.3% | -2.26 | 545 |
 | Engulfing_Reversal(0.3) | FLAT | $95,458 | -4.5% | -2.55 | 1001 |
-| ATR_Vol_Breakout(14,k=1.5) | FLAT | $95,405 | -4.6% | -2.43 | 430 |
-| Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,146 | -4.9% | -2.80 | 1202 |
-| MACD_Momentum(12/26/9) | FLAT | $95,075 | -4.9% | -2.74 | 1290 |
-| VolProfile_Reversion(30) | FLAT | $95,004 | -5.0% | -4.26 | 1793 |
-| CCI_Reversion(20,100) | FLAT | $95,002 | -5.0% | -4.09 | 1815 |
-| TPO_Reversion(60,p=5) | FLAT | $94,994 | -5.0% | -3.58 | 1672 |
+| ATR_Vol_Breakout(14,k=1.5) | FLAT | $95,403 | -4.6% | -2.42 | 432 |
+| Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,148 | -4.9% | -2.80 | 1203 |
+| MACD_Momentum(12/26/9) | FLAT | $95,077 | -4.9% | -2.74 | 1290 |
+| VolProfile_Reversion(30) | FLAT | $95,004 | -5.0% | -4.25 | 1791 |
+| TPO_Reversion(60,p=5) | FLAT | $95,000 | -5.0% | -3.57 | 1670 |
+| CCI_Reversion(20,100) | FLAT | $94,997 | -5.0% | -4.09 | 1791 |
