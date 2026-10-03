@@ -2,7 +2,7 @@
   "symbol": "MES",
   "freq": "5min",
   "leverage": 1.0,
-  "updated_at_utc": "2026-10-03T06:34:43.475272+00:00",
+  "updated_at_utc": "2026-10-03T08:18:49.053663+00:00",
   "latest_bar": "2026-10-02 20:55:00",
   "bar_count": 23987,
   "buy_and_hold_equity_curve": [
@@ -1004,7 +1004,7 @@
     ],
     [
       "2026-10-02 20:55:00",
-      102393.1
+      102402.98
     ]
   ],
   "strategies": {
@@ -2021,7 +2021,7 @@
     "Donchian_Breakout(20)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99400.25,
+      "equity": 99404.0,
       "max_drawdown": -0.0398,
       "open_trade": {
         "direction": 1,
@@ -3029,7 +3029,7 @@
         ],
         [
           "2026-10-02 20:55:00",
-          99400.25
+          99404.0
         ]
       ]
     },
@@ -9096,7 +9096,7 @@
     "CCI_Reversion(20,100)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 97362.5,
+      "equity": 97366.25,
       "max_drawdown": -0.0345,
       "open_trade": {
         "direction": 1,
@@ -10104,7 +10104,7 @@
         ],
         [
           "2026-10-02 20:55:00",
-          97362.5
+          97366.25
         ]
       ]
     },
@@ -12131,7 +12131,7 @@
     "Keltner_Breakout(20,m=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 100741.25,
+      "equity": 100737.5,
       "max_drawdown": -0.0413,
       "open_trade": {
         "direction": -1,
@@ -13139,7 +13139,7 @@
         ],
         [
           "2026-10-02 20:55:00",
-          100741.25
+          100737.5
         ]
       ]
     },
@@ -15166,7 +15166,7 @@
     "Inside_Bar_Breakout(0.6)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 102565.25,
+      "equity": 102569.0,
       "max_drawdown": -0.027,
       "open_trade": {
         "direction": 1,
@@ -16174,14 +16174,14 @@
         ],
         [
           "2026-10-02 20:55:00",
-          102565.25
+          102569.0
         ]
       ]
     },
     "Opening_Range_Breakout(6)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 100101.75,
+      "equity": 100098.0,
       "max_drawdown": -0.0208,
       "open_trade": {
         "direction": -1,
@@ -17189,14 +17189,14 @@
         ],
         [
           "2026-10-02 20:55:00",
-          100101.75
+          100098.0
         ]
       ]
     },
     "ORB_ATR_Target(6,1.5xATR)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 99108.0,
+      "equity": 99104.25,
       "max_drawdown": -0.0229,
       "open_trade": {
         "direction": -1,
@@ -18204,7 +18204,7 @@
         ],
         [
           "2026-10-02 20:55:00",
-          99108.0
+          99104.25
         ]
       ]
     },

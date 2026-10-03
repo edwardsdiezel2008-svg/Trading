@@ -2,7 +2,7 @@
   "symbol": "M2K",
   "freq": "5min",
   "leverage": 1.0,
-  "updated_at_utc": "2026-10-03T06:35:30.512704+00:00",
+  "updated_at_utc": "2026-10-03T08:19:35.765444+00:00",
   "latest_bar": "2026-10-02 20:55:00",
   "bar_count": 23977,
   "buy_and_hold_equity_curve": [
@@ -1004,14 +1004,14 @@
     ],
     [
       "2026-10-02 20:55:00",
-      97584.18
+      97553.38
     ]
   ],
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 97141.82,
+      "equity": 97146.32,
       "max_drawdown": -0.0392,
       "open_trade": {
         "direction": -1,
@@ -2019,14 +2019,14 @@
         ],
         [
           "2026-10-02 20:55:00",
-          97141.82
+          97146.32
         ]
       ]
     },
     "Donchian_Breakout(20)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 96552.58,
+      "equity": 96557.08,
       "max_drawdown": -0.0435,
       "open_trade": {
         "direction": -1,
@@ -3034,14 +3034,14 @@
         ],
         [
           "2026-10-02 20:55:00",
-          96552.58
+          96557.08
         ]
       ]
     },
     "MACD_Momentum(12/26/9)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 98555.18,
+      "equity": 98559.68,
       "max_drawdown": -0.0273,
       "open_trade": {
         "direction": -1,
@@ -4049,14 +4049,14 @@
         ],
         [
           "2026-10-02 20:55:00",
-          98555.18
+          98559.68
         ]
       ]
     },
     "Parabolic_SAR(af=0.02,max=0.2)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 96528.67,
+      "equity": 96524.17,
       "max_drawdown": -0.0456,
       "open_trade": {
         "direction": 1,
@@ -5064,7 +5064,7 @@
         ],
         [
           "2026-10-02 20:55:00",
-          96528.67
+          96524.17
         ]
       ]
     },
@@ -10121,7 +10121,7 @@
     "ATR_Vol_Breakout(14,k=1.5)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 97304.53,
+      "equity": 97309.03,
       "max_drawdown": -0.0363,
       "open_trade": {
         "direction": -1,
@@ -11129,14 +11129,14 @@
         ],
         [
           "2026-10-02 20:55:00",
-          97304.53
+          97309.03
         ]
       ]
     },
     "Supertrend(10,m=3.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 96541.91,
+      "equity": 96546.41,
       "max_drawdown": -0.0446,
       "open_trade": {
         "direction": -1,
@@ -12144,14 +12144,14 @@
         ],
         [
           "2026-10-02 20:55:00",
-          96541.91
+          96546.41
         ]
       ]
     },
     "Keltner_Breakout(20,m=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 96852.2,
+      "equity": 96856.7,
       "max_drawdown": -0.0449,
       "open_trade": {
         "direction": -1,
@@ -13159,7 +13159,7 @@
         ],
         [
           "2026-10-02 20:55:00",
-          96852.2
+          96856.7
         ]
       ]
     },
@@ -15186,7 +15186,7 @@
     "Inside_Bar_Breakout(0.6)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99016.0,
+      "equity": 99011.5,
       "max_drawdown": -0.0169,
       "open_trade": {
         "direction": 1,
@@ -16194,14 +16194,14 @@
         ],
         [
           "2026-10-02 20:55:00",
-          99016.0
+          99011.5
         ]
       ]
     },
     "Opening_Range_Breakout(6)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 96251.81,
+      "equity": 96256.31,
       "max_drawdown": -0.0438,
       "open_trade": {
         "direction": -1,
@@ -17209,14 +17209,14 @@
         ],
         [
           "2026-10-02 20:55:00",
-          96251.81
+          96256.31
         ]
       ]
     },
     "ORB_ATR_Target(6,1.5xATR)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 98631.29,
+      "equity": 98635.79,
       "max_drawdown": -0.0191,
       "open_trade": {
         "direction": -1,
@@ -18224,7 +18224,7 @@
         ],
         [
           "2026-10-02 20:55:00",
-          98631.29
+          98635.79
         ]
       ]
     },
