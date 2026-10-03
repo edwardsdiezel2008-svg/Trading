@@ -1,10 +1,10 @@
-# ETH/USDT Paper Trading (1D) — updated 2026-10-02T23:19:09.830766+00:00
+# ETH/USDT Paper Trading (1D) — updated 2026-10-03T01:10:14.852885+00:00
 
-Latest bar: 2026-10-02 00:00:00 · 2,202 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-03 00:00:00 · 2,203 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $774,007 | +674.0% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $777,556 | +677.6% | — | 1 |
 | Inside_Bar_Breakout(0.6) | FLAT | $111,350 | +11.3% | 0.29 | 1 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $109,246 | +9.2% | 0.32 | 3 |
 | MACD_Momentum(12/26/9) | FLAT | $103,610 | +3.6% | 0.14 | 1 |
@@ -18,7 +18,7 @@ Latest bar: 2026-10-02 00:00:00 · 2,202 bars of history · $100,000 starting ca
 | RSI_Reversion(14,30/70) | FLAT | $97,759 | -2.2% | -0.05 | 2 |
 | Supertrend(10,m=3.0) | FLAT | $96,318 | -3.7% | -0.18 | 1 |
 | CCI_Reversion(20,100) | FLAT | $95,651 | -4.3% | -0.17 | 2 |
-| Keltner_Breakout(20,m=2.0) | FLAT | $94,620 | -5.4% | -0.47 | 1 |
+| Keltner_Breakout(20,m=2.0) | FLAT | $94,620 | -5.4% | -0.46 | 1 |
 | Engulfing_Reversal(0.3) | FLAT | $94,450 | -5.6% | -0.38 | 1 |
 | Donchian_Breakout(20) | FLAT | $94,375 | -5.6% | -0.51 | 1 |
 | VolProfile_Reversion(30) | FLAT | $91,967 | -8.0% | -0.27 | 2 |
