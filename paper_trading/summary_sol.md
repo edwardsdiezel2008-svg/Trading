@@ -1,10 +1,10 @@
-# SOL/USDT Paper Trading (1D) — updated 2026-10-03T23:18:25.761193+00:00
+# SOL/USDT Paper Trading (1D) — updated 2026-10-04T00:34:56.463436+00:00
 
-Latest bar: 2026-10-03 00:00:00 · 1,993 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-04 00:00:00 · 1,994 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $370,056 | +270.1% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $371,137 | +271.1% | — | 1 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $135,384 | +35.4% | 0.29 | 3 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $129,158 | +29.2% | 0.40 | 1 |
 | TPO_Reversion(60,p=5) | FLAT | $128,208 | +28.2% | 0.44 | 6 |
@@ -12,7 +12,7 @@ Latest bar: 2026-10-03 00:00:00 · 1,993 bars of history · $100,000 starting ca
 | Stochastic_Reversion(14,20/80) | FLAT | $105,783 | +5.8% | 0.17 | 1 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $100,000 | +0.0% | — | 0 |
-| VWAP_Reversion(20,2%) | FLAT | $95,517 | -4.5% | -0.22 | 1 |
+| VWAP_Reversion(20,2%) | FLAT | $95,517 | -4.5% | -0.21 | 1 |
 | RSI_Reversion(14,30/70) | FLAT | $94,180 | -5.8% | -0.36 | 1 |
 | Inside_Bar_Breakout(0.6) | FLAT | $93,323 | -6.7% | -0.36 | 1 |
 | Engulfing_Reversal(0.3) | FLAT | $91,689 | -8.3% | -0.50 | 1 |
