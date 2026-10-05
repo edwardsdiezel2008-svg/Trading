@@ -1,21 +1,21 @@
-# MYM Paper Trading (5min) — updated 2026-10-05T11:19:56.050326+00:00
+# MYM Paper Trading (5min) — updated 2026-10-05T13:19:58.836551+00:00
 
-Latest bar: 2026-10-05 11:05:00 · 24,210 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-05 13:05:00 · 24,234 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $100,689 | +0.7% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $100,744 | +0.7% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| Opening_Range_Breakout(6) | SHORT | $99,734 | -0.3% | -0.14 | 164 |
-| ORB_ATR_Target(6,1.5xATR) | SHORT | $99,709 | -0.3% | -0.28 | 364 |
-| Inside_Bar_Breakout(0.6) | SHORT | $99,523 | -0.5% | -0.22 | 269 |
+| Opening_Range_Breakout(6) | SHORT | $99,720 | -0.3% | -0.14 | 164 |
+| ORB_ATR_Target(6,1.5xATR) | SHORT | $99,640 | -0.4% | -0.35 | 366 |
+| Inside_Bar_Breakout(0.6) | LONG | $99,504 | -0.5% | -0.23 | 270 |
 | RSI_Reversion(14,30/70) | FLAT | $98,150 | -1.8% | -2.38 | 694 |
-| Donchian_Breakout(20) | LONG | $97,560 | -2.4% | -1.15 | 583 |
-| Keltner_Breakout(20,m=2.0) | LONG | $97,358 | -2.6% | -1.25 | 405 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $97,260 | -2.7% | -1.87 | 946 |
-| MA_Crossover(10/50) | SHORT | $97,076 | -2.9% | -1.37 | 649 |
-| Stochastic_Reversion(14,20/80) | FLAT | $96,904 | -3.1% | -2.31 | 924 |
-| Bollinger_Reversion(20,2sd) | FLAT | $96,644 | -3.4% | -2.17 | 818 |
+| Donchian_Breakout(20) | LONG | $97,574 | -2.4% | -1.14 | 583 |
+| Keltner_Breakout(20,m=2.0) | LONG | $97,372 | -2.6% | -1.24 | 405 |
+| ZScore_Reversion(20,z=2.0) | LONG | $97,290 | -2.7% | -1.85 | 948 |
+| MA_Crossover(10/50) | LONG | $96,984 | -3.0% | -1.41 | 650 |
+| Stochastic_Reversion(14,20/80) | LONG | $96,915 | -3.1% | -2.30 | 925 |
+| Bollinger_Reversion(20,2sd) | LONG | $96,654 | -3.3% | -2.16 | 820 |
 | Supertrend(10,m=3.0) | FLAT | $95,724 | -4.3% | -2.26 | 545 |
 | Engulfing_Reversal(0.3) | FLAT | $95,458 | -4.5% | -2.54 | 1001 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $95,405 | -4.6% | -2.42 | 430 |
