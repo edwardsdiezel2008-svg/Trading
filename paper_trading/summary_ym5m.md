@@ -1,21 +1,21 @@
-# MYM Paper Trading (5min) — updated 2026-10-04T23:18:59.626557+00:00
+# MYM Paper Trading (5min) — updated 2026-10-05T00:54:31.337633+00:00
 
-Latest bar: 2026-10-04 23:05:00 · 24,066 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-05 00:40:00 · 24,085 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $100,932 | +0.9% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $100,885 | +0.9% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| Opening_Range_Breakout(6) | LONG | $99,704 | -0.3% | -0.15 | 163 |
-| ORB_ATR_Target(6,1.5xATR) | FLAT | $99,683 | -0.3% | -0.31 | 362 |
-| Inside_Bar_Breakout(0.6) | LONG | $99,524 | -0.5% | -0.22 | 266 |
+| Opening_Range_Breakout(6) | SHORT | $99,684 | -0.3% | -0.17 | 164 |
+| ORB_ATR_Target(6,1.5xATR) | SHORT | $99,677 | -0.3% | -0.31 | 363 |
+| Inside_Bar_Breakout(0.6) | SHORT | $99,487 | -0.5% | -0.24 | 267 |
 | RSI_Reversion(14,30/70) | FLAT | $98,149 | -1.9% | -2.39 | 691 |
-| Donchian_Breakout(20) | LONG | $97,736 | -2.3% | -1.07 | 577 |
-| Keltner_Breakout(20,m=2.0) | LONG | $97,392 | -2.6% | -1.24 | 403 |
-| MA_Crossover(10/50) | LONG | $97,309 | -2.7% | -1.26 | 640 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $97,236 | -2.8% | -1.89 | 940 |
+| Donchian_Breakout(20) | SHORT | $97,708 | -2.3% | -1.08 | 578 |
+| Keltner_Breakout(20,m=2.0) | SHORT | $97,355 | -2.6% | -1.25 | 404 |
+| MA_Crossover(10/50) | LONG | $97,297 | -2.7% | -1.27 | 640 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $97,248 | -2.8% | -1.88 | 942 |
 | Stochastic_Reversion(14,20/80) | FLAT | $96,850 | -3.1% | -2.36 | 919 |
-| Bollinger_Reversion(20,2sd) | SHORT | $96,602 | -3.4% | -2.21 | 813 |
+| Bollinger_Reversion(20,2sd) | LONG | $96,618 | -3.4% | -2.20 | 814 |
 | Supertrend(10,m=3.0) | FLAT | $95,730 | -4.3% | -2.26 | 545 |
 | Engulfing_Reversal(0.3) | FLAT | $95,458 | -4.5% | -2.55 | 1001 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $95,403 | -4.6% | -2.42 | 432 |
