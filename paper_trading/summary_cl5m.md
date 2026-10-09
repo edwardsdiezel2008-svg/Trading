@@ -1,6 +1,6 @@
-# MCL Paper Trading (5min) — updated 2026-10-09T20:56:14.548766+00:00
+# MCL Paper Trading (5min) — updated 2026-10-09T23:19:53.683585+00:00
 
-Latest bar: 2026-10-09 20:40:00 · 25,433 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-09 20:55:00 · 25,436 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
@@ -20,7 +20,7 @@ Latest bar: 2026-10-09 20:40:00 · 25,433 bars of history · $100,000 starting c
 | TPO_Reversion(60,p=5) | FLAT | $97,250 | -2.8% | -1.25 | 1850 |
 | Opening_Range_Breakout(6) | LONG | $97,168 | -2.8% | -0.94 | 254 |
 | Inside_Bar_Breakout(0.6) | SHORT | $96,542 | -3.5% | -1.11 | 249 |
-| CCI_Reversion(20,100) | SHORT | $96,374 | -3.6% | -1.64 | 2536 |
+| CCI_Reversion(20,100) | FLAT | $96,374 | -3.6% | -1.64 | 2536 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,284 | -4.7% | -1.74 | 1725 |
 | MACD_Momentum(12/26/9) | FLAT | $95,248 | -4.8% | -2.08 | 931 |
 | Engulfing_Reversal(0.3) | FLAT | $95,069 | -4.9% | -2.28 | 894 |
