@@ -2,7 +2,7 @@
   "symbol": "MES",
   "freq": "5min",
   "leverage": 1.0,
-  "updated_at_utc": "2026-10-10T07:02:52.404326+00:00",
+  "updated_at_utc": "2026-10-10T09:19:12.201264+00:00",
   "latest_bar": "2026-10-09 20:55:00",
   "bar_count": 25362,
   "buy_and_hold_equity_curve": [
@@ -1004,7 +1004,7 @@
     ],
     [
       "2026-10-09 20:55:00",
-      103571.55
+      103489.25
     ]
   ],
   "strategies": {
@@ -2021,7 +2021,7 @@
     "Donchian_Breakout(20)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99434.75,
+      "equity": 99403.5,
       "max_drawdown": -0.0398,
       "open_trade": {
         "direction": 1,
@@ -3029,7 +3029,7 @@
         ],
         [
           "2026-10-09 20:55:00",
-          99434.75
+          99403.5
         ]
       ]
     },
@@ -12126,7 +12126,7 @@
     "Keltner_Breakout(20,m=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 100906.75,
+      "equity": 100938.0,
       "max_drawdown": -0.0401,
       "open_trade": {
         "direction": -1,
@@ -13134,7 +13134,7 @@
         ],
         [
           "2026-10-09 20:55:00",
-          100906.75
+          100938.0
         ]
       ]
     },
@@ -15161,7 +15161,7 @@
     "Inside_Bar_Breakout(0.6)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 102277.25,
+      "equity": 102246.0,
       "max_drawdown": -0.027,
       "open_trade": {
         "direction": 1,
@@ -16169,14 +16169,14 @@
         ],
         [
           "2026-10-09 20:55:00",
-          102277.25
+          102246.0
         ]
       ]
     },
     "Opening_Range_Breakout(6)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99706.75,
+      "equity": 99675.5,
       "max_drawdown": -0.0254,
       "open_trade": {
         "direction": 1,
@@ -17184,7 +17184,7 @@
         ],
         [
           "2026-10-09 20:55:00",
-          99706.75
+          99675.5
         ]
       ]
     },
