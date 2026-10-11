@@ -1,6 +1,6 @@
-# MNQ Paper Trading (15min) — updated 2026-10-11T20:14:44.998449+00:00
+# MNQ Paper Trading (15min) — updated 2026-10-11T22:20:26.252700+00:00
 
-Latest bar: 2026-10-09 20:45:00 · 8,472 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-11 22:00:00 · 8,473 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
@@ -17,7 +17,7 @@ Latest bar: 2026-10-09 20:45:00 · 8,472 bars of history · $100,000 starting ca
 | Inside_Bar_Breakout(0.6) | FLAT | $98,644 | -1.4% | -0.21 | 18 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $98,495 | -1.5% | -0.39 | 17 |
 | Donchian_Breakout(20) | FLAT | $98,142 | -1.9% | -0.35 | 42 |
-| VolProfile_Reversion(30) | SHORT | $97,990 | -2.0% | -0.34 | 904 |
+| VolProfile_Reversion(30) | FLAT | $97,990 | -2.0% | -0.34 | 904 |
 | Supertrend(10,m=3.0) | FLAT | $97,532 | -2.5% | -0.48 | 47 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $97,530 | -2.5% | -0.40 | 57 |
 | RSI_Reversion(14,30/70) | FLAT | $96,996 | -3.0% | -0.83 | 243 |
