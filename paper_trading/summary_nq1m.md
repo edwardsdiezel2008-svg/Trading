@@ -1,16 +1,16 @@
-# MNQ Paper Trading (1min) — updated 2026-10-12T13:27:09.502994+00:00
+# MNQ Paper Trading (1min) — updated 2026-10-12T15:21:35.159726+00:00
 
-Latest bar: 2026-10-12 13:14:00 · 65,942 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-12 15:09:00 · 66,057 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $107,183 | +7.2% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $106,642 | +6.6% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
+| ORB_ATR_Target(6,1.5xATR) | FLAT | $98,266 | -1.7% | -0.81 | 578 |
 | Opening_Range_Breakout(6) | FLAT | $98,186 | -1.8% | -0.88 | 63 |
-| ORB_ATR_Target(6,1.5xATR) | SHORT | $98,147 | -1.9% | -0.86 | 577 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $97,006 | -3.0% | -1.28 | 2558 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $96,979 | -3.0% | -1.29 | 2562 |
 | Stochastic_Reversion(14,20/80) | FLAT | $96,408 | -3.6% | -1.73 | 2197 |
-| VolProfile_Reversion(30) | FLAT | $96,368 | -3.6% | -2.48 | 3595 |
+| VolProfile_Reversion(30) | FLAT | $96,368 | -3.6% | -2.47 | 3595 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $96,360 | -3.6% | -2.66 | 177 |
 | MA_Crossover(10/50) | FLAT | $96,294 | -3.7% | -2.73 | 301 |
 | Supertrend(10,m=3.0) | FLAT | $96,290 | -3.7% | -2.72 | 295 |
@@ -21,6 +21,6 @@ Latest bar: 2026-10-12 13:14:00 · 65,942 bars of history · $100,000 starting c
 | Bollinger_Reversion(20,2sd) | FLAT | $95,662 | -4.3% | -2.08 | 1660 |
 | CCI_Reversion(20,100) | FLAT | $95,427 | -4.6% | -2.36 | 3923 |
 | Engulfing_Reversal(0.3) | FLAT | $95,249 | -4.8% | -2.59 | 1171 |
-| RSI_Reversion(14,30/70) | FLAT | $95,214 | -4.8% | -3.97 | 1594 |
+| RSI_Reversion(14,30/70) | FLAT | $95,210 | -4.8% | -3.97 | 1595 |
 | MACD_Momentum(12/26/9) | FLAT | $95,194 | -4.8% | -2.72 | 1389 |
-| TPO_Reversion(60,p=5) | FLAT | $95,112 | -4.9% | -2.44 | 3487 |
+| TPO_Reversion(60,p=5) | FLAT | $95,112 | -4.9% | -2.43 | 3487 |
