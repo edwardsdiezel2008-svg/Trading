@@ -1,26 +1,26 @@
-# MNQ Paper Trading (5min) — updated 2026-10-13T02:19:05.199405+00:00
+# MNQ Paper Trading (5min) — updated 2026-10-13T04:18:50.839942+00:00
 
 Latest bar: 2026-10-13 02:05:00 · 25,687 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
 | *Buy & Hold (benchmark)* | — | $100,765 | +0.8% | — | 1 |
-| ORB_ATR_Target(6,1.5xATR) | FLAT | $101,344 | +1.3% | 0.33 | 426 |
+| ORB_ATR_Target(6,1.5xATR) | FLAT | $101,129 | +1.1% | 0.28 | 426 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $101,115 | +1.1% | 0.21 | 117 |
 | MA_Crossover(10/50) | FLAT | $100,132 | +0.1% | 0.05 | 132 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
 | Engulfing_Reversal(0.3) | FLAT | $99,393 | -0.6% | -0.11 | 302 |
-| Stochastic_Reversion(14,20/80) | LONG | $99,367 | -0.6% | -0.09 | 977 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $99,023 | -1.0% | -0.20 | 74 |
+| Stochastic_Reversion(14,20/80) | LONG | $99,016 | -1.0% | -0.16 | 978 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $98,610 | -1.4% | -0.31 | 330 |
 | Opening_Range_Breakout(6) | FLAT | $98,606 | -1.4% | -0.25 | 59 |
 | Donchian_Breakout(20) | FLAT | $98,430 | -1.6% | -0.32 | 105 |
 | Supertrend(10,m=3.0) | FLAT | $98,334 | -1.7% | -0.25 | 222 |
 | Inside_Bar_Breakout(0.6) | FLAT | $97,516 | -2.5% | -0.34 | 85 |
 | MACD_Momentum(12/26/9) | FLAT | $97,036 | -3.0% | -0.69 | 301 |
-| RSI_Reversion(14,30/70) | LONG | $96,978 | -3.0% | -0.92 | 723 |
-| TPO_Reversion(60,p=5) | FLAT | $96,684 | -3.3% | -0.57 | 1609 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $96,483 | -3.5% | -0.59 | 958 |
+| RSI_Reversion(14,30/70) | LONG | $96,738 | -3.3% | -1.00 | 722 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $96,556 | -3.4% | -0.58 | 959 |
+| TPO_Reversion(60,p=5) | FLAT | $96,540 | -3.5% | -0.60 | 1604 |
 | CCI_Reversion(20,100) | FLAT | $95,580 | -4.4% | -0.90 | 1086 |
 | Bollinger_Reversion(20,2sd) | FLAT | $95,228 | -4.8% | -2.40 | 61 |
 | VolProfile_Reversion(30) | FLAT | $95,029 | -5.0% | -2.57 | 187 |
