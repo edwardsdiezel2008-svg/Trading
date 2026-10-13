@@ -1,10 +1,6 @@
 {
   "runs": [
     {
-      "timestamp": "2026-10-01T01:19:22.952438+00:00",
-      "flagged": {}
-    },
-    {
       "timestamp": "2026-10-01T03:20:09.692744+00:00",
       "flagged": {
         "COQUSD": "elevated"
@@ -827,6 +823,15 @@
       "timestamp": "2026-10-12T22:21:23.841454+00:00",
       "flagged": {
         "BOMEUSD": "elevated",
+        "BASEDUSD": "elevated"
+      }
+    },
+    {
+      "timestamp": "2026-10-13T00:21:32.634750+00:00",
+      "flagged": {
+        "BOMEUSD": "severe",
+        "USELESSUSD": "elevated",
+        "CASHCATUSD": "elevated",
         "BASEDUSD": "elevated"
       }
     }
