@@ -1,14 +1,14 @@
-# MNQ Paper Trading (1min) — updated 2026-10-14T20:20:31.335814+00:00
+# MNQ Paper Trading (1min) — updated 2026-10-14T22:18:06.289940+00:00
 
-Latest bar: 2026-10-14 20:07:00 · 69,095 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-14 22:06:00 · 69,154 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $104,037 | +4.0% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $103,925 | +3.9% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
 | Opening_Range_Breakout(6) | FLAT | $98,186 | -1.8% | -0.86 | 63 |
-| ORB_ATR_Target(6,1.5xATR) | FLAT | $98,074 | -1.9% | -0.85 | 579 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $97,914 | -2.1% | -0.83 | 2684 |
+| ORB_ATR_Target(6,1.5xATR) | FLAT | $98,067 | -1.9% | -0.85 | 579 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $97,588 | -2.4% | -0.97 | 2684 |
 | Stochastic_Reversion(14,20/80) | FLAT | $96,408 | -3.6% | -1.69 | 2197 |
 | VolProfile_Reversion(30) | FLAT | $96,368 | -3.6% | -2.42 | 3595 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $96,360 | -3.6% | -2.60 | 177 |
@@ -18,9 +18,9 @@ Latest bar: 2026-10-14 20:07:00 · 69,095 bars of history · $100,000 starting c
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $96,186 | -3.8% | -1.59 | 685 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,984 | -4.0% | -2.89 | 859 |
 | Donchian_Breakout(20) | FLAT | $95,984 | -4.0% | -2.45 | 379 |
-| Bollinger_Reversion(20,2sd) | FLAT | $95,662 | -4.3% | -2.04 | 1660 |
+| Bollinger_Reversion(20,2sd) | FLAT | $95,662 | -4.3% | -2.03 | 1660 |
 | CCI_Reversion(20,100) | FLAT | $95,427 | -4.6% | -2.31 | 3923 |
 | Engulfing_Reversal(0.3) | FLAT | $95,249 | -4.8% | -2.53 | 1171 |
 | RSI_Reversion(14,30/70) | FLAT | $95,214 | -4.8% | -3.88 | 1594 |
-| MACD_Momentum(12/26/9) | FLAT | $95,194 | -4.8% | -2.66 | 1389 |
+| MACD_Momentum(12/26/9) | FLAT | $95,194 | -4.8% | -2.65 | 1389 |
 | TPO_Reversion(60,p=5) | FLAT | $95,112 | -4.9% | -2.38 | 3487 |
