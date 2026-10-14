@@ -1,26 +1,26 @@
-# MGC Paper Trading (5min) — updated 2026-10-14T17:19:17.852171+00:00
+# MGC Paper Trading (5min) — updated 2026-10-14T18:35:34.464672+00:00
 
-Latest bar: 2026-10-14 17:05:00 · 26,221 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-14 18:20:00 · 26,236 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $89,863 | -10.1% | — | 1 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $106,884 | +6.9% | 0.98 | 417 |
-| ORB_ATR_Target(6,1.5xATR) | SHORT | $106,709 | +6.7% | 1.62 | 586 |
-| MA_Crossover(10/50) | SHORT | $106,352 | +6.4% | 0.92 | 689 |
-| MACD_Momentum(12/26/9) | LONG | $104,675 | +4.7% | 0.68 | 2022 |
-| Supertrend(10,m=3.0) | SHORT | $104,134 | +4.1% | 0.60 | 663 |
-| Keltner_Breakout(20,m=2.0) | SHORT | $103,461 | +3.5% | 0.52 | 389 |
+| *Buy & Hold (benchmark)* | — | $90,067 | -9.9% | — | 1 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $106,628 | +6.6% | 0.95 | 415 |
+| ORB_ATR_Target(6,1.5xATR) | SHORT | $106,441 | +6.4% | 1.55 | 585 |
+| MA_Crossover(10/50) | SHORT | $106,265 | +6.3% | 0.91 | 691 |
+| MACD_Momentum(12/26/9) | LONG | $104,881 | +4.9% | 0.71 | 2024 |
+| Supertrend(10,m=3.0) | SHORT | $103,503 | +3.5% | 0.52 | 663 |
 | Opening_Range_Breakout(6) | FLAT | $102,488 | +2.5% | 0.58 | 83 |
-| RSI_Reversion(14,30/70) | FLAT | $101,097 | +1.1% | 0.39 | 753 |
-| Donchian_Breakout(20) | FLAT | $100,011 | +0.0% | 0.03 | 549 |
+| Keltner_Breakout(20,m=2.0) | SHORT | $101,483 | +1.5% | 0.24 | 393 |
+| RSI_Reversion(14,30/70) | FLAT | $101,097 | +1.1% | 0.39 | 751 |
+| Donchian_Breakout(20) | FLAT | $100,010 | +0.0% | 0.03 | 533 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
 | Inside_Bar_Breakout(0.6) | FLAT | $98,363 | -1.6% | -0.39 | 54 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $98,042 | -2.0% | -0.37 | 1129 |
-| TPO_Reversion(60,p=5) | FLAT | $96,434 | -3.6% | -0.95 | 963 |
-| VolProfile_Reversion(30) | FLAT | $96,346 | -3.7% | -0.92 | 2077 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $96,298 | -3.7% | -0.95 | 605 |
+| Stochastic_Reversion(14,20/80) | FLAT | $97,371 | -2.6% | -0.53 | 969 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $96,364 | -3.6% | -0.93 | 615 |
+| TPO_Reversion(60,p=5) | FLAT | $96,362 | -3.6% | -0.96 | 963 |
+| VolProfile_Reversion(30) | FLAT | $96,330 | -3.7% | -0.93 | 2085 |
 | Engulfing_Reversal(0.3) | FLAT | $96,128 | -3.9% | -1.22 | 242 |
-| Stochastic_Reversion(14,20/80) | FLAT | $95,705 | -4.3% | -1.00 | 701 |
-| Bollinger_Reversion(20,2sd) | FLAT | $95,673 | -4.3% | -1.10 | 452 |
-| CCI_Reversion(20,100) | FLAT | $95,532 | -4.5% | -1.20 | 1259 |
+| Bollinger_Reversion(20,2sd) | FLAT | $95,653 | -4.3% | -1.11 | 452 |
+| CCI_Reversion(20,100) | FLAT | $95,479 | -4.5% | -1.22 | 1260 |
