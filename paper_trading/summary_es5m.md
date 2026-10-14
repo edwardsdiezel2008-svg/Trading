@@ -1,23 +1,23 @@
-# MES Paper Trading (5min) — updated 2026-10-14T07:19:13.362993+00:00
+# MES Paper Trading (5min) — updated 2026-10-14T07:32:40.319568+00:00
 
-Latest bar: 2026-10-14 07:05:00 · 26,021 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-14 07:20:00 · 26,024 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $103,618 | +3.6% | — | 1 |
-| Inside_Bar_Breakout(0.6) | SHORT | $102,306 | +2.3% | 0.70 | 190 |
+| *Buy & Hold (benchmark)* | — | $103,562 | +3.6% | — | 1 |
+| Inside_Bar_Breakout(0.6) | SHORT | $102,328 | +2.3% | 0.71 | 190 |
 | Bollinger_Reversion(20,2sd) | FLAT | $101,026 | +1.0% | 0.44 | 923 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $100,726 | +0.7% | 0.33 | 1041 |
-| Keltner_Breakout(20,m=2.0) | SHORT | $100,281 | +0.3% | 0.10 | 380 |
+| Keltner_Breakout(20,m=2.0) | SHORT | $100,302 | +0.3% | 0.10 | 380 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| Stochastic_Reversion(14,20/80) | SHORT | $99,824 | -0.2% | -0.08 | 970 |
+| Stochastic_Reversion(14,20/80) | SHORT | $99,845 | -0.2% | -0.07 | 970 |
 | RSI_Reversion(14,30/70) | FLAT | $99,810 | -0.2% | -0.16 | 703 |
-| Opening_Range_Breakout(6) | LONG | $99,614 | -0.4% | -0.12 | 195 |
-| Donchian_Breakout(20) | SHORT | $99,146 | -0.9% | -0.25 | 624 |
-| ORB_ATR_Target(6,1.5xATR) | LONG | $98,826 | -1.2% | -0.63 | 435 |
+| Opening_Range_Breakout(6) | LONG | $99,592 | -0.4% | -0.13 | 195 |
+| Donchian_Breakout(20) | SHORT | $99,167 | -0.8% | -0.24 | 624 |
+| ORB_ATR_Target(6,1.5xATR) | LONG | $98,805 | -1.2% | -0.64 | 435 |
 | TPO_Reversion(60,p=5) | FLAT | $98,694 | -1.3% | -0.59 | 1956 |
-| VolProfile_Reversion(30) | FLAT | $98,224 | -1.8% | -0.86 | 2828 |
-| CCI_Reversion(20,100) | FLAT | $97,180 | -2.8% | -1.26 | 2571 |
+| VolProfile_Reversion(30) | FLAT | $98,226 | -1.8% | -0.86 | 2829 |
+| CCI_Reversion(20,100) | FLAT | $97,182 | -2.8% | -1.25 | 2572 |
 | Supertrend(10,m=3.0) | FLAT | $97,157 | -2.8% | -1.23 | 207 |
 | MA_Crossover(10/50) | FLAT | $97,141 | -2.9% | -1.13 | 312 |
 | MACD_Momentum(12/26/9) | FLAT | $96,811 | -3.2% | -1.32 | 739 |
