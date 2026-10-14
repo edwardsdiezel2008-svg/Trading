@@ -1,26 +1,26 @@
-# MNQ Paper Trading (15min) — updated 2026-10-14T13:41:48.223536+00:00
+# MNQ Paper Trading (15min) — updated 2026-10-14T15:21:10.612760+00:00
 
-Latest bar: 2026-10-14 13:15:00 · 8,718 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-14 15:00:00 · 8,725 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $99,982 | -0.0% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $99,446 | -0.6% | — | 1 |
 | Bollinger_Reversion(20,2sd) | FLAT | $104,902 | +4.9% | 0.78 | 302 |
 | Engulfing_Reversal(0.3) | FLAT | $102,454 | +2.5% | 0.33 | 469 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $100,860 | +0.9% | 0.21 | 151 |
 | MACD_Momentum(12/26/9) | FLAT | $100,773 | +0.8% | 0.19 | 110 |
 | VWAP_Reversion(20,2%) | FLAT | $100,222 | +0.2% | 0.24 | 1 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $99,782 | -0.2% | -0.05 | 186 |
-| TPO_Reversion(60,p=5) | LONG | $99,344 | -0.7% | -0.09 | 609 |
 | MA_Crossover(10/50) | FLAT | $99,142 | -0.9% | -0.15 | 46 |
+| TPO_Reversion(60,p=5) | LONG | $99,016 | -1.0% | -0.14 | 609 |
 | Opening_Range_Breakout(6) | FLAT | $98,765 | -1.2% | -0.26 | 38 |
 | Inside_Bar_Breakout(0.6) | FLAT | $98,644 | -1.4% | -0.21 | 18 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $98,495 | -1.5% | -0.39 | 17 |
+| VolProfile_Reversion(30) | FLAT | $98,228 | -1.8% | -0.28 | 928 |
 | Donchian_Breakout(20) | FLAT | $98,142 | -1.9% | -0.35 | 42 |
-| VolProfile_Reversion(30) | FLAT | $98,135 | -1.9% | -0.30 | 926 |
 | Supertrend(10,m=3.0) | FLAT | $97,532 | -2.5% | -0.48 | 47 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $97,530 | -2.5% | -0.40 | 57 |
-| RSI_Reversion(14,30/70) | FLAT | $96,956 | -3.0% | -0.83 | 250 |
+| RSI_Reversion(14,30/70) | FLAT | $96,999 | -3.0% | -0.82 | 252 |
 | CCI_Reversion(20,100) | FLAT | $95,607 | -4.4% | -2.10 | 52 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $95,560 | -4.4% | -1.40 | 50 |
 | Stochastic_Reversion(14,20/80) | FLAT | $95,131 | -4.9% | -1.86 | 30 |
