@@ -1,19 +1,19 @@
-# MES Paper Trading (5min) — updated 2026-10-15T13:19:09.624495+00:00
+# MES Paper Trading (5min) — updated 2026-10-15T13:29:18.310649+00:00
 
-Latest bar: 2026-10-15 13:05:00 · 26,368 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-15 13:15:00 · 26,370 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $101,985 | +2.0% | — | 1 |
-| Inside_Bar_Breakout(0.6) | SHORT | $102,825 | +2.8% | 0.84 | 192 |
+| *Buy & Hold (benchmark)* | — | $101,965 | +2.0% | — | 1 |
+| Inside_Bar_Breakout(0.6) | SHORT | $102,832 | +2.8% | 0.84 | 192 |
 | Bollinger_Reversion(20,2sd) | FLAT | $100,976 | +1.0% | 0.41 | 933 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $100,775 | +0.8% | 0.35 | 1052 |
-| Keltner_Breakout(20,m=2.0) | LONG | $100,264 | +0.3% | 0.09 | 385 |
+| Keltner_Breakout(20,m=2.0) | LONG | $100,256 | +0.3% | 0.09 | 385 |
 | Stochastic_Reversion(14,20/80) | FLAT | $100,188 | +0.2% | 0.10 | 985 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
 | RSI_Reversion(14,30/70) | FLAT | $99,982 | -0.0% | -0.01 | 717 |
-| Opening_Range_Breakout(6) | SHORT | $99,781 | -0.2% | -0.06 | 197 |
-| Donchian_Breakout(20) | LONG | $99,064 | -0.9% | -0.27 | 635 |
+| Opening_Range_Breakout(6) | SHORT | $99,788 | -0.2% | -0.06 | 197 |
+| Donchian_Breakout(20) | LONG | $99,056 | -0.9% | -0.27 | 635 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $98,892 | -1.1% | -0.59 | 440 |
 | TPO_Reversion(60,p=5) | FLAT | $98,856 | -1.1% | -0.50 | 1983 |
 | VolProfile_Reversion(30) | FLAT | $98,636 | -1.4% | -0.64 | 2873 |
