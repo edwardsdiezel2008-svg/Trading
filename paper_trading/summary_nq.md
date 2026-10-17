@@ -1,4 +1,4 @@
-# MNQ Paper Trading (1D) — updated 2026-10-17T06:18:23.837412+00:00
+# MNQ Paper Trading (1D) — updated 2026-10-17T08:17:52.463487+00:00
 
 Latest bar: 2026-10-16 00:00:00 · 2,572 bars of history · $100,000 starting capital per strategy
 
