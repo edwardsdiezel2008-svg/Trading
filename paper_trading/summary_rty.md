@@ -1,22 +1,22 @@
-# M2K Paper Trading (1D) — updated 2026-10-18T20:38:20.415144+00:00
+# M2K Paper Trading (1D) — updated 2026-10-18T23:07:33.326145+00:00
 
-Latest bar: 2026-10-16 00:00:00 · 2,345 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-18 00:00:00 · 2,346 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $194,186 | +94.2% | — | 1 |
-| Parabolic_SAR(af=0.02,max=0.2) | SHORT | $107,196 | +7.2% | 0.38 | 230 |
-| VWAP_Reversion(20,2%) | LONG | $106,242 | +6.2% | 0.37 | 144 |
-| Bollinger_Reversion(20,2sd) | LONG | $104,261 | +4.3% | 0.29 | 85 |
-| Keltner_Breakout(20,m=2.0) | SHORT | $103,515 | +3.5% | 0.19 | 33 |
-| ZScore_Reversion(20,z=2.0) | LONG | $102,351 | +2.4% | 0.18 | 91 |
+| *Buy & Hold (benchmark)* | — | $195,315 | +95.3% | — | 1 |
+| Parabolic_SAR(af=0.02,max=0.2) | SHORT | $107,116 | +7.1% | 0.37 | 230 |
+| VWAP_Reversion(20,2%) | LONG | $106,322 | +6.3% | 0.37 | 144 |
+| Bollinger_Reversion(20,2sd) | LONG | $104,341 | +4.3% | 0.29 | 85 |
+| Keltner_Breakout(20,m=2.0) | SHORT | $103,436 | +3.4% | 0.18 | 33 |
+| ZScore_Reversion(20,z=2.0) | LONG | $102,431 | +2.4% | 0.19 | 91 |
 | Stochastic_Reversion(14,20/80) | FLAT | $102,320 | +2.3% | 0.18 | 87 |
 | Donchian_Breakout(20) | FLAT | $101,661 | +1.7% | 0.12 | 32 |
 | MACD_Momentum(12/26/9) | FLAT | $101,059 | +1.1% | 0.07 | 175 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $100,000 | +0.0% | — | 0 |
-| TPO_Reversion(60,p=5) | FLAT | $99,436 | -0.6% | -0.03 | 163 |
-| VolProfile_Reversion(30) | LONG | $98,935 | -1.1% | -0.08 | 227 |
+| TPO_Reversion(60,p=5) | LONG | $99,575 | -0.4% | -0.02 | 164 |
+| VolProfile_Reversion(30) | LONG | $99,015 | -1.0% | -0.07 | 227 |
 | RSI_Reversion(14,30/70) | FLAT | $98,568 | -1.4% | -0.17 | 65 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $98,321 | -1.7% | -0.16 | 11 |
 | MA_Crossover(10/50) | FLAT | $98,245 | -1.8% | -0.11 | 40 |
