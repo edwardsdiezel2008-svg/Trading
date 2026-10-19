@@ -1,26 +1,26 @@
-# MNQ Paper Trading (15min) — updated 2026-10-19T17:19:08.893884+00:00
+# MNQ Paper Trading (15min) — updated 2026-10-19T19:20:38.654620+00:00
 
-Latest bar: 2026-10-19 17:00:00 · 9,009 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-19 19:00:00 · 9,017 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $97,497 | -2.5% | — | 1 |
-| Bollinger_Reversion(20,2sd) | FLAT | $105,008 | +5.0% | 0.78 | 304 |
-| Engulfing_Reversal(0.3) | FLAT | $102,697 | +2.7% | 0.36 | 448 |
+| *Buy & Hold (benchmark)* | — | $97,461 | -2.5% | — | 1 |
+| Bollinger_Reversion(20,2sd) | FLAT | $104,876 | +4.9% | 0.77 | 302 |
+| Engulfing_Reversal(0.3) | FLAT | $102,314 | +2.3% | 0.31 | 469 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $100,860 | +0.9% | 0.20 | 151 |
 | MACD_Momentum(12/26/9) | FLAT | $100,773 | +0.8% | 0.18 | 110 |
 | VWAP_Reversion(20,2%) | FLAT | $100,222 | +0.2% | 0.24 | 1 |
-| ORB_ATR_Target(6,1.5xATR) | FLAT | $99,488 | -0.5% | -0.13 | 192 |
+| ORB_ATR_Target(6,1.5xATR) | FLAT | $99,618 | -0.4% | -0.09 | 191 |
 | MA_Crossover(10/50) | FLAT | $99,142 | -0.9% | -0.14 | 46 |
 | Opening_Range_Breakout(6) | FLAT | $98,765 | -1.2% | -0.26 | 38 |
 | Inside_Bar_Breakout(0.6) | FLAT | $98,644 | -1.4% | -0.21 | 18 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $98,495 | -1.5% | -0.38 | 17 |
 | Donchian_Breakout(20) | FLAT | $98,142 | -1.9% | -0.34 | 42 |
-| TPO_Reversion(60,p=5) | FLAT | $97,917 | -2.1% | -0.32 | 629 |
-| VolProfile_Reversion(30) | FLAT | $97,750 | -2.3% | -0.36 | 961 |
+| VolProfile_Reversion(30) | FLAT | $97,562 | -2.4% | -0.39 | 956 |
 | Supertrend(10,m=3.0) | FLAT | $97,532 | -2.5% | -0.47 | 47 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $97,530 | -2.5% | -0.39 | 57 |
-| RSI_Reversion(14,30/70) | FLAT | $95,780 | -4.2% | -1.11 | 262 |
+| TPO_Reversion(60,p=5) | FLAT | $97,429 | -2.6% | -0.40 | 624 |
+| RSI_Reversion(14,30/70) | FLAT | $95,802 | -4.2% | -1.11 | 261 |
 | CCI_Reversion(20,100) | FLAT | $95,607 | -4.4% | -2.06 | 52 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $95,560 | -4.4% | -1.38 | 50 |
 | Stochastic_Reversion(14,20/80) | FLAT | $95,131 | -4.9% | -1.83 | 30 |
