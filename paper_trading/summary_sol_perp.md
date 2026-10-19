@@ -1,10 +1,10 @@
-# SOL/USDT Paper Trading (1D) — updated 2026-10-18T23:07:00.605722+00:00
+# SOL/USDT Paper Trading (1D) — updated 2026-10-19T01:13:18.572109+00:00
 
-Latest bar: 2026-10-18 00:00:00 · 2,008 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-19 00:00:00 · 2,009 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $320,983 | +221.0% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $323,331 | +223.3% | — | 1 |
 | TPO_Reversion(60,p=5) | FLAT | $141,475 | +41.5% | 0.33 | 4 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $129,336 | +29.3% | 0.27 | 1 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $125,588 | +25.6% | 0.29 | 3 |
