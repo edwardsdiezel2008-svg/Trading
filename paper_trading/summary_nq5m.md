@@ -1,26 +1,26 @@
-# MNQ Paper Trading (5min) — updated 2026-10-20T20:34:02.552383+00:00
+# MNQ Paper Trading (5min) — updated 2026-10-20T22:18:29.732208+00:00
 
-Latest bar: 2026-10-20 20:20:00 · 27,279 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-20 22:05:00 · 27,288 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $97,702 | -2.3% | — | 1 |
-| ORB_ATR_Target(6,1.5xATR) | LONG | $101,478 | +1.5% | 0.33 | 444 |
+| *Buy & Hold (benchmark)* | — | $98,429 | -1.6% | — | 1 |
+| ORB_ATR_Target(6,1.5xATR) | LONG | $101,920 | +1.9% | 0.43 | 444 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $101,115 | +1.1% | 0.21 | 117 |
-| Stochastic_Reversion(14,20/80) | SHORT | $100,299 | +0.3% | 0.07 | 1048 |
 | MA_Crossover(10/50) | FLAT | $100,132 | +0.1% | 0.04 | 132 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
+| Stochastic_Reversion(14,20/80) | SHORT | $99,857 | -0.1% | -0.00 | 1048 |
 | Engulfing_Reversal(0.3) | FLAT | $99,393 | -0.6% | -0.11 | 302 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $99,023 | -1.0% | -0.19 | 74 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $98,624 | -1.4% | -0.20 | 1018 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $98,610 | -1.4% | -0.30 | 330 |
 | Opening_Range_Breakout(6) | FLAT | $98,606 | -1.4% | -0.24 | 59 |
-| RSI_Reversion(14,30/70) | FLAT | $98,534 | -1.5% | -0.41 | 780 |
 | Donchian_Breakout(20) | FLAT | $98,430 | -1.6% | -0.31 | 105 |
+| RSI_Reversion(14,30/70) | SHORT | $98,338 | -1.7% | -0.46 | 781 |
 | Supertrend(10,m=3.0) | FLAT | $98,334 | -1.7% | -0.24 | 222 |
+| ZScore_Reversion(20,z=2.0) | SHORT | $98,275 | -1.7% | -0.26 | 1019 |
 | Inside_Bar_Breakout(0.6) | FLAT | $97,516 | -2.5% | -0.33 | 85 |
 | MACD_Momentum(12/26/9) | FLAT | $97,036 | -3.0% | -0.67 | 301 |
 | TPO_Reversion(60,p=5) | FLAT | $96,507 | -3.5% | -0.59 | 1604 |
 | CCI_Reversion(20,100) | FLAT | $95,580 | -4.4% | -0.87 | 1086 |
 | Bollinger_Reversion(20,2sd) | FLAT | $95,228 | -4.8% | -2.32 | 61 |
-| VolProfile_Reversion(30) | FLAT | $95,029 | -5.0% | -2.50 | 187 |
+| VolProfile_Reversion(30) | FLAT | $95,029 | -5.0% | -2.49 | 187 |
