@@ -1,4 +1,4 @@
-# MCL Paper Trading (1D) — updated 2026-10-23T21:19:35.353276+00:00
+# MCL Paper Trading (1D) — updated 2026-10-23T22:13:02.034161+00:00
 
 Latest bar: 2026-10-23 00:00:00 · 2,577 bars of history · $100,000 starting capital per strategy
 
