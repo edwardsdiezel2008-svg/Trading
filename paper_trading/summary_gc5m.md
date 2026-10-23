@@ -1,15 +1,15 @@
-# MGC Paper Trading (5min) — updated 2026-10-23T19:11:21.600747+00:00
+# MGC Paper Trading (5min) — updated 2026-10-23T21:19:17.725497+00:00
 
-Latest bar: 2026-10-23 18:55:00 · 28,171 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-23 20:55:00 · 28,195 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $87,870 | -12.1% | — | 1 |
-| ORB_ATR_Target(6,1.5xATR) | SHORT | $105,764 | +5.8% | 1.32 | 629 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $105,282 | +5.3% | 0.73 | 451 |
+| *Buy & Hold (benchmark)* | — | $87,833 | -12.2% | — | 1 |
+| ORB_ATR_Target(6,1.5xATR) | SHORT | $105,781 | +5.8% | 1.32 | 629 |
+| ATR_Vol_Breakout(14,k=1.5) | LONG | $105,273 | +5.3% | 0.72 | 452 |
 | MA_Crossover(10/50) | FLAT | $105,038 | +5.0% | 0.71 | 725 |
-| Supertrend(10,m=3.0) | SHORT | $103,045 | +3.0% | 0.43 | 719 |
-| MACD_Momentum(12/26/9) | LONG | $102,883 | +2.9% | 0.41 | 2188 |
+| Supertrend(10,m=3.0) | SHORT | $103,062 | +3.1% | 0.43 | 719 |
+| MACD_Momentum(12/26/9) | SHORT | $102,777 | +2.8% | 0.40 | 2191 |
 | Opening_Range_Breakout(6) | FLAT | $102,488 | +2.5% | 0.56 | 83 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $102,097 | +2.1% | 0.31 | 414 |
 | RSI_Reversion(14,30/70) | FLAT | $101,225 | +1.2% | 0.41 | 793 |
