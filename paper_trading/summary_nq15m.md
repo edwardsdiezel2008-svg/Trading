@@ -1,10 +1,10 @@
-# MNQ Paper Trading (15min) — updated 2026-10-26T15:24:19.919833+00:00
+# MNQ Paper Trading (15min) — updated 2026-10-26T17:22:01.437088+00:00
 
-Latest bar: 2026-10-26 15:00:00 · 9,461 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-26 17:00:00 · 9,469 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $96,642 | -3.4% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $96,551 | -3.4% | — | 1 |
 | Bollinger_Reversion(20,2sd) | FLAT | $105,004 | +5.0% | 0.76 | 304 |
 | Engulfing_Reversal(0.3) | FLAT | $101,816 | +1.8% | 0.25 | 440 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $100,860 | +0.9% | 0.20 | 151 |
@@ -15,7 +15,7 @@ Latest bar: 2026-10-26 15:00:00 · 9,461 bars of history · $100,000 starting ca
 | Opening_Range_Breakout(6) | FLAT | $98,765 | -1.2% | -0.25 | 38 |
 | Inside_Bar_Breakout(0.6) | FLAT | $98,644 | -1.4% | -0.20 | 18 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $98,495 | -1.5% | -0.37 | 17 |
-| VolProfile_Reversion(30) | SHORT | $98,486 | -1.5% | -0.22 | 1007 |
+| VolProfile_Reversion(30) | FLAT | $98,470 | -1.5% | -0.22 | 1007 |
 | Donchian_Breakout(20) | FLAT | $98,142 | -1.9% | -0.33 | 42 |
 | Supertrend(10,m=3.0) | FLAT | $97,532 | -2.5% | -0.46 | 47 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $97,530 | -2.5% | -0.38 | 57 |
