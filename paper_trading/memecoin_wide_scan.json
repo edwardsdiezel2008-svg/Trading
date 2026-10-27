@@ -1,8 +1,21 @@
 {
-  "updated_at_utc": "2026-10-27T16:32:55.322611+00:00",
+  "updated_at_utc": "2026-10-27T16:48:23.360095+00:00",
   "universe_size": 56,
   "min_volume_usd": 10000,
   "ranked": [
+    {
+      "symbol": "BOMEUSD",
+      "price": 0.00063273,
+      "change_24h_pct": 0.88,
+      "high_24h": 0.00063273,
+      "low_24h": 0.00061413,
+      "pct_from_24h_high": 0.0,
+      "range_position": 1.0,
+      "volume_24h_usd": 286.8,
+      "thin_liquidity": true,
+      "as_of": "2026-10-27T16:45:00.252000Z",
+      "rank": 1
+    },
     {
       "symbol": "HMSTRUSD",
       "price": 0.00014193,
@@ -13,8 +26,21 @@
       "range_position": 1.0,
       "volume_24h_usd": 332.88,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.792000Z",
-      "rank": 1
+      "as_of": "2026-10-27T16:45:00.685000Z",
+      "rank": 2
+    },
+    {
+      "symbol": "ORDIUSD",
+      "price": 3.6159,
+      "change_24h_pct": 1.07,
+      "high_24h": 3.6159,
+      "low_24h": 3.5406,
+      "pct_from_24h_high": 0.0,
+      "range_position": 1.0,
+      "volume_24h_usd": 519.19,
+      "thin_liquidity": true,
+      "as_of": "2026-10-27T16:45:00.058000Z",
+      "rank": 3
     },
     {
       "symbol": "DEGENUSD",
@@ -26,8 +52,8 @@
       "range_position": 1.0,
       "volume_24h_usd": 4.97,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:05.696000Z",
-      "rank": 2
+      "as_of": "2026-10-27T16:45:00.369000Z",
+      "rank": 4
     },
     {
       "symbol": "ACTUSD",
@@ -39,8 +65,8 @@
       "range_position": 1.0,
       "volume_24h_usd": 24.97,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.882000Z",
-      "rank": 3
+      "as_of": "2026-10-27T16:45:00.193000Z",
+      "rank": 5
     },
     {
       "symbol": "GEKKOUSD",
@@ -52,73 +78,34 @@
       "range_position": 1.0,
       "volume_24h_usd": 347.06,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.807000Z",
-      "rank": 4
-    },
-    {
-      "symbol": "CLANKERUSD",
-      "price": 13.567,
-      "change_24h_pct": 0.62,
-      "high_24h": 13.567,
-      "low_24h": 13.483,
-      "pct_from_24h_high": 0.0,
-      "range_position": 1.0,
-      "volume_24h_usd": 177.42,
-      "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:33.029000Z",
-      "rank": 5
-    },
-    {
-      "symbol": "PENGUUSD",
-      "price": 0.007663,
-      "change_24h_pct": 0.74,
-      "high_24h": 0.007667,
-      "low_24h": 0.007367,
-      "pct_from_24h_high": -0.052,
-      "range_position": 0.987,
-      "volume_24h_usd": 3851.95,
-      "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:32.792000Z",
+      "as_of": "2026-10-27T16:45:00.265000Z",
       "rank": 6
     },
     {
-      "symbol": "CHILLGUYUSD",
-      "price": 0.00983,
-      "change_24h_pct": 0.61,
-      "high_24h": 0.00984,
-      "low_24h": 0.00934,
-      "pct_from_24h_high": -0.102,
-      "range_position": 0.98,
-      "volume_24h_usd": 15552.71,
+      "symbol": "PEPEUSD",
+      "price": 4.433e-06,
+      "change_24h_pct": 1.19,
+      "high_24h": 4.44e-06,
+      "low_24h": 4.248e-06,
+      "pct_from_24h_high": -0.158,
+      "range_position": 0.964,
+      "volume_24h_usd": 125098.12,
       "thin_liquidity": false,
-      "as_of": "2026-10-27T16:29:33.303000Z",
+      "as_of": "2026-10-27T16:45:00.685000Z",
       "rank": 7
     },
     {
-      "symbol": "PEPEUSD",
-      "price": 4.413e-06,
-      "change_24h_pct": 0.94,
-      "high_24h": 4.42e-06,
-      "low_24h": 4.248e-06,
-      "pct_from_24h_high": -0.158,
-      "range_position": 0.959,
-      "volume_24h_usd": 107914.12,
+      "symbol": "CHILLGUYUSD",
+      "price": 0.00982,
+      "change_24h_pct": 1.34,
+      "high_24h": 0.00984,
+      "low_24h": 0.00934,
+      "pct_from_24h_high": -0.203,
+      "range_position": 0.96,
+      "volume_24h_usd": 15553.91,
       "thin_liquidity": false,
-      "as_of": "2026-10-27T16:29:29.792000Z",
+      "as_of": "2026-10-27T16:45:00.084000Z",
       "rank": 8
-    },
-    {
-      "symbol": "DOGEUSD",
-      "price": 0.078182,
-      "change_24h_pct": 1.22,
-      "high_24h": 0.078284,
-      "low_24h": 0.076566,
-      "pct_from_24h_high": -0.13,
-      "range_position": 0.941,
-      "volume_24h_usd": 1067772.83,
-      "thin_liquidity": false,
-      "as_of": "2026-10-27T16:29:33.556000Z",
-      "rank": 9
     },
     {
       "symbol": "LADYSUSD",
@@ -130,73 +117,99 @@
       "range_position": 0.933,
       "volume_24h_usd": 121.03,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.029000Z",
+      "as_of": "2026-10-27T16:45:00.252000Z",
+      "rank": 9
+    },
+    {
+      "symbol": "BONKUSD",
+      "price": 3.07e-06,
+      "change_24h_pct": 0.69,
+      "high_24h": 3.079e-06,
+      "low_24h": 2.949e-06,
+      "pct_from_24h_high": -0.292,
+      "range_position": 0.931,
+      "volume_24h_usd": 42626.67,
+      "thin_liquidity": false,
+      "as_of": "2026-10-27T16:45:00.084000Z",
       "rank": 10
     },
     {
-      "symbol": "BOMEUSD",
-      "price": 0.00063076,
-      "change_24h_pct": 0.55,
-      "high_24h": 0.00063197,
-      "low_24h": 0.00061413,
-      "pct_from_24h_high": -0.191,
-      "range_position": 0.932,
-      "volume_24h_usd": 290.35,
+      "symbol": "PENGUUSD",
+      "price": 0.007668,
+      "change_24h_pct": 0.8,
+      "high_24h": 0.007691,
+      "low_24h": 0.007367,
+      "pct_from_24h_high": -0.299,
+      "range_position": 0.929,
+      "volume_24h_usd": 3864.25,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:33.029000Z",
+      "as_of": "2026-10-27T16:45:00.685000Z",
       "rank": 11
     },
     {
       "symbol": "PUMPUSD",
       "price": 0.004317,
-      "change_24h_pct": 0.86,
+      "change_24h_pct": 1.92,
       "high_24h": 0.0043367,
       "low_24h": 0.0040899,
       "pct_from_24h_high": -0.454,
       "range_position": 0.92,
-      "volume_24h_usd": 14861.89,
+      "volume_24h_usd": 14858.08,
       "thin_liquidity": false,
-      "as_of": "2026-10-27T16:29:33.035000Z",
+      "as_of": "2026-10-27T16:45:00.996000Z",
       "rank": 12
     },
     {
-      "symbol": "BONKUSD",
-      "price": 3.067e-06,
-      "change_24h_pct": 0.36,
-      "high_24h": 3.079e-06,
-      "low_24h": 2.949e-06,
-      "pct_from_24h_high": -0.39,
-      "range_position": 0.908,
-      "volume_24h_usd": 43122.76,
-      "thin_liquidity": false,
-      "as_of": "2026-10-27T16:29:32.303000Z",
+      "symbol": "PNUTUSD",
+      "price": 0.0412,
+      "change_24h_pct": 1.55,
+      "high_24h": 0.04127,
+      "low_24h": 0.04057,
+      "pct_from_24h_high": -0.17,
+      "range_position": 0.9,
+      "volume_24h_usd": 2747.91,
+      "thin_liquidity": true,
+      "as_of": "2026-10-27T16:45:00.685000Z",
       "rank": 13
     },
     {
-      "symbol": "FARTCOINUSD",
-      "price": 0.1303,
-      "change_24h_pct": 2.53,
-      "high_24h": 0.13095,
-      "low_24h": 0.12596,
-      "pct_from_24h_high": -0.496,
-      "range_position": 0.87,
-      "volume_24h_usd": 16129.91,
-      "thin_liquidity": false,
-      "as_of": "2026-10-27T16:29:33.556000Z",
+      "symbol": "SPXUSD",
+      "price": 0.38307,
+      "change_24h_pct": 1.58,
+      "high_24h": 0.38525,
+      "low_24h": 0.36476,
+      "pct_from_24h_high": -0.566,
+      "range_position": 0.894,
+      "volume_24h_usd": 1290.43,
+      "thin_liquidity": true,
+      "as_of": "2026-10-27T16:45:00.685000Z",
       "rank": 14
     },
     {
-      "symbol": "FLOKIUSD",
-      "price": 2.313e-05,
-      "change_24h_pct": 0.39,
-      "high_24h": 2.327e-05,
-      "low_24h": 2.247e-05,
-      "pct_from_24h_high": -0.602,
-      "range_position": 0.825,
-      "volume_24h_usd": 6893.63,
-      "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:32.792000Z",
+      "symbol": "DOGEUSD",
+      "price": 0.078048,
+      "change_24h_pct": 1.21,
+      "high_24h": 0.078346,
+      "low_24h": 0.076566,
+      "pct_from_24h_high": -0.38,
+      "range_position": 0.833,
+      "volume_24h_usd": 1061701.17,
+      "thin_liquidity": false,
+      "as_of": "2026-10-27T16:45:00.058000Z",
       "rank": 15
+    },
+    {
+      "symbol": "FARTCOINUSD",
+      "price": 0.12979,
+      "change_24h_pct": 2.37,
+      "high_24h": 0.13095,
+      "low_24h": 0.12596,
+      "pct_from_24h_high": -0.886,
+      "range_position": 0.768,
+      "volume_24h_usd": 15868.09,
+      "thin_liquidity": false,
+      "as_of": "2026-10-27T16:45:00.058000Z",
+      "rank": 16
     },
     {
       "symbol": "BONEUSD",
@@ -208,60 +221,73 @@
       "range_position": 0.764,
       "volume_24h_usd": 945.34,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.807000Z",
-      "rank": 16
-    },
-    {
-      "symbol": "GOATEDUSD",
-      "price": 0.010082,
-      "change_24h_pct": 10.5,
-      "high_24h": 0.010417,
-      "low_24h": 0.009088,
-      "pct_from_24h_high": -3.216,
-      "range_position": 0.748,
-      "volume_24h_usd": 22041.69,
-      "thin_liquidity": false,
-      "as_of": "2026-10-27T16:29:32.807000Z",
+      "as_of": "2026-10-27T16:45:00.265000Z",
       "rank": 17
     },
     {
-      "symbol": "SHIBUSD",
-      "price": 4.868e-06,
-      "change_24h_pct": 0.27,
-      "high_24h": 4.895e-06,
-      "low_24h": 4.794e-06,
-      "pct_from_24h_high": -0.552,
-      "range_position": 0.733,
-      "volume_24h_usd": 116431.37,
+      "symbol": "GOATEDUSD",
+      "price": 0.010081,
+      "change_24h_pct": 9.28,
+      "high_24h": 0.010417,
+      "low_24h": 0.009153,
+      "pct_from_24h_high": -3.225,
+      "range_position": 0.734,
+      "volume_24h_usd": 22053.23,
       "thin_liquidity": false,
-      "as_of": "2026-10-27T16:29:29.882000Z",
+      "as_of": "2026-10-27T16:45:00.265000Z",
       "rank": 18
     },
     {
-      "symbol": "CASHCATUSD",
-      "price": 0.09894,
-      "change_24h_pct": 7.86,
-      "high_24h": 0.10247,
-      "low_24h": 0.08961,
-      "pct_from_24h_high": -3.445,
-      "range_position": 0.726,
-      "volume_24h_usd": 110511.24,
+      "symbol": "LUNCUSD",
+      "price": 4.478e-05,
+      "change_24h_pct": 0.11,
+      "high_24h": 4.513e-05,
+      "low_24h": 4.384e-05,
+      "pct_from_24h_high": -0.776,
+      "range_position": 0.729,
+      "volume_24h_usd": 16266.04,
       "thin_liquidity": false,
-      "as_of": "2026-10-27T16:29:33.029000Z",
+      "as_of": "2026-10-27T16:45:00.265000Z",
       "rank": 19
     },
     {
-      "symbol": "ELONUSD",
-      "price": 2.716e-08,
-      "change_24h_pct": 1.61,
-      "high_24h": 2.76e-08,
-      "low_24h": 2.631e-08,
-      "pct_from_24h_high": -1.594,
-      "range_position": 0.659,
-      "volume_24h_usd": 19099.56,
+      "symbol": "CASHCATUSD",
+      "price": 0.09869,
+      "change_24h_pct": 8.33,
+      "high_24h": 0.10247,
+      "low_24h": 0.08961,
+      "pct_from_24h_high": -3.689,
+      "range_position": 0.706,
+      "volume_24h_usd": 108837.07,
       "thin_liquidity": false,
-      "as_of": "2026-10-27T16:29:02.807000Z",
+      "as_of": "2026-10-27T16:45:00.252000Z",
       "rank": 20
+    },
+    {
+      "symbol": "FLOKIUSD",
+      "price": 2.303e-05,
+      "change_24h_pct": 0.39,
+      "high_24h": 2.327e-05,
+      "low_24h": 2.247e-05,
+      "pct_from_24h_high": -1.031,
+      "range_position": 0.7,
+      "volume_24h_usd": 6981.32,
+      "thin_liquidity": true,
+      "as_of": "2026-10-27T16:45:00.685000Z",
+      "rank": 21
+    },
+    {
+      "symbol": "SHIBUSD",
+      "price": 4.86e-06,
+      "change_24h_pct": 0.29,
+      "high_24h": 4.895e-06,
+      "low_24h": 4.794e-06,
+      "pct_from_24h_high": -0.715,
+      "range_position": 0.653,
+      "volume_24h_usd": 116488.08,
+      "thin_liquidity": false,
+      "as_of": "2026-10-27T16:45:00.193000Z",
+      "rank": 22
     },
     {
       "symbol": "BASEDUSD",
@@ -273,21 +299,60 @@
       "range_position": 0.636,
       "volume_24h_usd": 1041.51,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:15.556000Z",
-      "rank": 21
+      "as_of": "2026-10-27T16:45:00.058000Z",
+      "rank": 23
+    },
+    {
+      "symbol": "GOATUSD",
+      "price": 0.01384,
+      "change_24h_pct": 0.22,
+      "high_24h": 0.01398,
+      "low_24h": 0.01363,
+      "pct_from_24h_high": -1.001,
+      "range_position": 0.6,
+      "volume_24h_usd": 280.49,
+      "thin_liquidity": true,
+      "as_of": "2026-10-27T16:45:00.193000Z",
+      "rank": 24
+    },
+    {
+      "symbol": "MOGUSD",
+      "price": 1.0002e-07,
+      "change_24h_pct": 0.3,
+      "high_24h": 1.0128e-07,
+      "low_24h": 9.819e-08,
+      "pct_from_24h_high": -1.244,
+      "range_position": 0.592,
+      "volume_24h_usd": 6151.87,
+      "thin_liquidity": true,
+      "as_of": "2026-10-27T16:45:00.265000Z",
+      "rank": 25
+    },
+    {
+      "symbol": "ELONUSD",
+      "price": 2.705e-08,
+      "change_24h_pct": 1.16,
+      "high_24h": 2.76e-08,
+      "low_24h": 2.631e-08,
+      "pct_from_24h_high": -1.993,
+      "range_position": 0.574,
+      "volume_24h_usd": 19076.32,
+      "thin_liquidity": false,
+      "as_of": "2026-10-27T16:45:00.265000Z",
+      "rank": 26
     },
     {
       "symbol": "TRUMPUSD",
-      "price": 1.691,
-      "change_24h_pct": 0.59,
+      "price": 1.69,
+      "change_24h_pct": 0.72,
       "high_24h": 1.713,
       "low_24h": 1.662,
-      "pct_from_24h_high": -1.284,
-      "range_position": 0.569,
-      "volume_24h_usd": 28694.31,
+      "pct_from_24h_high": -1.343,
+      "range_position": 0.549,
+      "volume_24h_usd": 28903.23,
       "thin_liquidity": false,
-      "as_of": "2026-10-27T16:29:33.035000Z",
-      "rank": 22
+      "as_of": "2026-10-27T16:45:00.996000Z",
+      "rank": 27
     },
     {
       "symbol": "HEHEUSD",
@@ -299,34 +364,21 @@
       "range_position": 0.493,
       "volume_24h_usd": 3826.86,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:22.807000Z",
-      "rank": 23
+      "as_of": "2026-10-27T16:45:00.265000Z",
+      "rank": 28
     },
     {
       "symbol": "BIRBUSD",
-      "price": 0.07279,
-      "change_24h_pct": 11.11,
+      "price": 0.0743,
+      "change_24h_pct": 13.42,
       "high_24h": 0.08553,
-      "low_24h": 0.065,
-      "pct_from_24h_high": -14.895,
-      "range_position": 0.379,
-      "volume_24h_usd": 26471.94,
+      "low_24h": 0.06551,
+      "pct_from_24h_high": -13.13,
+      "range_position": 0.439,
+      "volume_24h_usd": 26474.08,
       "thin_liquidity": false,
-      "as_of": "2026-10-27T16:29:33.303000Z",
-      "rank": 24
-    },
-    {
-      "symbol": "PNUTUSD",
-      "price": 0.0407,
-      "change_24h_pct": 0.32,
-      "high_24h": 0.04127,
-      "low_24h": 0.04057,
-      "pct_from_24h_high": -1.381,
-      "range_position": 0.186,
-      "volume_24h_usd": 1381.89,
-      "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:32.792000Z",
-      "rank": 25
+      "as_of": "2026-10-27T16:45:00.084000Z",
+      "rank": 29
     }
   ],
   "not_moving": [
@@ -340,7 +392,7 @@
       "range_position": 0.5,
       "volume_24h_usd": 0.0,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.882000Z"
+      "as_of": "2026-10-27T16:45:00.193000Z"
     },
     {
       "symbol": "COQUSD",
@@ -352,7 +404,7 @@
       "range_position": 0.5,
       "volume_24h_usd": 0.0,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:33.556000Z"
+      "as_of": "2026-10-27T16:45:00.058000Z"
     },
     {
       "symbol": "PONKEUSD",
@@ -364,7 +416,7 @@
       "range_position": 0.5,
       "volume_24h_usd": 0.0,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.303000Z"
+      "as_of": "2026-10-27T16:45:00.084000Z"
     },
     {
       "symbol": "AGENTFUNUSD",
@@ -376,7 +428,7 @@
       "range_position": 0.5,
       "volume_24h_usd": 0.0,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.696000Z"
+      "as_of": "2026-10-27T16:45:00.369000Z"
     },
     {
       "symbol": "BINKUSD",
@@ -388,7 +440,7 @@
       "range_position": 0.5,
       "volume_24h_usd": 0.0,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:33.035000Z"
+      "as_of": "2026-10-27T16:45:00.996000Z"
     },
     {
       "symbol": "FWOGUSD",
@@ -400,7 +452,7 @@
       "range_position": 0.5,
       "volume_24h_usd": 0.0,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:28.696000Z"
+      "as_of": "2026-10-27T16:45:00.369000Z"
     },
     {
       "symbol": "AIXBTUSD",
@@ -412,43 +464,43 @@
       "range_position": 0.5,
       "volume_24h_usd": 0.0,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:17.303000Z"
+      "as_of": "2026-10-27T16:45:00.084000Z"
     },
     {
-      "symbol": "SPXUSD",
-      "price": 0.38307,
-      "change_24h_pct": -0.26,
-      "high_24h": 0.38525,
-      "low_24h": 0.36476,
-      "pct_from_24h_high": -0.566,
-      "range_position": 0.894,
-      "volume_24h_usd": 1290.43,
+      "symbol": "CLANKERUSD",
+      "price": 13.567,
+      "change_24h_pct": 0.0,
+      "high_24h": 13.567,
+      "low_24h": 13.567,
+      "pct_from_24h_high": 0.0,
+      "range_position": 0.5,
+      "volume_24h_usd": 177.42,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.792000Z"
+      "as_of": "2026-10-27T16:45:00.252000Z"
+    },
+    {
+      "symbol": "WIFUSD",
+      "price": 0.1789,
+      "change_24h_pct": -0.06,
+      "high_24h": 0.1818,
+      "low_24h": 0.1767,
+      "pct_from_24h_high": -1.595,
+      "range_position": 0.431,
+      "volume_24h_usd": 6338.33,
+      "thin_liquidity": true,
+      "as_of": "2026-10-27T16:45:00.265000Z"
     },
     {
       "symbol": "TURBOUSD",
-      "price": 0.0008196,
-      "change_24h_pct": -0.28,
+      "price": 0.0008193,
+      "change_24h_pct": -0.32,
       "high_24h": 0.000825,
       "low_24h": 0.0007992,
-      "pct_from_24h_high": -0.655,
-      "range_position": 0.791,
-      "volume_24h_usd": 6339.27,
+      "pct_from_24h_high": -0.691,
+      "range_position": 0.779,
+      "volume_24h_usd": 6806.76,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:32.696000Z"
-    },
-    {
-      "symbol": "ORDIUSD",
-      "price": 3.5641,
-      "change_24h_pct": -0.32,
-      "high_24h": 3.5838,
-      "low_24h": 3.5406,
-      "pct_from_24h_high": -0.55,
-      "range_position": 0.544,
-      "volume_24h_usd": 526.54,
-      "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:33.556000Z"
+      "as_of": "2026-10-27T16:45:00.369000Z"
     },
     {
       "symbol": "POPCATUSD",
@@ -460,43 +512,7 @@
       "range_position": 0.0,
       "volume_24h_usd": 8.65,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.029000Z"
-    },
-    {
-      "symbol": "MOGUSD",
-      "price": 9.964e-08,
-      "change_24h_pct": -0.47,
-      "high_24h": 1.0128e-07,
-      "low_24h": 9.819e-08,
-      "pct_from_24h_high": -1.619,
-      "range_position": 0.469,
-      "volume_24h_usd": 6175.99,
-      "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:32.807000Z"
-    },
-    {
-      "symbol": "LUNCUSD",
-      "price": 4.489e-05,
-      "change_24h_pct": -0.47,
-      "high_24h": 4.513e-05,
-      "low_24h": 4.384e-05,
-      "pct_from_24h_high": -0.532,
-      "range_position": 0.814,
-      "volume_24h_usd": 16103.27,
-      "thin_liquidity": false,
-      "as_of": "2026-10-27T16:29:31.807000Z"
-    },
-    {
-      "symbol": "GOATUSD",
-      "price": 0.01384,
-      "change_24h_pct": -0.65,
-      "high_24h": 0.01398,
-      "low_24h": 0.01363,
-      "pct_from_24h_high": -1.001,
-      "range_position": 0.6,
-      "volume_24h_usd": 296.04,
-      "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:32.882000Z"
+      "as_of": "2026-10-27T16:45:00.252000Z"
     },
     {
       "symbol": "TROLLUSD",
@@ -508,19 +524,7 @@
       "range_position": 0.206,
       "volume_24h_usd": 217.14,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:09.696000Z"
-    },
-    {
-      "symbol": "CORGIAIUSD",
-      "price": 2.6167e-05,
-      "change_24h_pct": -1.33,
-      "high_24h": 2.6958e-05,
-      "low_24h": 2.6125e-05,
-      "pct_from_24h_high": -2.934,
-      "range_position": 0.05,
-      "volume_24h_usd": 867.72,
-      "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.029000Z"
+      "as_of": "2026-10-27T16:45:00.369000Z"
     },
     {
       "symbol": "NOTUSD",
@@ -532,19 +536,7 @@
       "range_position": 0.0,
       "volume_24h_usd": 12.06,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:24.807000Z"
-    },
-    {
-      "symbol": "WIFUSD",
-      "price": 0.1791,
-      "change_24h_pct": -1.49,
-      "high_24h": 0.1818,
-      "low_24h": 0.1767,
-      "pct_from_24h_high": -1.485,
-      "range_position": 0.471,
-      "volume_24h_usd": 6284.63,
-      "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:32.807000Z"
+      "as_of": "2026-10-27T16:45:00.265000Z"
     },
     {
       "symbol": "LOAFUSD",
@@ -556,19 +548,19 @@
       "range_position": 0.0,
       "volume_24h_usd": 3.69,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.556000Z"
+      "as_of": "2026-10-27T16:45:00.058000Z"
     },
     {
-      "symbol": "CAWUSD",
-      "price": 5.73e-09,
+      "symbol": "MOODENGUSD",
+      "price": 0.03773,
       "change_24h_pct": -2.05,
-      "high_24h": 6.05e-09,
-      "low_24h": 5.65e-09,
-      "pct_from_24h_high": -5.289,
-      "range_position": 0.2,
-      "volume_24h_usd": 3345.15,
+      "high_24h": 0.03878,
+      "low_24h": 0.037711,
+      "pct_from_24h_high": -2.708,
+      "range_position": 0.018,
+      "volume_24h_usd": 401.37,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.556000Z"
+      "as_of": "2026-10-27T16:45:00.265000Z"
     },
     {
       "symbol": "DOGSUSD",
@@ -580,31 +572,31 @@
       "range_position": 0.424,
       "volume_24h_usd": 4049.13,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:13.792000Z"
-    },
-    {
-      "symbol": "MOODENGUSD",
-      "price": 0.03773,
-      "change_24h_pct": -2.57,
-      "high_24h": 0.03878,
-      "low_24h": 0.037711,
-      "pct_from_24h_high": -2.708,
-      "range_position": 0.018,
-      "volume_24h_usd": 417.54,
-      "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:32.807000Z"
+      "as_of": "2026-10-27T16:45:00.685000Z"
     },
     {
       "symbol": "USELESSUSD",
-      "price": 0.155334,
-      "change_24h_pct": -3.12,
+      "price": 0.154743,
+      "change_24h_pct": -2.54,
       "high_24h": 0.16056,
       "low_24h": 0.149617,
-      "pct_from_24h_high": -3.255,
-      "range_position": 0.522,
-      "volume_24h_usd": 42826.63,
+      "pct_from_24h_high": -3.623,
+      "range_position": 0.468,
+      "volume_24h_usd": 44458.54,
       "thin_liquidity": false,
-      "as_of": "2026-10-27T16:29:32.696000Z"
+      "as_of": "2026-10-27T16:45:00.369000Z"
+    },
+    {
+      "symbol": "CORGIAIUSD",
+      "price": 2.6167e-05,
+      "change_24h_pct": -2.93,
+      "high_24h": 2.6958e-05,
+      "low_24h": 2.6125e-05,
+      "pct_from_24h_high": -2.934,
+      "range_position": 0.05,
+      "volume_24h_usd": 867.72,
+      "thin_liquidity": true,
+      "as_of": "2026-10-27T16:45:00.252000Z"
     },
     {
       "symbol": "VINEUSD",
@@ -616,19 +608,31 @@
       "range_position": 0.29,
       "volume_24h_usd": 1674.71,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:32.696000Z"
+      "as_of": "2026-10-27T16:45:00.369000Z"
+    },
+    {
+      "symbol": "CAWUSD",
+      "price": 5.72e-09,
+      "change_24h_pct": -3.21,
+      "high_24h": 6.05e-09,
+      "low_24h": 5.65e-09,
+      "pct_from_24h_high": -5.455,
+      "range_position": 0.175,
+      "volume_24h_usd": 3345.76,
+      "thin_liquidity": true,
+      "as_of": "2026-10-27T16:45:00.058000Z"
     },
     {
       "symbol": "CATIUSD",
-      "price": 0.042228,
-      "change_24h_pct": -3.91,
+      "price": 0.042365,
+      "change_24h_pct": -3.39,
       "high_24h": 0.044481,
       "low_24h": 0.041786,
-      "pct_from_24h_high": -5.065,
-      "range_position": 0.164,
-      "volume_24h_usd": 1692.3,
+      "pct_from_24h_high": -4.757,
+      "range_position": 0.215,
+      "volume_24h_usd": 1683.94,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:18.303000Z"
+      "as_of": "2026-10-27T16:45:00.084000Z"
     },
     {
       "symbol": "SNEKUSD",
@@ -638,9 +642,9 @@
       "low_24h": 0.0006288,
       "pct_from_24h_high": -3.985,
       "range_position": 0.0,
-      "volume_24h_usd": 447.05,
+      "volume_24h_usd": 446.07,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.556000Z"
+      "as_of": "2026-10-27T16:45:00.058000Z"
     },
     {
       "symbol": "MANEKIUSD",
@@ -652,7 +656,7 @@
       "range_position": 0.294,
       "volume_24h_usd": 349.23,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:09.807000Z"
+      "as_of": "2026-10-27T16:45:00.265000Z"
     },
     {
       "symbol": "BANANAUSD",
@@ -664,7 +668,7 @@
       "range_position": 0.0,
       "volume_24h_usd": 3.8,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:27.792000Z"
+      "as_of": "2026-10-27T16:45:00.685000Z"
     },
     {
       "symbol": "TOSHIUSD",
@@ -676,31 +680,31 @@
       "range_position": 0.0,
       "volume_24h_usd": 2699.37,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:00.029000Z"
+      "as_of": "2026-10-27T16:45:00.252000Z"
     },
     {
       "symbol": "WENUSD",
       "price": 5.7469e-06,
-      "change_24h_pct": -8.13,
+      "change_24h_pct": -12.05,
       "high_24h": 6.6417e-06,
       "low_24h": 5.4873e-06,
       "pct_from_24h_high": -13.472,
       "range_position": 0.225,
-      "volume_24h_usd": 2584.24,
+      "volume_24h_usd": 2575.3,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:29.696000Z"
+      "as_of": "2026-10-27T16:45:00.369000Z"
     },
     {
       "symbol": "MYROUSD",
       "price": 0.0016016,
-      "change_24h_pct": -14.91,
-      "high_24h": 0.0018822,
+      "change_24h_pct": -12.65,
+      "high_24h": 0.0018386,
       "low_24h": 0.0016016,
-      "pct_from_24h_high": -14.908,
+      "pct_from_24h_high": -12.89,
       "range_position": 0.0,
       "volume_24h_usd": 3018.79,
       "thin_liquidity": true,
-      "as_of": "2026-10-27T16:29:28.792000Z"
+      "as_of": "2026-10-27T16:45:00.685000Z"
     }
   ]
 }
