@@ -1,10 +1,10 @@
-# MGC Paper Trading (1D) — updated 2026-10-27T02:18:24.446249+00:00
+# MGC Paper Trading (1D) — updated 2026-10-27T04:19:13.891598+00:00
 
-Latest bar: 2026-10-26 00:00:00 · 2,579 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-27 00:00:00 · 2,580 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $299,420 | +199.4% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $300,171 | +200.2% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $110,674 | +10.7% | 0.46 | 119 |
 | Stochastic_Reversion(14,20/80) | FLAT | $101,348 | +1.3% | 0.08 | 96 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
@@ -16,7 +16,7 @@ Latest bar: 2026-10-26 00:00:00 · 2,579 bars of history · $100,000 starting ca
 | Bollinger_Reversion(20,2sd) | FLAT | $98,421 | -1.6% | -0.06 | 77 |
 | VolProfile_Reversion(30) | FLAT | $97,443 | -2.6% | -0.13 | 224 |
 | Donchian_Breakout(20) | FLAT | $97,314 | -2.7% | -0.17 | 30 |
-| TPO_Reversion(60,p=5) | FLAT | $97,132 | -2.9% | -0.17 | 150 |
+| TPO_Reversion(60,p=5) | FLAT | $97,132 | -2.9% | -0.16 | 150 |
 | MACD_Momentum(12/26/9) | FLAT | $96,852 | -3.1% | -0.29 | 75 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $96,759 | -3.2% | -0.15 | 87 |
 | Inside_Bar_Breakout(0.6) | FLAT | $95,836 | -4.2% | -0.56 | 20 |
