@@ -1,15 +1,15 @@
-# MNQ Paper Trading (1h) — updated 2026-10-29T09:21:32.675479+00:00
+# MNQ Paper Trading (1h) — updated 2026-10-29T11:24:09.140966+00:00
 
-Latest bar: 2026-10-29 09:00:00 · 15,020 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-29 11:00:00 · 15,022 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $163,427 | +63.4% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $163,243 | +63.2% | — | 1 |
 | MACD_Momentum(12/26/9) | FLAT | $114,394 | +14.4% | 0.54 | 485 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $106,737 | +6.7% | 0.29 | 100 |
 | Supertrend(10,m=3.0) | FLAT | $100,605 | +0.6% | 0.05 | 89 |
 | Donchian_Breakout(20) | FLAT | $100,488 | +0.5% | 0.03 | 138 |
-| ORB_ATR_Target(6,1.5xATR) | SHORT | $100,244 | +0.2% | 0.03 | 313 |
+| ORB_ATR_Target(6,1.5xATR) | SHORT | $100,311 | +0.3% | 0.03 | 313 |
 | VWAP_Reversion(20,2%) | FLAT | $99,048 | -1.0% | -0.06 | 35 |
 | Inside_Bar_Breakout(0.6) | FLAT | $97,878 | -2.1% | -0.20 | 18 |
 | CCI_Reversion(20,100) | FLAT | $97,062 | -2.9% | -0.37 | 176 |
