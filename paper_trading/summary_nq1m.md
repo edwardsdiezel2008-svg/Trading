@@ -1,16 +1,16 @@
-# MNQ Paper Trading (1min) — updated 2026-10-30T05:20:22.570779+00:00
+# MNQ Paper Trading (1min) — updated 2026-10-30T07:06:29.928492+00:00
 
-Latest bar: 2026-10-30 05:08:00 · 84,623 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-10-30 06:53:00 · 84,732 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $100,110 | +0.1% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $100,050 | +0.1% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| ORB_ATR_Target(6,1.5xATR) | FLAT | $99,941 | -0.1% | -0.00 | 674 |
+| ORB_ATR_Target(6,1.5xATR) | FLAT | $99,781 | -0.2% | -0.06 | 675 |
 | Opening_Range_Breakout(6) | FLAT | $98,186 | -1.8% | -0.78 | 63 |
-| ZScore_Reversion(20,z=2.0) | SHORT | $97,750 | -2.3% | -0.69 | 3292 |
-| Stochastic_Reversion(14,20/80) | FLAT | $96,408 | -3.6% | -1.53 | 2197 |
-| VolProfile_Reversion(30) | FLAT | $96,368 | -3.6% | -2.19 | 3595 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $97,964 | -2.0% | -0.62 | 3298 |
+| Stochastic_Reversion(14,20/80) | FLAT | $96,408 | -3.6% | -1.52 | 2197 |
+| VolProfile_Reversion(30) | FLAT | $96,368 | -3.6% | -2.18 | 3595 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $96,360 | -3.6% | -2.35 | 177 |
 | MA_Crossover(10/50) | FLAT | $96,294 | -3.7% | -2.41 | 301 |
 | Supertrend(10,m=3.0) | FLAT | $96,290 | -3.7% | -2.40 | 295 |
@@ -19,7 +19,7 @@ Latest bar: 2026-10-30 05:08:00 · 84,623 bars of history · $100,000 starting c
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,984 | -4.0% | -2.61 | 859 |
 | Donchian_Breakout(20) | FLAT | $95,984 | -4.0% | -2.22 | 379 |
 | Bollinger_Reversion(20,2sd) | FLAT | $95,662 | -4.3% | -1.84 | 1660 |
-| CCI_Reversion(20,100) | FLAT | $95,427 | -4.6% | -2.09 | 3923 |
+| CCI_Reversion(20,100) | FLAT | $95,427 | -4.6% | -2.08 | 3923 |
 | Engulfing_Reversal(0.3) | FLAT | $95,249 | -4.8% | -2.29 | 1171 |
 | RSI_Reversion(14,30/70) | FLAT | $95,214 | -4.8% | -3.51 | 1594 |
 | MACD_Momentum(12/26/9) | FLAT | $95,194 | -4.8% | -2.40 | 1389 |
