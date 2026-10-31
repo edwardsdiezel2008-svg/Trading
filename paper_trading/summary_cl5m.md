@@ -1,4 +1,4 @@
-# MCL Paper Trading (5min) — updated 2026-10-30T23:44:35.415612+00:00
+# MCL Paper Trading (5min) — updated 2026-10-31T02:19:51.592991+00:00
 
 Latest bar: 2026-10-30 20:55:00 · 29,571 bars of history · $100,000 starting capital per strategy
 
@@ -17,7 +17,7 @@ Latest bar: 2026-10-30 20:55:00 · 29,571 bars of history · $100,000 starting c
 | Bollinger_Reversion(20,2sd) | LONG | $99,536 | -0.5% | -0.16 | 1047 |
 | Stochastic_Reversion(14,20/80) | LONG | $97,828 | -2.2% | -0.89 | 1026 |
 | Opening_Range_Breakout(6) | SHORT | $97,114 | -2.9% | -0.84 | 292 |
-| VolProfile_Reversion(30) | FLAT | $96,963 | -3.0% | -1.34 | 3210 |
+| VolProfile_Reversion(30) | FLAT | $96,984 | -3.0% | -1.33 | 3210 |
 | TPO_Reversion(60,p=5) | LONG | $96,475 | -3.5% | -1.42 | 2158 |
 | Inside_Bar_Breakout(0.6) | LONG | $95,889 | -4.1% | -1.16 | 276 |
 | CCI_Reversion(20,100) | FLAT | $95,613 | -4.4% | -1.81 | 2721 |
