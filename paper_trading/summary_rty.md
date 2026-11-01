@@ -1,6 +1,6 @@
-# M2K Paper Trading (1D) — updated 2026-11-01T21:19:30.197199+00:00
+# M2K Paper Trading (1D) — updated 2026-11-01T23:20:00.330705+00:00
 
-Latest bar: 2026-10-30 00:00:00 · 2,357 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-11-01 00:00:00 · 2,358 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
@@ -16,7 +16,7 @@ Latest bar: 2026-10-30 00:00:00 · 2,357 bars of history · $100,000 starting ca
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $100,000 | +0.0% | — | 0 |
 | TPO_Reversion(60,p=5) | FLAT | $99,778 | -0.2% | -0.01 | 164 |
-| VolProfile_Reversion(30) | SHORT | $99,347 | -0.7% | -0.04 | 229 |
+| VolProfile_Reversion(30) | FLAT | $99,306 | -0.7% | -0.05 | 229 |
 | RSI_Reversion(14,30/70) | FLAT | $98,568 | -1.4% | -0.17 | 65 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $98,321 | -1.7% | -0.16 | 11 |
 | MA_Crossover(10/50) | FLAT | $98,245 | -1.8% | -0.11 | 40 |
