@@ -1,22 +1,22 @@
-# MYM Paper Trading (5min) — updated 2026-11-02T01:18:31.123747+00:00
+# MYM Paper Trading (5min) — updated 2026-11-02T03:19:22.942030+00:00
 
-Latest bar: 2026-11-02 01:05:00 · 29,591 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-11-02 03:05:00 · 29,615 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $101,982 | +2.0% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $102,059 | +2.1% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| ORB_ATR_Target(6,1.5xATR) | LONG | $99,240 | -0.8% | -0.62 | 454 |
-| Opening_Range_Breakout(6) | LONG | $98,222 | -1.8% | -0.79 | 208 |
-| Inside_Bar_Breakout(0.6) | SHORT | $98,189 | -1.8% | -0.70 | 323 |
-| RSI_Reversion(14,30/70) | FLAT | $97,608 | -2.4% | -2.47 | 871 |
-| MA_Crossover(10/50) | LONG | $96,913 | -3.1% | -1.19 | 784 |
-| Donchian_Breakout(20) | LONG | $96,766 | -3.2% | -1.25 | 705 |
+| ORB_ATR_Target(6,1.5xATR) | LONG | $99,260 | -0.7% | -0.60 | 454 |
+| Opening_Range_Breakout(6) | LONG | $98,241 | -1.8% | -0.78 | 208 |
+| Inside_Bar_Breakout(0.6) | SHORT | $98,170 | -1.8% | -0.71 | 323 |
+| RSI_Reversion(14,30/70) | FLAT | $97,609 | -2.4% | -2.47 | 872 |
+| MA_Crossover(10/50) | LONG | $96,932 | -3.1% | -1.18 | 784 |
+| Donchian_Breakout(20) | LONG | $96,785 | -3.2% | -1.25 | 705 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $96,690 | -3.3% | -1.36 | 452 |
-| ZScore_Reversion(20,z=2.0) | FLAT | $96,516 | -3.5% | -1.95 | 1148 |
-| Stochastic_Reversion(14,20/80) | FLAT | $96,174 | -3.8% | -2.32 | 1109 |
-| ATR_Vol_Breakout(14,k=1.5) | LONG | $96,114 | -3.9% | -1.49 | 657 |
-| Bollinger_Reversion(20,2sd) | FLAT | $95,768 | -4.2% | -2.25 | 999 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $96,524 | -3.5% | -1.94 | 1149 |
+| Stochastic_Reversion(14,20/80) | FLAT | $96,194 | -3.8% | -2.30 | 1110 |
+| ATR_Vol_Breakout(14,k=1.5) | LONG | $96,134 | -3.9% | -1.49 | 657 |
+| Bollinger_Reversion(20,2sd) | FLAT | $95,776 | -4.2% | -2.25 | 1000 |
 | Supertrend(10,m=3.0) | FLAT | $95,740 | -4.3% | -2.03 | 546 |
 | Engulfing_Reversal(0.3) | FLAT | $95,452 | -4.5% | -2.26 | 1066 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,144 | -4.9% | -2.53 | 1203 |
