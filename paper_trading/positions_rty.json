@@ -2,7 +2,7 @@
   "symbol": "M2K",
   "freq": "1D",
   "leverage": 1.0,
-  "updated_at_utc": "2026-11-02T12:26:03.031582+00:00",
+  "updated_at_utc": "2026-11-02T14:58:57.492320+00:00",
   "latest_bar": "2026-11-02 00:00:00",
   "bar_count": 2359,
   "buy_and_hold_equity_curve": [
@@ -1004,7 +1004,7 @@
     ],
     [
       "2026-11-02 00:00:00",
-      201512.04
+      201469.45
     ]
   ],
   "strategies": {
@@ -4041,7 +4041,7 @@
     "Parabolic_SAR(af=0.02,max=0.2)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 107122.29,
+      "equity": 107119.29,
       "max_drawdown": -0.0408,
       "open_trade": {
         "direction": 1,
@@ -5049,7 +5049,7 @@
         ],
         [
           "2026-11-02 00:00:00",
-          107122.29
+          107119.29
         ]
       ]
     },
@@ -6066,7 +6066,7 @@
     "Bollinger_Reversion(20,2sd)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 105077.8,
+      "equity": 105080.8,
       "max_drawdown": -0.0325,
       "open_trade": {
         "direction": -1,
@@ -7074,14 +7074,14 @@
         ],
         [
           "2026-11-02 00:00:00",
-          105077.8
+          105080.8
         ]
       ]
     },
     "ZScore_Reversion(20,z=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 102782.6,
+      "equity": 102785.6,
       "max_drawdown": -0.0344,
       "open_trade": {
         "direction": -1,
@@ -8089,7 +8089,7 @@
         ],
         [
           "2026-11-02 00:00:00",
-          102782.6
+          102785.6
         ]
       ]
     },
@@ -12136,7 +12136,7 @@
     "Keltner_Breakout(20,m=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 102999.4,
+      "equity": 103002.4,
       "max_drawdown": -0.0428,
       "open_trade": {
         "direction": -1,
@@ -13144,14 +13144,14 @@
         ],
         [
           "2026-11-02 00:00:00",
-          102999.4
+          103002.4
         ]
       ]
     },
     "VWAP_Reversion(20,2%)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 106673.5,
+      "equity": 106676.5,
       "max_drawdown": -0.0337,
       "open_trade": {
         "direction": -1,
@@ -14159,7 +14159,7 @@
         ],
         [
           "2026-11-02 00:00:00",
-          106673.5
+          106676.5
         ]
       ]
     },
