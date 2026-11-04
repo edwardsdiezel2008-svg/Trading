@@ -1,12 +1,12 @@
-# MNQ Paper Trading (1min) — updated 2026-11-04T13:24:22.735317+00:00
+# MNQ Paper Trading (1min) — updated 2026-11-04T15:22:37.648972+00:00
 
-Latest bar: 2026-11-04 13:12:00 · 89,147 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-11-04 15:09:00 · 89,269 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $97,810 | -2.2% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $99,595 | -0.4% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| ORB_ATR_Target(6,1.5xATR) | LONG | $99,021 | -1.0% | -0.29 | 703 |
+| ORB_ATR_Target(6,1.5xATR) | FLAT | $99,296 | -0.7% | -0.20 | 707 |
 | Opening_Range_Breakout(6) | FLAT | $98,186 | -1.8% | -0.76 | 63 |
 | Stochastic_Reversion(14,20/80) | FLAT | $96,408 | -3.6% | -1.49 | 2197 |
 | VolProfile_Reversion(30) | FLAT | $96,368 | -3.6% | -2.13 | 3595 |
@@ -15,12 +15,12 @@ Latest bar: 2026-11-04 13:12:00 · 89,147 bars of history · $100,000 starting c
 | Supertrend(10,m=3.0) | FLAT | $96,290 | -3.7% | -2.34 | 295 |
 | Inside_Bar_Breakout(0.6) | FLAT | $96,200 | -3.8% | -1.36 | 412 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $96,186 | -3.8% | -1.40 | 685 |
-| Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,984 | -4.0% | -2.55 | 859 |
+| ZScore_Reversion(20,z=2.0) | FLAT | $96,102 | -3.9% | -1.12 | 3472 |
+| Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,984 | -4.0% | -2.54 | 859 |
 | Donchian_Breakout(20) | FLAT | $95,984 | -4.0% | -2.16 | 379 |
-| ZScore_Reversion(20,z=2.0) | SHORT | $95,860 | -4.1% | -1.19 | 3469 |
 | Bollinger_Reversion(20,2sd) | FLAT | $95,662 | -4.3% | -1.79 | 1660 |
 | CCI_Reversion(20,100) | FLAT | $95,427 | -4.6% | -2.03 | 3923 |
 | Engulfing_Reversal(0.3) | FLAT | $95,249 | -4.8% | -2.23 | 1171 |
-| RSI_Reversion(14,30/70) | FLAT | $95,214 | -4.8% | -3.42 | 1594 |
+| RSI_Reversion(14,30/70) | FLAT | $95,214 | -4.8% | -3.41 | 1594 |
 | MACD_Momentum(12/26/9) | FLAT | $95,194 | -4.8% | -2.34 | 1389 |
-| TPO_Reversion(60,p=5) | FLAT | $95,112 | -4.9% | -2.10 | 3487 |
+| TPO_Reversion(60,p=5) | FLAT | $95,112 | -4.9% | -2.09 | 3487 |
