@@ -1,23 +1,23 @@
-# MYM Paper Trading (5min) — updated 2026-11-05T15:21:06.119346+00:00
+# MYM Paper Trading (5min) — updated 2026-11-05T15:34:33.621654+00:00
 
-Latest bar: 2026-11-05 15:05:00 · 30,587 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-11-05 15:20:00 · 30,590 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $103,796 | +3.8% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $103,424 | +3.4% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| ORB_ATR_Target(6,1.5xATR) | SHORT | $99,663 | -0.3% | -0.26 | 469 |
-| Opening_Range_Breakout(6) | SHORT | $98,926 | -1.1% | -0.45 | 215 |
-| MA_Crossover(10/50) | SHORT | $98,300 | -1.7% | -0.62 | 799 |
-| Inside_Bar_Breakout(0.6) | SHORT | $98,101 | -1.9% | -0.71 | 335 |
-| Donchian_Breakout(20) | SHORT | $97,810 | -2.2% | -0.81 | 726 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $97,619 | -2.4% | -0.87 | 672 |
-| RSI_Reversion(14,30/70) | LONG | $96,764 | -3.2% | -3.15 | 911 |
+| ORB_ATR_Target(6,1.5xATR) | FLAT | $99,704 | -0.3% | -0.23 | 469 |
+| Opening_Range_Breakout(6) | SHORT | $99,022 | -1.0% | -0.41 | 215 |
+| MA_Crossover(10/50) | SHORT | $98,396 | -1.6% | -0.58 | 799 |
+| Inside_Bar_Breakout(0.6) | SHORT | $98,196 | -1.8% | -0.67 | 335 |
+| Donchian_Breakout(20) | SHORT | $97,905 | -2.1% | -0.77 | 726 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $97,714 | -2.3% | -0.83 | 672 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $96,690 | -3.3% | -1.34 | 452 |
+| RSI_Reversion(14,30/70) | LONG | $96,668 | -3.3% | -3.23 | 911 |
 | Supertrend(10,m=3.0) | FLAT | $95,740 | -4.3% | -2.00 | 546 |
-| ZScore_Reversion(20,z=2.0) | LONG | $95,562 | -4.4% | -2.40 | 1187 |
+| ZScore_Reversion(20,z=2.0) | LONG | $95,466 | -4.5% | -2.45 | 1187 |
 | Engulfing_Reversal(0.3) | FLAT | $95,452 | -4.5% | -2.23 | 1066 |
-| Stochastic_Reversion(14,20/80) | LONG | $95,298 | -4.7% | -2.73 | 1149 |
+| Stochastic_Reversion(14,20/80) | LONG | $95,204 | -4.8% | -2.79 | 1149 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,144 | -4.9% | -2.49 | 1203 |
 | MACD_Momentum(12/26/9) | FLAT | $95,102 | -4.9% | -2.41 | 1286 |
 | CCI_Reversion(20,100) | FLAT | $95,001 | -5.0% | -3.62 | 1795 |
