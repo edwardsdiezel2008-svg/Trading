@@ -1,10 +1,10 @@
-# ETH/USDT Paper Trading (1D) — updated 2026-11-05T13:22:30.976165+00:00
+# ETH/USDT Paper Trading (1D) — updated 2026-11-05T15:20:18.348630+00:00
 
 Latest bar: 2026-11-05 00:00:00 · 2,236 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $693,174 | +593.2% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $668,437 | +568.4% | — | 1 |
 | Inside_Bar_Breakout(0.6) | FLAT | $134,050 | +34.0% | 0.33 | 1 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $123,144 | +23.1% | 0.46 | 2 |
 | Bollinger_Reversion(20,2sd) | FLAT | $105,541 | +5.5% | 0.17 | 1 |
