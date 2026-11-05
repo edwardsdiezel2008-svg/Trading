@@ -1,10 +1,10 @@
-# MCL Paper Trading (1D) — updated 2026-11-04T23:39:31.951166+00:00
+# MCL Paper Trading (1D) — updated 2026-11-05T02:19:55.697731+00:00
 
 Latest bar: 2026-11-04 00:00:00 · 2,587 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $211,316 | +111.3% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $208,439 | +108.4% | — | 1 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $106,523 | +6.5% | 0.30 | 97 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $106,325 | +6.3% | 0.26 | 89 |
 | RSI_Reversion(14,30/70) | FLAT | $105,182 | +5.2% | 0.33 | 68 |
