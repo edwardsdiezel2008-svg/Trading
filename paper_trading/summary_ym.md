@@ -1,10 +1,10 @@
-# MYM Paper Trading (1D) — updated 2026-11-06T10:48:00.567896+00:00
+# MYM Paper Trading (1D) — updated 2026-11-06T13:22:16.537084+00:00
 
 Latest bar: 2026-11-06 00:00:00 · 2,590 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $277,276 | +177.3% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $276,908 | +176.9% | — | 1 |
 | RSI_Reversion(14,30/70) | FLAT | $105,251 | +5.3% | 0.49 | 73 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $103,716 | +3.7% | 0.19 | 162 |
 | Bollinger_Reversion(20,2sd) | FLAT | $103,206 | +3.2% | 0.16 | 86 |
