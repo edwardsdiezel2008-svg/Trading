@@ -2,7 +2,7 @@
   "symbol": "MYM",
   "freq": "5min",
   "leverage": 1.0,
-  "updated_at_utc": "2026-11-07T09:19:34.902400+00:00",
+  "updated_at_utc": "2026-11-07T10:00:00.193989+00:00",
   "latest_bar": "2026-11-06 21:55:00",
   "bar_count": 30945,
   "buy_and_hold_equity_curve": [
@@ -1004,14 +1004,14 @@
     ],
     [
       "2026-11-06 21:55:00",
-      100662.07
+      100652.28
     ]
   ],
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 99158.5,
+      "equity": 99161.0,
       "max_drawdown": -0.0433,
       "open_trade": {
         "direction": -1,
@@ -2019,14 +2019,14 @@
         ],
         [
           "2026-11-06 21:55:00",
-          99158.5
+          99161.0
         ]
       ]
     },
     "Donchian_Breakout(20)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 98544.0,
+      "equity": 98546.5,
       "max_drawdown": -0.0491,
       "open_trade": {
         "direction": -1,
@@ -3034,7 +3034,7 @@
         ],
         [
           "2026-11-06 21:55:00",
-          98544.0
+          98546.5
         ]
       ]
     },
@@ -10111,7 +10111,7 @@
     "ATR_Vol_Breakout(14,k=1.5)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 98603.0,
+      "equity": 98605.5,
       "max_drawdown": -0.0465,
       "open_trade": {
         "direction": -1,
@@ -11119,7 +11119,7 @@
         ],
         [
           "2026-11-06 21:55:00",
-          98603.0
+          98605.5
         ]
       ]
     },
@@ -15166,7 +15166,7 @@
     "Inside_Bar_Breakout(0.6)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99156.5,
+      "equity": 99154.0,
       "max_drawdown": -0.0398,
       "open_trade": {
         "direction": 1,
@@ -16174,14 +16174,14 @@
         ],
         [
           "2026-11-06 21:55:00",
-          99156.5
+          99154.0
         ]
       ]
     },
     "Opening_Range_Breakout(6)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99725.5,
+      "equity": 99723.0,
       "max_drawdown": -0.031,
       "open_trade": {
         "direction": 1,
@@ -17189,7 +17189,7 @@
         ],
         [
           "2026-11-06 21:55:00",
-          99725.5
+          99723.0
         ]
       ]
     },

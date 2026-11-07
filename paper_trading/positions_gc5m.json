@@ -2,7 +2,7 @@
   "symbol": "MGC",
   "freq": "5min",
   "leverage": 1.0,
-  "updated_at_utc": "2026-11-07T09:19:53.283142+00:00",
+  "updated_at_utc": "2026-11-07T10:00:12.098339+00:00",
   "latest_bar": "2026-11-06 21:55:00",
   "bar_count": 30952,
   "buy_and_hold_equity_curve": [
@@ -1004,7 +1004,7 @@
     ],
     [
       "2026-11-06 21:55:00",
-      89354.94
+      89254.19
     ]
   ],
   "strategies": {
@@ -10101,7 +10101,7 @@
     "ATR_Vol_Breakout(14,k=1.5)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 105861.95,
+      "equity": 105907.95,
       "max_drawdown": -0.0344,
       "open_trade": {
         "direction": -1,
@@ -11109,14 +11109,14 @@
         ],
         [
           "2026-11-06 21:55:00",
-          105861.95
+          105907.95
         ]
       ]
     },
     "Supertrend(10,m=3.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 103408.88,
+      "equity": 103454.88,
       "max_drawdown": -0.0382,
       "open_trade": {
         "direction": -1,
@@ -12124,7 +12124,7 @@
         ],
         [
           "2026-11-06 21:55:00",
-          103408.88
+          103454.88
         ]
       ]
     },
@@ -17181,7 +17181,7 @@
     "ORB_ATR_Target(6,1.5xATR)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 105367.29,
+      "equity": 105321.28,
       "max_drawdown": -0.0434,
       "open_trade": {
         "direction": 1,
@@ -18189,7 +18189,7 @@
         ],
         [
           "2026-11-06 21:55:00",
-          105367.29
+          105321.28
         ]
       ]
     },

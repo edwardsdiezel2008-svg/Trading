@@ -2,7 +2,7 @@
   "symbol": "MCL",
   "freq": "5min",
   "leverage": 1.0,
-  "updated_at_utc": "2026-11-07T09:20:30.494070+00:00",
+  "updated_at_utc": "2026-11-07T10:00:36.333434+00:00",
   "latest_bar": "2026-11-06 21:55:00",
   "bar_count": 30950,
   "buy_and_hold_equity_curve": [
@@ -1004,14 +1004,14 @@
     ],
     [
       "2026-11-06 21:55:00",
-      100814.64
+      101361.46
     ]
   ],
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 101265.47,
+      "equity": 101216.47,
       "max_drawdown": -0.0237,
       "open_trade": {
         "direction": -1,
@@ -2019,14 +2019,14 @@
         ],
         [
           "2026-11-06 21:55:00",
-          101265.47
+          101216.47
         ]
       ]
     },
     "Donchian_Breakout(20)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 103079.1,
+      "equity": 103030.1,
       "max_drawdown": -0.0184,
       "open_trade": {
         "direction": -1,
@@ -3034,7 +3034,7 @@
         ],
         [
           "2026-11-06 21:55:00",
-          103079.1
+          103030.1
         ]
       ]
     },
@@ -6071,7 +6071,7 @@
     "Bollinger_Reversion(20,2sd)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99068.21,
+      "equity": 99117.21,
       "max_drawdown": -0.0245,
       "open_trade": {
         "direction": 1,
@@ -7079,14 +7079,14 @@
         ],
         [
           "2026-11-06 21:55:00",
-          99068.21
+          99117.21
         ]
       ]
     },
     "ZScore_Reversion(20,z=2.0)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99930.32,
+      "equity": 99979.32,
       "max_drawdown": -0.0171,
       "open_trade": {
         "direction": 1,
@@ -8094,14 +8094,14 @@
         ],
         [
           "2026-11-06 21:55:00",
-          99930.32
+          99979.32
         ]
       ]
     },
     "Stochastic_Reversion(14,20/80)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 97635.44,
+      "equity": 97684.44,
       "max_drawdown": -0.0303,
       "open_trade": {
         "direction": 1,
@@ -9109,7 +9109,7 @@
         ],
         [
           "2026-11-06 21:55:00",
-          97635.44
+          97684.44
         ]
       ]
     },
@@ -10126,7 +10126,7 @@
     "ATR_Vol_Breakout(14,k=1.5)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 102145.98,
+      "equity": 102194.98,
       "max_drawdown": -0.033,
       "open_trade": {
         "direction": 1,
@@ -11134,14 +11134,14 @@
         ],
         [
           "2026-11-06 21:55:00",
-          102145.98
+          102194.98
         ]
       ]
     },
     "Supertrend(10,m=3.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 102192.58,
+      "equity": 102143.58,
       "max_drawdown": -0.0194,
       "open_trade": {
         "direction": -1,
@@ -12149,14 +12149,14 @@
         ],
         [
           "2026-11-06 21:55:00",
-          102192.58
+          102143.58
         ]
       ]
     },
     "Keltner_Breakout(20,m=2.0)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 100471.88,
+      "equity": 100520.88,
       "max_drawdown": -0.036,
       "open_trade": {
         "direction": 1,
@@ -13164,7 +13164,7 @@
         ],
         [
           "2026-11-06 21:55:00",
-          100471.88
+          100520.88
         ]
       ]
     },
@@ -15191,7 +15191,7 @@
     "Inside_Bar_Breakout(0.6)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 97352.63,
+      "equity": 97303.63,
       "max_drawdown": -0.0399,
       "open_trade": {
         "direction": -1,
@@ -16199,14 +16199,14 @@
         ],
         [
           "2026-11-06 21:55:00",
-          97352.63
+          97303.63
         ]
       ]
     },
     "Opening_Range_Breakout(6)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 96827.32,
+      "equity": 96876.32,
       "max_drawdown": -0.0345,
       "open_trade": {
         "direction": 1,
@@ -17214,7 +17214,7 @@
         ],
         [
           "2026-11-06 21:55:00",
-          96827.32
+          96876.32
         ]
       ]
     },
@@ -18231,7 +18231,7 @@
     "VolProfile_Reversion(30)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 96453.36,
+      "equity": 96502.36,
       "max_drawdown": -0.0405,
       "open_trade": {
         "direction": 1,
@@ -19239,7 +19239,7 @@
         ],
         [
           "2026-11-06 21:55:00",
-          96453.36
+          96502.36
         ]
       ]
     },
