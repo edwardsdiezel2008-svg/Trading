@@ -1,4 +1,4 @@
-# SOL/USDT Paper Trading (1D) — updated 2026-11-08T07:16:29.344742+00:00
+# SOL/USDT Paper Trading (1D) — updated 2026-11-08T09:17:55.609945+00:00
 
 Latest bar: 2026-11-08 00:00:00 · 2,029 bars of history · $100,000 starting capital per strategy
 
