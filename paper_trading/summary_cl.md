@@ -1,18 +1,18 @@
-# MCL Paper Trading (1D) — updated 2026-11-10T20:19:21.816610+00:00
+# MCL Paper Trading (1D) — updated 2026-11-10T22:23:03.792727+00:00
 
 Latest bar: 2026-11-10 00:00:00 · 2,592 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $207,001 | +107.0% | — | 1 |
-| ZScore_Reversion(20,z=2.0) | LONG | $106,350 | +6.4% | 0.29 | 98 |
+| *Buy & Hold (benchmark)* | — | $207,240 | +107.2% | — | 1 |
+| ZScore_Reversion(20,z=2.0) | LONG | $106,360 | +6.4% | 0.30 | 98 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $106,325 | +6.3% | 0.26 | 89 |
 | RSI_Reversion(14,30/70) | FLAT | $105,182 | +5.2% | 0.33 | 68 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $103,759 | +3.8% | 0.15 | 17 |
 | Inside_Bar_Breakout(0.6) | FLAT | $103,726 | +3.7% | 0.16 | 7 |
 | Supertrend(10,m=3.0) | FLAT | $103,044 | +3.0% | 0.13 | 27 |
 | Donchian_Breakout(20) | FLAT | $101,920 | +1.9% | 0.09 | 24 |
-| Bollinger_Reversion(20,2sd) | LONG | $101,870 | +1.9% | 0.09 | 84 |
+| Bollinger_Reversion(20,2sd) | LONG | $101,880 | +1.9% | 0.09 | 84 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $101,045 | +1.0% | 0.05 | 16 |
 | MA_Crossover(10/50) | FLAT | $100,334 | +0.3% | 0.03 | 33 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
