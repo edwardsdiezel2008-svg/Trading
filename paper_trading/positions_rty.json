@@ -2,7 +2,7 @@
   "symbol": "M2K",
   "freq": "1D",
   "leverage": 1.0,
-  "updated_at_utc": "2026-11-10T17:47:01.068558+00:00",
+  "updated_at_utc": "2026-11-10T20:19:09.236331+00:00",
   "latest_bar": "2026-11-10 00:00:00",
   "bar_count": 2366,
   "buy_and_hold_equity_curve": [
@@ -1004,7 +1004,7 @@
     ],
     [
       "2026-11-10 00:00:00",
-      200099.39
+      200276.86
     ]
   ],
   "strategies": {
@@ -4041,7 +4041,7 @@
     "Parabolic_SAR(af=0.02,max=0.2)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 106070.09,
+      "equity": 106057.59,
       "max_drawdown": -0.0441,
       "open_trade": {
         "direction": -1,
@@ -5049,7 +5049,7 @@
         ],
         [
           "2026-11-10 00:00:00",
-          106070.09
+          106057.59
         ]
       ]
     },
@@ -12126,7 +12126,7 @@
     "Keltner_Breakout(20,m=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 103098.9,
+      "equity": 103086.4,
       "max_drawdown": -0.0428,
       "open_trade": {
         "direction": -1,
@@ -13134,14 +13134,14 @@
         ],
         [
           "2026-11-10 00:00:00",
-          103098.9
+          103086.4
         ]
       ]
     },
     "VWAP_Reversion(20,2%)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 107722.3,
+      "equity": 107734.8,
       "max_drawdown": -0.0337,
       "open_trade": {
         "direction": 1,
@@ -14149,7 +14149,7 @@
         ],
         [
           "2026-11-10 00:00:00",
-          107722.3
+          107734.8
         ]
       ]
     },
