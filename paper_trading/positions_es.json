@@ -2,7 +2,7 @@
   "symbol": "MES",
   "freq": "1D",
   "leverage": 1.0,
-  "updated_at_utc": "2026-11-11T03:18:28.927328+00:00",
+  "updated_at_utc": "2026-11-11T05:17:50.851459+00:00",
   "latest_bar": "2026-11-10 00:00:00",
   "bar_count": 2593,
   "buy_and_hold_equity_curve": [
@@ -1004,14 +1004,14 @@
     ],
     [
       "2026-11-10 00:00:00",
-      349085.26
+      347221.26
     ]
   ],
   "strategies": {
     "MA_Crossover(10/50)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 104705.25,
+      "equity": 104907.75,
       "max_drawdown": -0.0465,
       "open_trade": {
         "direction": -1,
@@ -2019,7 +2019,7 @@
         ],
         [
           "2026-11-10 00:00:00",
-          104705.25
+          104907.75
         ]
       ]
     },
@@ -18186,7 +18186,7 @@
     "VolProfile_Reversion(30)": {
       "position": 0,
       "position_label": "FLAT",
-      "equity": 103895.0,
+      "equity": 104027.5,
       "max_drawdown": -0.0451,
       "open_trade": null,
       "as_of": "2026-11-10 00:00:00",
@@ -19189,7 +19189,7 @@
         ],
         [
           "2026-11-10 00:00:00",
-          103895.0
+          104027.5
         ]
       ]
     },
