@@ -2,7 +2,7 @@
   "symbol": "M2K",
   "freq": "1D",
   "leverage": 1.0,
-  "updated_at_utc": "2026-11-12T15:20:56.356009+00:00",
+  "updated_at_utc": "2026-11-12T17:19:31.612053+00:00",
   "latest_bar": "2026-11-12 00:00:00",
   "bar_count": 2368,
   "buy_and_hold_equity_curve": [
@@ -1004,7 +1004,7 @@
     ],
     [
       "2026-11-12 00:00:00",
-      200070.99
+      201071.92
     ]
   ],
   "strategies": {
@@ -4041,7 +4041,7 @@
     "Parabolic_SAR(af=0.02,max=0.2)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 106072.09,
+      "equity": 106001.59,
       "max_drawdown": -0.0444,
       "open_trade": {
         "direction": -1,
@@ -5049,7 +5049,7 @@
         ],
         [
           "2026-11-12 00:00:00",
-          106072.09
+          106001.59
         ]
       ]
     },
@@ -12126,7 +12126,7 @@
     "Keltner_Breakout(20,m=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 103100.9,
+      "equity": 103030.4,
       "max_drawdown": -0.0428,
       "open_trade": {
         "direction": -1,
@@ -13134,14 +13134,14 @@
         ],
         [
           "2026-11-12 00:00:00",
-          103100.9
+          103030.4
         ]
       ]
     },
     "VWAP_Reversion(20,2%)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 107720.3,
+      "equity": 107790.8,
       "max_drawdown": -0.0337,
       "open_trade": {
         "direction": 1,
@@ -14149,7 +14149,7 @@
         ],
         [
           "2026-11-12 00:00:00",
-          107720.3
+          107790.8
         ]
       ]
     },
@@ -18196,7 +18196,7 @@
     "VolProfile_Reversion(30)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 99611.8,
+      "equity": 99541.3,
       "max_drawdown": -0.0472,
       "open_trade": {
         "direction": -1,
@@ -19204,7 +19204,7 @@
         ],
         [
           "2026-11-12 00:00:00",
-          99611.8
+          99541.3
         ]
       ]
     },

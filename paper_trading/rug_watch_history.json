@@ -1,10 +1,6 @@
 {
   "runs": [
     {
-      "timestamp": "2026-10-31T04:22:06.104196+00:00",
-      "flagged": {}
-    },
-    {
       "timestamp": "2026-10-31T05:34:14.070226+00:00",
       "flagged": {}
     },
@@ -806,6 +802,13 @@
     {
       "timestamp": "2026-11-12T15:22:28.288006+00:00",
       "flagged": {
+        "CASHCATUSD": "elevated"
+      }
+    },
+    {
+      "timestamp": "2026-11-12T17:21:01.355192+00:00",
+      "flagged": {
+        "MYROUSD": "elevated",
         "CASHCATUSD": "elevated"
       }
     }

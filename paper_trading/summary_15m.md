@@ -1,13 +1,13 @@
-# BTC/USDT Paper Trading (15min) — updated 2026-11-12T15:19:15.684886+00:00
+# BTC/USDT Paper Trading (15min) — updated 2026-11-12T17:17:52.333148+00:00
 
-Latest bar: 2026-11-12 15:15:00 · 9,421 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-11-12 17:15:00 · 9,429 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $110,807 | +10.8% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $111,059 | +11.1% | — | 1 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $119,197 | +19.2% | 1.53 | 14 |
 | Supertrend(10,m=3.0) | FLAT | $118,407 | +18.4% | 1.61 | 11 |
-| MA_Crossover(10/50) | FLAT | $115,725 | +15.7% | 1.55 | 14 |
+| MA_Crossover(10/50) | FLAT | $115,725 | +15.7% | 1.54 | 14 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $114,127 | +14.1% | 1.26 | 12 |
 | Opening_Range_Breakout(6) | FLAT | $111,797 | +11.8% | 1.36 | 9 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $105,338 | +5.3% | 0.62 | 20 |
@@ -15,12 +15,12 @@ Latest bar: 2026-11-12 15:15:00 · 9,421 bars of history · $100,000 starting ca
 | MACD_Momentum(12/26/9) | FLAT | $101,288 | +1.3% | 0.23 | 7 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $96,219 | -3.8% | -0.98 | 11 |
 | Donchian_Breakout(20) | FLAT | $96,108 | -3.9% | -0.97 | 6 |
-| VWAP_Reversion(20,2%) | FLAT | $95,917 | -4.1% | -0.73 | 9 |
+| VWAP_Reversion(20,2%) | FLAT | $95,917 | -4.1% | -0.72 | 9 |
 | Bollinger_Reversion(20,2sd) | FLAT | $95,551 | -4.4% | -1.09 | 4 |
 | Engulfing_Reversal(0.3) | FLAT | $95,436 | -4.6% | -1.52 | 4 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $94,891 | -5.1% | -1.35 | 4 |
 | RSI_Reversion(14,30/70) | FLAT | $94,532 | -5.5% | -1.28 | 5 |
 | TPO_Reversion(60,p=5) | FLAT | $94,531 | -5.5% | -1.42 | 5 |
-| VolProfile_Reversion(30) | FLAT | $94,109 | -5.9% | -1.35 | 8 |
+| VolProfile_Reversion(30) | FLAT | $94,109 | -5.9% | -1.34 | 8 |
 | CCI_Reversion(20,100) | FLAT | $94,015 | -6.0% | -1.68 | 6 |
 | Stochastic_Reversion(14,20/80) | FLAT | $93,493 | -6.5% | -1.40 | 4 |
