@@ -1,19 +1,19 @@
-# MYM Paper Trading (5min) — updated 2026-11-13T00:16:44.858270+00:00
+# MYM Paper Trading (5min) — updated 2026-11-13T02:18:45.133978+00:00
 
-Latest bar: 2026-11-13 00:05:00 · 32,060 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-11-13 02:05:00 · 32,084 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $102,946 | +2.9% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $102,852 | +2.9% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| Opening_Range_Breakout(6) | SHORT | $99,541 | -0.5% | -0.18 | 224 |
-| ORB_ATR_Target(6,1.5xATR) | SHORT | $99,373 | -0.6% | -0.47 | 494 |
-| Donchian_Breakout(20) | LONG | $99,066 | -0.9% | -0.32 | 751 |
-| Inside_Bar_Breakout(0.6) | LONG | $99,052 | -0.9% | -0.32 | 358 |
-| MA_Crossover(10/50) | SHORT | $98,926 | -1.1% | -0.36 | 839 |
-| ATR_Vol_Breakout(14,k=1.5) | SHORT | $98,501 | -1.5% | -0.51 | 692 |
+| Opening_Range_Breakout(6) | SHORT | $99,565 | -0.4% | -0.17 | 224 |
+| ORB_ATR_Target(6,1.5xATR) | FLAT | $99,358 | -0.6% | -0.48 | 495 |
+| Donchian_Breakout(20) | LONG | $99,042 | -1.0% | -0.32 | 751 |
+| Inside_Bar_Breakout(0.6) | SHORT | $98,984 | -1.0% | -0.35 | 359 |
+| MA_Crossover(10/50) | LONG | $98,869 | -1.1% | -0.38 | 842 |
+| ATR_Vol_Breakout(14,k=1.5) | SHORT | $98,525 | -1.5% | -0.50 | 692 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $96,688 | -3.3% | -1.31 | 452 |
-| RSI_Reversion(14,30/70) | SHORT | $96,452 | -3.5% | -3.16 | 958 |
+| RSI_Reversion(14,30/70) | FLAT | $96,461 | -3.5% | -3.15 | 958 |
 | Supertrend(10,m=3.0) | FLAT | $95,744 | -4.3% | -1.95 | 545 |
 | Engulfing_Reversal(0.3) | FLAT | $95,449 | -4.6% | -2.17 | 1065 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,144 | -4.9% | -2.43 | 1203 |
