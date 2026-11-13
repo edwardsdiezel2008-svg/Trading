@@ -1,14 +1,14 @@
-# MNQ Paper Trading (1min) — updated 2026-11-13T06:20:10.327275+00:00
+# MNQ Paper Trading (1min) — updated 2026-11-13T07:54:56.849869+00:00
 
-Latest bar: 2026-11-13 06:08:00 · 98,306 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-11-13 07:42:00 · 98,400 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $97,508 | -2.5% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $97,729 | -2.3% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| ORB_ATR_Target(6,1.5xATR) | LONG | $98,316 | -1.7% | -0.44 | 763 |
+| ORB_ATR_Target(6,1.5xATR) | LONG | $98,550 | -1.4% | -0.37 | 762 |
 | Opening_Range_Breakout(6) | FLAT | $98,186 | -1.8% | -0.72 | 63 |
-| Stochastic_Reversion(14,20/80) | FLAT | $96,408 | -3.6% | -1.42 | 2197 |
+| Stochastic_Reversion(14,20/80) | FLAT | $96,408 | -3.6% | -1.41 | 2197 |
 | VolProfile_Reversion(30) | FLAT | $96,368 | -3.6% | -2.03 | 3595 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $96,360 | -3.6% | -2.18 | 177 |
 | MA_Crossover(10/50) | FLAT | $96,294 | -3.7% | -2.24 | 301 |
@@ -18,9 +18,9 @@ Latest bar: 2026-11-13 06:08:00 · 98,306 bars of history · $100,000 starting c
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,984 | -4.0% | -2.42 | 859 |
 | Donchian_Breakout(20) | FLAT | $95,984 | -4.0% | -2.06 | 379 |
 | Bollinger_Reversion(20,2sd) | FLAT | $95,662 | -4.3% | -1.71 | 1660 |
-| CCI_Reversion(20,100) | FLAT | $95,427 | -4.6% | -1.94 | 3923 |
+| CCI_Reversion(20,100) | FLAT | $95,427 | -4.6% | -1.93 | 3923 |
 | Engulfing_Reversal(0.3) | FLAT | $95,249 | -4.8% | -2.12 | 1171 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $95,234 | -4.8% | -1.29 | 3523 |
 | RSI_Reversion(14,30/70) | FLAT | $95,214 | -4.8% | -3.25 | 1594 |
 | MACD_Momentum(12/26/9) | FLAT | $95,194 | -4.8% | -2.23 | 1389 |
-| TPO_Reversion(60,p=5) | FLAT | $95,112 | -4.9% | -2.00 | 3487 |
+| TPO_Reversion(60,p=5) | FLAT | $95,112 | -4.9% | -1.99 | 3487 |
