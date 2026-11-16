@@ -1,10 +1,10 @@
-# MYM Paper Trading (1D) — updated 2026-11-15T21:45:37.014496+00:00
+# MYM Paper Trading (1D) — updated 2026-11-16T00:19:06.058834+00:00
 
-Latest bar: 2026-11-13 00:00:00 · 2,596 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-11-15 00:00:00 · 2,597 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $284,078 | +184.1% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $284,576 | +184.6% | — | 1 |
 | RSI_Reversion(14,30/70) | FLAT | $105,251 | +5.3% | 0.49 | 73 |
 | Bollinger_Reversion(20,2sd) | FLAT | $103,762 | +3.8% | 0.18 | 87 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $103,716 | +3.7% | 0.19 | 162 |
@@ -23,4 +23,4 @@ Latest bar: 2026-11-13 00:00:00 · 2,596 bars of history · $100,000 starting ca
 | ZScore_Reversion(20,z=2.0) | FLAT | $95,210 | -4.8% | -0.42 | 29 |
 | CCI_Reversion(20,100) | FLAT | $95,151 | -4.8% | -0.29 | 192 |
 | VolProfile_Reversion(30) | FLAT | $95,088 | -4.9% | -0.30 | 224 |
-| TPO_Reversion(60,p=5) | FLAT | $95,032 | -5.0% | -0.50 | 51 |
+| TPO_Reversion(60,p=5) | FLAT | $95,032 | -5.0% | -0.49 | 51 |
