@@ -1,12 +1,12 @@
-# MNQ Paper Trading (1min) — updated 2026-11-17T03:49:30.525407+00:00
+# MNQ Paper Trading (1min) — updated 2026-11-17T06:21:25.814055+00:00
 
-Latest bar: 2026-11-17 03:37:00 · 100,899 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-11-17 06:08:00 · 101,045 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $94,762 | -5.2% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $94,164 | -5.8% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
-| ORB_ATR_Target(6,1.5xATR) | FLAT | $99,709 | -0.3% | -0.06 | 773 |
+| ORB_ATR_Target(6,1.5xATR) | FLAT | $99,752 | -0.2% | -0.05 | 773 |
 | Opening_Range_Breakout(6) | FLAT | $98,186 | -1.8% | -0.71 | 63 |
 | Stochastic_Reversion(14,20/80) | FLAT | $96,408 | -3.6% | -1.40 | 2197 |
 | VolProfile_Reversion(30) | FLAT | $96,368 | -3.6% | -2.00 | 3595 |
@@ -14,12 +14,12 @@ Latest bar: 2026-11-17 03:37:00 · 100,899 bars of history · $100,000 starting 
 | MA_Crossover(10/50) | FLAT | $96,294 | -3.7% | -2.21 | 301 |
 | Supertrend(10,m=3.0) | FLAT | $96,290 | -3.7% | -2.20 | 295 |
 | Inside_Bar_Breakout(0.6) | FLAT | $96,200 | -3.8% | -1.28 | 412 |
-| ATR_Vol_Breakout(14,k=1.5) | FLAT | $96,186 | -3.8% | -1.32 | 685 |
+| ATR_Vol_Breakout(14,k=1.5) | FLAT | $96,186 | -3.8% | -1.31 | 685 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $95,984 | -4.0% | -2.39 | 859 |
 | Donchian_Breakout(20) | FLAT | $95,984 | -4.0% | -2.03 | 379 |
 | Bollinger_Reversion(20,2sd) | FLAT | $95,662 | -4.3% | -1.68 | 1660 |
 | CCI_Reversion(20,100) | FLAT | $95,427 | -4.6% | -1.91 | 3923 |
-| Engulfing_Reversal(0.3) | FLAT | $95,249 | -4.8% | -2.10 | 1171 |
+| Engulfing_Reversal(0.3) | FLAT | $95,249 | -4.8% | -2.09 | 1171 |
 | ZScore_Reversion(20,z=2.0) | FLAT | $95,234 | -4.8% | -1.27 | 3523 |
 | RSI_Reversion(14,30/70) | FLAT | $95,214 | -4.8% | -3.21 | 1594 |
 | MACD_Momentum(12/26/9) | FLAT | $95,194 | -4.8% | -2.20 | 1389 |
