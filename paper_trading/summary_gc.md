@@ -1,10 +1,10 @@
-# MGC Paper Trading (1D) — updated 2026-11-19T00:19:27.728787+00:00
+# MGC Paper Trading (1D) — updated 2026-11-19T02:18:48.681731+00:00
 
 Latest bar: 2026-11-18 00:00:00 · 2,599 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $278,241 | +178.2% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $278,740 | +178.7% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $110,674 | +10.7% | 0.46 | 119 |
 | Stochastic_Reversion(14,20/80) | FLAT | $101,348 | +1.3% | 0.07 | 96 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
