@@ -2,7 +2,7 @@
   "symbol": "M2K",
   "freq": "1D",
   "leverage": 1.0,
-  "updated_at_utc": "2026-11-20T03:07:40.188079+00:00",
+  "updated_at_utc": "2026-11-20T05:18:53.655896+00:00",
   "latest_bar": "2026-11-19 00:00:00",
   "bar_count": 2374,
   "buy_and_hold_equity_curve": [
@@ -1004,7 +1004,7 @@
     ],
     [
       "2026-11-19 00:00:00",
-      188535.53
+      189060.85
     ]
   ],
   "strategies": {
@@ -4041,7 +4041,7 @@
     "Parabolic_SAR(af=0.02,max=0.2)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 106884.59,
+      "equity": 106847.59,
       "max_drawdown": -0.0444,
       "open_trade": {
         "direction": -1,
@@ -5049,7 +5049,7 @@
         ],
         [
           "2026-11-19 00:00:00",
-          106884.59
+          106847.59
         ]
       ]
     },
@@ -6066,7 +6066,7 @@
     "Bollinger_Reversion(20,2sd)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 105340.6,
+      "equity": 105377.6,
       "max_drawdown": -0.0325,
       "open_trade": {
         "direction": 1,
@@ -7074,14 +7074,14 @@
         ],
         [
           "2026-11-19 00:00:00",
-          105340.6
+          105377.6
         ]
       ]
     },
     "ZScore_Reversion(20,z=2.0)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 102905.9,
+      "equity": 102942.9,
       "max_drawdown": -0.0344,
       "open_trade": {
         "direction": 1,
@@ -8089,18 +8089,18 @@
         ],
         [
           "2026-11-19 00:00:00",
-          102905.9
+          102942.9
         ]
       ]
     },
     "Stochastic_Reversion(14,20/80)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 102306.4,
+      "equity": 102024.9,
       "max_drawdown": -0.0353,
       "open_trade": {
         "direction": 1,
-        "entry_price": 2658.300048828125,
+        "entry_price": 2722.0,
         "entry_time": "2026-11-19 00:00:00",
         "units": 1.0
       },
@@ -9104,7 +9104,7 @@
         ],
         [
           "2026-11-19 00:00:00",
-          102306.4
+          102024.9
         ]
       ]
     },
@@ -12141,7 +12141,7 @@
     "Keltner_Breakout(20,m=2.0)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 103913.4,
+      "equity": 103876.4,
       "max_drawdown": -0.0428,
       "open_trade": {
         "direction": -1,
@@ -13149,14 +13149,14 @@
         ],
         [
           "2026-11-19 00:00:00",
-          103913.4
+          103876.4
         ]
       ]
     },
     "VWAP_Reversion(20,2%)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 107197.6,
+      "equity": 107234.6,
       "max_drawdown": -0.0337,
       "open_trade": {
         "direction": 1,
@@ -14164,7 +14164,7 @@
         ],
         [
           "2026-11-19 00:00:00",
-          107197.6
+          107234.6
         ]
       ]
     },
@@ -18211,7 +18211,7 @@
     "VolProfile_Reversion(30)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99351.1,
+      "equity": 99388.1,
       "max_drawdown": -0.0472,
       "open_trade": {
         "direction": 1,
@@ -19219,14 +19219,14 @@
         ],
         [
           "2026-11-19 00:00:00",
-          99351.1
+          99388.1
         ]
       ]
     },
     "TPO_Reversion(60,p=5)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 99444.3,
+      "equity": 99481.3,
       "max_drawdown": -0.0469,
       "open_trade": {
         "direction": 1,
@@ -20234,7 +20234,7 @@
         ],
         [
           "2026-11-19 00:00:00",
-          99444.3
+          99481.3
         ]
       ]
     }
