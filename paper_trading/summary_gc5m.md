@@ -1,18 +1,18 @@
-# MGC Paper Trading (5min) — updated 2026-11-20T07:19:58.952743+00:00
+# MGC Paper Trading (5min) — updated 2026-11-20T09:18:56.861936+00:00
 
-Latest bar: 2026-11-20 07:05:00 · 33,513 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-11-20 09:05:00 · 33,555 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $77,788 | -22.2% | — | 1 |
-| Supertrend(10,m=3.0) | LONG | $106,380 | +6.4% | 0.74 | 852 |
+| *Buy & Hold (benchmark)* | — | $78,285 | -21.7% | — | 1 |
+| Supertrend(10,m=3.0) | LONG | $106,787 | +6.8% | 0.78 | 852 |
 | ORB_ATR_Target(6,1.5xATR) | FLAT | $105,446 | +5.4% | 1.07 | 720 |
 | MA_Crossover(10/50) | FLAT | $105,066 | +5.1% | 0.65 | 725 |
-| ATR_Vol_Breakout(14,k=1.5) | LONG | $103,750 | +3.8% | 0.45 | 542 |
+| ATR_Vol_Breakout(14,k=1.5) | LONG | $103,977 | +4.0% | 0.48 | 542 |
 | Opening_Range_Breakout(6) | FLAT | $102,488 | +2.5% | 0.51 | 83 |
-| MACD_Momentum(12/26/9) | FLAT | $102,211 | +2.2% | 0.30 | 2214 |
+| MACD_Momentum(12/26/9) | FLAT | $102,211 | +2.2% | 0.29 | 2214 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $102,117 | +2.1% | 0.29 | 414 |
-| RSI_Reversion(14,30/70) | FLAT | $101,469 | +1.5% | 0.42 | 947 |
+| RSI_Reversion(14,30/70) | FLAT | $101,489 | +1.5% | 0.42 | 948 |
 | VWAP_Reversion(20,2%) | FLAT | $100,000 | +0.0% | — | 0 |
 | Donchian_Breakout(20) | FLAT | $99,997 | -0.0% | 0.02 | 588 |
 | Inside_Bar_Breakout(0.6) | FLAT | $98,363 | -1.6% | -0.34 | 54 |
@@ -22,5 +22,5 @@ Latest bar: 2026-11-20 07:05:00 · 33,513 bars of history · $100,000 starting c
 | VolProfile_Reversion(30) | FLAT | $96,351 | -3.6% | -0.78 | 2232 |
 | Engulfing_Reversal(0.3) | FLAT | $96,128 | -3.9% | -1.08 | 242 |
 | Stochastic_Reversion(14,20/80) | FLAT | $95,715 | -4.3% | -0.85 | 752 |
-| Bollinger_Reversion(20,2sd) | FLAT | $95,673 | -4.3% | -0.98 | 452 |
+| Bollinger_Reversion(20,2sd) | FLAT | $95,673 | -4.3% | -0.97 | 452 |
 | CCI_Reversion(20,100) | FLAT | $95,532 | -4.5% | -1.06 | 1259 |
