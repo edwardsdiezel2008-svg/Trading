@@ -1,4 +1,4 @@
-# MES Paper Trading (5min) — updated 2026-11-21T03:19:21.662459+00:00
+# MES Paper Trading (5min) — updated 2026-11-21T05:19:21.120971+00:00
 
 Latest bar: 2026-11-20 21:55:00 · 33,610 bars of history · $100,000 starting capital per strategy
 
@@ -21,6 +21,6 @@ Latest bar: 2026-11-20 21:55:00 · 33,610 bars of history · $100,000 starting c
 | MACD_Momentum(12/26/9) | FLAT | $96,811 | -3.2% | -1.16 | 739 |
 | Parabolic_SAR(af=0.02,max=0.2) | FLAT | $96,662 | -3.3% | -1.25 | 763 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $96,492 | -3.5% | -1.34 | 151 |
-| VolProfile_Reversion(30) | FLAT | $96,154 | -3.8% | -1.27 | 3640 |
+| VolProfile_Reversion(30) | FLAT | $96,151 | -3.8% | -1.27 | 3640 |
 | CCI_Reversion(20,100) | FLAT | $95,384 | -4.6% | -1.64 | 3008 |
 | Engulfing_Reversal(0.3) | FLAT | $95,033 | -5.0% | -1.89 | 781 |
