@@ -4,6 +4,9 @@ __pycache__/
 venv/
 *.egg-info/
 
+# API keys - never commit these.
+.env
+
 # Downloaded trading logs are large and often licensed data - keep them local only.
 data/raw/*
 !data/raw/.gitkeep
