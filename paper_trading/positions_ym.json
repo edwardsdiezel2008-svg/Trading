@@ -2,7 +2,7 @@
   "symbol": "MYM",
   "freq": "1D",
   "leverage": 1.0,
-  "updated_at_utc": "2026-11-23T21:17:16.941079+00:00",
+  "updated_at_utc": "2026-11-24T00:18:37.954571+00:00",
   "latest_bar": "2026-11-23 00:00:00",
   "bar_count": 2604,
   "buy_and_hold_equity_curve": [
@@ -1004,7 +1004,7 @@
     ],
     [
       "2026-11-23 00:00:00",
-      269385.43
+      269277.04
     ]
   ],
   "strategies": {
@@ -5051,7 +5051,7 @@
     "RSI_Reversion(14,30/70)": {
       "position": 0,
       "position_label": "FLAT",
-      "equity": 104665.0,
+      "equity": 105276.5,
       "max_drawdown": -0.0258,
       "open_trade": null,
       "as_of": "2026-11-23 00:00:00",
@@ -6054,14 +6054,14 @@
         ],
         [
           "2026-11-23 00:00:00",
-          104665.0
+          105276.5
         ]
       ]
     },
     "Bollinger_Reversion(20,2sd)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 103161.5,
+      "equity": 103151.5,
       "max_drawdown": -0.044,
       "open_trade": {
         "direction": 1,
@@ -7069,7 +7069,7 @@
         ],
         [
           "2026-11-23 00:00:00",
-          103161.5
+          103151.5
         ]
       ]
     },
@@ -8086,11 +8086,11 @@
     "Stochastic_Reversion(14,20/80)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 102644.5,
+      "equity": 102023.0,
       "max_drawdown": -0.0433,
       "open_trade": {
         "direction": 1,
-        "entry_price": 48501.0,
+        "entry_price": 49724.0,
         "entry_time": "2026-11-23 00:00:00",
         "units": 1.0
       },
@@ -9094,7 +9094,7 @@
         ],
         [
           "2026-11-23 00:00:00",
-          102644.5
+          102023.0
         ]
       ]
     },
@@ -18191,7 +18191,7 @@
     "VolProfile_Reversion(30)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 100438.0,
+      "equity": 100428.0,
       "max_drawdown": -0.0491,
       "open_trade": {
         "direction": 1,
@@ -19199,7 +19199,7 @@
         ],
         [
           "2026-11-23 00:00:00",
-          100438.0
+          100428.0
         ]
       ]
     },
