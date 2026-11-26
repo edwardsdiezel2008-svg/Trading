@@ -1,10 +1,10 @@
-# MGC Paper Trading (1D) — updated 2026-11-26T04:59:45.521116+00:00
+# MGC Paper Trading (1D) — updated 2026-11-26T07:19:02.157846+00:00
 
-Latest bar: 2026-11-25 00:00:00 · 2,605 bars of history · $100,000 starting capital per strategy
+Latest bar: 2026-11-26 00:00:00 · 2,606 bars of history · $100,000 starting capital per strategy
 
 | Strategy | Position | Equity | Total Return | Sharpe | Trades |
 |---|---|---|---|---|---|
-| *Buy & Hold (benchmark)* | — | $269,746 | +169.7% | — | 1 |
+| *Buy & Hold (benchmark)* | — | $267,716 | +167.7% | — | 1 |
 | VWAP_Reversion(20,2%) | FLAT | $110,674 | +10.7% | 0.46 | 119 |
 | Stochastic_Reversion(14,20/80) | FLAT | $101,348 | +1.3% | 0.07 | 96 |
 | Opening_Range_Breakout(6) | FLAT | $100,000 | +0.0% | — | 0 |
@@ -21,6 +21,6 @@ Latest bar: 2026-11-25 00:00:00 · 2,605 bars of history · $100,000 starting ca
 | ZScore_Reversion(20,z=2.0) | FLAT | $96,759 | -3.2% | -0.15 | 87 |
 | Inside_Bar_Breakout(0.6) | FLAT | $95,836 | -4.2% | -0.56 | 20 |
 | Keltner_Breakout(20,m=2.0) | FLAT | $95,576 | -4.4% | -0.36 | 30 |
-| Engulfing_Reversal(0.3) | FLAT | $95,346 | -4.7% | -0.67 | 18 |
+| Engulfing_Reversal(0.3) | FLAT | $95,346 | -4.7% | -0.66 | 18 |
 | ATR_Vol_Breakout(14,k=1.5) | FLAT | $95,149 | -4.9% | -0.50 | 47 |
 | RSI_Reversion(14,30/70) | FLAT | $95,088 | -4.9% | -0.37 | 77 |

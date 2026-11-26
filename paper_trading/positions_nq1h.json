@@ -2,7 +2,7 @@
   "symbol": "MNQ",
   "freq": "1h",
   "leverage": 1.0,
-  "updated_at_utc": "2026-11-26T05:01:02.785424+00:00",
+  "updated_at_utc": "2026-11-26T07:20:58.774234+00:00",
   "latest_bar": "2026-11-26 04:00:00",
   "bar_count": 15476,
   "buy_and_hold_equity_curve": [
@@ -1004,7 +1004,7 @@
     ],
     [
       "2026-11-26 04:00:00",
-      145191.66
+      145080.33
     ]
   ],
   "strategies": {
@@ -13131,7 +13131,7 @@
     "VWAP_Reversion(20,2%)": {
       "position": -1,
       "position_label": "SHORT",
-      "equity": 100860.0,
+      "equity": 100900.5,
       "max_drawdown": -0.0371,
       "open_trade": {
         "direction": -1,
@@ -14139,7 +14139,7 @@
         ],
         [
           "2026-11-26 04:00:00",
-          100860.0
+          100900.5
         ]
       ]
     },
@@ -17176,7 +17176,7 @@
     "ORB_ATR_Target(6,1.5xATR)": {
       "position": 1,
       "position_label": "LONG",
-      "equity": 105211.5,
+      "equity": 105171.0,
       "max_drawdown": -0.0416,
       "open_trade": {
         "direction": 1,
@@ -18184,7 +18184,7 @@
         ],
         [
           "2026-11-26 04:00:00",
-          105211.5
+          105171.0
         ]
       ]
     },
